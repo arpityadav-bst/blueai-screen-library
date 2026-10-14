@@ -4,6 +4,8 @@
 
 **Why:** A system is only trustworthy if it says what it cannot prove. These are the limits of the guide and its checks, the open items the build left for the part that owns them, and the V2 code that is not a source.
 
+**V3 restyle (2026-10-14).** V2's jobs.jsx still carries an unreachable job list (JobCard, JobDetailsModal, StatusBadge, JOB_STATUS, JOBS_ACTIVE, JOBS_HISTORY) with indigo #4f46e5 and the old status colours; V3 no longer does. Delete it in V2 or bring it back on purpose (PM). The PM copy items found in the V3 restyle are listed in section 70.
+
 ### What the guide cannot catch
 
 - **How it looks:** Nothing here takes screenshots, by design. ds-check reads files, not pixels; layout, spacing and stroke weight are checked by eye in this guide.

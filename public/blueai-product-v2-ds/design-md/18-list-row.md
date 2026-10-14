@@ -4,6 +4,8 @@
 
 **Why:** Every screen the concept adds (Activity, Notifications, Worker settings, Connected apps, Account) is a list. V2 has four row shapes for one idea, with two label treatments: Profile rows (grey 14.5 label, 14.5/600 value, profile.jsx:17-24), Settings field rows (15/700 label over a 12px hint at 2.54:1, settings.jsx:97-102), the Sign out card (a whole card, hover from a mouse handler, profile.jsx:57-59) and History rows (a card each, a turning chevron, no aria-expanded, history.jsx:96-104). One row with variants replaces them.
 
+**V3 restyle (2026-10-14).** Decision: the settings row and the ledger row are one component, ListRow. A control in the trailing slot makes a settings row (label 14/500 ink, one 12 hint under it, hairline between rows); a value makes a ledger line, drawn as the site's ledger: muted label (ink-3, 400), the value in ink. A settings section head is the SettingsSection title 16/600 with one 13 ink-3 line.
+
 ### ListRow (Changed from V2)
 
 **Purpose.** The repeated line of every list: a fact (label + value), a setting (label + control), a place (navigation), a day or run you can open (expandable), an irreversible action (destructive).
@@ -12,7 +14,7 @@
 1. Row: min 48 tall, padding 12 16 (`--v2-space-3` `--v2-space-4`), gap 12, items centred.
 2. Leading (optional), one of: a 20px icon in `--v2-ink-3`; an Avatar 32 / 40; or a mark (`mark` prop): a `--v2-mark-md` (32) round `--v2-surface-sunken` disc with a 16 glyph in its tone (ink-3, or attention, success or danger ink) and, when `dot`, an 8 `--v2-blue` dot at its top right with a 2px surface halo. The mark is for a row about a thing or an event, not a person: a notification (section 60), BlueStacks in Settings (section 61).
 3. Text: label 14/500 `--v2-ink`; description 13 `--v2-ink-3` under it (also where a disabled row says why).
-4. Trailing, one of: value (14/400 `--v2-ink-2`, tabular, right-aligned), a control (Switch, Select), a Badge, a chevron (16, `--v2-ink-4`), or the external mark.
+4. Trailing, one of: value (14/400 `--v2-ink`, tabular, right-aligned; the label then steps to ink-3, the site's ledger), a control (Switch, Select), a Badge, a chevron (16, `--v2-ink-4`), or the external mark.
 5. Divider: 1px `--v2-line-hair`, inset 16 on both sides, between rows only (none after the last).
 
 **Variants.** Value. Control (the row is a plain div; the control is the only target). Nav (a button or a link; chevron-right, or `external` for the site). Expandable (chevron-down that turns 180; a panel below). Destructive (label and icon in `--v2-danger-ink`).

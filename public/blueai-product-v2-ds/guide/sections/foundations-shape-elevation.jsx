@@ -6,7 +6,8 @@
     ['--v2-radius-xs', '4', 'checkbox box, day-bar segment, tooltip arrow'],
     ['--v2-radius-sm', '6', 'buttons, fields, segmented items, menu rows, icon buttons'],
     ['--v2-radius-md', '10', 'rows, banners, composer, menus, tooltips'],
-    ['--v2-radius-lg', '16', 'cards, bubbles, dialogs, sheet top corners'],
+    ['--v2-radius-lg', '16', 'cards, bubbles, composer'],
+    ['--v2-radius-dialog', '20', 'every dialog, the sheet top edge'],
     ['--v2-radius-pill', 'pill', 'badges, quick-reply chips, credits chip, progress rail'],
     ['--v2-radius-round', 'round', 'avatars, discs, send button'],
   ];
@@ -48,6 +49,7 @@
     const K = window.V2Kit || {};
     return (
       <G.Section id="shape-elevation">
+        <G.Note>V3 restyle (2026-10-14): one dialog radius, --v2-radius-dialog 20, for every dialog and the sheet's top edge (Appy's consent decision); cards stay 16, rows keep 10 (the one inset step). A bottom sheet casts upward (--v2-shadow-2-up) over the light veil (--v2-scrim-light). The solid button's three-stop cast (--v2-shadow-btn) is the one in-flow cast; every other in-flow surface is a line.</G.Note>
         <G.Part name="Radius ladder" status="changed" role="Six radii, each with a job: 4 inner, 6 controls, 10 rows, 16 surfaces, pill, round. One button shape, the site's 6.">
           <div className="v2-hstack v2-wrap v2-gap-3">
             {RADII.map(function (r) {
@@ -71,7 +73,7 @@
             changed="Twenty radii in live code; buttons alone use 8, 9, 10, 20, 40 and 999, two of them on the same settings screen (Connect Telegram 20, Save settings 8). Six steps remain and every button is 6, the strongest single 'same family as the site' cue." />
           <G.SpecDrawer rows={[
             { part: 'Buttons, fields', token: '--v2-radius-sm', value: '6', ref: ['foundations.radius.save', 'foundations.radius.ai-mode', 'foundations.radius.telegram', 'foundations.blue.new-chat', 'foundations.radius.onblue-button'] },
-            { part: 'Cards, bubbles, dialogs', token: '--v2-radius-lg', value: '16', ref: 'foundations.radius.onblue-card' },
+            { part: 'Cards, bubbles (dialogs: --v2-radius-dialog 20)', token: '--v2-radius-lg', value: '16', ref: 'foundations.radius.onblue-card' },
             { part: 'Copy shown', token: null, value: "'Connect Telegram', 'Save settings'", ref: ['foundations.radius.telegram-copy', 'foundations.radius.save-copy'] },
           ]} />
         </G.Part>
@@ -84,12 +86,12 @@
           ]} />
           <G.CompareRow
             v2={<div className="v2-stack"><G.Live get={function () { return window.ChatBubbles && window.ChatBubbles.UserBubble; }} props={{ content: (window.MoneyMaker && window.MoneyMaker.PROMPT) || 'Run this to begin' }} label="ChatBubbles.UserBubble" /><G.Live get={function () { return window.BluestacksCard; }} label="BluestacksCard (settings.jsx)" /></div>}
-            system={<div className="v2-stack"><div style={{ alignSelf: 'flex-end', maxWidth: 'var(--v2-bubble-max)', background: 'var(--v2-blue-tint)', borderRadius: 'var(--v2-radius-lg)', padding: 'var(--v2-space-3) var(--v2-space-4)' }} className="v2-text-body">{(window.MoneyMaker && window.MoneyMaker.PROMPT) || 'Run this to begin'}</div><div style={surf}><span className="v2-text-title">BlueStacks Instance</span></div></div>}
+            system={<div className="v2-stack"><div style={{ alignSelf: 'flex-end', maxWidth: 'var(--v2-bubble-max)', background: 'var(--v2-bubble-user-fill)', border: 'var(--v2-stroke) solid var(--v2-bubble-user-line)', borderRadius: 'var(--v2-radius-lg)', padding: 'var(--v2-space-3) var(--v2-space-4)' }} className="v2-text-body">{(window.MoneyMaker && window.MoneyMaker.PROMPT) || 'Run this to begin'}</div><div style={surf}><span className="v2-text-title">BlueStacks Instance</span></div></div>}
             changed="154 shadow declarations from 55 recipes, 15 of them coloured glows (the user bubble's indigo glow, the bottom nav casting upward, a 0.45 black cast on day done). Things in flow separate with a 1px line; menus and toasts get level 1; dialogs and sheets level 2." />
           <G.SpecDrawer rows={[
             { part: 'Cards, bubbles, nav', token: '--v2-shadow-0', value: 'none + 1px --v2-line', ref: ['foundations.shadow.card', 'foundations.shadow.bottom-nav', 'foundations.shadow.user-bubble'] },
             { part: 'Menus, popovers, toast', token: '--v2-shadow-1', value: '0 1px 2px rgba(18,32,64,0.04), 0 12px 32px -12px rgba(18,32,64,0.18)', ref: 'foundations.shadow.dropdown' },
-            { part: 'Dialogs, sheets, day done', token: '--v2-shadow-2', value: '0 2px 6px rgba(18,32,64,0.06), 0 28px 64px -24px rgba(18,32,64,0.32)', ref: ['foundations.shadow.modal', 'foundations.shadow.day-done'] },
+            { part: 'Dialogs, day done (sheets: --v2-shadow-2-up)', token: '--v2-shadow-2', value: '0 2px 6px rgba(18,32,64,0.06), 0 28px 64px -24px rgba(18,32,64,0.32)', ref: ['foundations.shadow.modal', 'foundations.shadow.day-done'] },
           ]} />
         </G.Part>
 

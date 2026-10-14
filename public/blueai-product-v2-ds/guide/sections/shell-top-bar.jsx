@@ -72,6 +72,7 @@
     const K = window.V2Kit;
     return (
       <G.Section id="top-bar">
+        <G.Note>V3 restyle (2026-10-14): the BrandMark word is ink in Target (--v2-brand-word-fill); the gradient is fenced to the credits glyph. The V2 today look keeps its gradient word.</G.Note>
         <G.Part name="TopBar" status="changed" role="Brand, today's run, credits, help and more: what the partner checks every time the window opens.">
           <ul className="g-list">
             <li>52 tall, surface, one bottom hairline, no shadow. Left padding on the 16 gutter; right 12, because the 32 icon buttons carry their own inset.</li>
@@ -137,7 +138,7 @@
             dont={['Make the chip a verb: it names the state; the run holds the action.', 'Animate the running dot: nothing loops unattended.']} />
         </G.Part>
 
-        <G.Part name="BrandMark" status="changed" role="The BlueAI mark and wordmark, the one place the brand gradient is allowed as a fill.">
+        <G.Part name="BrandMark" status="changed" role="The BlueAI mark and wordmark, the word in ink (V3 restyle).">
           <G.StateGrid states={[
             { label: 'Mark + wordmark, 24', note: 'top bar', node: <K.BrandMark size={24} /> },
             { label: 'Mark only, 24', note: 'tight places; alt "BlueAI"', node: <K.BrandMark size={24} wordmark={false} /> },
@@ -146,11 +147,11 @@
           <G.CompareRow
             v2={<G.FrameState url="index.html?start=worker" label="V2 lockup: logo 32, wordmark 22/700" height={900} />}
             system={<K.BrandMark size={24} />}
-            changed="V2's bar runs the cyan-to-violet gradient three times in 419px: the wordmark, a ring around the credits pill and the credits number. The wordmark keeps it; the credits chip goes back to ink with its star glyph (section 47). The lockup drops to 24 + 16/600 so the status chip fits beside it." />
+            changed="V2's bar runs the cyan-to-violet gradient three times in 419px: the wordmark, a ring around the credits pill and the credits number. The wordmark goes to ink (V3 restyle) and the credits chip goes back to ink with its star glyph (section 47). The lockup drops to 24 + 16/600 so the status chip fits beside it." />
           <G.SpecDrawer rows={[
             { part: 'Logo', token: '--v2-icon-lg', value: '24px (48 on the splash)', ref: 'shell.topbar.logo' },
             { part: 'Wordmark', token: '--v2-text-16, --v2-weight-semibold', value: '16/600, -0.01em', ref: 'shell.topbar.wordmark' },
-            { part: 'Gradient', token: '--v2-gradient-brand', value: 'linear-gradient(90deg, #0EA4C5, #7B4CFF)', ref: 'shell.topbar.wordmark-gradient' },
+            { part: 'Word fill', token: '--v2-brand-word-fill', value: 'ink in Target; the brand gradient in V2 today', ref: 'shell.topbar.wordmark-gradient' },
             { part: 'Credits ring', token: 'removed', value: 'hairline chip instead', ref: 'shell.topbar.credits-ring' },
             { part: 'Credits number', token: '--v2-ink', value: 'ink, not gradient', ref: 'shell.topbar.credits-number' },
           ]} />

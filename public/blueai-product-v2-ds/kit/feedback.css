@@ -125,23 +125,24 @@
 .v2-banner--compact .v2-banner-text { padding: var(--v2-space-15) 0; }
 .v2-banner--compact .v2-banner-actions { margin: 0; }
 
-/* ---- EmptyState: the dashed ghost ---- */
+/* ---- EmptyState: a 56 sunken mark, a 20/600 title, one muted line (V3 restyle, 2026-10-14). No box of its
+   own: on a page it sits on the ground, in a card it takes the card's padding. ---- */
 .v2-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--v2-space-2);
-  padding: var(--v2-space-8) var(--v2-space-6);
-  border: var(--v2-stroke) dashed var(--v2-line-strong);
-  border-radius: var(--v2-radius-lg);
-  background: var(--v2-surface-panel);
+  padding: var(--v2-space-10) var(--v2-space-5);
   font-family: var(--v2-font-ui);
   text-align: center;
 }
-.v2-empty-icon { display: inline-flex; margin-bottom: var(--v2-space-1); color: var(--v2-ink-3); }
-/* Type from .v2-text-title and .v2-text-body-sm (kit/base.css), set in kit/notice.jsx. */
+.v2-empty-icon {
+  display: grid; place-items: center; width: var(--v2-mark-xl); height: var(--v2-mark-xl); margin-bottom: var(--v2-space-2);
+  border-radius: var(--v2-radius-round); background: var(--v2-surface-sunken); color: var(--v2-ink-3);
+}
+/* Type from .v2-text-title-lg and .v2-text-body (kit/base.css), set in kit/notice.jsx; the body in ink-3. */
 .v2-empty-title { margin: 0; }
-.v2-empty-body { max-width: var(--v2-measure); margin: 0; }
+.v2-empty-body { max-width: var(--v2-measure-tip); margin: 0; color: var(--v2-ink-3); text-wrap: pretty; }
 .v2-empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--v2-space-2); margin-top: var(--v2-space-2); }
 
 @media (forced-colors: active) {

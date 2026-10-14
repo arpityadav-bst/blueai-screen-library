@@ -14,10 +14,11 @@
     const first = <E variant="first" title="No days yet" body={DAYS + ' Next run today at 11 am.'} />;
     return (
       <G.Section id="empty-state">
+        <G.Note>V3 restyle (2026-10-14): a 56 sunken mark with the icon in muted ink, a 20/600 title, one 14 ink-3 line at --v2-measure-tip, at most one solid action; no box of its own. No serif em phrase in working tabs.</G.Note>
         <G.Part name="EmptyState" status="changed" role="What a view shows with nothing in it: names what will appear, says why, and offers the one way forward.">
           <G.Stage ground="canvas" width="shell">{first}</G.Stage>
           <ul className="g-list">
-            <li>The site's dashed ghost: 1px dashed --v2-line-strong, radius 16, panel fill, padding 32 24. A dashed edge says "a thing will be here".</li>
+            <li>No box: a centred column, padding 40 20; the icon on a 56 sunken disc; title 20/600; body 14 ink-3 at 260 wide.</li>
             <li>Icon 24 in ink-3, no disc, no colour.</li>
             <li>Title 16/600 ink (an h2 by default). Body 13 ink-3, at most 280 wide.</li>
             <li>At most one medium primary button, and only when there is a real next step; a secondary quiet one beside it if needed.</li>
@@ -41,7 +42,7 @@
             changed="Two looks with off-palette art: Schedule's purple icon on a purple disc inside a shadowed card, and Jobs' 120px disc with a brown briefcase over 'Coming Soon', standing in for a whole tab. Schedule's body reads at 2.54:1. The system follows the site's voice and its dashed ghost: name what will appear, one muted line of why, a neutral icon, and a button only when there is something to do. Jobs and Schedule give way to Activity (R04)." />
 
           <G.SpecDrawer rows={[
-            { part: 'Edge', token: '--v2-line-strong', value: '1px dashed', ref: 'display-feedback.empty.site-ghost' },
+            { part: 'Mark', token: '--v2-mark-xl, --v2-surface-sunken, --v2-ink-3', value: '56 disc, 24 icon (V3 restyle; was a dashed box)', ref: 'display-feedback.empty.site-ghost' },
             { part: 'Fill', token: '--v2-surface-panel', value: '#fdfdfd, no shadow', ref: 'display-feedback.empty.schedule' },
             { part: 'Radius', token: '--v2-radius-lg', value: '16px', ref: 'display-feedback.empty.schedule' },
             { part: 'Padding', token: '--v2-space-8 / --v2-space-6', value: '32px 24px', ref: ['display-feedback.empty.site-empty', 'display-feedback.empty.schedule'] },

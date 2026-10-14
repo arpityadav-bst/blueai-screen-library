@@ -3,6 +3,8 @@
 **Status:** Changed from V2 (Composer, ComposerNotice, Stop).
 **Why:** V2 clips text past 120px (chat_product.jsx:78, 284), rests on a blue-tinted 1.5px border at 1.40:1 that reads as focus (chat_product.jsx:260), mixes "..." and "…" in placeholders (266, 278, 283), reveals zero credits only after Send (124), and stops a paid job on one click with no trace (141). The Automatic ribbon (agent_permissions.jsx:203-216) is the right pattern and is generalised.
 
+**V3 restyle (2026-10-14).** Send is the solid ink button; Stop is the ghost (the ladder's second step); Stop run in the confirm is the solid primary.
+
 ### Composer (Changed from V2)
 - **Purpose:** One field to talk to the worker, with Send that becomes Stop.
 - **Anatomy:** Block padding 4 16 12; optional notice and stop-confirm above; box radius 10, 1px `--v2-line-strong`, white, padding 4 4 4 12; textarea 14/1.5 ink, placeholder ink-4; SendStop 36 round on the right, bottom-aligned.
@@ -29,7 +31,7 @@
 
 ### Stop (SendStop) (Changed from V2)
 - **Purpose:** Send the message, or stop the run.
-- **Anatomy:** 36 round. Send: `--v2-action` fill, white send glyph 16. Stop: white, 1px line-strong, ink-2 stop glyph 16. Stop confirm (today not counted yet, `costsDay`): attention panel above the field, "Stop now? Today counts only if you run again by 9 pm." (the stopped RunCard and WorkerCard say the same); with a paid job under way (`paidJob`) it says "Stop now? The paid job won’t finish. Today counts only if you run again by 9 pm."; Keep running (secondary md) / Stop run (danger md). The confirm is role=alertdialog labelled by its question and takes focus on Keep running; while it is open, Stop moves focus back to it, so a double press never stops a paid run (`kit/composer.jsx:102-135`).
+- **Anatomy:** 36 round. Send: `--v2-solid` fill with `--v2-shadow-btn`, white send glyph 16. Stop: the ghost, `--v2-surface-panel`, 1px line-strong, ink stop glyph 16. Stop confirm (today not counted yet, `costsDay`): attention panel above the field, "Stop now? Today counts only if you run again by 9 pm." (the stopped RunCard and WorkerCard say the same); with a paid job under way (`paidJob`) it says "Stop now? The paid job won’t finish. Today counts only if you run again by 9 pm."; Keep running (secondary md) / Stop run (primary md). The confirm is role=alertdialog labelled by its question and takes focus on Keep running; while it is open, Stop moves focus back to it, so a double press never stops a paid run (`kit/composer.jsx:102-135`).
 - **Variants:** send, stop.
 - **Sizes:** 36 (control-md).
 - **States:** Send ready, hover (`--v2-action-hover`), focus, pressed (1px down), disabled (sunken + ink-4, not pale blue); Stop, hover (wash + line), pressed; stop confirm.

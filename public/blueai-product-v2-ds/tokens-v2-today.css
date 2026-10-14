@@ -26,6 +26,8 @@
   --v2-surface-sunken: #f1f5f9; /* status bubble, chips, pills, 18 uses (chat_bubbles.jsx:40, index.html:480) */
   --v2-wash-hover: rgba(115,155,195,0.10); /* equals #f1f5f9 over white, V2's hover fill (index.html:291), as a wash so it still layers over fills */
   --v2-wash-press: rgba(0,0,0,0.07); /* kept: V2 presses by scale, no fill (index.html:94, 101) */
+  --v2-surface-press: #e7eaf1; /* kept: V2 presses by scale, no fill (index.html:94, 101) */
+  --v2-wash-tint: transparent; /* V2 chips and pills sit on white with a line, no wash */
 
   /* Line: Tailwind hex lines. */
   --v2-line: #e2e8f0; /* 89 uses, the de-facto line (index.html:323, shared.jsx:300) */
@@ -43,6 +45,12 @@
   --v2-blue-tint-line: #bfdbfe; /* info notice edge (needs_bluestacks.jsx:77-82, jobs.jsx:6) */
   --v2-select: #eef6ff; /* selected option fill (ai_mode.jsx:51) */
   --v2-select-line: #1990FF; /* selected option border, 1.5px solid ACCENT (ai_mode.jsx:52) */
+
+  /* Solid: V2's committing action is the blue fill. */
+  --v2-solid: #1990FF; /* every primary fill (index.html:342, settings.jsx:123, byok.jsx:26) */
+  --v2-solid-hover: #359dff; /* #1990FF at opacity 0.88 over white (index.html:343) */
+  --v2-shadow-btn: none; /* most V2 primaries cast nothing (settings.jsx:123); its few glows are absorbed by --v2-shadow-0 */
+  --v2-shadow-btn-hover: none; /* no hover cast (index.html:343) */
 
   /* Status. */
   --v2-success: #16a34a; /* 10 uses: key icon, 'Active', dots (index.html:469, 481) */
@@ -66,6 +74,8 @@
   --v2-bubble-user-line: transparent; /* user bubble has no border (chat_bubbles.jsx:30) */
   --v2-bubble-user-ink: var(--v2-on-color); /* white text on the gradient (chat_bubbles.jsx:31) */
   --v2-bubble-user-shadow: 0 4px 14px rgba(99,102,241,0.30); /* indigo glow (chat_bubbles.jsx:30) */
+  --v2-waiting-fill: var(--v2-attention-tint); /* needs-input yellow fill (chat_bubbles.jsx:89, worker_cards.jsx:19) */
+  --v2-brand-word-fill: var(--v2-gradient-brand); /* gradient wordmark (index.html:326) */
   --v2-nav-selected-fill: #eef2ff; /* active tab pill (shared.jsx:305) */
   --v2-nav-selected-ink: #4f46e5; /* active tab label and icon (shared.jsx:305) */
   --v2-nav-indicator: transparent; /* V2 marks the tab with the pill only, no bar (shared.jsx:305) */
@@ -80,6 +90,7 @@
   --v2-text-13: 13px; /* the commonest size, 81 uses: button, body-sm (index.html:342, 526) */
   --v2-text-14: 13.5px; /* body: bubbles and composer (chat_bubbles.jsx:31, chat_product.jsx:284) */
   --v2-text-16: 17px; /* card title 17/700 (settings.jsx:13, login.jsx:229, account_gate.jsx:46) */
+  --v2-text-18: 18px; /* ModalOverlay title 18/600 (shared.jsx:75), Out of credits 18/800 (byok.jsx:58) */
   --v2-text-20: 20px; /* page title; V2 spreads 18 to 22, 20 is its middle (schedule.jsx:118, terms_sheet.jsx:114) */
   --v2-text-24: 24px; /* greeting (chat_compare.jsx:100) */
   --v2-text-40: 54px; /* credits balance (index.html:518) */
@@ -91,6 +102,7 @@
   --v2-leading-snug: 1.4; /* single-line UI, 10 uses, the most of 1.3 to 1.4 */
   --v2-leading-body: 1.5; /* paragraphs, 31 uses */
   --v2-tracking-display: -1px; /* balance 54/800/-1px (index.html:518, byok.jsx:51) */
+  --v2-tracking-figure: -1px; /* balance 54/800/-1px (index.html:518, byok.jsx:51) */
   --v2-tracking-title: -0.4px; /* page titles (history.jsx:91, terms_sheet.jsx:114) */
   --v2-tracking-label: 0; /* V2 card titles and buttons set no tracking (settings.jsx:13, index.html:342) */
   --v2-tracking-eyebrow: 0.08em; /* eyebrow, 7 uses (product_home.jsx:92) */
@@ -115,6 +127,7 @@
   --v2-radius-sm: 8px; /* buttons and fields, 38 uses (settings.jsx:123, schedule.jsx:60) */
   --v2-radius-md: 10px; /* 10 x29, the most of 10 to 14 (byok_settings.jsx:31, profile.jsx:78) */
   --v2-radius-lg: 16px; /* cards, 25 uses (index.html:432, settings.jsx:10) */
+  --v2-radius-dialog: 20px; /* sheets and dialogs (terms_sheet.jsx:113, agent_permissions.jsx:148, login.jsx:68) */
   --v2-radius-pill: 999px; /* pills (index.html:342) */
   --v2-radius-round: 50%; /* discs, 40 uses */
 
@@ -126,9 +139,11 @@
   --v2-shadow-0: 0 1px 3px rgba(0,0,0,0.04); /* in-flow cards and bubbles, x9 (index.html:432, chat_bubbles.jsx:40) */
   --v2-shadow-1: 0 10px 28px rgba(0,0,0,0.14); /* top-bar dropdown (index.html:289); each floating recipe is used once */
   --v2-shadow-2: 0 20px 60px rgba(0,0,0,0.3); /* ModalOverlay and Logout (shared.jsx:73, profile.jsx:74) */
+  --v2-shadow-2-up: 0 -12px 40px rgba(8,10,31,0.18); /* terms sheet (terms_sheet.jsx:113) */
 
   /* Overlay. */
   --v2-scrim: rgba(0,0,0,0.5); /* ModalOverlay, four dialogs (shared.jsx:72) */
+  --v2-scrim-light: rgba(15,23,42,0.24); /* mode sheet veil (agent_permissions.jsx:146) */
   --v2-scrim-frost: rgba(255,255,255,0.55); /* sign-in veil (login.jsx:74) */
   --v2-scrim-blur: 10px; /* sign-in blur (login.jsx:74) */
 
@@ -159,6 +174,7 @@
   --v2-focus-outline: 2px solid var(--v2-blue); /* kept: V2 relies on the browser default (focus.ring) */
   --v2-focus-offset: 2px; /* kept */
   --v2-focus-ring: 0 0 0 3px rgba(25,144,255,0.12); /* .ba-field:focus (index.html:57) */
+  --v2-ring-select: 0 0 0 4px rgba(25,144,255,0.22); /* routed-to BYOK glow ring (byok_settings.jsx:58) */
 
   /* Opacity. */
   --v2-opacity-disabled: 0.45; /* ai_mode.jsx:190, 226 */

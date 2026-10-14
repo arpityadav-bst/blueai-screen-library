@@ -4,11 +4,13 @@
 
 **Why:** The product should feel like the site's quiet working screen: one button shape, hairlines instead of shadows, one veil. V2 has twenty radii in live code (buttons alone 8, 9, 10, 20, 40 and 999, two of them on the same settings screen), 154 shadow declarations from 55 recipes with 15 coloured glows, seven scrim recipes, and two dialogs tied at z-index 120. Fewer, named steps make every surface say how far it sits from the page (P5, P6).
 
+**V3 restyle (2026-10-14).** Decisions: one dialog radius, `--v2-radius-dialog` 20, for every dialog and the sheet's top edge (Appy's consent decision, kept over the brief's 14/16: the run-complete moment and the mode sheet already share it); cards stay 16. Rows keep `--v2-radius-md` 10: the brief's 6/16/999 scale covers controls, cards and pills, and 10 is the one inset step the system keeps (no 7/9/11/12/14). A bottom sheet casts upward (`--v2-shadow-2-up`) and sits on the light veil (`--v2-scrim-light`, 0.24), so the consent that opens over the mode sheet stacks to about one veil. The solid button keeps the site's three-stop cast (`--v2-shadow-btn`), the one in-flow cast: it says "this commits". Every other in-flow surface is a 1px line with no shadow.
+
 ### Radius ladder (Changed from V2)
 
 **Purpose.** Six radii, each with a job.
 
-**Anatomy.** `--v2-radius-xs` 4 (checkbox box, day-bar segment, tooltip arrow), `-sm` 6 (buttons, fields, segmented items, menu rows, icon buttons: the site's button radius), `-md` 10 (rows, banners, composer, menus, tooltips, segmented track), `-lg` 16 (cards, bubbles, dialogs, sheet top corners: the site's card radius), `-pill` (badges, quick-reply chips, credits chip, progress rail), `-round` (avatars, discs, send). Strokes: `--v2-stroke` 1px for every edge; `--v2-stroke-selected` 1.5px for a selected choice, the focused composer, and the two outlined marks that must still read at 6 to 8px: the ring status dot (paused, offline: `kit/shell.css:80`) and the pending DayBar segment (`kit/worker.css:78`). A 2px step is not a stroke token; it appears only as mark geometry, sized with its mark: the spinner ring and the checkbox tick (glyph lines), the 2px surface halo that cuts a count dot out of what it sits on (`kit/credits.css:33`, `kit/display.css:89`), and the 2px left rule of the job preview's quoted comment (`kit/worker.css:151`). Icon glyphs draw at their own weight (StatusTick 2.5, `kit/program.jsx:29`).
+**Anatomy.** `--v2-radius-xs` 4 (checkbox box, day-bar segment, tooltip arrow), `-sm` 6 (buttons, fields, segmented items, menu rows, icon buttons: the site's button radius), `-md` 10 (rows, banners, composer, menus, tooltips, segmented track), `-lg` 16 (cards, bubbles, composer: the site's card radius), `-dialog` 20 (every dialog, the sheet's top edge), `-pill` (badges, quick-reply chips, credits chip, progress rail), `-round` (avatars, discs, send). Strokes: `--v2-stroke` 1px for every edge; `--v2-stroke-selected` 1.5px for a selected choice, the focused composer, and the two outlined marks that must still read at 6 to 8px: the ring status dot (paused, offline: `kit/shell.css:80`) and the pending DayBar segment (`kit/worker.css:78`). A 2px step is not a stroke token; it appears only as mark geometry, sized with its mark: the spinner ring and the checkbox tick (glyph lines), the 2px surface halo that cuts a count dot out of what it sits on (`kit/credits.css:33`, `kit/display.css:89`), and the 2px left rule of the job preview's quoted comment (`kit/worker.css:151`). Icon glyphs draw at their own weight (StatusTick 2.5, `kit/program.jsx:29`).
 
 **Variants.** As listed.
 
@@ -24,7 +26,7 @@
 
 **Responsive.** Not applicable.
 
-**Do / Don't.** Do make every button 6. Do nest radii inner-smaller (card 16, row 10, control 6). Don't use 8, 9, 12, 14, 18 or 20. Don't use pill buttons.
+**Do / Don't.** Do make every button 6. Do nest radii inner-smaller (card 16, row 10, control 6). Don't use 8, 9, 12, 14 or 18; 20 is the dialog radius only. Don't use pill buttons.
 
 ### Elevation (Changed from V2)
 
@@ -52,7 +54,7 @@
 
 **Purpose.** One veil for every decision, the site's frosted gate for sign-in, and a named order of layers inside the window.
 
-**Anatomy.** `--v2-scrim` rgba(11,18,32,0.48) under every dialog, sheet and day done. `--v2-scrim-frost` rgba(248,249,251,0.88) with `--v2-scrim-blur` 14px, the site's gate, for sign-in only. Z-scale: `--v2-z-raised` 1, `-sticky` 10, `-header` 20, `-popover` 30, `-dialog` 100, `-gate` 110, `-toast` 120, `-splash` 200.
+**Anatomy.** `--v2-scrim` rgba(11,18,32,0.48) under every dialog and day done; `--v2-scrim-light` rgba(11,18,32,0.24) under a sheet. `--v2-scrim-frost` rgba(248,249,251,0.88) with `--v2-scrim-blur` 14px, the site's gate, for sign-in only. Z-scale: `--v2-z-raised` 1, `-sticky` 10, `-header` 20, `-popover` 30, `-dialog` 100, `-gate` 110, `-toast` 120, `-splash` 200.
 
 **Variants.** Dim, frost.
 

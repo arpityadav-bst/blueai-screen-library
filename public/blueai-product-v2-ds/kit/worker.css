@@ -131,7 +131,7 @@
   animation: v2-scale-in var(--v2-dur-celebrate) var(--v2-ease-out) both;
 }
 .v2-daydone-badge .v2-tick { color: inherit; }
-.v2-daydone-title { margin: 0; } /* type: .v2-text-title-lg */
+.v2-daydone-title { margin: 0; } /* type: .v2-text-title-dialog */
 .v2-daydone-sub { margin: calc(var(--v2-space-2) * -1) 0 0; } /* type: .v2-text-body-sm */
 .v2-daydone-progress { align-self: stretch; display: flex; flex-direction: column; gap: var(--v2-space-2); text-align: left; }
 .v2-daydone-count { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-2); color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-snug); }

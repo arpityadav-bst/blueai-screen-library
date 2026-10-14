@@ -120,7 +120,7 @@
               <p className="v2-byok-confirm-text">{BYOK.confirm(keyInfo.provider)}</p>
               <div className="v2-byok-actions">
                 <Button variant="secondary" size="sm" onClick={function () { setConfirming(false); }}>Keep key</Button>
-                <Button variant="danger" size="sm" onClick={function () { setConfirming(false); call(props.onRemove, keyInfo); }}>Remove key</Button>
+                <Button variant="primary" size="sm" onClick={function () { setConfirming(false); call(props.onRemove, keyInfo); }}>Remove key</Button>
               </div>
             </Card>
           ) : null}

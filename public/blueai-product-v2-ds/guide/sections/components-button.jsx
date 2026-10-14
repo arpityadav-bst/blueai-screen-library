@@ -38,7 +38,8 @@
     VARIANTS.forEach(function (v) { grid = grid.concat(statesFor(K, v)); });
     return (
       <G.Section id="button">
-        <G.Part name="Button" status="changed" role="The action ladder: one primary per view, secondary for the frequent second action, quiet for the third, danger for the one that destroys.">
+        <G.Note>V3 restyle (2026-10-14): decision D1 is settled: primary is the site's solid ink button (--v2-solid, --v2-shadow-btn; hover --v2-solid-hover, 1px drop; active 2px). Secondary is the ghost (panel fill, 15% line; hover --v2-surface-sunken; pressed --v2-surface-press). No red solid: danger is the trigger skin, a ghost red on hover; a destructive confirm commits with the solid primary. Geometry: radius 6, 500, -0.02em, 44 / 36 / 28; lg labels 14.</G.Note>
+        <G.Part name="Button" status="changed" role="The action ladder: one primary per view, secondary for the frequent second action, quiet for the third, danger for the trigger of one that destroys.">
           <G.Stage ground="surface">
             <div className={row}>
               {VARIANTS.map(function (v) { return <K.Button key={v[0]} variant={v[0]}>{v[1]}</K.Button>; })}
@@ -74,19 +75,19 @@
             { part: 'Shape', token: '--v2-radius-sm', value: 'radius 6 (V2: 999, 8, 10)', ref: ['actions-inputs.onblue.btn-radius', 'actions-inputs.button.new-chat', 'actions-inputs.button.settings-save', 'actions-inputs.button.day-done'] },
             { part: 'Height', token: '--v2-control-sm / -md / -lg', value: '28 / 36 / 44', ref: 'actions-inputs.button.terms' },
             { part: 'Label', token: '--v2-text-13, --v2-weight-medium', value: '13/500 (V2: 13 to 15, 600 to 750)', ref: ['actions-inputs.onblue.btn-weight', 'actions-inputs.button.pill', 'actions-inputs.button.consent-recipe'] },
-            { part: 'Primary fill', token: '--v2-action', value: '#1268f0, white label 4.92:1 (V2 #1990FF, 3.24:1)', ref: 'actions-inputs.button.blue' },
-            { part: 'Primary hover', token: '--v2-action-hover', value: '#0f5ad4 (V2: opacity 0.88, opacity 0.9, lift + brightness)', ref: ['actions-inputs.button.new-chat-hover', 'actions-inputs.button.pill-hover', 'actions-inputs.button.terms-hover'] },
+            { part: 'Primary fill', token: '--v2-solid, --v2-shadow-btn', value: '#0b0b0d, white 19.6:1, three-stop cast (V2 #1990FF, 3.24:1)', ref: 'actions-inputs.button.blue' },
+            { part: 'Primary hover', token: '--v2-solid-hover, --v2-shadow-btn-hover', value: '#26262b, cast pulled in, 1px drop (V2: opacity 0.88, opacity 0.9, lift + brightness)', ref: ['actions-inputs.button.new-chat-hover', 'actions-inputs.button.pill-hover', 'actions-inputs.button.terms-hover'] },
             { part: 'Glow', token: '--v2-shadow-0', value: 'none (V2: blue glows)', ref: ['actions-inputs.button.day-done-glow', 'actions-inputs.button.terms-glow'] },
-            { part: 'Secondary', token: '--v2-surface, --v2-line-strong, --v2-ink', value: 'white, 1px 15% black, ink; hover wash + 20% edge', ref: ['actions-inputs.button.cancel', 'actions-inputs.onblue.ghost-hover'] },
+            { part: 'Secondary', token: '--v2-surface-panel, --v2-line-strong, --v2-surface-press', value: 'the ghost: panel, 1px 15% black, ink; hover sunken + 20% edge; pressed #e7eaf1', ref: ['actions-inputs.button.cancel', 'actions-inputs.onblue.ghost-hover'] },
             { part: 'Quiet', token: '--v2-ink-2, --v2-wash-hover', value: 'no box at rest, ink-2; hover wash + ink' },
-            { part: 'Danger', token: '--v2-danger-ink', value: '#c03a40 fill, white 5.36:1; only for the confirm’s primary when something is lost and the trigger that opens that confirm (Disconnect YouTube), section 52 (V2 Remove: #dc2626 outline, no confirm)', ref: 'actions-inputs.button.remove' },
+            { part: 'Danger', token: '--v2-danger-ink, --v2-danger-edge, --v2-danger-tint', value: 'a ghost that turns red on hover; only for the trigger that opens a destructive confirm (Disconnect YouTube); the commit is the solid primary, section 52 (V2 Remove: #dc2626 outline, no confirm)', ref: 'actions-inputs.button.remove' },
             { part: 'Press', token: '--v2-dur-1', value: 'translateY(1px), 120ms' },
             { part: 'Focus', token: '--v2-focus-outline, --v2-focus-offset', value: '2px #156efe, offset 2 (V2: none)' },
             { part: 'Disabled', token: '--v2-opacity-disabled', value: '0.45, aria-disabled, reason 12/ink-3 below', ref: ['actions-inputs.button.apply-disabled', 'actions-inputs.onblue.disabled', 'actions-inputs.onblue.disabled-why'] },
             { part: 'Loading', token: '--v2-dur-spin', value: 'spinner 16 in place of the icon, aria-busy, clicks ignored' },
             { part: 'Copy', token: null, value: 'specimen labels are V2 copy', ref: ['actions-inputs.button.consent', 'actions-inputs.button.cancel', 'actions-inputs.chip.job-options', 'actions-inputs.button.remove', 'actions-inputs.button.got-it', 'actions-inputs.button.validate-save', 'actions-inputs.button.apply'] },
           ]} />
-          <G.Warn>Decision D1 (PM): primary fill blue #1268f0 (kit default) or ink #0b0b0d like the site's commit button. The kit reads one token, so either answer is a one-line change.</G.Warn>
+          <G.Note>Decision D1, settled (Appy, V3 restyle 2026-10-14): the primary is the solid ink #0b0b0d like the site's commit button. The kit reads one token, --v2-solid.</G.Note>
           <G.DoDont
             do={['One primary per view: the action that commits.', 'Print the reason under a disabled button.', 'Keep the label while loading; the spinner says it is working.']}
             dont={['Two filled buttons side by side.', 'Hover by opacity: it lowers contrast that must hold.', 'A glow or a lift under a button.']} />

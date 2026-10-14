@@ -164,7 +164,7 @@
 
     const pauseDialog = pausing && K.Dialog ? (
       <K.Dialog open preview={p.preview} variant="task" title="Pause daily runs?" busy={!!pauseStep.busy} onClose={function () { setPausing(false); }}
-        actions={[{ label: 'Keep running', onClick: function () { setPausing(false); } }, { label: 'Pause', variant: 'danger', onClick: confirmPause }]}>
+        actions={[{ label: 'Keep running', onClick: function () { setPausing(false); } }, { label: 'Pause', variant: 'primary', onClick: confirmPause }]}>
         <div className="v2-acct-stack">
           {K.Select ? <K.Select label="Pause until" options={UNTIL} value={until} onChange={setUntil} /> : null}
           <p role="status">{pauseCost(until, w, n)}</p>

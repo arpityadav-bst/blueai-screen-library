@@ -27,6 +27,7 @@
     const fmt = function (n) { return n.toLocaleString('en-US'); };
     return (
       <G.Section id="credits-balance">
+        <G.Note>V3 restyle (2026-10-14): the credits glyph is V2's own drawing shown as an image beside the ink figure; big figures take --v2-tracking-figure (-0.045em).</G.Note>
         <G.Part name="CreditsChip" status="changed"
           role="The top bar's quiet allowance status. Number in ink; a dot only when today's run is short. Opens AI credits.">
           <G.StateGrid states={[
@@ -57,7 +58,7 @@
             { part: 'Edge', token: '--v2-line', value: '1px rgba(0,0,0,0.10)', ref: 'credits-settings.pill.ring' },
             { part: 'Fill', token: '--v2-surface', value: '#ffffff', ref: 'credits-settings.pill.inner' },
             { part: 'Radius', token: '--v2-radius-pill', value: '999px', ref: 'credits-settings.pill.ring' },
-            { part: 'Glyph', token: '--v2-gradient-brand', value: 'credits icon 16px (mask)', ref: 'credits-settings.pill.glyph' },
+            { part: 'Glyph', token: '--v2-gradient-brand', value: 'credits icon 16px, assets/Credits.svg as an image', ref: 'credits-settings.pill.glyph' },
             { part: 'Number', token: '--v2-text-13, --v2-weight-medium, --v2-ink', value: '13/500 #0b0b0d, tabular', ref: 'credits-settings.pill.number' },
             { part: 'Low rule', token: null, value: 'balance < runCost (' + c.runCost + ', Worker record)', ref: 'credits-settings.grant.low-dot' },
             { part: 'Low dot', token: '--v2-attention-ink', value: '8px #8a6116, 2px surface ring' },

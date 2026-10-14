@@ -3,9 +3,11 @@
 **Status:** Changed from V2 (CreditsChip); New (CreditsMeter, useCountdown).
 **Why:** AI credits are the worker's fuel, not money (concept). A partner has one question about them: will today's run happen. V2 shows a bare number that is only ever 2,000 or 0 (index.html:731), paints it and its ring in the brand gradient (index.html:342, 346), fires a "low" dot under 1,000 that can therefore only mean empty (index.html:733), and keeps a second grant of 2,500 in the shared popup parts (credits_popup_parts.jsx:14). The system says the allowance in one place, in ink, against one grant read from the Worker record (section 41).
 
+**V3 restyle (2026-10-14).** The credits glyph is V2's own drawing (assets/Credits.svg) shown as an image beside the ink figure, never a mask fill or text. The big figure takes `--v2-tracking-figure` (-0.045em), tabular.
+
 ### CreditsChip (Changed from V2)
 - **Purpose:** The top bar's quiet status of today's allowance, and the way into AI credits (section 66).
-- **Anatomy:** A real `<button>` with a 32px hit area holding a 28px pill: 1px `--v2-line` on `--v2-surface`, radius pill, padding 0 12 0 8; credits glyph 16 (the brand gradient through V2's star, its one sanctioned use besides the mark); number 13/500 ink, tabular; an 8px dot at the top right with a 2px surface ring when low or empty.
+- **Anatomy:** A real `<button>` with a 32px hit area holding a 28px pill: 1px `--v2-line` on `--v2-surface`, radius pill, padding 0 12 0 8; credits glyph 16 (V2's own drawing as an image, the gradient's one use); number 13/500 ink, tabular; an 8px dot at the top right with a 2px surface ring when low or empty.
 - **Variants:** full (number), low (number + attention dot), empty (0 + danger dot), paused (glyph + "Own key" in ink-3).
 - **Sizes:** One: pill 28, target 32.
 - **States:** Full; low (less than one run's cost); empty; paused (running on your own key); hover (edge to `--v2-line-hover` + 4.5% wash); focus-visible (2px blue outline on the pill); active (7% wash). Forced with `.is-hover`, `.is-focus`, `.is-active`. V2: `index.html?start=worker` (2,000), `?start=worker&credits=0` (0 + red dot), Preview row "Own key: On" (still shows 2,000, dot hidden).

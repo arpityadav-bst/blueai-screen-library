@@ -20,6 +20,7 @@
     const planned = I.planned || [];
     return (
       <G.Section id="icons">
+        <G.Note>V3 restyle (2026-10-14): --v2-icon-stroke 1.75 applies to every product icon set at every size; marks (the filled spark, 2px tick geometry) are the exceptions. The spark ships as an image too (assets/spark.svg) for OS chrome. The credits glyph is V2's own drawing shown as an image, never a mask fill.</G.Note>
         <G.Part name="Icon set" status="changed" role="One registry, one name per meaning: 24-unit glyphs, round caps, a 1.75px stroke at 16, 20 and 24, coloured by the text around them.">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(96px, 1fr))', gap: 'var(--v2-space-2)' }}>
             {I.names.map(function (n) {
@@ -59,7 +60,7 @@
             { part: 'Always ask / Automatic', token: null, value: "shield-check / zap, V2's drawings", ref: ['foundations.icon.shield', 'foundations.icon.zap'] },
             { part: 'App marks', token: null, value: "youtube / instagram, V2's stroke drawings", ref: 'foundations.icon.youtube' },
             { part: 'Spark (filled)', token: null, value: "the site's spark", ref: 'foundations.icon.onblue-spark' },
-            { part: 'Credits (painted)', token: '--v2-gradient-brand', value: "V2's star as a mask", ref: ['foundations.icon.credits-asset', 'foundations.brand.star-mask'] },
+            { part: 'Credits (painted)', token: '--v2-gradient-brand', value: "V2's star, assets/Credits.svg, as an image (V3 restyle; was a mask)", ref: ['foundations.icon.credits-asset', 'foundations.brand.star-mask'] },
             { part: 'Helpers retired', token: null, value: 'ChatCatIcon, the per-file stroke() helper', ref: 'foundations.icon.chat-cat' },
           ]} />
         </G.Part>

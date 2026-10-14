@@ -4,6 +4,8 @@
 
 **Why:** A partner moves between the onBlue site and the app every day. V2 names one thing several ways: "BlueAI Worker v57 skill" (`worker_flow.jsx:63`), "Loading your skills…" (`boot_splash.jsx:25`), "tasks" and "earn rewards" for paid jobs (`worker_flow.jsx:45-46`), "Logout" beside "Sign out" (`index.html:378`, `profile.jsx:62`), "tokens" for AI credits (`ai_mode.jsx:109`). The same thing named five ways reads as five things, and the money words drift most.
 
+**V3 restyle (2026-10-14).** Eyebrows are sentence case in the source and uppercase through CSS only. PM copy items seen in the V3 restyle (not changed there, proposed): Jobs empty state "Coming Soon" (title case, its body ends in "!"); "Are you sure...?" confirm copy; Schedule's "N/A"; "Logout" title vs the "Sign out" row in the same flow; Settings titles in title case ("Bring Your Own Key", "Max Output Tokens", "Chat AI Settings", "Timeout (in Secs)"); "Validate & Save" (ampersand).
+
 ### Glossary (New)
 
 - **Purpose:** one word per thing, shared with the site, with the words that must not stand in for it.

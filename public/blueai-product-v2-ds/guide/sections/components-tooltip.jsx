@@ -39,6 +39,7 @@
     const CP = window.CreditsPopupParts;
     return (
       <G.Section id="tooltip">
+        <G.Note>V3 restyle (2026-10-14): one caret for every float that points (tooltip, coach mark, popover): an 8px rotated square in the panel's surface with the panel's line on its outer sides, centred on the edge; white panel, 15% line, --v2-shadow-1.</G.Note>
         <G.Part name="Tooltip" status="changed"
           role="A label tip names an icon-only control; an info tip explains a concept beside its name, with at most one link.">
           <p>Two kinds on one float. <strong>Info</strong> keeps everything V2's credits (i) already does well:

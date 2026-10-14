@@ -4,6 +4,8 @@
 
 **Why:** Typing is rare in a worker the partner sets up once, so every field the partner does meet (an API key, a feedback note, Report a problem, the advanced endpoint) has to be right first time and say what went wrong. V2 hand-builds five fields with three focus treatments and no error state at all; its key field shows the key in clear text and its Validate & Save never validates (byok_settings.jsx:54, 93). The system takes the site's question shape: a label, one box, a message line that exists only when it may hold something, the site's error line and ring, and "a placeholder is an example, not a watermark" (onblue/onblue.css:3654, 3703-3709; P6, P7).
 
+**V3 restyle (2026-10-14).** Decisions: the field stays 40 (`--v2-field-h`), the app's density, over the site's 44; one label everywhere, 13/500 (`--v2-text-13`, `--v2-weight-medium`) above the field in dialogs and on pages alike, so the brief's 14/600 page label is not a second token. One field language: 1px `--v2-line-strong`, hover 20%, focus blue edge plus `--v2-focus-ring`.
+
 ### TextField (Changed from V2)
 
 **Purpose.** One line of typed input with a visible label and a place to say what is wrong or what is happening.

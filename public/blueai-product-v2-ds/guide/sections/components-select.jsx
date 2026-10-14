@@ -27,11 +27,12 @@
     const prov = function (extra) { return Object.assign({ label: 'Provider', placeholder: ADD, options: PROVIDERS, width: '100%' }, extra); };
     return (
       <G.Section id="select">
+        <G.Note>V3 restyle (2026-10-14): the placeholder takes --v2-ink-placeholder like a field's (it sits under a visible label); the chevron stays 16 in ink-3.</G.Note>
         <G.Part name="Select" status="changed" role="Pick one from a short plain list. The native control in the field box, so keyboard, screen readers and the open list come from the system.">
           <ul className="g-list">
             <li>The field box (40, sm 32, radius 6, 1px line-strong) with the label above and the message line below, exactly as TextField.</li>
             <li>chevron-down 16 in ink-3, 12 from the right edge; the whole box opens the list.</li>
-            <li>Placeholder is an instruction ("Add a provider"): a disabled first option in ink-3. The open list is drawn by the operating system.</li>
+            <li>Placeholder ("Add a provider"): a disabled first option in the placeholder ink, under the visible label. The open list is drawn by the operating system.</li>
           </ul>
           <G.StateGrid wide states={[
             { label: 'Placeholder', node: <K.Select {...prov()} /> },
@@ -51,7 +52,7 @@
             { part: 'Box', token: '--v2-field-h, --v2-radius-sm, --v2-line-strong', value: '40 (sm 32), radius 6, 1px 15% black (V2: radius 10 and 8)', ref: ['actions-inputs.select.byok', 'actions-inputs.select.model'] },
             { part: 'Chevron', token: '--v2-icon-sm, --v2-ink-3', value: 'chevron-down 16, right 12 (V2: #64748b stroke 2.2 on one, the OS arrow on two)', ref: ['actions-inputs.select.chevron', 'actions-inputs.select.model', 'actions-inputs.select.schedule'] },
             { part: 'Focus', token: '--v2-blue, --v2-focus-ring', value: 'blue edge + 3px 16% ring (V2 BYOK: outline none, nothing in its place)', ref: ['actions-inputs.select.byok-outline', 'actions-inputs.field.focus'] },
-            { part: 'Placeholder', token: '--v2-ink-3', value: 'disabled first option, #5f636b 6.0:1 (V2 #9ca3af, 2.54:1)', ref: ['actions-inputs.select.placeholder', 'actions-inputs.select.placeholder-colour'] },
+            { part: 'Placeholder', token: '--v2-ink-placeholder', value: 'disabled first option, #9ca2ad under a visible label (V2 #9ca3af)', ref: ['actions-inputs.select.placeholder', 'actions-inputs.select.placeholder-colour'] },
             { part: 'Value and options', token: '--v2-text-14, --v2-ink', value: '14 ink; options always ink' },
             { part: 'Invalid, disabled', token: '--v2-danger-edge, --v2-opacity-disabled', value: 'as TextField: #d0454a edge; disabled 0.45' },
             { part: 'Copy', token: null, value: 'provider and model names are V2 data', ref: ['actions-inputs.select.provider-anthropic', 'actions-inputs.select.provider-azure', 'actions-inputs.select.provider-gemini', 'actions-inputs.select.provider-vertex', 'actions-inputs.select.provider-openai', 'actions-inputs.select.models'] },

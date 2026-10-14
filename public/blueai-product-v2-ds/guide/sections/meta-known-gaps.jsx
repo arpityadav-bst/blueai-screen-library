@@ -59,6 +59,7 @@
   function KnownGapsSection() {
     return (
       <G.Section id="known-gaps">
+        <G.Note>V3 restyle (2026-10-14): V2's jobs.jsx still carries an unreachable job list (JobCard, JobDetailsModal, StatusBadge, JOB_STATUS, JOBS_ACTIVE, JOBS_HISTORY) with indigo #4f46e5 and the old status colours; V3 no longer does. Delete it in V2 or bring it back on purpose (PM).</G.Note>
         <G.Part name="What the guide cannot catch">
           <G.Table head={['Limit', 'What it means']} rows={CANNOT} />
         </G.Part>

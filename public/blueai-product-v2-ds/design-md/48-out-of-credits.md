@@ -3,6 +3,8 @@
 **Status:** Changed from V2 (out-of-credits popup, retired); New (zero-credits notice and run end).
 **Why:** Every zero-balance moment must say the same time and what zero means for today's day (R14). In V2 the popup counts down (byok.jsx:66) while the chat says "refreshed tomorrow" twice (chat_bubbles.jsx:188, 189), the main chat reveals zero only after Send (chat_product.jsx:124), and nothing says whether the day still counts.
 
+**V3 restyle (2026-10-14).** Decision: zero balance is a wait, not an error. It stays neutral (a panel note) and carries only the credits chip's danger dot; it gets no tone of its own and no red banner.
+
 ### Out-of-credits popup (retired) (Changed from V2)
 - **Purpose:** none left. V2 lets the partner type at zero, then stops the send with a popup. The system locks the composer at zero and says so before anyone types (section 38), so the moment the popup answered never happens and there is no dialog to dismiss or buy from.
 - **V2 today:** `index.html?start=worker&credits=0`, type in the composer, press Send. Width 300, radius 12, its own scrim rgba(15,23,42,0.5) at z 130, backdrop click only, no role, focus never moves in (byok.jsx:78-80); a gradient 38/800 zero (byok.jsx:51); an unlabelled 22px (i) "What are credits?" (credits_popup_parts.jsx:94); "You’ve used all of today’s AI credits." / "Credits will be refreshed in **6h 42m**." (byok.jsx:65-66).

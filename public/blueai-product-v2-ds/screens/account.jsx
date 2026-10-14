@@ -17,7 +17,7 @@
      (a new partner) are Not allowed, and the interest profile then says it is general topics.
      The agreement record lists it with the day it was decided.
      Leaving the program and deleting data are the withdrawal the consent rules put here
-     (section 53): danger AlertDialogs with CONFIRM_COPY and ConfirmDialog (settings.jsx), whose
+     (section 53): AlertDialogs with CONFIRM_COPY and ConfirmDialog (settings.jsx), whose
      cash-out line reads numbers(record).
      onNavigate('connected-apps', {app}) | ('worker-settings'), plus every chrome event. */
 (function () {
@@ -98,17 +98,17 @@
     const copy = S.CONFIRM_COPY || {};
     function nav(id, opts) { if (id === 'sign-out') setConfirm('signout'); else go(id, opts); }
 
-    // The confirm that is open: its copy, its primary's tone, and where confirming lands.
+    // The confirm that is open: its copy and where confirming lands.
     const confirms = {
-      signout: [copy.signOut && copy.signOut(a.email), 'primary', function () { setOut(true); (p.onSignOut || noop)(); }],
-      leave: [copy.leave && copy.leave(yt.handle || 'your YouTube account', n.endsOn, n), 'danger', function () { setLeft('left'); (p.onLeave || noop)(); }],
-      delete: [copy.deleteData && copy.deleteData(n), 'danger', function () { setLeft('deleted'); (p.onDeleteData || noop)(); }],
+      signout: [copy.signOut && copy.signOut(a.email), function () { setOut(true); (p.onSignOut || noop)(); }],
+      leave: [copy.leave && copy.leave(yt.handle || 'your YouTube account', n.endsOn, n), function () { setLeft('left'); (p.onLeave || noop)(); }],
+      delete: [copy.deleteData && copy.deleteData(n), function () { setLeft('deleted'); (p.onDeleteData || noop)(); }],
     };
     const c = confirm && confirms[confirm];
     function cancel() { step.reset(); setConfirm(null); }
     const dialog = c && S.ConfirmDialog ? (
-      <S.ConfirmDialog copy={c[0]} tone={c[1]} step={step} preview={p.preview} onCancel={cancel}
-        onConfirm={function () { step.run(function () { setConfirm(null); c[2](); }); }} />
+      <S.ConfirmDialog copy={c[0]} step={step} preview={p.preview} onCancel={cancel}
+        onConfirm={function () { step.run(function () { setConfirm(null); c[1](); }); }} />
     ) : null;
     const pending = S.pendingBody ? S.pendingBody(p.state, 'your account', p.onRetry) : null;
 

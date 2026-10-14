@@ -75,7 +75,7 @@
           <p className="v2-tray-confirm-body" id={id + 'b'}>{c.body}</p>
           <div className="v2-tray-actions">
             <K.Button variant="secondary" size="sm" onClick={onCancel}>{c.cancel}</K.Button>
-            <K.Button variant="danger" size="sm" onClick={onConfirm}>{c.confirm}</K.Button>
+            <K.Button variant="primary" size="sm" onClick={onConfirm}>{c.confirm}</K.Button>
           </div>
         </div>
       );

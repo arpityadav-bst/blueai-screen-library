@@ -42,8 +42,9 @@
     );
   }
 
-  /* EmptyState: the site's dashed ghost ("a thing will be here"). A neutral icon, a title that
-     names what will appear, one line of why, and at most one way forward as a medium button.
+  /* EmptyState: a neutral 24 icon on a 56 sunken mark, a title that names what will appear, one
+     muted line of why, and at most one way forward as a medium button (the solid; a second is quiet).
+     No serif em here: these sit in working tabs (V3 restyle, 2026-10-14).
      Variants change the words and the default icon, never the colours. */
   const EMPTY_ICON = { first: 'activity', noresults: 'info', error: 'alert', offline: 'wifi-off', locked: 'lock' };
   function EmptyState(props) {
@@ -60,8 +61,8 @@
     return (
       <div className={cx('v2-empty', 'v2-empty--' + v, 'v2-anim-fade-up', className)} role={v === 'error' ? 'alert' : undefined}>
         {ic ? <span className="v2-empty-icon" aria-hidden="true"><Ico name={ic} size={24} /></span> : null}
-        {title ? <H className="v2-empty-title v2-text-title">{title}</H> : null}
-        {body ? <p className="v2-empty-body v2-text-body-sm">{body}</p> : null}
+        {title ? <H className="v2-empty-title v2-text-title-lg">{title}</H> : null}
+        {body ? <p className="v2-empty-body v2-text-body">{body}</p> : null}
         {primaryAction || secondaryAction ? (
           <div className="v2-empty-actions">
             {button(primaryAction, 'primary')}

@@ -6,11 +6,6 @@
    waiting on an answer). Progress lines are notes, not bubbles. Blue is held to focus, selection,
    progress and link hover. Only things that float (the onboarding nudge) cast a shadow. */
 
-/* Site value the Target set lacks (brief section 11, gap `--v2-wash-tint`): the 2% navy chip fill. */
-:root {
-  --v3-wash-tint: rgba(18, 32, 64, 0.02);
-}
-
 /* ---- Message rows ----------------------------------------------------------------------------- */
 .v3-msg { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: var(--v2-space-3); }
 .v3-msg--user { align-items: flex-end; }
@@ -83,7 +78,7 @@ ul.v3-bubble-list { list-style: disc; }
 .v3-pills { display: flex; flex-wrap: wrap; gap: var(--v2-space-15); }
 .v3-pill {
   display: inline-flex; align-items: center; min-height: var(--v2-hit-min); padding: var(--v2-space-15) var(--v2-space-3);
-  border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-pill); background: var(--v3-wash-tint);
+  border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-pill); background: var(--v2-wash-tint);
   color: var(--v2-ink-2); font: inherit; font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium);
   letter-spacing: var(--v2-tracking-label); line-height: var(--v2-leading-tight); text-align: left; cursor: pointer;
   transition: background var(--v2-dur-1) var(--v2-ease-standard), border-color var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
@@ -138,7 +133,7 @@ ul.v3-bubble-list { list-style: disc; }
 .v3-send { width: var(--v2-hit-min); height: var(--v2-hit-min); padding: 0; flex: none; }
 .v3-send:disabled, .v3-send:disabled:hover {
   opacity: var(--v2-opacity-disabled); box-shadow: none; transform: none; cursor: default;
-  background: var(--v2-ink); border-color: var(--v2-ink);
+  background: var(--v2-solid); border-color: var(--v2-solid);
 }
 /* Running: the same seat becomes Stop, a ghost button (the ladder's second step). */
 .v3-send--stop { background: var(--v2-surface-panel); border-color: var(--v2-line-strong); color: var(--v2-ink); box-shadow: none; }

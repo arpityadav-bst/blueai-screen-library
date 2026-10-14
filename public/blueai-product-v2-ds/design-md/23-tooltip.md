@@ -4,6 +4,8 @@
 
 **Why:** The partner meets two words the product cannot leave unexplained (AI credits, your 20 days) and a top bar of icon-only buttons with no visible names. V2 already built the right disclosure for the first job, the credits (i): hover, focus, click to pin, Esc, a 200ms close delay (credits_popup_parts.jsx:135-146). It only works for one centred title (left -189, line 148), and nothing covers the second job. The system keeps the behaviour, fits it to any window, and adds a label kind (P7: every control has a visible name; P5: one float look).
 
+**V3 restyle (2026-10-14).** Popover spec, one caret for every float that points (tooltip, coach mark, popover): an 8px rotated square in the panel's surface with the panel's 1px line on its two outer sides, centred on the edge (offset -5), on a white panel with a 15% line and `--v2-shadow-1`. The caret stays part geometry, not a token.
+
 ### Tooltip (Changed from V2)
 
 **Purpose.** `kind="info"` explains a concept right after its name, in two short sentences and at most one link. `kind="label"` shows an icon-only button's name.

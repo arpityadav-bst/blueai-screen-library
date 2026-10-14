@@ -237,7 +237,7 @@
     const title = app === 'youtube' ? 'YouTube' : app === 'telegram' ? 'Telegram' : 'Connected apps';
     const c = S.CONFIRM_COPY ? S.CONFIRM_COPY.disconnect(yt.handle) : null;
     const dialog = confirm && S.ConfirmDialog ? (
-      <S.ConfirmDialog copy={c} tone="danger" step={step} preview={p.preview} onConfirm={disconnect}
+      <S.ConfirmDialog copy={c} step={step} preview={p.preview} onConfirm={disconnect}
         onCancel={function () { step.reset(); setConfirm(false); }} />
     ) : null;
     const pending = S.pendingBody ? S.pendingBody(p.state, 'your connected apps', p.onRetry) : null;

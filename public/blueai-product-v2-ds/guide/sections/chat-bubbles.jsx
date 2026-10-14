@@ -38,6 +38,7 @@
     const planNode = plan ? K.renderMessage(plan, 0, [plan]) : <div className="g-missing">WorkerFlow.PLAN (V2 worker_flow.jsx) is not loaded, so the plan is not drawn.</div>;
     return (
       <G.Section id="bubbles">
+        <G.Note>V3 restyle (2026-10-14): the user bubble is the grey surface with a hairline, not a blue tint. Tone rides on one 16px icon; the edge takes the tone only when the run stopped (waiting: the attention line at 32%; failed: the danger line), on the surface. The progress note (a 4px dot and a muted 13px line) is a pattern, not a bubble.</G.Note>
         <G.Part name="MessageBubble (user)" status="changed" role="What the partner said, or the answer they tapped. The quietest thing on screen, because the partner already knows what they said.">
           <G.StateGrid states={[
             { label: 'Rest', note: 'an answer the partner tapped', node: <K.MessageBubble from="user">{WORK.answer}</K.MessageBubble> },
@@ -48,8 +49,8 @@
             system={<K.MessageBubble from="user" time="11:03 am">{COPY.user}</K.MessageBubble>}
             changed="An indigo-violet gradient with a 30% glow was the loudest thing on screen, in a colour nothing else uses, with white text and a fixed fake date. It becomes the quietest: a blue tint (the product's one hue) with a hairline, ink text, no shadow, and a real time only on the last message of a group." />
           <G.SpecDrawer rows={[
-            { part: 'Fill', token: '--v2-blue-tint', value: 'rgba(21,110,254,0.08)', ref: 'chat.user-bubble.gradient' },
-            { part: 'Line', token: '--v2-blue-tint-line', value: '1px rgba(21,110,254,0.24)' },
+            { part: 'Fill', token: '--v2-bubble-user-fill', value: '--v2-surface-sunken #f6f6f8', ref: 'chat.user-bubble.gradient' },
+            { part: 'Line', token: '--v2-bubble-user-line', value: '1px --v2-line-hair (8%)' },
             { part: 'Shadow', token: '--v2-shadow-0', value: 'none', ref: 'chat.user-bubble.glow' },
             { part: 'Shape', token: '--v2-radius-lg, --v2-bubble-max', value: 'radius 16, max 300', ref: ['chat.user-bubble.radius', 'chat.user-bubble.shape'] },
             { part: 'Padding', token: '--v2-space-3, --v2-space-4', value: '12px 16px' },
@@ -107,7 +108,7 @@
             { part: 'Heads-up', token: '--v2-attention-ink', value: 'alert icon #8a6116 on white (was an orange bubble)', ref: ['chat.status.warning', 'chat.status.warning-icon'] },
             { part: 'Success', token: '--v2-success-ink', value: 'check icon #15803d (was a green bubble)', ref: 'chat.status.final-success' },
             { part: 'Fail', token: '--v2-danger-ink', value: 'x-circle icon #c03a40 (was a red bubble)', ref: 'chat.status.final-fail' },
-            { part: 'Needs input', token: '--v2-attention-tint, --v2-attention-line', value: '#fdf6cf fill, #f3e8a8 line, help icon #8a6116', ref: 'chat.status.final-needs-input' },
+            { part: 'Needs input', token: '--v2-waiting-fill, --v2-attention-line', value: 'the surface, the attention ink at 32% as the edge, help icon #8a6116', ref: 'chat.status.final-needs-input' },
             { part: 'Title', token: '--v2-text-14, --v2-weight-semibold, --v2-ink', value: '14/600 ink, optional', ref: 'chat.status.ooc-title' },
             { part: 'Body', token: '--v2-text-14, --v2-ink-2', value: '14/1.5; one line per item when given lines' },
             { part: 'Copy', token: null, value: 'V2 preview examples, quoted', ref: ['chat.status.example-success', 'chat.status.example-warning', 'chat.status.example-needs-input', 'chat.status.example-fail'] },

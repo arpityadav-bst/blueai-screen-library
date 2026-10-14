@@ -94,6 +94,7 @@
     const btn = function (cls, extra) { return K.Button ? <K.Button variant="primary" className={cls} {...(extra || {})}>Switch account</K.Button> : <span className="g-missing">Button is not loaded</span>; };
     return (
       <G.Section id="color">
+        <G.Note>V3 restyle (2026-10-14): the committing button is the solid ink (--v2-solid #0b0b0d, hover --v2-solid-hover, the site's three-stop --v2-shadow-btn), so blue is held to focus, selection, progress, links on hover and the spark; --v2-action stays only for a filled selection with a white mark (checkbox, avatar). The user bubble is the grey surface with a hairline. Run state rule: pending is blue-outlined, green only with the second tick, money in ink. Every tone line is its ink at 32% (attention-line was #f3e8a8); a message's edge takes its tone only when the run stopped. The gradient lives only in the credits glyph's drawing.</G.Note>
         <G.Part name="Ink ramp" status="changed" role="One ink hue in four steps for all text and idle icons, plus placeholder and on-colour; each step clears 4.5:1 where it is allowed.">
           <div className="g-table-wrap">
             <table className="g-table">
@@ -177,18 +178,18 @@
           ]} />
         </G.Part>
 
-        <G.Part name="Action blue" status="changed" role="One blue hue in roles: brand blue for focus, selection and progress; a one-step-deeper action blue for filled buttons; a deeper ink for blue text.">
+        <G.Part name="Action blue" status="changed" role="One blue hue in roles: brand blue for focus, selection and progress; a one-step-deeper action blue for a filled selection with a white mark; a deeper ink for blue text. Buttons are the solid ink (V3 restyle).">
           <div className="v2-hstack v2-wrap v2-gap-4">
             <G.Swatch token="--v2-blue" label="Blue" note={<span>focus, selected, progress. White on it: <Ratio fg="--v2-on-color" bg="--v2-blue" /></span>} />
-            <G.Swatch token="--v2-action" label="Action" note={<span>button fill. <Ratio fg="--v2-on-color" bg="--v2-action" /></span>} />
+            <G.Swatch token="--v2-action" label="Action" note={<span>checkbox, avatar. <Ratio fg="--v2-on-color" bg="--v2-action" /></span>} />
             <G.Swatch token="--v2-action-hover" label="Action hover" note={<Ratio fg="--v2-on-color" bg="--v2-action-hover" />} />
             <G.Swatch token="--v2-blue-ink" label="Blue ink" note={<span>blue text on tints: <Ratio fg="--v2-blue-ink" bg="--v2-blue-tint" /></span>} />
-            <G.Swatch token="--v2-blue-tint" label="Tint" note="info notice, user bubble" />
+            <G.Swatch token="--v2-blue-tint" label="Tint" note="info badge, banner, notice" />
             <G.Swatch token="--v2-select" label="Selected" note="chip, choice card, segmented on" />
           </div>
           <G.StateGrid states={[
             { label: 'Rest', node: btn() },
-            { label: 'Hover', note: '--v2-action-hover', node: btn('is-hover') },
+            { label: 'Hover', note: '--v2-solid-hover', node: btn('is-hover') },
             { label: 'Focus', note: '2px --v2-blue outline', node: btn('is-focus') },
             { label: 'Disabled', note: 'with its reason', node: btn(null, { disabled: true, disabledReason: 'Sign in first' }) },
           ]} />
@@ -198,8 +199,8 @@
             changed="White on #1990FF is 3.24:1 on every primary button and link. #1268f0 passes (4.92:1) and sits one step from the site's #156efe, which itself computes 4.47:1, so brand blue stays for focus, selection and progress only. The indigo nav (#4f46e5 on #eef2ff) is retired: one accent." />
           <G.SpecDrawer rows={[
             { part: 'Focus, selected, progress', token: '--v2-blue', value: '#156efe', ref: ['foundations.blue.onblue-blue', 'foundations.blue.field-focus'] },
-            { part: 'Button fill', token: '--v2-action', value: '#1268f0 (4.92:1)', ref: ['foundations.blue.tailwind-accent', 'foundations.blue.new-chat', 'foundations.blue.gate-button'] },
-            { part: 'Button hover', token: '--v2-action-hover', value: '#0f5ad4 (6.12:1)', ref: 'foundations.blue.hover-opacity' },
+            { part: 'Button fill', token: '--v2-solid', value: '#0b0b0d ink, white 19.6:1 (V3 restyle; --v2-action #1268f0 is now the filled selection)', ref: ['foundations.blue.tailwind-accent', 'foundations.blue.new-chat', 'foundations.blue.gate-button'] },
+            { part: 'Button hover', token: '--v2-solid-hover', value: '#26262b, the cast pulled in, 1px drop', ref: 'foundations.blue.hover-opacity' },
             { part: 'Blue text', token: '--v2-blue-ink', value: '#0d5ad6 (6.09:1)', ref: ['foundations.blue.link-const', 'foundations.blue.link-text', 'foundations.blue.onblue-notice'] },
             { part: 'Second accent, retired', token: '--v2-select', value: 'rgba(21,110,254,0.12)', ref: 'foundations.blue.indigo-nav' },
             { part: 'Copy shown', token: null, value: "'Switch account'", ref: 'foundations.blue.gate-label' },
@@ -225,13 +226,13 @@
           <G.SpecDrawer rows={[
             { part: 'Success', token: '--v2-success / -ink / -tint / -line', value: '#16a34a / #15803d / 8% / 32%; not the site’s 10%: green text on it must pass 4.5:1', ref: ['foundations.status.success-icon', 'foundations.status.active-badge', 'foundations.status.tones-green', 'foundations.status.fb-success', 'foundations.status.onblue-green', 'foundations.status.onblue-green-ink'] },
             { part: 'Danger', token: '--v2-danger-ink / -line / -edge / -tint', value: '#c03a40 / rgba(208,69,74,0.32), the tint’s pale edge / #d0454a, the one strong red stroke: errored fields and checkboxes (4.53:1) / #fdecec', ref: ['foundations.status.final-fail', 'foundations.status.danger-banner', 'foundations.status.tones-red', 'foundations.status.job-failed', 'foundations.status.logout-red'] },
-            { part: 'Attention', token: '--v2-attention-ink / -tint / -line', value: '#8a6116 / #fdf6cf / #f3e8a8', ref: ['foundations.status.final-needs', 'foundations.status.tones-amber'] },
+            { part: 'Attention', token: '--v2-attention-ink / -tint / -line', value: '#8a6116 / #fdf6cf / the ink at 32%', ref: ['foundations.status.final-needs', 'foundations.status.tones-amber'] },
             { part: 'Money in green, retired', token: '--v2-ink', value: '#0b0b0d (V2 retired it too on 2026-10-14)', ref: 'foundations.status.green-const' },
             { part: 'The four maps', token: null, value: 'FINAL_STYLES, TONES, JOB_STATUS, FB_TONES', ref: ['foundations.status.final-styles', 'foundations.status.final-success', 'foundations.status.tones', 'foundations.status.job-status', 'foundations.status.fb-tones'] },
           ]} />
         </G.Part>
 
-        <G.Part name="Brand gradient" status="changed" role="Identity, not action: the gradient lives on the BlueAI mark and the credits glyph, nowhere else.">
+        <G.Part name="Brand gradient" status="changed" role="Identity, not action: the gradient lives only in the credits glyph's own drawing (V3 restyle).">
           <G.StateGrid states={[
             { label: 'Mark', node: K.BrandMark ? <K.BrandMark /> : <span className="v2-text-title-lg" style={{ background: 'var(--v2-gradient-brand)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>BlueAI</span> },
             { label: 'Credits glyph', note: '16 / 20 / 24', node: K.Icon ? <div className="v2-hstack v2-gap-3"><K.Icon name="credits" /><K.Icon name="credits" size={20} /><K.Icon name="credits" size={24} /></div> : null },
@@ -242,10 +243,10 @@
             system={<div className="v2-stack"><div className="v2-hstack v2-hstack--between" style={plate}>{K.BrandMark ? <K.BrandMark /> : null}<span className="v2-hstack v2-gap-1">{K.Icon ? <K.Icon name="credits" /> : null}<span className="v2-text-label v2-tabular" style={{ color: 'var(--v2-ink)' }}>2,000</span></span></div><div style={{ alignSelf: 'flex-end', maxWidth: 'var(--v2-bubble-max)', background: 'var(--v2-blue-tint)', border: 'var(--v2-stroke) solid var(--v2-blue-tint-line)', borderRadius: 'var(--v2-radius-lg)', padding: 'var(--v2-space-3) var(--v2-space-4)' }} className="v2-text-body">{(window.MoneyMaker && window.MoneyMaker.PROMPT) || 'Run this to begin'}</div></div>}
             changed="The gradient appears three times in one 419px top bar (wordmark, pill ring, pill number) and fills the user bubble with a cousin gradient and an indigo glow. Fenced to identity: the wordmark and the credits glyph keep it; rings, numbers, bubbles, buttons and borders lose it. The credits number turns ink." />
           <G.SpecDrawer rows={[
-            { part: 'Wordmark, credits glyph', token: '--v2-gradient-brand', value: 'linear-gradient(90deg, #0EA4C5, #7B4CFF)', ref: ['foundations.brand.wordmark', 'foundations.brand.star-mask', 'foundations.icon.credits-asset'] },
+            { part: 'Credits glyph', token: '--v2-gradient-brand', value: 'linear-gradient(90deg, #0EA4C5, #7B4CFF)', ref: ['foundations.brand.wordmark', 'foundations.brand.star-mask', 'foundations.icon.credits-asset'] },
             { part: 'Pill ring, retired', token: '--v2-line', value: 'rgba(0,0,0,0.10)', ref: 'foundations.brand.pill-ring' },
             { part: 'Credits number', token: '--v2-ink', value: '#0b0b0d, 13/500 tabular', ref: 'foundations.brand.pill-number' },
-            { part: 'User bubble', token: '--v2-blue-tint', value: 'rgba(21,110,254,0.08) + tint line, no shadow', ref: ['foundations.brand.user-bubble', 'foundations.shadow.user-bubble'] },
+            { part: 'User bubble', token: '--v2-surface-sunken, --v2-line-hair', value: 'the grey surface + hairline, no shadow (V3 restyle)', ref: ['foundations.brand.user-bubble', 'foundations.shadow.user-bubble'] },
           ]} />
         </G.Part>
       </G.Section>

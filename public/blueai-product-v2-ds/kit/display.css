@@ -29,6 +29,8 @@
 .v2-badge--success { background: var(--v2-success-tint); --badge-mark: var(--v2-success); }
 .v2-badge--attention { background: var(--v2-attention-tint); --badge-mark: var(--v2-attention-ink); }
 .v2-badge--danger { background: var(--v2-danger-tint); --badge-mark: var(--v2-danger-ink); }
+/* busy: work in progress is blue (progress), the select fill with blue ink and a pulsing dot (V3 restyle, 2026-10-14). */
+.v2-badge--neutral.is-busy, .v2-badge--info.is-busy { background: var(--v2-select); color: var(--v2-blue-ink); --badge-mark: var(--v2-blue); }
 .v2-badge-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .v2-badge-dot {
   flex: none;
@@ -120,10 +122,12 @@
 .v2-row-text { display: flex; flex: 1; flex-direction: column; gap: var(--v2-space-05); min-width: 0; }
 .v2-row-label { color: var(--v2-ink); font-weight: var(--v2-weight-medium); overflow-wrap: anywhere; }
 /* .v2-row-desc is set in .v2-text-body-sm (kit/base.css). */
+/* A row with a value is a ledger line (the site's ledger, V3 restyle, 2026-10-14): muted label, the value in ink. */
+.v2-row:has(> .v2-row-value) .v2-row-label { color: var(--v2-ink-3); font-weight: var(--v2-weight-regular); }
 .v2-row-value {
   flex: none;
   max-width: 50%;
-  color: var(--v2-ink-2);
+  color: var(--v2-ink);
   text-align: right;
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;

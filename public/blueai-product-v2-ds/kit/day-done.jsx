@@ -51,7 +51,7 @@
       <div className="v2-daydone">
         <Confetti />
         <span className="v2-daydone-badge" aria-hidden="true">{T ? <T status="pending" size={28} /> : null}</span>
-        <h2 className="v2-daydone-title v2-text-title-lg" id={titleId}>{COPY.title}</h2>
+        <h2 className="v2-daydone-title v2-text-title-dialog" id={titleId}>{COPY.title}</h2>
         <p className="v2-daydone-sub v2-text-body-sm">{COPY.sub}</p>
         <p className="v2-daydone-sub v2-text-body-sm">{NEXT(n.endsOn)}</p>
         <div className="v2-daydone-progress">

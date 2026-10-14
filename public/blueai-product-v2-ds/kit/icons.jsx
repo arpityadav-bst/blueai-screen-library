@@ -11,7 +11,7 @@
    className. Colour is always currentColor: set `color` on the parent, never on the icon.
    Geometry: 24-unit grid, round caps and joins, stroke renders 1.75px at every size (kit/base.css
    .v2-icon). spark is the one filled glyph (onBlue's mark, onblue/index.html:327-329); credits is
-   the one painted glyph (the brand gradient through V2's own star, assets/Credits.svg).
+   the one painted glyph: V2's own star (assets/Credits.svg) as an image, its gradient inside the file.
    youtube and instagram keep V2's own stroke drawings (agent_permissions.jsx:41-42), and
    shield-check / zap keep V2's mode glyphs (agent_permissions.jsx:39-40) so Always ask and
    Automatic look the same as in V2. An unknown name renders an empty box and warns once. */
@@ -89,9 +89,9 @@
     bluestacks: 'monitor', 'app-player': 'monitor', offline: 'wifi-off',
   };
 
-  // V2's credits star (assets/Credits.svg), drawn as a mask so the brand gradient shows through it.
-  const CREDITS_PATH = 'M7.516 14.824C7.396 14.044 7.048 13.204 6.472 12.304C5.908 11.404 5.104 10.558 4.06 9.766C3.004 8.962 1.984 8.464 1 8.272V7.516C1.996 7.288 2.962 6.844 3.898 6.184C4.834 5.524 5.626 4.738 6.274 3.826C6.922 2.902 7.336 1.96 7.516 1H8.272C8.38 1.612 8.596 2.23 8.92 2.854C9.256 3.478 9.682 4.078 10.198 4.654C10.714 5.218 11.284 5.728 11.908 6.184C12.856 6.856 13.828 7.3 14.824 7.516V8.272C14.152 8.404 13.462 8.674 12.754 9.082C12.058 9.49 11.41 9.97 10.81 10.522C10.21 11.074 9.718 11.656 9.334 12.268C8.746 13.204 8.392 14.056 8.272 14.824H7.516ZM7.768 14.392H8.02C8.08 13.768 8.176 13.144 8.308 12.52C8.452 11.884 8.614 11.296 8.794 10.756C8.986 10.216 9.184 9.772 9.388 9.424C9.796 9.196 10.282 8.986 10.846 8.794C11.422 8.602 12.016 8.44 12.628 8.308C13.252 8.176 13.828 8.092 14.356 8.056V7.804C13.828 7.756 13.246 7.666 12.61 7.534C11.986 7.39 11.386 7.222 10.81 7.03C10.234 6.826 9.76 6.616 9.388 6.4C9.184 6.04 8.986 5.596 8.794 5.068C8.614 4.528 8.452 3.952 8.308 3.34C8.176 2.716 8.08 2.092 8.02 1.468H7.768C7.72 2.032 7.63 2.62 7.498 3.232C7.378 3.832 7.222 4.408 7.03 4.96C6.838 5.512 6.628 5.992 6.4 6.4C6.016 6.616 5.542 6.826 4.978 7.03C4.414 7.222 3.82 7.39 3.196 7.534C2.572 7.666 1.984 7.756 1.432 7.804V8.056C1.984 8.092 2.566 8.176 3.178 8.308C3.79 8.44 4.378 8.602 4.942 8.794C5.506 8.986 5.992 9.196 6.4 9.424C6.628 9.808 6.832 10.282 7.012 10.846C7.204 11.398 7.366 11.986 7.498 12.61C7.63 13.222 7.72 13.816 7.768 14.392Z';
-  const CREDITS_MASK = 'url("data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="' + CREDITS_PATH + '"/></svg>') + '")';
+  // V2's credits star, V2's own drawing (assets/Credits.svg, its gradient inside the file), shown as
+  // an image beside an ink figure.
+  const CREDITS_SRC = 'assets/Credits.svg';
 
   const SIZES = [16, 20, 24];
   const warned = {};
@@ -103,7 +103,7 @@
     const a11y = label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': true };
     const cls = cx('v2-icon', s !== 16 && 'v2-icon--' + s, inline && 'v2-icon--inline', className);
     if (key === 'credits') {
-      return <span className={cx(cls, 'v2-icon--credits')} style={{ WebkitMaskImage: CREDITS_MASK, maskImage: CREDITS_MASK }} {...a11y} />;
+      return <img className={cx(cls, 'v2-icon--credits')} src={CREDITS_SRC} alt={label || ''} aria-hidden={label ? undefined : true} draggable="false" />;
     }
     const glyph = GLYPHS[key];
     if (!glyph) {

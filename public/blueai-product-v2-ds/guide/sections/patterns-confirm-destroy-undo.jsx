@@ -7,7 +7,7 @@
   const RULES = [
     ['Costs today’s day or future days', 'Say the cost before the choice and ask once: either the control carries the cost and one tap acts, or it opens one confirm that names it. Never a second question, never the cost told afterwards. No Undo: a day cannot be given back by a toast.', 'Skip today’s job (“Skip: today won’t count”), Skip today’s run (tray), Stop a run, Quit BlueAI, Pause daily runs, Disconnect YouTube'],
     ['Costs account control, AI credits or money', 'Confirm in an alert dialog: the title asks the question with the object, the body says what changes and how to undo it, the primary names the action. Turning on Automatic uses the ConsentDialog.', 'Sign out, Disconnect YouTube, Remove my own key (then Undo in the toast); turn on Automatic: ConsentDialog (section 46)'],
-    ['Cannot be undone', 'Confirm; the primary is danger and named for the action.', 'Delete my data, Leave the program'],
+    ['Cannot be undone', 'Confirm; the solid primary is named for what is lost (no red solid).', 'Delete my data, Leave the program'],
     ['Costs nothing', 'Do it at once, no question, then a toast with Undo; the toast has no timer and the change commits when it leaves.', 'Disconnect Telegram, Dismiss a notification'],
     ['A switch', 'A switch only turns something on or off. It never deletes, signs out or costs a day as a side effect.', 'Use my own key (off keeps the key)'],
   ];
@@ -43,6 +43,7 @@
     };
     return (
       <G.Section id="confirm-destroy-undo">
+        <G.Note>V3 restyle (2026-10-14): no red solid. The confirm's commit is the solid primary named for what is lost; the trigger that opens it is the danger ghost, red on hover.</G.Note>
         <G.Part name="Rules" status="changed" role="Confirm when an action costs a day, money or account control, or cannot be undone; otherwise act and offer Undo; never as a side effect of a switch.">
           <div className="g-table-wrap">
             <table className="g-table">
@@ -51,11 +52,11 @@
             </table>
           </div>
           <G.StateGrid wide states={[
-            { label: 'Confirm first: sign out', note: 'primary, not danger: nothing is deleted', node: signOut(false) },
-            { label: 'Confirm first: disconnect', note: 'danger: the worker cannot run', node: (
+            { label: 'Confirm first: sign out', note: 'the solid primary: nothing is deleted', node: signOut(false) },
+            { label: 'Confirm first: disconnect', note: 'the solid primary names the loss: the worker cannot run', node: (
               <Win h={300}>
                 <K.Dialog open preview variant="alert" title={DISCONNECT.title} description={DISCONNECT.body}
-                  actions={[{ label: 'Cancel', variant: 'secondary', onClick: noop }, { label: DISCONNECT.confirm || 'Disconnect', variant: 'danger', onClick: noop }]} />
+                  actions={[{ label: 'Cancel', variant: 'secondary', onClick: noop }, { label: DISCONNECT.confirm || 'Disconnect', variant: 'primary', onClick: noop }]} />
               </Win>
             ) },
             { label: 'Busy', note: 'Esc, scrim and Cancel held while it works', node: signOut(true) },
@@ -75,7 +76,7 @@
             { part: 'Dialog', token: 'Dialog alert, --v2-dialog-sm', value: '320, role alertdialog, focus on the first action, no scrim dismiss' },
             { part: 'Title', token: '--v2-text-20', value: 'the question, with the object: Sign out of BlueAI? (V2: Logout)', ref: 'entry-patterns.destroy.logout-title' },
             { part: 'Body', token: '--v2-text-14, --v2-ink-2', value: 'what changes and how to undo it', ref: 'entry-patterns.destroy.logout-body' },
-            { part: 'Primary', token: '--v2-action or --v2-danger-ink', value: 'danger only when something is lost (V2 paints sign out #ef4444)', ref: ['entry-patterns.destroy.logout-red', 'entry-patterns.destroy.schedule-red'] },
+            { part: 'Primary', token: '--v2-solid', value: 'the solid ink, named for what is lost; no red solid (V3 restyle; V2 paints sign out #ef4444)', ref: ['entry-patterns.destroy.logout-red', 'entry-patterns.destroy.schedule-red'] },
             { part: 'Confirm that does nothing, V2', token: null, value: 'closes and stays signed in', ref: 'entry-patterns.destroy.logout-noop' },
             { part: 'The one V2 delete confirm', token: null, value: 'Confirm delete / This action cannot be undone.', ref: ['entry-patterns.destroy.schedule-title', 'entry-patterns.destroy.schedule-body'] },
             { part: 'No confirm, no undo, V2', token: null, value: 'switch off deletes the key; Remove; Unlink', ref: ['entry-patterns.destroy.toggle-delete', 'entry-patterns.destroy.remove', 'entry-patterns.destroy.unlink'] },

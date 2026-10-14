@@ -3,9 +3,11 @@
 **Status:** Changed from V2 (all three parts).
 **Why:** V2 has six bubble looks in five colours, each with a shadow, and the loudest is the partner's own message (an indigo gradient with a 30% glow, chat_bubbles.jsx:30). The system is quiet by default (P5): white with a 1px line, colour carried by an icon, one attention fill for "needs you".
 
+**V3 restyle (2026-10-14).** The user bubble is the grey surface (`--v2-surface-sunken`) with a hairline (`--v2-line-hair`), not a blue tint. Tone rides on one 16px icon; the edge takes the tone only when the run stopped (`needsInput` on `--v2-attention-line`, `danger` on `--v2-danger-line`), on the surface: V2's fill-based message colours are retired (`--v2-waiting-fill` keeps the yellow in the V2 today look only). The progress note is a pattern: a 4px ink-4 dot and a muted 13px line, no bubble.
+
 ### MessageBubble, user (Changed from V2)
 - **Purpose:** What the partner said, or the answer chip they tapped (echoed).
-- **Anatomy:** Right-aligned; blue tint fill (`--v2-blue-tint`), 1px `--v2-blue-tint-line`, radius 16, padding 12 16, max 300, text 14/1.5 ink, no shadow; optional time under it.
+- **Anatomy:** Right-aligned; the grey surface (`--v2-surface-sunken`), 1px `--v2-line-hair`, radius 16, padding 12 16, max 300, text 14/1.5 ink, no shadow; optional time under it.
 - **Variants:** One.
 - **Sizes:** Max 300, hugs short text.
 - **States:** Rest; with time (last of a group). V2: `?start=worker&ask=<text>`, or the Preview panel's Chat states row.
@@ -30,7 +32,7 @@
 ### NoticeBubble (Changed from V2)
 - **Purpose:** An outcome or a heads-up the partner should read.
 - **Anatomy:** White, 1px line, radius 16, padding 12 16, max 300; icon 16 in tone, optional title 14/600 ink, body 14 ink-2 (one line per item when given `lines`); optional action row under it and feedback below the bubble.
-- **Variants:** `kind` is one of the five token tones (`kit/thread.jsx` NOTICE): `info` (info, blue-ink; DependencyCard), `success` (check, success-ink), `attention` (alert, attention-ink), `danger` (x-circle, danger-ink), `neutral` (info, ink-3). Aliases kept for older callers: `headsup` is attention, `fail` is danger, and `needsInput` is attention (help icon) on the PM's yellow (`--v2-attention-tint` / `--v2-attention-line`), the one attention fill.
+- **Variants:** `kind` is one of the five token tones (`kit/thread.jsx` NOTICE): `info` (info, blue-ink; DependencyCard), `success` (check, success-ink), `attention` (alert, attention-ink), `danger` (x-circle, danger-ink), `neutral` (info, ink-3). Aliases kept for older callers: `headsup` is attention, `fail` is danger, and `needsInput` is attention (help icon) on the surface with the attention edge (`--v2-attention-line`); `danger` takes the danger edge.
 - **Sizes:** Max 300.
 - **States:** Static. V2: Preview panel, Chat states On shows success, heads-up, needs input and fail; Scheduled job Out of credits shows the titled heads-up.
 - **Props:** `NoticeBubble {kind, title, lines, children, action, feedback, time, groupStart, className}`.

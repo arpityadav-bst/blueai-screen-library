@@ -7,12 +7,6 @@
    by the hairline (the site's ledger). Sections are in-flow cards: 1px line, no shadow. Money and
    balances are ink 600; green is only verified or reached; blue is selection, progress, focus. */
 
-/* Values the Target set lacks (brief section 11 gap names in brackets). */
-:root {
-  /* [--v2-tracking-hero] The big figure's tight tracking (brief section 3, Big figure). */
-  --v3-tracking-figure: -0.045em;
-}
-
 @keyframes v3-breathe { 0%, 100% { opacity: 0.6; } 50% { opacity: 0.3; } }
 
 /* ---- A pushed screen (AI Credits, Profile): canvas ground, title row, padded body ------------ */
@@ -29,7 +23,7 @@
 .v3-cr-glyph { flex: none; width: calc(var(--v2-icon-lg) + var(--v2-space-1)); height: calc(var(--v2-icon-lg) + var(--v2-space-1)); }
 .v3-cr-value {
   color: var(--v2-ink); font-size: var(--v2-text-40); font-weight: var(--v2-weight-semibold); line-height: 1;
-  letter-spacing: var(--v3-tracking-figure); font-variant-numeric: tabular-nums;
+  letter-spacing: var(--v2-tracking-figure); font-variant-numeric: tabular-nums;
 }
 .v3-cr-explain { width: 100%; margin-top: var(--v2-space-6); padding-top: var(--v2-space-5); border-top: var(--v2-stroke) solid var(--v2-line-hair); }
 .v3-cr-title { margin: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold); letter-spacing: var(--v2-tracking-label); }
@@ -95,7 +89,7 @@
 .v3-set { display: flex; flex-direction: column; gap: var(--v2-space-3); padding: var(--v2-space-4) 0 var(--v2-space-5); }
 .v3-set-card { transition: border-color var(--v2-dur-3) var(--v2-ease-standard), box-shadow var(--v2-dur-3) var(--v2-ease-standard); }
 /* Routed here from the credits screen: a passing selection ring, not a glow. */
-.v3-set-card.is-highlight { border-color: var(--v2-select-line); box-shadow: 0 0 0 3px var(--v2-select); }
+.v3-set-card.is-highlight { border-color: var(--v2-select-line); box-shadow: var(--v2-ring-select); }
 .v3-set-head { display: flex; align-items: flex-start; gap: var(--v2-space-3); }
 .v3-set-head-main { flex: 1; min-width: 0; }
 .v3-set-title { margin: 0; color: var(--v2-ink); font-size: var(--v2-text-16); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-snug); letter-spacing: var(--v2-tracking-label); }

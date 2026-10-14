@@ -74,6 +74,7 @@
     const S = function (props) { return <Win h={380}><K.Sheet preview open {...props} /></Win>; };
     return (
       <G.Section id="sheet">
+        <G.Note>V3 restyle (2026-10-14): top corners 20 (--v2-radius-dialog), an upward cast (--v2-shadow-2-up), the light veil (--v2-scrim-light) so a dialog over it stacks to about one veil; title 18/600.</G.Note>
         <G.Part name="Sheet" status="changed"
           role="A panel that rises from the window's bottom edge: blocking for an agreement, dismissible for a longer panel.">
           <p><strong>Blocking</strong> is for an agreement the partner must give before going on (the Program Terms):
@@ -97,9 +98,9 @@
             changed="V2's Terms sheet is the one overlay with a proper entrance, exit and reduced-motion rule, so it becomes the family sheet, and its legal wording stays exactly as it is. The shell changes: radius 20 becomes 16; the upward cast becomes the top line with shadow-2; the title goes from 20/800 to 20/600; the 15/700 #1990FF pill with a glow (3.24:1) becomes the 44px primary on action blue (4.92:1); body 13 #6b7280 becomes 14 in ink-2; the 0.45s entrance and 0.32s exit become 320ms and 240ms on the site ease; the rgba(8,10,31,0.44) scrim becomes the one veil; and its z 120, tied with Logout, becomes the one dialog layer, ordered by mount. The dismissible kind is new." />
           <G.SpecDrawer rows={[
             { part: 'Placement', token: null, value: 'full window width, on the bottom edge; up to the window height less 40px, then the body scrolls' },
-            { part: 'Shape', token: '--v2-radius-lg, --v2-line, --v2-shadow-2', value: '16 16 0 0, 1px top line, the dialog cast', ref: 'overlays.sheet.panel' },
+            { part: 'Shape', token: '--v2-radius-dialog, --v2-line, --v2-shadow-2-up', value: '20 20 0 0, 1px top line, the upward cast', ref: 'overlays.sheet.panel' },
             { part: 'Padding', token: '--v2-space-6', value: '24px', ref: 'overlays.sheet.panel' },
-            { part: 'Title', token: '--v2-text-20, --v2-weight-semibold, --v2-ink', value: '20/600', ref: 'overlays.sheet.title' },
+            { part: 'Title', token: '--v2-text-18, --v2-weight-semibold, --v2-ink', value: '18/600', ref: 'overlays.sheet.title' },
             { part: 'Body', token: '--v2-text-14, --v2-ink-2, --v2-leading-body', value: '14px / 1.5, #3c4049', ref: 'overlays.sheet.body' },
             { part: 'Actions', token: '--v2-control-lg', value: '44px; one action spans the width, two share it (secondary, primary)', ref: 'overlays.sheet.cta' },
             { part: 'Scrim', token: '--v2-scrim', value: 'rgba(11,18,32,0.48), fades 240ms', ref: ['overlays.sheet.scrim', 'overlays.sheet.scrim-in'] },

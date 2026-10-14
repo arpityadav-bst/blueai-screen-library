@@ -63,7 +63,9 @@
 .v2-notice-body { display: flex; flex-direction: column; gap: var(--v2-space-05); min-width: 0; }
 .v2-notice-title { margin: 0; color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
 .v2-notice-text { margin: 0; }
-.v2-notice--fill { background: var(--v2-attention-tint); border-color: var(--v2-attention-line); }
+/* The edge takes the tone only when the run stopped: waiting on you, or failed (V3 restyle, 2026-10-14). */
+.v2-notice--fill { background: var(--v2-waiting-fill); border-color: var(--v2-attention-line); }
+.v2-notice--danger { border-color: var(--v2-danger-line); }
 .v2-notice-action { display: flex; flex-direction: column; gap: var(--v2-space-2); }
 .v2-dep > .v2-notice { width: var(--v2-bubble-max); max-width: 100%; }
 .v2-dep .v2-notice-action > .v2-button--quiet { align-self: flex-start; }
@@ -116,7 +118,7 @@
 .v2-run-actions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--v2-space-3); }
 
 /* Ask card (37): yellow only while it waits for you */
-.v2-ask-card { display: flex; flex-direction: column; gap: var(--v2-space-15); background: var(--v2-attention-tint); border-color: var(--v2-attention-line); }
+.v2-ask-card { display: flex; flex-direction: column; gap: var(--v2-space-15); background: var(--v2-waiting-fill); border-color: var(--v2-attention-line); }
 .v2-ask--neutral .v2-ask-card, .v2-ask.is-answered .v2-ask-card, .v2-ask.is-stopped .v2-ask-card, .v2-ask.is-expired .v2-ask-card { background: var(--v2-surface); border-color: var(--v2-line); }
 .v2-ask-title { margin: 0; color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
 .v2-ask-text { margin: 0; }
@@ -169,11 +171,12 @@
   border: var(--v2-stroke) solid transparent; border-radius: var(--v2-radius-round); cursor: pointer;
   transition: background-color var(--v2-dur-1) var(--v2-ease-standard), border-color var(--v2-dur-1) var(--v2-ease-standard), transform var(--v2-dur-1) var(--v2-ease-out);
 }
-.v2-sendstop--send { background: var(--v2-action); color: var(--v2-on-color); }
-.v2-sendstop--send:hover:not([aria-disabled="true"]), .v2-sendstop--send.is-hover { background: var(--v2-action-hover); }
+.v2-sendstop--send { background: var(--v2-solid); color: var(--v2-on-color); box-shadow: var(--v2-shadow-btn); }
+.v2-sendstop--send:hover:not([aria-disabled="true"]), .v2-sendstop--send.is-hover { background: var(--v2-solid-hover); box-shadow: var(--v2-shadow-btn-hover); }
+.v2-sendstop--send[aria-disabled="true"] { box-shadow: none; }
 .v2-sendstop--send[aria-disabled="true"] { background: var(--v2-surface-sunken); color: var(--v2-ink-4); cursor: default; }
-.v2-sendstop--stop { background: var(--v2-surface); border-color: var(--v2-line-strong); color: var(--v2-ink-2); }
-.v2-sendstop--stop:hover, .v2-sendstop--stop.is-hover { border-color: var(--v2-line-hover); background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); color: var(--v2-ink); }
+.v2-sendstop--stop { background: var(--v2-surface-panel); border-color: var(--v2-line-strong); color: var(--v2-ink); }
+.v2-sendstop--stop:hover, .v2-sendstop--stop.is-hover { border-color: var(--v2-line-hover); background: var(--v2-surface-sunken); }
 .v2-sendstop:active:not([aria-disabled="true"]), .v2-sendstop.is-active { transform: translateY(1px); }
 .v2-sendstop:focus-visible, .v2-sendstop.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 

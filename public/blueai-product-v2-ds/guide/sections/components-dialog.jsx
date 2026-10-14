@@ -73,7 +73,7 @@
         <K.Dialog open={open === 'signout'} onClose={close}
           {...alertOf(SIGN_OUT, 'Sign out', 'primary', { actions: [{ label: 'Cancel', onClick: close }, { label: 'Sign out', variant: 'primary', onClick: close }] })} />
         <K.Dialog open={open === 'disconnect'} onClose={close} busy={busy}
-          {...alertOf(DISCONNECT, 'Disconnect', 'danger', { actions: [{ label: 'Cancel', onClick: close }, { label: 'Disconnect', variant: 'danger', onClick: slow }] })} />
+          {...alertOf(DISCONNECT, 'Disconnect', 'primary', { actions: [{ label: 'Cancel', onClick: close }, { label: 'Disconnect', variant: 'primary', onClick: slow }] })} />
       </Win>
     );
   }
@@ -84,6 +84,7 @@
     const D = function (props) { return <Win h={330}><K.Dialog preview open {...props} /></Win>; };
     return (
       <G.Section id="dialog">
+        <G.Note>V3 restyle (2026-10-14): one dialog radius, 20 (--v2-radius-dialog); titles 18/600/-0.03em (--v2-text-18). Confirm dialogs use --v2-dialog-sm with the plain frame; task dialogs --v2-dialog-md with the header. The commit is the solid primary; a destructive confirm names the loss, no red fill.</G.Note>
         <G.Part name="Dialog" status="changed"
           role="One dialog for a decision or a short task: two widths, four variants, a busy state, and focus that goes in, stays in and comes back.">
           <p>Variants set the defaults: <strong>task</strong> (md, close button, scrim click cancels),
@@ -108,7 +109,7 @@
           <G.Stage width="shell"><TryIt /></G.Stage>
           <G.CompareRow
             v2={<Win h={330}><G.Live label="ModalOverlay" get={function () { return window.ModalOverlay; }} props={{ isOpen: true, onClose: noop, title: DELETE.title, children: DELETE.body }} /></Win>}
-            system={<D variant="task" title={DELETE.title} description={DELETE.body} actions={[{ label: 'Cancel' }, { label: 'Delete', variant: 'danger' }]} />}
+            system={<D variant="task" title={DELETE.title} description={DELETE.body} actions={[{ label: 'Cancel' }, { label: 'Delete', variant: 'primary' }]} />}
             changed="Same words on both sides, so only the shell differs (V2's buttons come from each caller). V2 builds its overlays one by one: five widths (280, 300, 340, 360, 382), radii 12, 16 and 20, five different scrims, z-indexes from 50 to 130 with a tie at 120. None moves focus in or gives it back, the close button has no name, and nothing has a busy state, so a slow consent can be clicked twice. Since 2026-10-14 ModalOverlay also has a plain frame (no header, divider or X; the title is an h2 in the body), which the Automatic consent uses. The system has one Dialog on one scrim: sm 320 or md 382, radius 16, shadow-2, a 20/600 title that takes the row with a named 32px Close beside it, body 14 in ink-2, actions secondary then primary at 44px." />
           <G.SpecDrawer rows={[
             { part: 'Scrim', token: '--v2-scrim', value: 'rgba(11,18,32,0.48), fades 240ms', ref: ['overlays.dialog.scrim', 'overlays.dialog.logout-scrim', 'overlays.dialog.ooc-scrim', 'overlays.dialog.daydone-scrim'] },
@@ -117,10 +118,10 @@
             { part: 'Width md', token: '--v2-dialog-md', value: '382px (task, consent)', ref: ['overlays.dialog.panel', 'overlays.dialog.login-card'] },
             { part: 'Height', token: null, value: 'up to the window less 16px each side; the body scrolls, title and actions stay', ref: 'overlays.dialog.panel' },
             { part: 'Window inset', token: '--v2-space-4', value: '16px', ref: 'overlays.dialog.padding' },
-            { part: 'Shape', token: '--v2-radius-lg, --v2-line, --v2-shadow-2', value: '16px, 1px 10% line, the dialog cast', ref: 'overlays.dialog.panel-shape' },
+            { part: 'Shape', token: '--v2-radius-dialog, --v2-line, --v2-shadow-2', value: '20px, 1px 10% line, the dialog cast', ref: 'overlays.dialog.panel-shape' },
             { part: 'Padding', token: '--v2-space-5', value: '20px (V2: header 16 20, body 16 20 20, plain body 22 22 20)', ref: ['overlays.dialog.header', 'overlays.dialog.body'] },
             { part: 'V2 plain frame', token: null, value: 'no header, divider or X; the title is an h2 in the body (the consent, since 2026-10-14)', ref: ['overlays.dialog.plain', 'worker.permissions.modal'] },
-            { part: 'Title', token: '--v2-text-20, --v2-weight-semibold, --v2-ink', value: '20/600, tracking -0.02em; takes the row', ref: ['overlays.dialog.title', 'overlays.dialog.family-title'] },
+            { part: 'Title', token: '--v2-text-18, --v2-weight-semibold, --v2-ink', value: '18/600, tracking -0.03em; takes the row', ref: ['overlays.dialog.title', 'overlays.dialog.family-title'] },
             { part: 'Close', token: '--v2-hit-min', value: 'IconButton 32, named Close; hidden on alert and blocking', ref: 'overlays.dialog.close' },
             { part: 'Body', token: '--v2-text-14, --v2-ink-2, --v2-leading-body', value: '14px / 1.5, #3c4049' },
             { part: 'Actions', token: '--v2-control-lg, --v2-space-2', value: '44px, equal widths, 8px apart, secondary then primary' },
@@ -144,8 +145,8 @@
           role="The confirm: the title is the question, the body says what changes, the primary is named for the action.">
           <G.StateGrid wide states={[
             { label: 'Confirm', node: <D {...alertOf(SIGN_OUT, 'Sign out', 'primary')} />, note: 'Signing in again undoes it and nothing is deleted, so the primary is neutral; the body still says days don’t count meanwhile.' },
-            { label: 'Destructive', node: <D {...alertOf(DISCONNECT, 'Disconnect', 'danger')} />, note: 'Danger only when it destroys or costs a day.' },
-            { label: 'Busy', node: <D {...alertOf(DISCONNECT, 'Disconnect', 'danger', { busy: true })} /> },
+            { label: 'Destructive', node: <D {...alertOf(DISCONNECT, 'Disconnect', 'primary')} />, note: 'The solid primary names what is lost; no red solid (V3 restyle).' },
+            { label: 'Busy', node: <D {...alertOf(DISCONNECT, 'Disconnect', 'primary', { busy: true })} /> },
           ]} />
           <G.CompareRow
             v2={<Win h={300}><G.Live label="Profile.LogoutModal" get={function () { return window.Profile && window.Profile.LogoutModal; }} props={{ isOpen: true, onCancel: noop, onConfirm: noop }} /></Win>}
@@ -154,10 +155,10 @@
           <G.SpecDrawer rows={[
             { part: 'Role', token: null, value: 'alertdialog; no close button; scrim click does nothing; Esc cancels' },
             { part: 'First focus', token: null, value: 'Cancel, the safe answer' },
-            { part: 'Title', token: '--v2-text-20, --v2-weight-semibold', value: 'the question, 20/600', ref: 'overlays.alert.logout-title' },
+            { part: 'Title', token: '--v2-text-18, --v2-weight-semibold', value: 'the question, 18/600', ref: 'overlays.alert.logout-title' },
             { part: 'Body', token: '--v2-text-14, --v2-ink-2', value: 'what changes and how to undo it', ref: 'overlays.alert.logout-body' },
-            { part: 'Confirm, neutral', token: '--v2-action', value: '#1268f0, white label 4.92:1', ref: 'overlays.alert.logout-confirm' },
-            { part: 'Confirm, destructive', token: '--v2-danger-ink', value: '#c03a40, white label 5.36:1', ref: ['overlays.alert.logout-confirm', 'overlays.dialog.delete-confirm'] },
+            { part: 'Confirm, neutral', token: '--v2-solid', value: '#0b0b0d, white label 19.6:1, the three-stop cast (V3 restyle)', ref: 'overlays.alert.logout-confirm' },
+            { part: 'Confirm, destructive', token: '--v2-solid', value: 'the same solid primary, its label naming the loss (V3 restyle: no red fill)', ref: ['overlays.alert.logout-confirm', 'overlays.dialog.delete-confirm'] },
             { part: 'Width', token: '--v2-dialog-sm', value: '320px', ref: 'overlays.dialog.logout-panel' },
             { part: 'V2 outcome', token: null, value: 'confirm closes the dialog and stays signed in', ref: 'overlays.alert.logout-noop' },
           ]} />

@@ -64,7 +64,7 @@
      'moneymaker'. The greeting above it is IntroCard (product_home.jsx) with its title/sub
      overridden by the caller, this component is the card plus a one-time coach spotlight.
 
-     Card anatomy is skills.jsx's row (tile · name+description · compact action pill), because the
+     Card anatomy is the old Skills screen's row (skills.jsx, deleted 2026-10-14) (tile · name+description · compact action pill), because the
      button only needs the verb: the tile and the title already say MoneyMaker. The whole card is
      clickable: the pill is a small target, and on a spotlighted first run clicking the lit thing
      should just work; the pill stopPropagations so it doesn't double-fire.

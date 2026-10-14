@@ -34,7 +34,7 @@
   ];
 
   function OnboardingWelcome({ onPick, onTypeIt }) {
-    const C = window.ChatCompare;
+    const C = window.ProductHomeScreen;
     return (
       <div className="v3-ob">
         <style>{`

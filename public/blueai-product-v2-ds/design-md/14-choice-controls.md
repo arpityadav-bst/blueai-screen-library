@@ -4,17 +4,19 @@
 
 **Why:** "Keep the partner in control" is one of the product's three jobs, and its controls are choices: Always ask or Automatic per app, own key on or off, when to run, which notifications. V2 has three switches (one of which deletes the saved key when turned off; the per-app mode switch, since 2026-10-14, is the one real role=switch) and an option card built from plain buttons (shared.jsx:49; byok_settings.jsx:26, 64; agent_permissions.jsx:108; ai_mode.jsx:47). Its segmented control, which declared a radiogroup without the keys it promised, became that mode switch on 2026-10-14. The system gives each a real role and keyboard, the site's one chosen look (blue 12% fill, blue 50% edge, ink; onblue/apply.html:930), and edges that clear 3:1 (P4, P6, P7).
 
+**V3 restyle (2026-10-14).** One switch for the product: 40 by 24, off is the sunken track with a 15% line, on is `--v2-blue` (a selection), the knob white with a 1px line and no cast; `role="switch"` and `aria-checked`. The off edge is 1.41:1, the same recorded exception as the field edge (section 09): the knob's side and the label carry the state. RadioCard's pending state is documented as the selection edge dashed; disabled is 0.45 with a reason line.
+
 ### Switch (Changed from V2)
 
 **Purpose.** On or off, applied at once. A switch enables or disables; it never deletes anything.
 
-**Anatomy.** Track 36 by 20, pill. Off: 1px `--v2-ink-4` edge, white, a 12px ink-4 thumb at left 3. On: `--v2-action` fill and edge, a 16px white thumb at right 1. Row form: label 14/500 ink and an optional description 13/1.5 ink-3 on the left, the switch on the right, gap 16; the label is clickable.
+**Anatomy.** Track 40 by 24, pill. Off: `--v2-surface-sunken` with a 1px `--v2-line-strong` edge, an 18px white knob with a 1px `--v2-line` ring at left 2. On: `--v2-blue` fill and edge, the knob at right 2 with no ring. Row form: label 14/500 ink and an optional description 13/1.5 ink-3 on the left, the switch on the right, gap 16; the label is clickable.
 
 **Variants.** With label row (default when `label` is visible); bare (`hideLabel`, for a list row that already names it).
 
-**Sizes.** One, 36x20, with an invisible 32px target.
+**Sizes.** One, 40x24, with an invisible 32px target.
 
-**States.** Off; on; hover (off: edge and thumb to ink-3; on: `--v2-action-hover`); focus-visible; disabled (0.45, `aria-disabled`, description says why); busy (`aria-busy`, held where it is, the thumb becomes a 12px spinner while a consent or a key check answers). In V2 today: the shared Toggle 32x18 with a spring (shared.jsx:49-51, only on the hidden Skills screen); Settings, Bring Your Own Key: 46x26, `aria-pressed`, and switching it off removes the saved key (byok_settings.jsx:25-26, 64).
+**States.** Off; on; hover (off: edge to `--v2-line-hover`; on: unchanged); focus-visible; disabled (0.45, `aria-disabled`, description says why); busy (`aria-busy`, held where it is, the knob holds a 12px spinner while a consent or a key check answers). In V2 today: the shared Toggle 32x18 with a spring (shared.jsx:49-51, only on the hidden Skills screen); Settings, Bring Your Own Key: 46x26, `aria-pressed`, and switching it off removes the saved key (byok_settings.jsx:25-26, 64).
 
 **Props.** `checked`, `onChange(next)`, `label`, `hideLabel`, `description`, `disabled`, `busy`, `id`, `className`.
 

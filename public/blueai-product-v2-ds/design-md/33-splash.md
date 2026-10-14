@@ -8,7 +8,7 @@
 
 **Purpose.** A short branded launch on a true cold start (the app process starting), in words that say what the app is doing.
 
-**Anatomy.** Centred on the surface: BrandMark stacked (logo 48, wordmark 24/600 in the brand gradient), three 6px blue dots, one status line 13/400 in ink-3.
+**Anatomy.** Centred on the surface: BrandMark stacked (logo 48, wordmark 24/600 in ink, `--v2-brand-word-fill`), three 6px blue dots, one status line 13/400 in ink-3.
 
 **Variants.** Cold start only. Reopening the window from the tray, taskbar or a notification restores the last screen at once, with no splash.
 

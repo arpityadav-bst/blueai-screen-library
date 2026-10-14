@@ -4,11 +4,13 @@
 
 **Why:** The Program Terms are the partner's first agreement, so they block until accepted; longer panels (Report a problem, a run's detail on a short window) need a place over the current screen that is roomier than a dialog. V2's Terms sheet is its one overlay with a proper entrance, exit and reduced-motion rule (terms_sheet.jsx:103-108), so it becomes the family sheet. Its shell joins the system (radius, title weight, an AA primary, one scrim, one layer instead of a z 120 tie with Logout); its legal wording stays exactly as legal approved it.
 
+**V3 restyle (2026-10-14).** The sheet's top corners are 20 (`--v2-radius-dialog`, shared with every dialog), it casts upward (`--v2-shadow-2-up`) and its veil is `--v2-scrim-light`; its title is 18/600.
+
 ### Sheet (Changed from V2)
 
 **Purpose.** `blocking`: an agreement the partner must give to continue. Dismissible (default): a longer panel that belongs to the current screen.
 
-**Anatomy.** Scrim `--v2-scrim`. Panel on the window's bottom edge, full width: `--v2-surface`, 1px top `--v2-line`, radius 16 16 0 0, `--v2-shadow-2`, padding 24. Header: title 20/600 `--v2-ink` taking the row; a 32px Close when dismissible. Body 14/1.5 `--v2-ink-2`, scrolls when tall (the sheet stops 40px short of the window top). Actions 44px: one spans the width, two share it (secondary, primary). Layer `--v2-z-dialog`.
+**Anatomy.** Scrim `--v2-scrim-light`. Panel on the window's bottom edge, full width: `--v2-surface`, 1px top `--v2-line`, radius 20 20 0 0, `--v2-shadow-2-up`, padding 24. Header: title 18/600 `--v2-ink` taking the row; a 32px Close when dismissible. Body 14/1.5 `--v2-ink-2`, scrolls when tall (the sheet stops 40px short of the window top). Actions 44px: one spans the width, two share it (secondary, primary). Layer `--v2-z-dialog`.
 
 **Variants.** `blocking` (no Close, no Esc, no scrim dismiss: the button is the only way on) and dismissible (Close, Esc, the scrim and Cancel all close it).
 

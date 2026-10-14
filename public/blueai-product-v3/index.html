@@ -74,19 +74,9 @@
     ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18); border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.32); }
 
-    @keyframes ba-ring { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(1.55); opacity: 0; } }
-    @keyframes ba-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } }
-    @keyframes ba-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
     @keyframes tabFadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     .tab-anim { animation: tabFadeUp 0.18s ease; }
     @keyframes ba-shimmer { 0% { background-position: -600px 0; } 100% { background-position: 600px 0; } }
-    /* Spin (chat.jsx's loader). The BlueStacks install ring moved to worker.css (.v3-spin), phase 4. */
-    @keyframes ba-spin { to { transform: rotate(360deg); } }
-    /* Install dialog's background wave (install_dialog.jsx's PixelWave), two tile-widths drawn
-       side by side, scrolled by exactly one tile so the loop is seamless. -400px→0 (not the
-       app's existing ba-marquee direction, which goes the other way) so it reads as moving right. */
-    @keyframes ba-wave-scroll { from { transform: translateX(-400px); } to { transform: translateX(0); } }
-    .ba-wave-scroll { animation: ba-wave-scroll 7s linear infinite; }
 
     /* ── Chat conversation + feedback (from ChatView Feedback) ── */
     @keyframes baMsgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -206,7 +196,6 @@
 <!-- Shared components (must load first) -->
 <script type="text/babel" src="blueai/logo.jsx"></script>
 <script type="text/babel" src="blueai/shared.jsx"></script>
-<script type="text/babel" src="blueai/top_navbar.jsx"></script>
 <!-- The Windows desktop scene: wallpaper + BlueStacks App Player window (exposes window.DesktopScene) -->
 <script type="text/babel" src="blueai/desktop_scene.jsx"></script>
 <!-- A Windows notification on that desktop (exposes window.DesktopToast) -->
@@ -215,8 +204,6 @@
 <script type="text/babel" src="blueai/install_dialog.jsx"></script>
 <!-- Boot splash + Shimmer -->
 <script type="text/babel" src="blueai/boot_splash.jsx"></script>
-<!-- Canonical NEW chat home (exposes window.ChatCompare) -->
-<script type="text/babel" src="blueai/chat_compare.jsx"></script>
 <!-- Onboarding welcome for the logged-out cold start (exposes window.Onboarding) -->
 <script type="text/babel" src="blueai/onboarding.jsx"></script>
 <!-- MoneyMaker's post-login in-chat card (exposes window.MoneyMakerHomeCard), must load before
@@ -250,7 +237,6 @@
 <script type="text/babel" src="blueai/profile.jsx"></script>
 <!-- Screen components -->
 <script type="text/babel" src="blueai/jobs.jsx"></script>
-<script type="text/babel" src="blueai/skills.jsx"></script>
 <script type="text/babel" src="blueai/schedule.jsx"></script>
 <!-- AI Mode (Cloud vs Hybrid), used inside settings.jsx (exposes window.AiMode) -->
 <script type="text/babel" src="blueai/ai_mode_parts.jsx"></script>
@@ -355,7 +341,6 @@ const START = (() => {
 // Live product configuration (frozen, the Tweaks playground is removed).
 const CONFIG = {
   credits: 45812,        // matches the live Windows app
-  skillsLayout: 'grid',
 };
 
 // Live header (newer than the export, matched to the live app screenshots):
@@ -895,13 +880,6 @@ function App() {
   const switchSession = (mode) => { setSessionMode(mode); setIsLoggedIn(mode === 'default'); setOnbPhase('welcome'); setSeed(null); setPendingMessage(null); setSessionKey((k) => k + 1); setActiveTab('chat'); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); };
   // Onboarding picker → chat: prefill the composer with the picked task (empty for "Just type it").
   const startOnboardingChat = (prompt) => { setSeed(prompt ? { text: prompt, n: Date.now() } : null); setSessionKey((k) => k + 1); setActiveTab('chat'); setOnbPhase('chat'); };
-  const handleTrySkill = (skillObj) => {
-    const text = typeof skillObj === 'string'
-      ? skillObj
-      : (skillObj && (skillObj.prompt || skillObj.title || skillObj.name)) || '';
-    setSeed({ text, n: Date.now() });
-    setActiveTab('chat');
-  };
   const handleTabChange = (tab) => { setActiveTab(tab); setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); if (tab !== 'chat') setSeed(null); };
   // MoneyMaker's welcome page IS the "please sign in" screen, so its CTA opens LoginModal
   // straight past the 'default' step (see login.jsx's initialStep).
@@ -1006,10 +984,6 @@ function App() {
         <HistoryScreen />
       ) : creditsOpen ? (
         <AICreditsScreen credits={credits} keyAdded={keyAdded} byokOn={byokOn} keyInfo={keyInfo} onManageByok={goToByokSettings} />
-      /* activeTab === 'skills' branch removed 2026-09-09 (designer directive, hide not delete),
-         SkillsScreen, handleTrySkill and CONFIG.skillsLayout below are all left defined; nothing
-         reaches 'skills' as an activeTab any more now that BottomNavbar's NAV dropped it in
-         shared.jsx, so this is dead-but-intact, not broken. */
       ) : isChat ? (
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', width: '420px' }}>
           <ProductChatScreen sessionKey={sessionKey} seed={seed} loading={!homeReady} zeroCredits={zeroCredits && !byokActive} onNoCredits={() => setOocOpen(true)} isOnboarding={!isLoggedIn} sessionMode={sessionMode} onNeedLogin={(text) => { setLoginFlow('onboarding'); setPendingMessage(text); setShowLoginModal(true); }} showStates={showChatStates}

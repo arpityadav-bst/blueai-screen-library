@@ -58,7 +58,7 @@
     }
     const inner = (
       <>
-        {loading ? <Spin onColor={variant === 'primary' || variant === 'danger'} /> : <Ico name={icon} />}
+        {loading ? <Spin onColor={variant === 'primary'} /> : <Ico name={icon} />}
         <span className="v2-button-label">{children}</span>
         {loading ? null : <Ico name={trailing} />}
         {external ? <span className="v2-sr-only">{NEW_TAB}</span> : null}

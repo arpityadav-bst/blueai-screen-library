@@ -251,7 +251,7 @@ The money model is decision D3: the app's $1 a day plus a $10 bonus, or the site
 
 ### P5 Quiet by default
 
-- **Rule:** Surfaces separate with 1px alpha-black lines, not shadows; shadows only on things that float (menus, dialogs). One action blue. The brand gradient only on the BlueAI mark and the credits glyph. Colour inside the thread is carried by icons, plus one attention tone for 'the worker needs you'.
+- **Rule:** Surfaces separate with 1px alpha-black lines, not shadows; shadows only on things that float (menus, dialogs) and the solid button's cast. The one commit is the solid ink; blue only for focus, selection, progress, links and the spark. The brand gradient only in the credits glyph's drawing. Colour inside the thread is carried by icons; a message's edge takes its tone only when the run stopped (V3 restyle, 2026-10-14).
 - **Why:** V2 carries 154 shadow declarations (55 recipes, 15 coloured glows), three competing accents and eight tinted message surfaces (inv-foundations, inv-chat). The partner sits on this screen daily; the one thing that matters must stand out.
 - **Prevents:** A UI where everything competes and nothing reads as the next action.
 
@@ -285,7 +285,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 | Lines alone separate in-flow surfaces | adapted (shadow dropped) | The site's light theme also casts a faint resting shadow on cards, panels and ghost buttons (onblue.css:388, 993, 1486; apply.html:85-90); the product drops it, so a shadow only ever means 'this floats'. |
 | Surfaces a fraction apart, alternating card / panel / row | shared | Depth reads as structure, not murk. |
 | Brand blue #156efe for focus, selection and progress | shared | One blue across the journey. |
-| Action blue #1268f0 and blue ink #0d5ad6 | adapted | #156efe is 4.47:1 with white; the product needs 4.5:1 on every primary label. |
+| Action blue #1268f0 and blue ink #0d5ad6 | adapted | #156efe is 4.47:1 with white; a filled selection with a white mark needs 4.5:1. Buttons are the site's solid ink (shared, V3 restyle 2026-10-14). |
 | Selection = 12% blue fill + 50% blue border + ink label | shared | One 'chosen' look on site and app. |
 | Green means reached; money stays in ink | shared | Verified days look the same on the dashboard; pending money is not painted as paid. |
 | Error red #c03a40 / #d0454a / ring 16% | shared | One danger set; also the destructive fill (5.36:1). |
@@ -323,6 +323,8 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 **Status:** Ink ramp, Surfaces and lines, Action blue, Status tones, Brand gradient: all Changed from V2.
 
 **Why:** BlueAI is a quiet control room for an agent working on the partner's own accounts, and the partner moves between it and the onBlue site every day. V2 paints with two Tailwind grey ramps split 178/178, seven blue fills, an indigo nav, four parallel status maps and the brand gradient in three places on one top bar; its primary blue fails contrast with its own white labels (3.24:1, index.html:351) and its faintest text carries its most important caveats (2.5:1, chat_bubbles.jsx:124, account_gate.jsx:31). The system keeps one hue per job and shares the site's neutrals, lines, blue, greens and reds, so the app and the site read as one family (P5, P6, P7).
+
+**V3 restyle (2026-10-14).** The Target look now carries what V3 settled on with Appy. The committing button is the solid ink (`--v2-solid` #0b0b0d, hover `--v2-solid-hover` #26262b, the site's three-stop `--v2-shadow-btn`), so blue is held to focus, selection, progress, links on hover and the spark. The user bubble is the grey surface with a hairline, not a blue tint. Green means reached or verified; money stays ink. Run state rule (decided): pending is blue-outlined (progress), green arrives only with the second tick (verified). Every tone line is its ink at 32%: `--v2-attention-line` is now rgba(138,97,22,0.32) (was #f3e8a8), and a message's edge takes its tone only when the run stopped (waiting on you, or failed). The brand gradient is fenced to the credits glyph's own drawing.
 
 ### Ink ramp (Changed from V2)
 
@@ -372,7 +374,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Purpose.** One blue hue in roles, so action, selection and focus are one colour family without failing contrast.
 
-**Anatomy.** `--v2-blue` #156efe (focus, selected border, progress, current step, lit nav: the site's blue), `--v2-action` #1268f0 (filled buttons, send: 4.92:1 with white), `--v2-action-hover` #0f5ad4 (6.12:1), `--v2-blue-ink` #0d5ad6 (blue text on tints: 6.09:1), `--v2-blue-tint` and `--v2-blue-tint-line` (info notice, user bubble), `--v2-select` and `--v2-select-line` (selected chip, choice card, segmented on).
+**Anatomy.** `--v2-blue` #156efe (focus, selected border, progress, current step, lit nav: the site's blue), `--v2-action` #1268f0 (a filled selection that carries a white mark: checked checkbox, avatar hue; 4.92:1 with white. Buttons and send moved to `--v2-solid` in the V3 restyle), `--v2-action-hover` #0f5ad4 (6.12:1), `--v2-blue-ink` #0d5ad6 (blue text on tints: 6.09:1), `--v2-blue-tint` and `--v2-blue-tint-line` (info badge, banner and notice), `--v2-select` and `--v2-select-line` (selected chip, choice card, segmented on).
 
 **Variants.** Fill, text, tint, selected.
 
@@ -384,7 +386,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Motion.** Fill colour over `--v2-dur-1`.
 
-**Accessibility.** White text goes on `--v2-action`, never on `--v2-blue` (4.47:1). Blue text uses `--v2-blue-ink`.
+**Accessibility.** White text goes on `--v2-action` or `--v2-solid`, never on `--v2-blue` (4.47:1). Blue text uses `--v2-blue-ink`.
 
 **Responsive.** Not applicable.
 
@@ -426,11 +428,11 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Anatomy.** `--v2-gradient-brand`, linear-gradient(90deg, #0EA4C5, #7B4CFF).
 
-**Variants.** The BlueAI mark and wordmark; the credits glyph (`<Icon name="credits" />`, the gradient through V2's star).
+**Variants.** The credits glyph only (`<Icon name="credits" />`): V2's own drawing, assets/Credits.svg, as an image beside an ink figure. Never text, a mask fill, a ring or a wordmark (V3 restyle; the BrandMark word is ink in Target through `--v2-brand-word-fill`).
 
 **Sizes.** Mark per section 30; glyph 16, 20, 24.
 
-**States.** Mark, credits glyph. V2 today: the top bar at `?start=worker` shows it three times (wordmark, pill ring, pill number, index.html:335-346), and the user bubble uses a cousin gradient with an indigo glow (chat_bubbles.jsx:30).
+**States.** Credits glyph. V2 today: the top bar at `?start=worker` shows it three times (wordmark, pill ring, pill number, index.html:335-346), and the user bubble uses a cousin gradient with an indigo glow (chat_bubbles.jsx:30).
 
 **Props.** None: use BrandMark or the credits Icon.
 
@@ -448,12 +450,15 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Why:** The partner reads this app every day in a 419px window, often at small sizes on Windows. V2 uses 30 font sizes, seven page-title recipes, weight 800 71 times (650, 750 and 900 are requested but never loaded), and four typefaces in a new partner's first minute. Its stack puts SF before Plus Jakarta Sans, so Macs and Windows show different products (index.html:34). The site is Inter end to end; one face, thirteen styles and three weights make the app read as the site's working screen (P6).
 
+**V3 restyle (2026-10-14).** Two values added: `--v2-text-18` for dialog and sheet titles (`.v2-text-title-dialog`, 18/600/-0.03em, the site's sheet title), and `--v2-tracking-figure` -0.045em for big figures (`.v2-text-display`: the credits balance, the out-of-credits 0, the free-credits grant). Eyebrows stay uppercase through CSS only: their source strings are sentence case ("What would you like to do?", "Plan"), so a screen reader and a copy edit read words, not shouting.
+
 ### Type ladder (Changed from V2)
 
 **Purpose.** One recipe per text role, so size, weight, leading, tracking and ink travel together and no screen re-decides how loud a line is.
 
 **Anatomy.** Thirteen classes in kit/base.css (size / weight / leading / tracking, ink), plus the row label the list-row parts set themselves:
-- `.v2-text-display` 40 / 600 / 1 / -0.03em, ink, tabular: credits balance.
+- `.v2-text-display` 40 / 600 / 1 / -0.045em (`--v2-tracking-figure`), ink, tabular: credits balance.
+- `.v2-text-title-dialog` 18 / 600 / 1.35 / -0.03em, ink: dialog and sheet titles (V3 restyle).
 - `.v2-text-greeting` 24 / 600 / 1.2 / -0.02em, ink: home greeting, welcome title.
 - `.v2-text-title-lg` 20 / 600 / 1.2 / -0.02em, ink: every screen and dialog title.
 - `.v2-text-numeral-sm` 20 / 600 / 1 / -0.02em, ink, tabular: "7" in "7 of 20 days".
@@ -587,11 +592,13 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Why:** The product should feel like the site's quiet working screen: one button shape, hairlines instead of shadows, one veil. V2 has twenty radii in live code (buttons alone 8, 9, 10, 20, 40 and 999, two of them on the same settings screen), 154 shadow declarations from 55 recipes with 15 coloured glows, seven scrim recipes, and two dialogs tied at z-index 120. Fewer, named steps make every surface say how far it sits from the page (P5, P6).
 
+**V3 restyle (2026-10-14).** Decisions: one dialog radius, `--v2-radius-dialog` 20, for every dialog and the sheet's top edge (Appy's consent decision, kept over the brief's 14/16: the run-complete moment and the mode sheet already share it); cards stay 16. Rows keep `--v2-radius-md` 10: the brief's 6/16/999 scale covers controls, cards and pills, and 10 is the one inset step the system keeps (no 7/9/11/12/14). A bottom sheet casts upward (`--v2-shadow-2-up`) and sits on the light veil (`--v2-scrim-light`, 0.24), so the consent that opens over the mode sheet stacks to about one veil. The solid button keeps the site's three-stop cast (`--v2-shadow-btn`), the one in-flow cast: it says "this commits". Every other in-flow surface is a 1px line with no shadow.
+
 ### Radius ladder (Changed from V2)
 
 **Purpose.** Six radii, each with a job.
 
-**Anatomy.** `--v2-radius-xs` 4 (checkbox box, day-bar segment, tooltip arrow), `-sm` 6 (buttons, fields, segmented items, menu rows, icon buttons: the site's button radius), `-md` 10 (rows, banners, composer, menus, tooltips, segmented track), `-lg` 16 (cards, bubbles, dialogs, sheet top corners: the site's card radius), `-pill` (badges, quick-reply chips, credits chip, progress rail), `-round` (avatars, discs, send). Strokes: `--v2-stroke` 1px for every edge; `--v2-stroke-selected` 1.5px for a selected choice, the focused composer, and the two outlined marks that must still read at 6 to 8px: the ring status dot (paused, offline: `kit/shell.css:80`) and the pending DayBar segment (`kit/worker.css:78`). A 2px step is not a stroke token; it appears only as mark geometry, sized with its mark: the spinner ring and the checkbox tick (glyph lines), the 2px surface halo that cuts a count dot out of what it sits on (`kit/credits.css:33`, `kit/display.css:89`), and the 2px left rule of the job preview's quoted comment (`kit/worker.css:151`). Icon glyphs draw at their own weight (StatusTick 2.5, `kit/program.jsx:29`).
+**Anatomy.** `--v2-radius-xs` 4 (checkbox box, day-bar segment, tooltip arrow), `-sm` 6 (buttons, fields, segmented items, menu rows, icon buttons: the site's button radius), `-md` 10 (rows, banners, composer, menus, tooltips, segmented track), `-lg` 16 (cards, bubbles, composer: the site's card radius), `-dialog` 20 (every dialog, the sheet's top edge), `-pill` (badges, quick-reply chips, credits chip, progress rail), `-round` (avatars, discs, send). Strokes: `--v2-stroke` 1px for every edge; `--v2-stroke-selected` 1.5px for a selected choice, the focused composer, and the two outlined marks that must still read at 6 to 8px: the ring status dot (paused, offline: `kit/shell.css:80`) and the pending DayBar segment (`kit/worker.css:78`). A 2px step is not a stroke token; it appears only as mark geometry, sized with its mark: the spinner ring and the checkbox tick (glyph lines), the 2px surface halo that cuts a count dot out of what it sits on (`kit/credits.css:33`, `kit/display.css:89`), and the 2px left rule of the job preview's quoted comment (`kit/worker.css:151`). Icon glyphs draw at their own weight (StatusTick 2.5, `kit/program.jsx:29`).
 
 **Variants.** As listed.
 
@@ -607,7 +614,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Responsive.** Not applicable.
 
-**Do / Don't.** Do make every button 6. Do nest radii inner-smaller (card 16, row 10, control 6). Don't use 8, 9, 12, 14, 18 or 20. Don't use pill buttons.
+**Do / Don't.** Do make every button 6. Do nest radii inner-smaller (card 16, row 10, control 6). Don't use 8, 9, 12, 14 or 18; 20 is the dialog radius only. Don't use pill buttons.
 
 ### Elevation (Changed from V2)
 
@@ -635,7 +642,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Purpose.** One veil for every decision, the site's frosted gate for sign-in, and a named order of layers inside the window.
 
-**Anatomy.** `--v2-scrim` rgba(11,18,32,0.48) under every dialog, sheet and day done. `--v2-scrim-frost` rgba(248,249,251,0.88) with `--v2-scrim-blur` 14px, the site's gate, for sign-in only. Z-scale: `--v2-z-raised` 1, `-sticky` 10, `-header` 20, `-popover` 30, `-dialog` 100, `-gate` 110, `-toast` 120, `-splash` 200.
+**Anatomy.** `--v2-scrim` rgba(11,18,32,0.48) under every dialog and day done; `--v2-scrim-light` rgba(11,18,32,0.24) under a sheet. `--v2-scrim-frost` rgba(248,249,251,0.88) with `--v2-scrim-blur` 14px, the site's gate, for sign-in only. Z-scale: `--v2-z-raised` 1, `-sticky` 10, `-header` 20, `-popover` 30, `-dialog` 100, `-gate` 110, `-toast` 120, `-splash` 200.
 
 **Variants.** Dim, frost.
 
@@ -731,13 +738,15 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Why:** Icons label the controls the partner uses to keep the worker in check (Always ask, Automatic, pause, disconnect), so each meaning needs one glyph everywhere. V2 redraws its clock, chat, help and sign-out glyphs two or three times per file at 14 to 22px, with 16 different stroke widths and hard-coded hexes such as #64748b (index.html:303-328, shared.jsx:7-40). One registry ends that and matches the site's stroke style (onblue/index.html:307-330).
 
+**V3 restyle (2026-10-14).** Decision: `--v2-icon-stroke` 1.75 applies to every product icon set (the kit Icon and any inline set a screen draws), at every size. The exceptions are marks, not icons: the filled spark, and 2px mark geometry (a tick inside a disc, the spinner ring). The spark also ships as an image (`assets/spark.svg`, Target blue) for places that take only an image: taskbar, toast, installer, favicon.
+
 ### Icon set (Changed from V2)
 
 **Purpose.** One named module, `window.V2Kit.Icon`, for every glyph the product draws.
 
 **Anatomy.** A 24-unit glyph, round caps and joins, `stroke: currentColor`, `fill: none`. Names: home, activity, settings, chat, help, more, close, back, chevron-right, chevron-down, external, check, check-double, x-circle, alert, info, clock, calendar, play, pause, stop, send, refresh, spark (filled), credits (gradient), youtube, instagram, shield-check (Always ask), zap (Automatic), user, sign-out, bell, link, trash, copy, lock, wifi-off, download, thumb-up, thumb-down, eye; added for the kit: check-circle, chevron-left, chevron-up, arrow-up, arrow-right, plus, minus, search, edit, key, earnings, monitor (BlueStacks, App Player), telegram. Aliases resolve common guesses (x, arrow-left, warning, error, verified, always-ask, automatic, logout, external-link, dollar, bluestacks, offline).
 
-**Variants.** Stroke (all but two); filled: spark (the site's mark); painted: credits (`--v2-gradient-brand` through V2's star, assets/Credits.svg).
+**Variants.** Stroke (all but two); filled: spark (the site's mark); painted: credits (V2's own drawing, assets/Credits.svg, shown as an image; never a mask fill).
 
 **Sizes.** 16 `--v2-icon-sm` (inline, chips, menu rows), 20 `--v2-icon-md` (top bar, nav, list rows), 24 `--v2-icon-lg` (empty states, dialog marks). The stroke renders 1.75px at every size (`--v2-icon-stroke`, compensated per size in kit/base.css).
 
@@ -868,13 +877,15 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Why:** The worker acts on the partner's own accounts, so every action needs a rank: the one that commits (I agree, turn on; Got it), the frequent second one (Cancel), the third (Not now), the one that destroys (Remove). V2 gives most of them the same blue fill in six radii with three hover models and blue glows, and white on its #1990FF is 3.24:1 (index.html:351, byok.jsx:22). The system takes the site's ladder and shape (radius 6, 13/500, a real press, disabled with a reason; onblue/onblue.css:959-999, onblue/apply.html:411) and an AA action blue (P2, P5, P6, P7).
 
+**V3 restyle (2026-10-14).** The ladder is one component with three skins and Appy's decision D1 is settled: `primary` is the site's solid ink button (`--v2-solid`, hover `--v2-solid-hover` with the cast pulled in and a 1px drop, active 2px, `--v2-shadow-btn`), `secondary` is the ghost (`--v2-surface-panel`, 15% line, no cast; hover `--v2-surface-sunken`, pressed `--v2-surface-press`), `quiet` is unchanged. Geometry: radius 6, 500, tracking -0.02em, heights 44 / 36 (28 sm); lg labels are 14. Decision on destruction: no red solid. `danger` is now the trigger skin (a ghost whose red arrives on hover); the confirm's commit is the solid primary, named for what is lost (section 52). The reason line under a disabled control is a pattern: 12 ink-3, an optional 16 icon, tied by `aria-describedby`.
+
 ### Button (Changed from V2)
 
 **Purpose.** Every pressable action that is not inside a sentence. One primary per view: the action that commits.
 
 **Anatomy.** Box: height 28 / 36 / 44, radius 6 (`--v2-radius-sm`), 1px edge, padding 0 12 / 16 / 20. Label: 13/500 (`--v2-text-13`, `--v2-weight-medium`), tracking -0.01em, one line, ellipsis if it must. Optional 16px icon before (`icon`) or after (`iconRight`), gap 8 (6 at sm). Loading: a 16px Spinner takes the leading icon's place; the label stays. Disabled reason: 12/1.35 ink-3 under the button, 6 below.
 
-**Variants.** `primary`: `--v2-action` #1268f0 fill and edge, white label (4.92:1); hover `--v2-action-hover`. `secondary` (default): white, 1px `--v2-line-strong`, ink label; hover adds `--v2-wash-hover` and `--v2-line-hover`. `quiet`: no box, ink-2 label; hover wash + ink. `danger`: `--v2-danger-ink` #c03a40 fill, white label (5.36:1); hover adds `--v2-wash-press`. Use danger for the primary of the confirm that names what is lost, and for the trigger that opens that confirm (Disconnect YouTube); never for an action that costs nothing (section 52 is the rule).
+**Variants.** `primary`: `--v2-solid` #0b0b0d fill and edge, white label (19.6:1), `--v2-shadow-btn`; hover `--v2-solid-hover` #26262b, `--v2-shadow-btn-hover`, 1px drop. `secondary` (default), the ghost: `--v2-surface-panel`, 1px `--v2-line-strong`, ink label, no cast; hover `--v2-surface-sunken` and `--v2-line-hover`; pressed `--v2-surface-press`. `quiet`: no box, ink-2 label; hover wash + ink. `danger`: the ghost at rest; on hover the label turns `--v2-danger-ink`, the edge `--v2-danger-edge`, the fill `--v2-danger-tint`. Use it for the trigger that opens a destructive confirm (Disconnect YouTube); the confirm's commit is the solid primary named for what is lost; never for an action that costs nothing (section 52 is the rule).
 
 **Sizes.** sm 28 (`--v2-control-sm`) for dense rows; md 36 (`--v2-control-md`) default; lg 44 (`--v2-control-lg`) for full-width sheet and dialog actions (`full`). sm grows an invisible ::after to the 32px hit floor.
 
@@ -882,19 +893,19 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Props.** `variant` ('primary' | 'secondary' | 'quiet' | 'danger', default 'secondary'), `size` ('sm' | 'md' | 'lg'), `icon`, `iconRight` (icon names, section 08), `loading`, `disabled`, `disabledReason` (string printed under it), `full`, `type` ('button'), `onClick`, `href` (renders an a), `external` (new tab, external glyph, "opens in a new tab" for screen readers), `className`, `children`.
 
-**Motion.** Colour and edge over `--v2-dur-1` (120ms) `--v2-ease-standard`; press 1px over `--v2-dur-1` `--v2-ease-out`. Reduced motion: no transitions, no press travel. No glow, no lift, no brightness filter.
+**Motion.** Colour, edge and cast over `--v2-dur-1` (120ms) `--v2-ease-standard`; press 1px (the solid: 1px on hover, 2px active) over `--v2-dur-1` `--v2-ease-out`. Reduced motion: no transitions, no press travel. No glow, no lift, no brightness filter.
 
-**Accessibility.** White labels only on `--v2-action` or `--v2-danger-ink`. Disabled stays in the tab order with the reason linked by `aria-describedby`. Focus ring always visible. Targets at least 32px. The label is the action, in sentence case, no trailing ellipsis.
+**Accessibility.** White labels only on `--v2-solid` (or `--v2-action` on a checked control). Disabled stays in the tab order with the reason linked by `aria-describedby`. Focus ring always visible. Targets at least 32px. The label is the action, in sentence case, no trailing ellipsis.
 
 **Responsive.** Fixed 419px window: sheets and dialogs use `size="lg" full`; rows use sm or md. On the compact 640px window nothing changes size.
 
-**Do / Don't.** Do keep one primary per view. Do print why a button is disabled. Do keep the label while loading. Don't put two filled buttons side by side. Don't hover by opacity (it lowers contrast that must hold). Don't add a glow, a lift or a pill. Primary fill blue or ink is decision D1: one token either way.
+**Do / Don't.** Do keep one primary per view. Do print why a button is disabled. Do keep the label while loading. Don't put two filled buttons side by side. Don't hover by opacity (it lowers contrast that must hold). Don't add a glow, a lift or a pill. Don't put a red fill on a commit. Decision D1 is settled: the primary is the solid ink (V3 restyle, 2026-10-14).
 
 ### Primary in V2 today (Changed from V2)
 
 **Purpose.** Shows the change where a partner meets it: the out-of-credits card's Got it.
 
-**Anatomy.** V2: pill, 15/700, #1990FF, white at 3.24:1, opacity 0.9 hover (byok.jsx:26-27). System: radius 6, 13/500, #1268f0, white at 4.92:1, `--v2-action-hover`.
+**Anatomy.** V2: pill, 15/700, #1990FF, white at 3.24:1, opacity 0.9 hover (byok.jsx:26-27). System: radius 6, 13/500, the solid ink #0b0b0d, white at 19.6:1, `--v2-solid-hover` (V3 restyle).
 
 **Variants.** None.
 
@@ -961,6 +972,8 @@ A new screen picks the first unless it is a settings-style list of sections that
 **Status:** TextField, Secret field, TextArea: all Changed from V2.
 
 **Why:** Typing is rare in a worker the partner sets up once, so every field the partner does meet (an API key, a feedback note, Report a problem, the advanced endpoint) has to be right first time and say what went wrong. V2 hand-builds five fields with three focus treatments and no error state at all; its key field shows the key in clear text and its Validate & Save never validates (byok_settings.jsx:54, 93). The system takes the site's question shape: a label, one box, a message line that exists only when it may hold something, the site's error line and ring, and "a placeholder is an example, not a watermark" (onblue/onblue.css:3654, 3703-3709; P6, P7).
+
+**V3 restyle (2026-10-14).** Decisions: the field stays 40 (`--v2-field-h`), the app's density, over the site's 44; one label everywhere, 13/500 (`--v2-text-13`, `--v2-weight-medium`) above the field in dialogs and on pages alike, so the brief's 14/600 page label is not a second token. One field language: 1px `--v2-line-strong`, hover 20%, focus blue edge plus `--v2-focus-ring`.
 
 ### TextField (Changed from V2)
 
@@ -1034,6 +1047,8 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Why:** The partner picks from a short plain list in two places (which provider, which model) and both live under Settings, Advanced (R31). The native select gives keyboard, screen readers and a list that fits a 419px window for free; it only needs to wear the field box. V2 shows three looks on one screen (radius 10 with a custom chevron, radius 8 with the OS arrow) and its provider select removes the focus outline with nothing in its place (byok_settings.jsx:31; settings.jsx:122; P2, P7).
 
+**V3 restyle (2026-10-14).** The select is the field with the native arrow replaced by a 16px chevron in ink-3. Decision: its placeholder takes `--v2-ink-placeholder` like a field's (it always sits under a visible label), not ink-3.
+
 ### Select (Changed from V2)
 
 **Purpose.** One choice from a short plain list.
@@ -1044,13 +1059,13 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Sizes.** md 40, sm 32.
 
-**States.** Placeholder (ink-3, "Add a provider"); rest; hover (edge 20%); focus (blue edge + 3px ring); filled; open (the operating system draws the list; options always ink); disabled (sunken, 0.45, helper says why); invalid (edge `--v2-danger-edge`, message, as TextField). In V2 today: Settings, Bring Your Own Key switched on: "Add a provider" at #9ca3af (2.54:1), radius 10, custom chevron, no focus style (byok_settings.jsx:31-32, 113-114); two cards below, AI Model with the OS arrow, radius 8, width 200 (settings.jsx:122).
+**States.** Placeholder (`--v2-ink-placeholder`, "Add a provider"); rest; hover (edge 20%); focus (blue edge + 3px ring); filled; open (the operating system draws the list; options always ink); disabled (sunken, 0.45, helper says why); invalid (edge `--v2-danger-edge`, message, as TextField). In V2 today: Settings, Bring Your Own Key switched on: "Add a provider" at #9ca3af (2.54:1), radius 10, custom chevron, no focus style (byok_settings.jsx:31-32, 113-114); two cards below, AI Model with the OS arrow, radius 8, width 200 (settings.jsx:122).
 
 **Props.** `label`, `hideLabel`, `value` / `defaultValue`, `options` ([{value, label, disabled}]), `placeholder`, `onChange(value, event)`, `helper`, `error`, `required`, `optional`, `disabled`, `size`, `width`, `id`, `className`.
 
 **Motion.** Edge and ring over `--v2-dur-1`.
 
-**Accessibility.** Native control: arrow keys, type-to-find and the screen reader's list come from the system. The placeholder is an instruction, so it reads at ink-3 (6.0:1), not placeholder ink. Always a visible label (V2's provider select has none).
+**Accessibility.** Native control: arrow keys, type-to-find and the screen reader's list come from the system. The placeholder sits under the visible label, so it takes the placeholder ink like a field's (V3 restyle). Always a visible label (V2's provider select has none).
 
 **Responsive.** Fills its column; `width` only beside a label in a settings row.
 
@@ -1062,17 +1077,19 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Why:** "Keep the partner in control" is one of the product's three jobs, and its controls are choices: Always ask or Automatic per app, own key on or off, when to run, which notifications. V2 has three switches (one of which deletes the saved key when turned off; the per-app mode switch, since 2026-10-14, is the one real role=switch) and an option card built from plain buttons (shared.jsx:49; byok_settings.jsx:26, 64; agent_permissions.jsx:108; ai_mode.jsx:47). Its segmented control, which declared a radiogroup without the keys it promised, became that mode switch on 2026-10-14. The system gives each a real role and keyboard, the site's one chosen look (blue 12% fill, blue 50% edge, ink; onblue/apply.html:930), and edges that clear 3:1 (P4, P6, P7).
 
+**V3 restyle (2026-10-14).** One switch for the product: 40 by 24, off is the sunken track with a 15% line, on is `--v2-blue` (a selection), the knob white with a 1px line and no cast; `role="switch"` and `aria-checked`. The off edge is 1.41:1, the same recorded exception as the field edge (section 09): the knob's side and the label carry the state. RadioCard's pending state is documented as the selection edge dashed; disabled is 0.45 with a reason line.
+
 ### Switch (Changed from V2)
 
 **Purpose.** On or off, applied at once. A switch enables or disables; it never deletes anything.
 
-**Anatomy.** Track 36 by 20, pill. Off: 1px `--v2-ink-4` edge, white, a 12px ink-4 thumb at left 3. On: `--v2-action` fill and edge, a 16px white thumb at right 1. Row form: label 14/500 ink and an optional description 13/1.5 ink-3 on the left, the switch on the right, gap 16; the label is clickable.
+**Anatomy.** Track 40 by 24, pill. Off: `--v2-surface-sunken` with a 1px `--v2-line-strong` edge, an 18px white knob with a 1px `--v2-line` ring at left 2. On: `--v2-blue` fill and edge, the knob at right 2 with no ring. Row form: label 14/500 ink and an optional description 13/1.5 ink-3 on the left, the switch on the right, gap 16; the label is clickable.
 
 **Variants.** With label row (default when `label` is visible); bare (`hideLabel`, for a list row that already names it).
 
-**Sizes.** One, 36x20, with an invisible 32px target.
+**Sizes.** One, 40x24, with an invisible 32px target.
 
-**States.** Off; on; hover (off: edge and thumb to ink-3; on: `--v2-action-hover`); focus-visible; disabled (0.45, `aria-disabled`, description says why); busy (`aria-busy`, held where it is, the thumb becomes a 12px spinner while a consent or a key check answers). In V2 today: the shared Toggle 32x18 with a spring (shared.jsx:49-51, only on the hidden Skills screen); Settings, Bring Your Own Key: 46x26, `aria-pressed`, and switching it off removes the saved key (byok_settings.jsx:25-26, 64).
+**States.** Off; on; hover (off: edge to `--v2-line-hover`; on: unchanged); focus-visible; disabled (0.45, `aria-disabled`, description says why); busy (`aria-busy`, held where it is, the knob holds a 12px spinner while a consent or a key check answers). In V2 today: the shared Toggle 32x18 with a spring (shared.jsx:49-51, only on the hidden Skills screen); Settings, Bring Your Own Key: 46x26, `aria-pressed`, and switching it off removes the saved key (byok_settings.jsx:25-26, 64).
 
 **Props.** `checked`, `onChange(next)`, `label`, `hideLabel`, `description`, `disabled`, `busy`, `id`, `className`.
 
@@ -1156,11 +1173,13 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Why:** The worker asks and the partner answers with a tap (Yes, Not now, Just this job), says what went wrong with a tap (Wrong result), and will filter Activity with a tap. V2 draws three chip looks for that: a 1.5px blue outline with #1990FF text at 3.24:1, a dark #334155 selected reason, and a grey back pill, with a hover that lifts but never changes colour (worker_cards.jsx:58; chat_feedback.jsx:77-84; index.html:100-101). One chip with the family's chosen look keeps blue meaning "chosen" and every label legible (P2, P5, P7).
 
+**V3 restyle (2026-10-14).** Chips rest on the 2% navy wash (`--v2-wash-tint` over the surface) with a 10% line and ink-2 labels; hover is the wash plus a 20% line and ink; selected is `--v2-select` with `--v2-select-line`. Decision: chip and pill geometry (height, padding) stays in the Chip rule, not tokens: it belongs to one part (the tokens header rule).
+
 ### Chip (Changed from V2)
 
 **Purpose.** One small pressable label for three jobs: a one-shot reply to the worker, a reason you toggle, a filter.
 
-**Anatomy.** Pill, 28 tall (`--v2-control-sm`; an invisible extension makes the target 32), padding 0 12, 1px `--v2-line-strong`, white. Label 13/500 ink, one line. Optional 16px icon before the label (zap marks the reply that turns on Automatic). Rows wrap with an 8px gap.
+**Anatomy.** Pill, 28 tall (`--v2-control-sm`; an invisible extension makes the target 32), padding 0 12, 1px `--v2-line`, the surface under `--v2-wash-tint`. Label 13/500 ink-2, one line. Optional 16px icon before the label (zap marks the reply that turns on Automatic). Rows wrap with an 8px gap.
 
 **Variants.** Reply (no `selected`: a plain button that answers once; the AskCard hides the row once answered). Reason and filter (`selected` true or false: a toggle with `aria-pressed`). One look for all three; only the behaviour differs.
 
@@ -1183,6 +1202,8 @@ A new screen picks the first unless it is a settings-style list of sections that
 **Status:** Changed from V2.
 
 **Why:** The money depends on a day's state (pending verification, verified, not counted), so that state needs one unmistakable label on every row and card. V2 has five pill systems for it: the AI Mode status chip (12/600, ai_mode.jsx:38), the Jobs badge (radius 4 with a line, jobs.jsx:31), "Active" (10/700 uppercase, index.html:483), "Verified" (11.5/700, profile.jsx:50) and "Not enrolled" (11/600 uppercase at 0.12em, account_gate.jsx:26). One Badge replaces all five.
+
+**V3 restyle (2026-10-14).** The status pill has five tones: neutral, busy, ok (success), danger, attention. Busy (a neutral or info badge with `busy`) is work in progress, so it is blue: `--v2-select` fill, `--v2-blue-ink` label, a pulsing `--v2-blue` dot.
 
 ### Badge (Changed from V2)
 
@@ -1265,6 +1286,8 @@ Plus: no mark, dot, icon, busy dot.
 
 **Why:** Every screen the concept adds (Activity, Notifications, Worker settings, Connected apps, Account) is a list. V2 has four row shapes for one idea, with two label treatments: Profile rows (grey 14.5 label, 14.5/600 value, profile.jsx:17-24), Settings field rows (15/700 label over a 12px hint at 2.54:1, settings.jsx:97-102), the Sign out card (a whole card, hover from a mouse handler, profile.jsx:57-59) and History rows (a card each, a turning chevron, no aria-expanded, history.jsx:96-104). One row with variants replaces them.
 
+**V3 restyle (2026-10-14).** Decision: the settings row and the ledger row are one component, ListRow. A control in the trailing slot makes a settings row (label 14/500 ink, one 12 hint under it, hairline between rows); a value makes a ledger line, drawn as the site's ledger: muted label (ink-3, 400), the value in ink. A settings section head is the SettingsSection title 16/600 with one 13 ink-3 line.
+
 ### ListRow (Changed from V2)
 
 **Purpose.** The repeated line of every list: a fact (label + value), a setting (label + control), a place (navigation), a day or run you can open (expandable), an irreversible action (destructive).
@@ -1273,7 +1296,7 @@ Plus: no mark, dot, icon, busy dot.
 1. Row: min 48 tall, padding 12 16 (`--v2-space-3` `--v2-space-4`), gap 12, items centred.
 2. Leading (optional), one of: a 20px icon in `--v2-ink-3`; an Avatar 32 / 40; or a mark (`mark` prop): a `--v2-mark-md` (32) round `--v2-surface-sunken` disc with a 16 glyph in its tone (ink-3, or attention, success or danger ink) and, when `dot`, an 8 `--v2-blue` dot at its top right with a 2px surface halo. The mark is for a row about a thing or an event, not a person: a notification (section 60), BlueStacks in Settings (section 61).
 3. Text: label 14/500 `--v2-ink`; description 13 `--v2-ink-3` under it (also where a disabled row says why).
-4. Trailing, one of: value (14/400 `--v2-ink-2`, tabular, right-aligned), a control (Switch, Select), a Badge, a chevron (16, `--v2-ink-4`), or the external mark.
+4. Trailing, one of: value (14/400 `--v2-ink`, tabular, right-aligned; the label then steps to ink-3, the site's ledger), a control (Switch, Select), a Badge, a chevron (16, `--v2-ink-4`), or the external mark.
 5. Divider: 1px `--v2-line-hair`, inset 16 on both sides, between rows only (none after the last).
 
 **Variants.** Value. Control (the row is a plain div; the control is the only target). Nav (a button or a link; chevron-right, or `external` for the site). Expandable (chevron-down that turns 180; a panel below). Destructive (label and icon in `--v2-danger-ink`).
@@ -1498,15 +1521,17 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Why:** A new partner opens Activity before their first run and Notifications before anything has happened; an empty view has to say what will be there and when. V2's two empty states use off-palette art (Schedule: a purple icon on a purple disc, schedule.jsx:126-132; Jobs: a 120px disc with a brown briefcase over "Coming Soon", jobs.jsx:129-145, standing in for a whole tab). The onBlue site already has the family's answer: the dashed ghost and copy that names what will appear (onblue/apply.html:323-327, 1422).
 
+**V3 restyle (2026-10-14).** An empty state is now a 56 sunken mark with the 24 icon in muted ink, a 20/600 title, one 14 ink-3 line at `--v2-measure-tip`, and at most one solid action; no box of its own (the dashed edge is kept for a pending choice). Decision: no serif em phrase in these, they sit in working tabs; the serif stays on welcome and first-run moments.
+
 ### EmptyState (Changed from V2)
 
 **Purpose.** What a view shows with nothing in it: names what will appear, gives one line of why, and offers the one way forward when there is one.
 
 **Anatomy.**
-1. Box: 1px dashed `--v2-line-strong`, radius 16, `--v2-surface-panel`, padding 32 24, centred column, gap 8. A dashed edge means "a thing will be here".
-2. Icon: 24 (`--v2-icon-lg`) in `--v2-ink-3`. No disc, no colour.
-3. Title: 16/600 `--v2-ink`, an h2 by default.
-4. Body: 13 `--v2-ink-3`, at most 280 wide.
+1. Column: no box, padding 40 20, centred, gap 8 (V3 restyle).
+2. Mark: a 56 disc (`--v2-mark-xl`) in `--v2-surface-sunken`, the 24 icon in `--v2-ink-3`. No colour.
+3. Title: 20/600 `--v2-ink`, an h2 by default.
+4. Body: 14 `--v2-ink-3`, at most 260 wide (`--v2-measure-tip`).
 5. Actions (optional): one medium primary Button (36), and a quiet one beside it only if needed.
 
 **Variants.** Five, which change the words and the default icon, never the colours:
@@ -1538,6 +1563,8 @@ Any icon can replace the default (Automatic uses `zap`).
 **Status:** Tooltip: Changed from V2.
 
 **Why:** The partner meets two words the product cannot leave unexplained (AI credits, your 20 days) and a top bar of icon-only buttons with no visible names. V2 already built the right disclosure for the first job, the credits (i): hover, focus, click to pin, Esc, a 200ms close delay (credits_popup_parts.jsx:135-146). It only works for one centred title (left -189, line 148), and nothing covers the second job. The system keeps the behaviour, fits it to any window, and adds a label kind (P7: every control has a visible name; P5: one float look).
+
+**V3 restyle (2026-10-14).** Popover spec, one caret for every float that points (tooltip, coach mark, popover): an 8px rotated square in the panel's surface with the panel's 1px line on its two outer sides, centred on the edge (offset -5), on a white panel with a 15% line and `--v2-shadow-1`. The caret stays part geometry, not a token.
 
 ### Tooltip (Changed from V2)
 
@@ -1595,11 +1622,13 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Why:** The partner's consent, sign-out and disconnect decisions happen in dialogs, and V2 builds each one separately: five widths (280, 300, 340, 360, 382), radii 12, 16 and 20, five different scrims, z-indexes from 50 to 130 with a tie at 120 (shared.jsx:72-73, profile.jsx:73-74, byok.jsx:79-80, worker_day_done.jsx:139-142, terms_sheet.jsx:97). None moves focus in or gives it back, the close button has no name (shared.jsx:76) and none has a busy state, so a slow consent can be clicked twice. One Dialog on one scrim and one layer fixes all of it (P5, P7, R24), with the onBlue sheet's quiet manners: the panel takes focus, not its close button (onblue/onblue.css:942), and the title takes the row (onblue.css:1384).
 
+**V3 restyle (2026-10-14).** Decisions: one dialog radius, 20 (`--v2-radius-dialog`); titles 18/600/-0.03em (`--v2-text-18`, `.v2-text-title-dialog`). Size split: confirm dialogs (sign out, out of credits) are `--v2-dialog-sm` with the plain frame (no header rule); task dialogs (Telegram, Hybrid) are `--v2-dialog-md` with the header. The commit is the solid ink primary; there is no red solid: a destructive confirm names the loss in a solid primary.
+
 ### Dialog (Changed from V2)
 
 **Purpose.** A decision or a short task the partner must finish or decline before going on: consent to Automatic, sign out, disconnect, out of credits, the day-done moment.
 
-**Anatomy.** Scrim `--v2-scrim` over the window. Panel centred with a 16px inset: `--v2-surface`, 1px `--v2-line`, radius 16 (`--v2-radius-lg`), `--v2-shadow-2`. Header: title 20/600 `--v2-ink` (tracking -0.02em) taking the row, a 32px IconButton named Close beside it. Body: 14/1.5 `--v2-ink-2`, padding 20, scrolls when tall. Actions: 44px Buttons of equal width, 8px apart, secondary first, primary last. Optional footer note 12 `--v2-ink-3`. Layer `--v2-z-dialog` (100). One dialog at a time; if two ever overlap, mount order decides which is on top (section 06), which only settles the overlap, it does not make stacking a pattern.
+**Anatomy.** Scrim `--v2-scrim` over the window. Panel centred with a 16px inset: `--v2-surface`, 1px `--v2-line`, radius 20 (`--v2-radius-dialog`), `--v2-shadow-2`. Header: title 18/600 `--v2-ink` (tracking -0.03em) taking the row, a 32px IconButton named Close beside it. Body: 14/1.5 `--v2-ink-2`, padding 20, scrolls when tall. Actions: 44px Buttons of equal width, 8px apart, secondary first, primary last. Optional footer note 12 `--v2-ink-3`. Layer `--v2-z-dialog` (100). One dialog at a time; if two ever overlap, mount order decides which is on top (section 06), which only settles the overlap, it does not make stacking a pattern.
 
 **Variants.** `task` (md, Close, scrim click cancels). `consent` (md, Close, scrim click does nothing, the primary's label is the agreement: "I agree, turn on"). `alert` (see AlertDialog). `celebration` (sm, centred, no Close, scrim click closes: DayDone). `scrim="frost"` puts it on the sign-in gate veil and layer (`--v2-z-gate`), sign-in only.
 
@@ -1623,7 +1652,7 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Anatomy.** Dialog sm with role alertdialog, no Close: the title is the question, the body says what changes, two actions: Cancel and the action named for itself.
 
-**Variants.** Confirm: a neutral primary (`--v2-action`, 4.92:1). Destructive: `danger` (`--v2-danger-ink` #c03a40, 5.36:1), only when it destroys or costs a day.
+**Variants.** Confirm: the solid primary (`--v2-solid`). Destructive: the same solid primary, its label naming what is lost (V3 restyle: no red fill).
 
 **Sizes.** sm 320.
 
@@ -1645,11 +1674,13 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Why:** The Program Terms are the partner's first agreement, so they block until accepted; longer panels (Report a problem, a run's detail on a short window) need a place over the current screen that is roomier than a dialog. V2's Terms sheet is its one overlay with a proper entrance, exit and reduced-motion rule (terms_sheet.jsx:103-108), so it becomes the family sheet. Its shell joins the system (radius, title weight, an AA primary, one scrim, one layer instead of a z 120 tie with Logout); its legal wording stays exactly as legal approved it.
 
+**V3 restyle (2026-10-14).** The sheet's top corners are 20 (`--v2-radius-dialog`, shared with every dialog), it casts upward (`--v2-shadow-2-up`) and its veil is `--v2-scrim-light`; its title is 18/600.
+
 ### Sheet (Changed from V2)
 
 **Purpose.** `blocking`: an agreement the partner must give to continue. Dismissible (default): a longer panel that belongs to the current screen.
 
-**Anatomy.** Scrim `--v2-scrim`. Panel on the window's bottom edge, full width: `--v2-surface`, 1px top `--v2-line`, radius 16 16 0 0, `--v2-shadow-2`, padding 24. Header: title 20/600 `--v2-ink` taking the row; a 32px Close when dismissible. Body 14/1.5 `--v2-ink-2`, scrolls when tall (the sheet stops 40px short of the window top). Actions 44px: one spans the width, two share it (secondary, primary). Layer `--v2-z-dialog`.
+**Anatomy.** Scrim `--v2-scrim-light`. Panel on the window's bottom edge, full width: `--v2-surface`, 1px top `--v2-line`, radius 20 20 0 0, `--v2-shadow-2-up`, padding 24. Header: title 18/600 `--v2-ink` taking the row; a 32px Close when dismissible. Body 14/1.5 `--v2-ink-2`, scrolls when tall (the sheet stops 40px short of the window top). Actions 44px: one spans the width, two share it (secondary, primary). Layer `--v2-z-dialog`.
 
 **Variants.** `blocking` (no Close, no Esc, no scrim dismiss: the button is the only way on) and dismissible (Close, Esc, the scrim and Cancel all close it).
 
@@ -1816,6 +1847,8 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Why:** The partner opens BlueAI to check one thing: did today's run happen, and does the day count. V2's header gives its loudest slot, the only filled control in the chrome, to a "New Chat" pill (index.html:351) and shows the run nowhere; it runs the brand gradient three times in 419px (index.html:335, 342, 346); and two of its six menu rows do nothing (index.html:364-365).
 
+**V3 restyle (2026-10-14).** The BrandMark word is ink in Target (`--v2-brand-word-fill`): the brand gradient is fenced to the credits glyph. The V2 today look keeps its gradient word.
+
 ### TopBar (Changed from V2)
 
 **Purpose.** Brand, today's run, credits, help and the account doors, on every signed-in screen.
@@ -1884,9 +1917,9 @@ One rule for the ended chip: once the period has ended, every signed-in screen s
 
 ### BrandMark (Changed from V2)
 
-**Purpose.** The BlueAI mark and wordmark: the one place the brand gradient is a fill.
+**Purpose.** The BlueAI mark and wordmark.
 
-**Anatomy.** Logo image (`assets/Logo.png`) and the "BlueAI" wordmark in `--v2-gradient-brand`.
+**Anatomy.** Logo image (`assets/Logo.png`) and the "BlueAI" wordmark in `--v2-brand-word-fill` (ink in Target).
 
 **Variants.** Mark + wordmark; mark only (alt "BlueAI"); stacked (splash).
 
@@ -1902,7 +1935,7 @@ One rule for the ended chip: once the period has ended, every signed-in screen s
 
 **Responsive.** Not applicable.
 
-**Do / Don't.** Do keep the gradient here and on the credits glyph only. Don't use the gradient as a ring, border or text fill elsewhere. Decision D8 may switch the product to the onBlue site's blue spark; only BrandMark changes.
+**Do / Don't.** Do keep the word in ink (V3 restyle). Don't use the gradient as a ring, border, wordmark or text fill: it lives only in the credits glyph's drawing. Decision D8 may switch the product to the onBlue site's blue spark; only BrandMark changes.
 
 ### Help and more menus (Changed from V2)
 
@@ -2060,7 +2093,7 @@ The run chip, the WorkerCard's Details and the RunCard's details emit no id of t
 
 **Purpose.** A short branded launch on a true cold start (the app process starting), in words that say what the app is doing.
 
-**Anatomy.** Centred on the surface: BrandMark stacked (logo 48, wordmark 24/600 in the brand gradient), three 6px blue dots, one status line 13/400 in ink-3.
+**Anatomy.** Centred on the surface: BrandMark stacked (logo 48, wordmark 24/600 in ink, `--v2-brand-word-fill`), three 6px blue dots, one status line 13/400 in ink-3.
 
 **Variants.** Cold start only. Reopening the window from the tray, taskbar or a notification restores the last screen at once, with no splash.
 
@@ -2136,9 +2169,11 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 **Status:** Changed from V2 (all three parts).
 **Why:** V2 has six bubble looks in five colours, each with a shadow, and the loudest is the partner's own message (an indigo gradient with a 30% glow, chat_bubbles.jsx:30). The system is quiet by default (P5): white with a 1px line, colour carried by an icon, one attention fill for "needs you".
 
+**V3 restyle (2026-10-14).** The user bubble is the grey surface (`--v2-surface-sunken`) with a hairline (`--v2-line-hair`), not a blue tint. Tone rides on one 16px icon; the edge takes the tone only when the run stopped (`needsInput` on `--v2-attention-line`, `danger` on `--v2-danger-line`), on the surface: V2's fill-based message colours are retired (`--v2-waiting-fill` keeps the yellow in the V2 today look only). The progress note is a pattern: a 4px ink-4 dot and a muted 13px line, no bubble.
+
 ### MessageBubble, user (Changed from V2)
 - **Purpose:** What the partner said, or the answer chip they tapped (echoed).
-- **Anatomy:** Right-aligned; blue tint fill (`--v2-blue-tint`), 1px `--v2-blue-tint-line`, radius 16, padding 12 16, max 300, text 14/1.5 ink, no shadow; optional time under it.
+- **Anatomy:** Right-aligned; the grey surface (`--v2-surface-sunken`), 1px `--v2-line-hair`, radius 16, padding 12 16, max 300, text 14/1.5 ink, no shadow; optional time under it.
 - **Variants:** One.
 - **Sizes:** Max 300, hugs short text.
 - **States:** Rest; with time (last of a group). V2: `?start=worker&ask=<text>`, or the Preview panel's Chat states row.
@@ -2163,7 +2198,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ### NoticeBubble (Changed from V2)
 - **Purpose:** An outcome or a heads-up the partner should read.
 - **Anatomy:** White, 1px line, radius 16, padding 12 16, max 300; icon 16 in tone, optional title 14/600 ink, body 14 ink-2 (one line per item when given `lines`); optional action row under it and feedback below the bubble.
-- **Variants:** `kind` is one of the five token tones (`kit/thread.jsx` NOTICE): `info` (info, blue-ink; DependencyCard), `success` (check, success-ink), `attention` (alert, attention-ink), `danger` (x-circle, danger-ink), `neutral` (info, ink-3). Aliases kept for older callers: `headsup` is attention, `fail` is danger, and `needsInput` is attention (help icon) on the PM's yellow (`--v2-attention-tint` / `--v2-attention-line`), the one attention fill.
+- **Variants:** `kind` is one of the five token tones (`kit/thread.jsx` NOTICE): `info` (info, blue-ink; DependencyCard), `success` (check, success-ink), `attention` (alert, attention-ink), `danger` (x-circle, danger-ink), `neutral` (info, ink-3). Aliases kept for older callers: `headsup` is attention, `fail` is danger, and `needsInput` is attention (help icon) on the surface with the attention edge (`--v2-attention-line`); `danger` takes the danger edge.
 - **Sizes:** Max 300.
 - **States:** Static. V2: Preview panel, Chat states On shows success, heads-up, needs input and fail; Scheduled job Out of credits shows the titled heads-up.
 - **Props:** `NoticeBubble {kind, title, lines, children, action, feedback, time, groupStart, className}`.
@@ -2196,9 +2231,11 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 **Status:** Changed from V2.
 **Why:** V2's one-shape-for-every-question idea is right and stays, with its copy. What changes: the chips are a fifth look at 3.24:1 (worker_cards.jsx:58), bullet markers are hidden by the Tailwind preflight (worker_cards.jsx:49), the hint is 2.54:1, yellow stays on after the answer, and "Not now" forfeits the day with the cost told only afterwards (worker_flow.jsx:149, P3).
 
+**V3 restyle (2026-10-14).** The card sits on the surface (`--v2-waiting-fill`) with the attention edge at 32%: waiting on you is said by the edge and the icon, not a yellow fill.
+
 ### AskCard (Changed from V2)
 - **Purpose:** The worker's question, answered with chips, with what each answer costs visible before tapping.
-- **Anatomy:** Card: attention fill `#fdf6cf`, 1px `#f3e8a8`, radius 16, padding 12 16, max 300, no shadow. Inside: optional title 14/600 ink, lead 14 ink-2, bullets (disc markers on, indent 20), question 14. Under the card: the consequence lines 13 attention-ink ("Not now: today won’t count toward your 20 days."), above the chip row so the cost is read before the tap; then the Chip row (shared Chip, gap 8; a consent option carries the zap icon), each chip's `aria-describedby` pointing at its consequence line (`kit/ask.jsx:56-68`); optional hint 13 ink-3.
+- **Anatomy:** Card: the surface (`--v2-waiting-fill`), 1px `--v2-attention-line` (the attention ink at 32%), radius 16, padding 12 16, max 300, no shadow. Inside: optional title 14/600 ink, lead 14 ink-2, bullets (disc markers on, indent 20), question 14. Under the card: the consequence lines 13 attention-ink ("Not now: today won’t count toward your 20 days."), above the chip row so the cost is read before the tap; then the Chip row (shared Chip, gap 8; a consent option carries the zap icon), each chip's `aria-describedby` pointing at its consequence line (`kit/ask.jsx:56-68`); optional hint 13 ink-3.
 - **Variants:** Plain (lead + chips), titled (job ask, failed day), with bullets (onboarding pitch). Tone `attention` (default) or `neutral` (decision D13 option B: onboarding asks while the partner watches).
 - **Sizes:** Card max 300; chip row wraps at 300.
 - **States:** Pending (chips shown, composer read-only with "Answer with the buttons above"); answered (chips go, card settles to white, the label echoes as a user bubble); stopped (Stop pressed while waiting: "The run stopped before you answered."); expired (proposed: "No answer by 9 pm, so I skipped this job. Today doesn’t count."). V2: `?start=worker` then Run for onboarding asks; `?day=next` for the job ask; `?day=next&end=failed` for the failed-day ask.
@@ -2214,6 +2251,8 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** Changed from V2 (Composer, ComposerNotice, Stop).
 **Why:** V2 clips text past 120px (chat_product.jsx:78, 284), rests on a blue-tinted 1.5px border at 1.40:1 that reads as focus (chat_product.jsx:260), mixes "..." and "…" in placeholders (266, 278, 283), reveals zero credits only after Send (124), and stops a paid job on one click with no trace (141). The Automatic ribbon (agent_permissions.jsx:203-216) is the right pattern and is generalised.
+
+**V3 restyle (2026-10-14).** Send is the solid ink button; Stop is the ghost (the ladder's second step); Stop run in the confirm is the solid primary.
 
 ### Composer (Changed from V2)
 - **Purpose:** One field to talk to the worker, with Send that becomes Stop.
@@ -2241,7 +2280,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 ### Stop (SendStop) (Changed from V2)
 - **Purpose:** Send the message, or stop the run.
-- **Anatomy:** 36 round. Send: `--v2-action` fill, white send glyph 16. Stop: white, 1px line-strong, ink-2 stop glyph 16. Stop confirm (today not counted yet, `costsDay`): attention panel above the field, "Stop now? Today counts only if you run again by 9 pm." (the stopped RunCard and WorkerCard say the same); with a paid job under way (`paidJob`) it says "Stop now? The paid job won’t finish. Today counts only if you run again by 9 pm."; Keep running (secondary md) / Stop run (danger md). The confirm is role=alertdialog labelled by its question and takes focus on Keep running; while it is open, Stop moves focus back to it, so a double press never stops a paid run (`kit/composer.jsx:102-135`).
+- **Anatomy:** 36 round. Send: `--v2-solid` fill with `--v2-shadow-btn`, white send glyph 16. Stop: the ghost, `--v2-surface-panel`, 1px line-strong, ink stop glyph 16. Stop confirm (today not counted yet, `costsDay`): attention panel above the field, "Stop now? Today counts only if you run again by 9 pm." (the stopped RunCard and WorkerCard say the same); with a paid job under way (`paidJob`) it says "Stop now? The paid job won’t finish. Today counts only if you run again by 9 pm."; Keep running (secondary md) / Stop run (primary md). The confirm is role=alertdialog labelled by its question and takes focus on Keep running; while it is open, Stop moves focus back to it, so a double press never stops a paid run (`kit/composer.jsx:102-135`).
 - **Variants:** send, stop.
 - **Sizes:** 36 (control-md).
 - **States:** Send ready, hover (`--v2-action-hover`), focus, pressed (1px down), disabled (sunken + ink-4, not pale blue); Stop, hover (wash + line), pressed; stop confirm.
@@ -2530,9 +2569,11 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 **Status:** Changed from V2 (CreditsChip); New (CreditsMeter, useCountdown).
 **Why:** AI credits are the worker's fuel, not money (concept). A partner has one question about them: will today's run happen. V2 shows a bare number that is only ever 2,000 or 0 (index.html:731), paints it and its ring in the brand gradient (index.html:342, 346), fires a "low" dot under 1,000 that can therefore only mean empty (index.html:733), and keeps a second grant of 2,500 in the shared popup parts (credits_popup_parts.jsx:14). The system says the allowance in one place, in ink, against one grant read from the Worker record (section 41).
 
+**V3 restyle (2026-10-14).** The credits glyph is V2's own drawing (assets/Credits.svg) shown as an image beside the ink figure, never a mask fill or text. The big figure takes `--v2-tracking-figure` (-0.045em), tabular.
+
 ### CreditsChip (Changed from V2)
 - **Purpose:** The top bar's quiet status of today's allowance, and the way into AI credits (section 66).
-- **Anatomy:** A real `<button>` with a 32px hit area holding a 28px pill: 1px `--v2-line` on `--v2-surface`, radius pill, padding 0 12 0 8; credits glyph 16 (the brand gradient through V2's star, its one sanctioned use besides the mark); number 13/500 ink, tabular; an 8px dot at the top right with a 2px surface ring when low or empty.
+- **Anatomy:** A real `<button>` with a 32px hit area holding a 28px pill: 1px `--v2-line` on `--v2-surface`, radius pill, padding 0 12 0 8; credits glyph 16 (V2's own drawing as an image, the gradient's one use); number 13/500 ink, tabular; an 8px dot at the top right with a 2px surface ring when low or empty.
 - **Variants:** full (number), low (number + attention dot), empty (0 + danger dot), paused (glyph + "Own key" in ink-3).
 - **Sizes:** One: pill 28, target 32.
 - **States:** Full; low (less than one run's cost); empty; paused (running on your own key); hover (edge to `--v2-line-hover` + 4.5% wash); focus-visible (2px blue outline on the pill); active (7% wash). Forced with `.is-hover`, `.is-focus`, `.is-active`. V2: `index.html?start=worker` (2,000), `?start=worker&credits=0` (0 + red dot), Preview row "Own key: On" (still shows 2,000, dot hidden).
@@ -2573,6 +2614,8 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 **Status:** Changed from V2 (out-of-credits popup, retired); New (zero-credits notice and run end).
 **Why:** Every zero-balance moment must say the same time and what zero means for today's day (R14). In V2 the popup counts down (byok.jsx:66) while the chat says "refreshed tomorrow" twice (chat_bubbles.jsx:188, 189), the main chat reveals zero only after Send (chat_product.jsx:124), and nothing says whether the day still counts.
 
+**V3 restyle (2026-10-14).** Decision: zero balance is a wait, not an error. It stays neutral (a panel note) and carries only the credits chip's danger dot; it gets no tone of its own and no red banner.
+
 ### Out-of-credits popup (retired) (Changed from V2)
 - **Purpose:** none left. V2 lets the partner type at zero, then stops the send with a popup. The system locks the composer at zero and says so before anyone types (section 38), so the moment the popup answered never happens and there is no dialog to dismiss or buy from.
 - **V2 today:** `index.html?start=worker&credits=0`, type in the composer, press Send. Width 300, radius 12, its own scrim rgba(15,23,42,0.5) at z 130, backdrop click only, no role, focus never moves in (byok.jsx:78-80); a gradient 38/800 zero (byok.jsx:51); an unlabelled 22px (i) "What are credits?" (credits_popup_parts.jsx:94); "You’ve used all of today’s AI credits." / "Credits will be refreshed in **6h 42m**." (byok.jsx:65-66).
@@ -2600,12 +2643,14 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 **Status:** Changed from V2 (SettingsSection, AdvancedDisclosure, ByokPanel, AiModePanel).
 **Why:** Settings is where a partner looks for the controls the worker's promises point to (P4). V2 copies one card shell five times with two paddings and two title weights (settings.jsx:25, 112; byok_settings.jsx:61), and leads with developer knobs (Max Output Tokens, Max Steps, Timeout, two AI Model pickers: settings.jsx:120-134, byok_settings.jsx:78). Its own-key switch deletes the key (byok_settings.jsx:64) and AI mode's failure states are unreachable. The system has one section block, one Advanced disclosure, and panels whose every state exists.
 
+**V3 restyle (2026-10-14).** Highlight on arrival is the passing selection ring (`--v2-select-line` edge plus `--v2-ring-select`), not the focus ring and never a glow. Every settings line is a ListRow (section 18).
+
 ### SettingsSection (Changed from V2)
 - **Purpose:** One card per topic the partner thinks about (Worker, Connected apps, Notifications, BlueStacks, Account and privacy, Help, then Advanced: section 55).
 - **Anatomy:** Card: `--v2-surface`, 1px `--v2-line`, no shadow, radius 16, padding 16, gap 12. Header: title 16/600 ink (h2), optional description 13 ink-3, optional control at the right. Body: ListRows run full-bleed (their 16px padding aligns with the title) with their own inset hairlines; any other block gets one `--v2-line-hair` above it with 12 on each side.
 - **Variants:** Plain; with description; with a header control.
 - **Sizes:** Full width of the settings column (387 in the window).
-- **States:** Rest; highlighted (routed here: `--v2-blue` edge + `--v2-focus-ring` for 1900ms, then fades over 240ms). V2: Settings tab at `index.html?start=worker`; the own-key route from AI credits highlights and also turns the key on (index.html:740).
+- **States:** Rest; highlighted (routed here: `--v2-select-line` edge + `--v2-ring-select` for 1900ms, then fades over 240ms). V2: Settings tab at `index.html?start=worker`; the own-key route from AI credits highlights and also turns the key on (index.html:740).
 - **Props:** `id`, `title`, `description`, `action`, `highlight` (truthy change = scroll into view + highlight), `className` (`is-highlighted` forces the look), `children`.
 - **Motion:** Scroll smooth, instant under reduced motion; edge and ring 240ms.
 - **Accessibility:** `<section aria-labelledby>` on its h2, so each block is a landmark-like group; highlight is visual only and never moves focus or changes a value.
@@ -2722,23 +2767,25 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Why:** V2's one sign-out confirm says "Logout" over a body that says sign out, paints a non-destructive action red (`profile.jsx:75-79`), and its confirm does not sign out (`index.html:1010`). The actions that do lose something never ask: switching your own key off deletes the key (`byok_settings.jsx:64`), Remove and Unlink act at once (`byok_settings.jsx:74`, `settings.jsx:59`), and "Not now" on a paid job ends the day as not counted in one tap, the cost told only afterwards (`worker_flow.jsx:121, 149`, `worker_day_done.jsx:95`).
 
+**V3 restyle (2026-10-14).** Decision: no red solid. The confirm's commit is the solid ink primary whose label names what is lost (Disconnect, Remove key, Stop run); the trigger that opens the confirm is the `danger` skin, a ghost whose red arrives on hover.
+
 ### Rules (Changed from V2)
 
 - **Purpose:** decide, by what an action costs, whether to confirm, say the cost on the control, or act and offer Undo. One rule for every destructive action, so a new one has one answer.
 - **Anatomy (the decision table):**
   1. Can cost today's day or future days (skip today's job, skip today's run, stop a run, quit, pause daily runs, disconnect YouTube): say the cost before the choice, and ask once. Either the control carries the cost and one tap acts (the job card's "Skip: today won’t count"), or the control opens one confirm that names it ("Stop now? Today counts only if you run again by 9 pm.", "Skip today’s run?"); never a second question, never the cost told afterwards. No Undo: a day cannot be given back by a toast.
   2. Costs account control, AI credits or money: sign out, disconnect YouTube and remove my own key (BlueAI goes back to the partner's AI credits, and the key must be pasted again) use an AlertDialog; turning on Automatic uses the ConsentDialog (section 46: Dialog `consent` variant, md, with Close, a scrim click does nothing, the primary is the agreement "I agree, turn on"). Either way the title is the question with the object, the body says what changes and how to undo it, and the primary names the action.
-  3. Cannot be undone (delete my data, leave the program): AlertDialog with a danger primary named for the action.
+  3. Cannot be undone (delete my data, leave the program): AlertDialog with the solid primary named for the action.
   4. Costs no day, no money and no control (disconnect Telegram, dismiss a notification): do it at once, no question, then a Toast with Undo.
   5. A switch only turns something on or off; it never deletes, signs out or costs a day as a side effect (a switch that would cost days, Daily runs, opens rule 1's confirm first, section 62).
   - Undo: any change the system can restore while its toast is up gets Undo in that toast, asked first or not (a removed key, rule 2; a disconnected Telegram, rule 4). A toast with Undo stays until Dismiss, Undo, the next toast, or the screen calls `dismiss()` on leaving (section 24); commit the change then.
-  - Red: danger is for the confirm's primary when something is lost (a day, an account link, a key, data, the program), and for a trigger that opens that confirm (Disconnect YouTube, Account's Leave the program and Delete my data). An action that costs nothing is never red (section 11).
+  - Red: never a fill (V3 restyle, 2026-10-14). The trigger that opens a confirm where something is lost (a day, an account link, a key, data, the program) is the `danger` ghost, red on hover (Disconnect YouTube, Account's Leave the program and Delete my data); the confirm's commit is the solid primary, named for the loss. An action that costs nothing is never red (section 11).
 - **Variants:** confirm first; cost on the control; act then Undo.
 - **Sizes:** AlertDialog sm (320); Toast as wide as the window minus the gutter.
 - **States:** confirm, busy (primary loading; Esc, scrim and Cancel held), done (toast), undone (toast "Key restored.").
 - **Props:** `Dialog {variant: 'alert', title, description, actions, busy}`; inside a screen, `useScreenToast().show({tone, title, action: {label: 'Undo', onClick}})` under `V2Screens.ToastScope` (a toast with an action has no timer, section 24). The screens' confirm helpers, on `window.V2Screens` from `screens/settings.jsx` (`:25-31`, header):
   - `useConfirmStep(forced) -> {busy, failed, run(done), reset()}`: the primary's work. `run(done)` sets busy, then calls `done()` once the work lands (failed keeps the dialog); `reset()` clears it on Cancel. `forced` 'busy' | 'failed' draws that cell in the guide.
-  - `ConfirmDialog {copy, tone, step, preview, onCancel, onConfirm}`: the AlertDialog for one `CONFIRM_COPY` entry. `copy` is the entry, `tone` the primary's variant ('danger' when something is lost, else primary), `step` a `useConfirmStep()`; busy holds Esc, the scrim and Cancel, and a failure keeps the dialog, shows a danger Banner with `copy.failed` and turns the primary into Try again.
+  - `ConfirmDialog {copy, step, preview, onCancel, onConfirm}`: the AlertDialog for one `CONFIRM_COPY` entry. `copy` is the entry (its commit is always the solid primary), `step` a `useConfirmStep()`; busy holds Esc, the scrim and Cancel, and a failure keeps the dialog, shows a danger Banner with `copy.failed` and turns the primary into Try again.
   - `pendingBody(state, what, onRetry)`: the account screens' 'loading' (ListSkeleton) and 'error' (LoadError with Try again) bodies, or null when the screen has its data (section 50).
 - **Motion:** dialog scale-in 320 ms, leaves 240 ms ease-in; toast rises 180 ms.
 - **Accessibility:** `role=alertdialog`, focus on Cancel (the first action, the safe answer; section 09), focus back to the opener on close; Undo is a real button; a toast that carries it never times out, so it can be reached at any pace (WCAG 2.2.1).
@@ -3220,6 +3267,8 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 **Status:** New (glossary); In V2 (PM copy register).
 
 **Why:** A partner moves between the onBlue site and the app every day. V2 names one thing several ways: "BlueAI Worker v57 skill" (`worker_flow.jsx:63`), "Loading your skills…" (`boot_splash.jsx:25`), "tasks" and "earn rewards" for paid jobs (`worker_flow.jsx:45-46`), "Logout" beside "Sign out" (`index.html:378`, `profile.jsx:62`), "tokens" for AI credits (`ai_mode.jsx:109`). The same thing named five ways reads as five things, and the money words drift most.
+
+**V3 restyle (2026-10-14).** Eyebrows are sentence case in the source and uppercase through CSS only. PM copy items seen in the V3 restyle (not changed there, proposed): Jobs empty state "Coming Soon" (title case, its body ends in "!"); "Are you sure...?" confirm copy; Schedule's "N/A"; "Logout" title vs the "Sign out" row in the same flow; Settings titles in title case ("Bring Your Own Key", "Max Output Tokens", "Chat AI Settings", "Timeout (in Secs)"); "Validate & Save" (ampersand).
 
 ### Glossary (New)
 
@@ -3821,7 +3870,7 @@ Choices only the PM (and legal, where named) can make. The system builds the rec
 
 | Decision | Option A | Option B | Recommended |
 |---|---|---|---|
-| **D1** Primary fill | Blue action #1268f0 (kit default) | Ink #0b0b0d like the site's commit button | A: blue already means the worker's actions in V2; links become underlined ink and selection a 12% tint, so blue no longer collides. |
+| **D1** Primary fill | Blue action #1268f0 | Ink #0b0b0d like the site's commit button | Decided B (Appy, V3 restyle 2026-10-14): the solid ink button, `--v2-solid` with the site's three-stop cast; blue is held to focus, selection, progress, links and the spark. |
 | **D2** The noun: worker or agent | worker (V2) | agent (site, apply.html:1269-1274) | One noun across site and app, one capitalisation ('BlueAI worker'); PM call. |
 | **D3** The money model | $1 per verified day + $10 day-20 bonus (worker_day_done.jsx:5-6) | $30 when the 20-day goal is met (apply.html:1285, 1471) | Pick one sentence and say it everywhere; if B, the app shows days, never partial dollars ('days' style is already the default). Rename the bonus 'day-20 bonus' if it stays. The $10 cash-out minimum is not part of the choice: it is V2's rule (worker_day_done.jsx:6) and the site's (apply.html:1360, 2292), so the app states it now (sections 01, 41, 43). Proposed strings that wait on this choice (PM and legal): the leave and delete line for a balance under the minimum ('a balance under $10 can’t be cashed out once you leave', `screens/settings.jsx` cashLine), and Home's dropped banner sentence 'Every day you run still counts.' (false under B). |
 | **D4** Where the mode changes later | Version 1 chip in the composer | Version 2 ribbon (default) | B as the in-chat shortcut plus Settings > Worker as the permanent home either way. V2 added a Worker card to Settings on 2026-10-14; both versions now open one mode sheet. |
@@ -4043,6 +4092,8 @@ Not live, and why:
 
 **Why:** A system is only trustworthy if it says what it cannot prove. These are the limits of the guide and its checks, the open items the build left for the part that owns them, and the V2 code that is not a source.
 
+**V3 restyle (2026-10-14).** V2's jobs.jsx still carries an unreachable job list (JobCard, JobDetailsModal, StatusBadge, JOB_STATUS, JOBS_ACTIVE, JOBS_HISTORY) with indigo #4f46e5 and the old status colours; V3 no longer does. Delete it in V2 or bring it back on purpose (PM). The PM copy items found in the V3 restyle are listed in section 70.
+
 ### What the guide cannot catch
 
 - **How it looks:** Nothing here takes screenshots, by design. ds-check reads files, not pixels; layout, spacing and stroke weight are checked by eye in this guide.
@@ -4110,6 +4161,14 @@ About 3,000 of V2’s lines never render. They are listed here and never specime
 **Status:** Meta (no parts).
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
+
+### 2026-10-14: Target look aligned with the onBlue Agentic site after the V3 restyle
+
+- Target look aligned with the onBlue Agentic site after the V3 restyle: the committing action is the site's solid ink button (new --v2-solid, --v2-solid-hover, --v2-shadow-btn, --v2-shadow-btn-hover; decision D1 settled), the ghost presses to new --v2-surface-press, chips rest on new --v2-wash-tint, and blue is held to focus, selection, progress, links and the spark.
+- New tokens: --v2-text-18 (dialog and sheet titles, .v2-text-title-dialog), --v2-tracking-figure (big figures), --v2-radius-dialog 20 (every dialog and the sheet's top edge), --v2-shadow-2-up (sheets), --v2-scrim-light (a sheet's veil), --v2-ring-select (highlight on arrival), and look hooks --v2-waiting-fill and --v2-brand-word-fill; each also in tokens-v2-today.css with V2's value.
+- Re-valued: the user bubble is the grey surface with a hairline (--v2-bubble-user-fill, -line); --v2-attention-line is the attention ink at 32% like the other tone lines; a needs-input notice and the AskCard sit on the surface with the tone on the edge, and a failed notice takes the danger edge.
+- Kit: Button primary is the solid ink, secondary the ghost, danger a ghost red on hover (no red solid; destructive confirms commit with the solid primary, ConfirmDialog drops its tone prop); one Switch (40x24, sunken off, blue on, lined knob); Select placeholder in placeholder ink; Badge busy is blue; a ListRow with a value draws the site's ledger; EmptyState is a 56 sunken mark, 20/600 title, one muted line; dialogs and sheets take radius 20 and 18/600 titles; the credits glyph is V2's own asset as an image (no mask) and the BrandMark word is ink.
+- Decided: rows keep radius 10; one field (40 tall, 13/500 label); icon stroke 1.75 for every product set; zero credits is a wait (neutral plus the chip's dot); no serif em in working-tab empty states; pill and caret geometry stay in their parts. The spark ships as assets/spark.svg. Sections 03, 04, 06, 08, 11 to 16, 18, 22, 23, 25, 26, 30, 33, 35, 37, 38, 47 to 49, 52, 70, 73 and 76 updated.
 
 ### 2026-10-14: Minimal progress card and plain consent frame in V2
 

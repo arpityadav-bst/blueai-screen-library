@@ -189,7 +189,7 @@
     return (
       <div className={cx('v2-ov-actions', actions.length === 1 && 'v2-ov-actions--one')}>
         {actions.map(function (a, i) {
-          const main = a.variant === 'primary' || a.variant === 'danger';
+          const main = a.variant === 'primary';
           return (
             <Btn key={a.label + i} variant={a.variant || 'secondary'} size="lg" full loading={!!(busy && main)}
               disabled={a.disabled || (busy && !main)} disabledReason={a.disabled ? a.disabledReason : undefined}
@@ -204,7 +204,7 @@
     if (!title && !showClose) return null;
     return (
       <div className={cx('v2-dialog-head', !title && 'v2-dialog-head--bare')}>
-        {title ? <h2 className="v2-dialog-title v2-text-title-lg" id={id}>{title}</h2> : null}
+        {title ? <h2 className="v2-dialog-title v2-text-title-dialog" id={id}>{title}</h2> : null}
         {showClose ? <CloseButton onClick={onClose} disabled={busy} /> : null}
       </div>
     );

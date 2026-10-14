@@ -26,8 +26,9 @@
      leaving and deleting always state the $10 minimum; under it, what that means once you leave.
    useConfirmStep(forced)  {busy, failed, run(done), reset()}: a confirm's primary that does work,
      busy while it runs, then done or failed. forced 'busy' | 'failed' draws that cell (guide).
-   ConfirmDialog {copy, tone, step, preview, onCancel, onConfirm}  the AlertDialog for one
-     CONFIRM_COPY entry: busy holds Esc, the scrim and Cancel; a failure keeps the dialog, says so
+   ConfirmDialog {copy, step, preview, onCancel, onConfirm}  the AlertDialog for one
+     CONFIRM_COPY entry; its commit is the solid primary named for what is lost (V3 restyle,
+     2026-10-14: no red solid). busy holds Esc, the scrim and Cancel; a failure keeps the dialog, says so
      in a danger Banner and turns the primary into Try again.
    pendingBody(state, what, onRetry)  the account screens' 'loading' and 'error' bodies (section
      50), or null when the screen has its data.
@@ -86,13 +87,13 @@
     };
   }
 
-  function ConfirmDialog({ copy, tone, step, preview, onCancel, onConfirm }) {
+  function ConfirmDialog({ copy, step, preview, onCancel, onConfirm }) {
     const K = kit();
     if (!copy || !K.Dialog) return null;
     const s = step || {};
     return (
       <K.Dialog open preview={preview} variant="alert" title={copy.title} description={copy.body} busy={s.busy} onClose={onCancel}
-        actions={[{ label: 'Cancel', onClick: onCancel }, { label: s.failed ? 'Try again' : copy.confirm, variant: tone || 'primary', onClick: onConfirm }]}>
+        actions={[{ label: 'Cancel', onClick: onCancel }, { label: s.failed ? 'Try again' : copy.confirm, variant: 'primary', onClick: onConfirm }]}>
         {s.failed && K.Banner ? <K.Banner tone="danger" title={copy.failed}>Nothing changed. Try again in a moment.</K.Banner> : null}
       </K.Dialog>
     );

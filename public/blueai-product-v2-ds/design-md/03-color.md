@@ -4,6 +4,8 @@
 
 **Why:** BlueAI is a quiet control room for an agent working on the partner's own accounts, and the partner moves between it and the onBlue site every day. V2 paints with two Tailwind grey ramps split 178/178, seven blue fills, an indigo nav, four parallel status maps and the brand gradient in three places on one top bar; its primary blue fails contrast with its own white labels (3.24:1, index.html:351) and its faintest text carries its most important caveats (2.5:1, chat_bubbles.jsx:124, account_gate.jsx:31). The system keeps one hue per job and shares the site's neutrals, lines, blue, greens and reds, so the app and the site read as one family (P5, P6, P7).
 
+**V3 restyle (2026-10-14).** The Target look now carries what V3 settled on with Appy. The committing button is the solid ink (`--v2-solid` #0b0b0d, hover `--v2-solid-hover` #26262b, the site's three-stop `--v2-shadow-btn`), so blue is held to focus, selection, progress, links on hover and the spark. The user bubble is the grey surface with a hairline, not a blue tint. Green means reached or verified; money stays ink. Run state rule (decided): pending is blue-outlined (progress), green arrives only with the second tick (verified). Every tone line is its ink at 32%: `--v2-attention-line` is now rgba(138,97,22,0.32) (was #f3e8a8), and a message's edge takes its tone only when the run stopped (waiting on you, or failed). The brand gradient is fenced to the credits glyph's own drawing.
+
 ### Ink ramp (Changed from V2)
 
 **Purpose.** All text and idle icon colour, in one hue.
@@ -52,7 +54,7 @@
 
 **Purpose.** One blue hue in roles, so action, selection and focus are one colour family without failing contrast.
 
-**Anatomy.** `--v2-blue` #156efe (focus, selected border, progress, current step, lit nav: the site's blue), `--v2-action` #1268f0 (filled buttons, send: 4.92:1 with white), `--v2-action-hover` #0f5ad4 (6.12:1), `--v2-blue-ink` #0d5ad6 (blue text on tints: 6.09:1), `--v2-blue-tint` and `--v2-blue-tint-line` (info notice, user bubble), `--v2-select` and `--v2-select-line` (selected chip, choice card, segmented on).
+**Anatomy.** `--v2-blue` #156efe (focus, selected border, progress, current step, lit nav: the site's blue), `--v2-action` #1268f0 (a filled selection that carries a white mark: checked checkbox, avatar hue; 4.92:1 with white. Buttons and send moved to `--v2-solid` in the V3 restyle), `--v2-action-hover` #0f5ad4 (6.12:1), `--v2-blue-ink` #0d5ad6 (blue text on tints: 6.09:1), `--v2-blue-tint` and `--v2-blue-tint-line` (info badge, banner and notice), `--v2-select` and `--v2-select-line` (selected chip, choice card, segmented on).
 
 **Variants.** Fill, text, tint, selected.
 
@@ -64,7 +66,7 @@
 
 **Motion.** Fill colour over `--v2-dur-1`.
 
-**Accessibility.** White text goes on `--v2-action`, never on `--v2-blue` (4.47:1). Blue text uses `--v2-blue-ink`.
+**Accessibility.** White text goes on `--v2-action` or `--v2-solid`, never on `--v2-blue` (4.47:1). Blue text uses `--v2-blue-ink`.
 
 **Responsive.** Not applicable.
 
@@ -106,11 +108,11 @@
 
 **Anatomy.** `--v2-gradient-brand`, linear-gradient(90deg, #0EA4C5, #7B4CFF).
 
-**Variants.** The BlueAI mark and wordmark; the credits glyph (`<Icon name="credits" />`, the gradient through V2's star).
+**Variants.** The credits glyph only (`<Icon name="credits" />`): V2's own drawing, assets/Credits.svg, as an image beside an ink figure. Never text, a mask fill, a ring or a wordmark (V3 restyle; the BrandMark word is ink in Target through `--v2-brand-word-fill`).
 
 **Sizes.** Mark per section 30; glyph 16, 20, 24.
 
-**States.** Mark, credits glyph. V2 today: the top bar at `?start=worker` shows it three times (wordmark, pill ring, pill number, index.html:335-346), and the user bubble uses a cousin gradient with an indigo glow (chat_bubbles.jsx:30).
+**States.** Credits glyph. V2 today: the top bar at `?start=worker` shows it three times (wordmark, pill ring, pill number, index.html:335-346), and the user bubble uses a cousin gradient with an indigo glow (chat_bubbles.jsx:30).
 
 **Props.** None: use BrandMark or the credits Icon.
 

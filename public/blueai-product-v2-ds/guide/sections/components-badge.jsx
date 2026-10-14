@@ -15,6 +15,7 @@
     const B = K.Badge;
     return (
       <G.Section id="badge">
+        <G.Note>V3 restyle (2026-10-14): the status pill has five tones: neutral, busy, ok, danger, attention. Busy is progress, so blue: the select fill, blue-ink label and a pulsing blue dot.</G.Note>
         <G.Part name="Badge" status="changed" role="A short state on a row or card: a day, a run, an app, a mode. Tone sits in the fill and the dot; words stay in ink.">
           <G.Stage ground="surface">
             <div style={row}>

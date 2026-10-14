@@ -26,6 +26,7 @@
     const chatModel = <S title="Chat model"><Select label="Model" value="auto" options={[{ value: 'auto', label: 'Auto' }]} onChange={noop} /></S>;
     return (
       <G.Section id="settings-blocks">
+        <G.Note>V3 restyle (2026-10-14): highlight on arrival is the passing selection ring (--v2-select-line edge plus --v2-ring-select), never a glow. Every settings line is a ListRow (section 18).</G.Note>
         <G.Part name="SettingsSection" status="changed"
           role="One card per topic the partner thinks about, hair-divided rows inside; developer controls behind one Advanced disclosure.">
           <G.StateGrid wide states={[

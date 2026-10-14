@@ -129,7 +129,7 @@
             <p className="v2-stopconfirm-text" id={askId}>{D ? D.stopAsk(!!paidJob) : 'Stop now?'}</p>
             <div className="v2-stopconfirm-actions">
               {P.Button ? <P.Button variant="secondary" size="md" onClick={keepRunning}>Keep running</P.Button> : null}
-              {P.Button ? <P.Button variant="danger" size="md" onClick={stopRun}>Stop run</P.Button> : null}
+              {P.Button ? <P.Button variant="primary" size="md" onClick={stopRun}>Stop run</P.Button> : null}
             </div>
           </div>
         ) : null}

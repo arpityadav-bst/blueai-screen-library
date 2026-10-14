@@ -4,15 +4,17 @@
 
 **Why:** A new partner opens Activity before their first run and Notifications before anything has happened; an empty view has to say what will be there and when. V2's two empty states use off-palette art (Schedule: a purple icon on a purple disc, schedule.jsx:126-132; Jobs: a 120px disc with a brown briefcase over "Coming Soon", jobs.jsx:129-145, standing in for a whole tab). The onBlue site already has the family's answer: the dashed ghost and copy that names what will appear (onblue/apply.html:323-327, 1422).
 
+**V3 restyle (2026-10-14).** An empty state is now a 56 sunken mark with the 24 icon in muted ink, a 20/600 title, one 14 ink-3 line at `--v2-measure-tip`, and at most one solid action; no box of its own (the dashed edge is kept for a pending choice). Decision: no serif em phrase in these, they sit in working tabs; the serif stays on welcome and first-run moments.
+
 ### EmptyState (Changed from V2)
 
 **Purpose.** What a view shows with nothing in it: names what will appear, gives one line of why, and offers the one way forward when there is one.
 
 **Anatomy.**
-1. Box: 1px dashed `--v2-line-strong`, radius 16, `--v2-surface-panel`, padding 32 24, centred column, gap 8. A dashed edge means "a thing will be here".
-2. Icon: 24 (`--v2-icon-lg`) in `--v2-ink-3`. No disc, no colour.
-3. Title: 16/600 `--v2-ink`, an h2 by default.
-4. Body: 13 `--v2-ink-3`, at most 280 wide.
+1. Column: no box, padding 40 20, centred, gap 8 (V3 restyle).
+2. Mark: a 56 disc (`--v2-mark-xl`) in `--v2-surface-sunken`, the 24 icon in `--v2-ink-3`. No colour.
+3. Title: 20/600 `--v2-ink`, an h2 by default.
+4. Body: 14 `--v2-ink-3`, at most 260 wide (`--v2-measure-tip`).
 5. Actions (optional): one medium primary Button (36), and a quiet one beside it only if needed.
 
 **Variants.** Five, which change the words and the default icon, never the colours:

@@ -4,11 +4,13 @@
 
 **Why:** The partner's consent, sign-out and disconnect decisions happen in dialogs, and V2 builds each one separately: five widths (280, 300, 340, 360, 382), radii 12, 16 and 20, five different scrims, z-indexes from 50 to 130 with a tie at 120 (shared.jsx:72-73, profile.jsx:73-74, byok.jsx:79-80, worker_day_done.jsx:139-142, terms_sheet.jsx:97). None moves focus in or gives it back, the close button has no name (shared.jsx:76) and none has a busy state, so a slow consent can be clicked twice. One Dialog on one scrim and one layer fixes all of it (P5, P7, R24), with the onBlue sheet's quiet manners: the panel takes focus, not its close button (onblue/onblue.css:942), and the title takes the row (onblue.css:1384).
 
+**V3 restyle (2026-10-14).** Decisions: one dialog radius, 20 (`--v2-radius-dialog`); titles 18/600/-0.03em (`--v2-text-18`, `.v2-text-title-dialog`). Size split: confirm dialogs (sign out, out of credits) are `--v2-dialog-sm` with the plain frame (no header rule); task dialogs (Telegram, Hybrid) are `--v2-dialog-md` with the header. The commit is the solid ink primary; there is no red solid: a destructive confirm names the loss in a solid primary.
+
 ### Dialog (Changed from V2)
 
 **Purpose.** A decision or a short task the partner must finish or decline before going on: consent to Automatic, sign out, disconnect, out of credits, the day-done moment.
 
-**Anatomy.** Scrim `--v2-scrim` over the window. Panel centred with a 16px inset: `--v2-surface`, 1px `--v2-line`, radius 16 (`--v2-radius-lg`), `--v2-shadow-2`. Header: title 20/600 `--v2-ink` (tracking -0.02em) taking the row, a 32px IconButton named Close beside it. Body: 14/1.5 `--v2-ink-2`, padding 20, scrolls when tall. Actions: 44px Buttons of equal width, 8px apart, secondary first, primary last. Optional footer note 12 `--v2-ink-3`. Layer `--v2-z-dialog` (100). One dialog at a time; if two ever overlap, mount order decides which is on top (section 06), which only settles the overlap, it does not make stacking a pattern.
+**Anatomy.** Scrim `--v2-scrim` over the window. Panel centred with a 16px inset: `--v2-surface`, 1px `--v2-line`, radius 20 (`--v2-radius-dialog`), `--v2-shadow-2`. Header: title 18/600 `--v2-ink` (tracking -0.03em) taking the row, a 32px IconButton named Close beside it. Body: 14/1.5 `--v2-ink-2`, padding 20, scrolls when tall. Actions: 44px Buttons of equal width, 8px apart, secondary first, primary last. Optional footer note 12 `--v2-ink-3`. Layer `--v2-z-dialog` (100). One dialog at a time; if two ever overlap, mount order decides which is on top (section 06), which only settles the overlap, it does not make stacking a pattern.
 
 **Variants.** `task` (md, Close, scrim click cancels). `consent` (md, Close, scrim click does nothing, the primary's label is the agreement: "I agree, turn on"). `alert` (see AlertDialog). `celebration` (sm, centred, no Close, scrim click closes: DayDone). `scrim="frost"` puts it on the sign-in gate veil and layer (`--v2-z-gate`), sign-in only.
 
@@ -32,7 +34,7 @@
 
 **Anatomy.** Dialog sm with role alertdialog, no Close: the title is the question, the body says what changes, two actions: Cancel and the action named for itself.
 
-**Variants.** Confirm: a neutral primary (`--v2-action`, 4.92:1). Destructive: `danger` (`--v2-danger-ink` #c03a40, 5.36:1), only when it destroys or costs a day.
+**Variants.** Confirm: the solid primary (`--v2-solid`). Destructive: the same solid primary, its label naming what is lost (V3 restyle: no red fill).
 
 **Sizes.** sm 320.
 

@@ -4,12 +4,15 @@
 
 **Why:** The partner reads this app every day in a 419px window, often at small sizes on Windows. V2 uses 30 font sizes, seven page-title recipes, weight 800 71 times (650, 750 and 900 are requested but never loaded), and four typefaces in a new partner's first minute. Its stack puts SF before Plus Jakarta Sans, so Macs and Windows show different products (index.html:34). The site is Inter end to end; one face, thirteen styles and three weights make the app read as the site's working screen (P6).
 
+**V3 restyle (2026-10-14).** Two values added: `--v2-text-18` for dialog and sheet titles (`.v2-text-title-dialog`, 18/600/-0.03em, the site's sheet title), and `--v2-tracking-figure` -0.045em for big figures (`.v2-text-display`: the credits balance, the out-of-credits 0, the free-credits grant). Eyebrows stay uppercase through CSS only: their source strings are sentence case ("What would you like to do?", "Plan"), so a screen reader and a copy edit read words, not shouting.
+
 ### Type ladder (Changed from V2)
 
 **Purpose.** One recipe per text role, so size, weight, leading, tracking and ink travel together and no screen re-decides how loud a line is.
 
 **Anatomy.** Thirteen classes in kit/base.css (size / weight / leading / tracking, ink), plus the row label the list-row parts set themselves:
-- `.v2-text-display` 40 / 600 / 1 / -0.03em, ink, tabular: credits balance.
+- `.v2-text-display` 40 / 600 / 1 / -0.045em (`--v2-tracking-figure`), ink, tabular: credits balance.
+- `.v2-text-title-dialog` 18 / 600 / 1.35 / -0.03em, ink: dialog and sheet titles (V3 restyle).
 - `.v2-text-greeting` 24 / 600 / 1.2 / -0.02em, ink: home greeting, welcome title.
 - `.v2-text-title-lg` 20 / 600 / 1.2 / -0.02em, ink: every screen and dialog title.
 - `.v2-text-numeral-sm` 20 / 600 / 1 / -0.02em, ink, tabular: "7" in "7 of 20 days".

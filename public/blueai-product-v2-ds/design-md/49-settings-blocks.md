@@ -3,12 +3,14 @@
 **Status:** Changed from V2 (SettingsSection, AdvancedDisclosure, ByokPanel, AiModePanel).
 **Why:** Settings is where a partner looks for the controls the worker's promises point to (P4). V2 copies one card shell five times with two paddings and two title weights (settings.jsx:25, 112; byok_settings.jsx:61), and leads with developer knobs (Max Output Tokens, Max Steps, Timeout, two AI Model pickers: settings.jsx:120-134, byok_settings.jsx:78). Its own-key switch deletes the key (byok_settings.jsx:64) and AI mode's failure states are unreachable. The system has one section block, one Advanced disclosure, and panels whose every state exists.
 
+**V3 restyle (2026-10-14).** Highlight on arrival is the passing selection ring (`--v2-select-line` edge plus `--v2-ring-select`), not the focus ring and never a glow. Every settings line is a ListRow (section 18).
+
 ### SettingsSection (Changed from V2)
 - **Purpose:** One card per topic the partner thinks about (Worker, Connected apps, Notifications, BlueStacks, Account and privacy, Help, then Advanced: section 55).
 - **Anatomy:** Card: `--v2-surface`, 1px `--v2-line`, no shadow, radius 16, padding 16, gap 12. Header: title 16/600 ink (h2), optional description 13 ink-3, optional control at the right. Body: ListRows run full-bleed (their 16px padding aligns with the title) with their own inset hairlines; any other block gets one `--v2-line-hair` above it with 12 on each side.
 - **Variants:** Plain; with description; with a header control.
 - **Sizes:** Full width of the settings column (387 in the window).
-- **States:** Rest; highlighted (routed here: `--v2-blue` edge + `--v2-focus-ring` for 1900ms, then fades over 240ms). V2: Settings tab at `index.html?start=worker`; the own-key route from AI credits highlights and also turns the key on (index.html:740).
+- **States:** Rest; highlighted (routed here: `--v2-select-line` edge + `--v2-ring-select` for 1900ms, then fades over 240ms). V2: Settings tab at `index.html?start=worker`; the own-key route from AI credits highlights and also turns the key on (index.html:740).
 - **Props:** `id`, `title`, `description`, `action`, `highlight` (truthy change = scroll into view + highlight), `className` (`is-highlighted` forces the look), `children`.
 - **Motion:** Scroll smooth, instant under reduced motion; edge and ring 240ms.
 - **Accessibility:** `<section aria-labelledby>` on its h2, so each block is a landmark-like group; highlight is visual only and never moves focus or changes a value.

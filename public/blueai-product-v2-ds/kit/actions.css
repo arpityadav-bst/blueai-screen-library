@@ -13,43 +13,49 @@
   border: var(--v2-stroke) solid transparent; border-radius: var(--v2-radius-sm);
   background-color: var(--v2-surface); color: var(--v2-ink);
   font-family: var(--v2-font-ui); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium);
-  letter-spacing: var(--v2-tracking-label); line-height: var(--v2-leading-display);
+  letter-spacing: var(--v2-tracking-title); line-height: var(--v2-leading-display);
   white-space: nowrap; text-decoration: none; cursor: pointer; user-select: none;
-  transition: background-color var(--v2-dur-1) var(--v2-ease-standard),
-    border-color var(--v2-dur-1) var(--v2-ease-standard), transform var(--v2-dur-1) var(--v2-ease-out);
+  transition: background-color var(--v2-dur-1) var(--v2-ease-standard), border-color var(--v2-dur-1) var(--v2-ease-standard),
+    box-shadow var(--v2-dur-1) var(--v2-ease-standard), transform var(--v2-dur-1) var(--v2-ease-out);
 }
 .v2-button--sm { height: var(--v2-control-sm); padding: 0 var(--v2-space-3); gap: var(--v2-space-15); }
-.v2-button--lg { height: var(--v2-control-lg); padding: 0 var(--v2-space-5); }
+.v2-button--lg { height: var(--v2-control-lg); padding: 0 var(--v2-space-6); font-size: var(--v2-text-14); }
 .v2-button--full { display: flex; width: 100%; }
 .v2-button .v2-icon { flex: none; }
 .v2-button-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 
-/* primary: the one commit on a view */
-.v2-button--primary { background-color: var(--v2-action); border-color: var(--v2-action); color: var(--v2-on-color); }
-.v2-button--primary:hover:not([aria-disabled="true"]), .v2-button--primary.is-hover {
-  background-color: var(--v2-action-hover); border-color: var(--v2-action-hover);
+/* primary: the one commit on a view, the site's solid ink button (V3 restyle, 2026-10-14): ink fill, the
+   three-stop cast; hover lightens the ink, pulls the cast in and drops 1px; active drops 2px. */
+.v2-button--primary {
+  background-color: var(--v2-solid); border-color: var(--v2-solid); color: var(--v2-on-color); box-shadow: var(--v2-shadow-btn);
 }
-/* secondary: the frequent second action (the site's ghost) */
-.v2-button--secondary { background-color: var(--v2-surface); border-color: var(--v2-line-strong); color: var(--v2-ink); }
+.v2-button--primary:hover:not([aria-disabled="true"]), .v2-button--primary.is-hover {
+  background-color: var(--v2-solid-hover); border-color: var(--v2-solid-hover); box-shadow: var(--v2-shadow-btn-hover); transform: translateY(1px);
+}
+.v2-button--primary[aria-disabled="true"] { box-shadow: none; }
+/* secondary: the frequent second action, the site's ghost: panel fill, 15% line, no cast; hover to
+   the sunken surface, pressed to --v2-surface-press. */
+.v2-button--secondary { background-color: var(--v2-surface-panel); border-color: var(--v2-line-strong); color: var(--v2-ink); }
 .v2-button--secondary:hover:not([aria-disabled="true"]), .v2-button--secondary.is-hover {
-  background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); border-color: var(--v2-line-hover);
+  background-color: var(--v2-surface-sunken); border-color: var(--v2-line-hover);
 }
 /* quiet: the third action, no box until hovered */
 .v2-button--quiet { background-color: transparent; color: var(--v2-ink-2); }
 .v2-button--quiet:hover:not([aria-disabled="true"]), .v2-button--quiet.is-hover {
   background-color: var(--v2-wash-hover); color: var(--v2-ink);
 }
-/* danger: the one action that destroys, inside its confirm */
-.v2-button--danger { background-color: var(--v2-danger-ink); border-color: var(--v2-danger-ink); color: var(--v2-on-color); }
+/* danger: the trigger of an action that destroys (Remove, Disconnect). A ghost whose red arrives on
+   hover only; the label already says what it does. The confirm's commit is the solid primary (V3 restyle, 2026-10-14). */
+.v2-button--danger { background-color: var(--v2-surface-panel); border-color: var(--v2-line-strong); color: var(--v2-ink); }
 .v2-button--danger:hover:not([aria-disabled="true"]), .v2-button--danger.is-hover {
-  background-image: linear-gradient(var(--v2-wash-press), var(--v2-wash-press));
+  background-color: var(--v2-danger-tint); border-color: var(--v2-danger-edge); color: var(--v2-danger-ink);
 }
 
-/* press: a real 1px drop (the site's press), plus a deeper wash on the unfilled two */
+/* press: a real drop (the site's press, 2px on the solid), the ghost to its pressed fill */
 .v2-button:active:not([aria-disabled="true"]), .v2-button.is-active { transform: translateY(1px); }
-.v2-button--secondary:active:not([aria-disabled="true"]), .v2-button--secondary.is-active {
-  background-image: linear-gradient(var(--v2-wash-press), var(--v2-wash-press));
-}
+.v2-button--primary:active:not([aria-disabled="true"]), .v2-button--primary.is-active { transform: translateY(2px); }
+.v2-button--secondary:active:not([aria-disabled="true"]), .v2-button--secondary.is-active,
+.v2-button--danger:active:not([aria-disabled="true"]), .v2-button--danger.is-active { background-color: var(--v2-surface-press); }
 .v2-button--quiet:active:not([aria-disabled="true"]), .v2-button--quiet.is-active { background-color: var(--v2-wash-press); }
 .v2-button:focus-visible, .v2-button.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 
@@ -131,8 +137,8 @@
   display: inline-flex; align-items: center; gap: var(--v2-space-15);
   height: var(--v2-control-sm);
   padding: 0 var(--v2-space-3);
-  border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-pill);
-  background-color: var(--v2-surface); color: var(--v2-ink);
+  border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-pill);
+  background-color: var(--v2-surface); background-image: linear-gradient(var(--v2-wash-tint), var(--v2-wash-tint)); color: var(--v2-ink-2);
   font-family: var(--v2-font-ui); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium);
   letter-spacing: var(--v2-tracking-label); line-height: var(--v2-leading-display);
   white-space: nowrap; cursor: pointer; user-select: none;
@@ -141,7 +147,7 @@
 }
 .v2-chip .v2-icon { flex: none; }
 .v2-chip:hover:not([aria-disabled="true"]), .v2-chip.is-hover {
-  background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); border-color: var(--v2-line-hover);
+  background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)); border-color: var(--v2-line-hover); color: var(--v2-ink);
 }
 .v2-chip:not([aria-pressed="true"]):active:not([aria-disabled="true"]), .v2-chip.is-active {
   background-image: linear-gradient(var(--v2-wash-press), var(--v2-wash-press));
@@ -168,4 +174,7 @@
 }
 .v2-icon-button--28::after { left: calc((100% - var(--v2-hit-min)) / 2); right: calc((100% - var(--v2-hit-min)) / 2); }
 
-@media (prefers-reduced-motion: reduce) { .v2-button:active:not([aria-disabled="true"]), .v2-button.is-active { transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .v2-button:active:not([aria-disabled="true"]), .v2-button.is-active,
+  .v2-button--primary:hover:not([aria-disabled="true"]), .v2-button--primary.is-hover { transform: none; }
+}

@@ -87,6 +87,7 @@
   function CopyVoiceSection() {
     return (
       <G.Section id="copy-voice">
+        <G.Note>V3 restyle (2026-10-14): eyebrows are sentence case in the source, uppercase by CSS only. PM copy items seen in V3 (proposed, not changed): Jobs' 'Coming Soon' and its '!'; 'Are you sure...?' confirms; Schedule's 'N/A'; the 'Logout' title beside the 'Sign out' row; Settings titles in title case ('Bring Your Own Key', 'Max Output Tokens', 'Chat AI Settings', 'Timeout (in Secs)'); 'Validate & Save'.</G.Note>
         <G.Part name="Glossary" status="new" role="One word per thing, shared with the onBlue site, with the words that must not stand in for it.">
           <G.Note>Why the product needs it. A partner moves between the site and the app every day; the same thing named five ways (worker, Worker, AI worker, skill, agent) reads as five things, and the money words are the ones that drift most.</G.Note>
           <Table head={['Term', 'Use', 'Never', 'Where V2 drifts']} rows={GLOSSARY} render={function (r) {

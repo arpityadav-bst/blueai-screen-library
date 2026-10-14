@@ -21,13 +21,14 @@
 .v2-frame-overlays { position: absolute; inset: 0; pointer-events: none; }
 .v2-frame-overlays > * { pointer-events: auto; }
 
-/* BrandMark: the one place the brand gradient is a fill (P5). Logos are exempt from text contrast;
+/* BrandMark: the word is ink in Target (V3 restyle, 2026-10-14: the gradient is fenced to the credits glyph);
+   the V2 today look paints it with the gradient through --v2-brand-word-fill. Logos are exempt from text contrast;
    forced-colours mode falls back to system text so the name never disappears. */
 .v2-brand { display: inline-flex; align-items: center; gap: var(--v2-space-15); flex: none; min-width: 0; }
 .v2-brand-logo { display: block; flex: none; width: var(--v2-icon-lg); height: var(--v2-icon-lg); }
 .v2-brand-word {
   font-size: var(--v2-text-16); font-weight: var(--v2-weight-semibold); letter-spacing: var(--v2-tracking-label);
-  line-height: var(--v2-leading-tight); background: var(--v2-gradient-brand);
+  line-height: var(--v2-leading-tight); background: var(--v2-brand-word-fill);
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
 }
 .v2-brand--lg { flex-direction: column; gap: var(--v2-space-3); }

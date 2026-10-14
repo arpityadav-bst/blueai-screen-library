@@ -30,7 +30,7 @@
 
 ### P5 Quiet by default
 
-- **Rule:** Surfaces separate with 1px alpha-black lines, not shadows; shadows only on things that float (menus, dialogs). One action blue. The brand gradient only on the BlueAI mark and the credits glyph. Colour inside the thread is carried by icons, plus one attention tone for 'the worker needs you'.
+- **Rule:** Surfaces separate with 1px alpha-black lines, not shadows; shadows only on things that float (menus, dialogs) and the solid button's cast. The one commit is the solid ink; blue only for focus, selection, progress, links and the spark. The brand gradient only in the credits glyph's drawing. Colour inside the thread is carried by icons; a message's edge takes its tone only when the run stopped (V3 restyle, 2026-10-14).
 - **Why:** V2 carries 154 shadow declarations (55 recipes, 15 coloured glows), three competing accents and eight tinted message surfaces (inv-foundations, inv-chat). The partner sits on this screen daily; the one thing that matters must stand out.
 - **Prevents:** A UI where everything competes and nothing reads as the next action.
 
@@ -64,7 +64,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 | Lines alone separate in-flow surfaces | adapted (shadow dropped) | The site's light theme also casts a faint resting shadow on cards, panels and ghost buttons (onblue.css:388, 993, 1486; apply.html:85-90); the product drops it, so a shadow only ever means 'this floats'. |
 | Surfaces a fraction apart, alternating card / panel / row | shared | Depth reads as structure, not murk. |
 | Brand blue #156efe for focus, selection and progress | shared | One blue across the journey. |
-| Action blue #1268f0 and blue ink #0d5ad6 | adapted | #156efe is 4.47:1 with white; the product needs 4.5:1 on every primary label. |
+| Action blue #1268f0 and blue ink #0d5ad6 | adapted | #156efe is 4.47:1 with white; a filled selection with a white mark needs 4.5:1. Buttons are the site's solid ink (shared, V3 restyle 2026-10-14). |
 | Selection = 12% blue fill + 50% blue border + ink label | shared | One 'chosen' look on site and app. |
 | Green means reached; money stays in ink | shared | Verified days look the same on the dashboard; pending money is not painted as paid. |
 | Error red #c03a40 / #d0454a / ring 16% | shared | One danger set; also the destructive fill (5.36:1). |

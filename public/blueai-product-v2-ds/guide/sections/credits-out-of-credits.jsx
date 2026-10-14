@@ -30,6 +30,7 @@
     const C = K.OOC_COPY;
     return (
       <G.Section id="out-of-credits">
+        <G.Note>V3 restyle (2026-10-14): zero balance is a wait, not an error: a neutral panel note with the credits chip's danger dot, no tone of its own and no red banner.</G.Note>
         <G.Part name="Out-of-credits popup (retired)" status="changed"
           role="Retired. V2 stops a send at zero with a popup; the system never lets the partner reach that moment.">
           <G.Note>

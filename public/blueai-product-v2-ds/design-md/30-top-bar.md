@@ -4,6 +4,8 @@
 
 **Why:** The partner opens BlueAI to check one thing: did today's run happen, and does the day count. V2's header gives its loudest slot, the only filled control in the chrome, to a "New Chat" pill (index.html:351) and shows the run nowhere; it runs the brand gradient three times in 419px (index.html:335, 342, 346); and two of its six menu rows do nothing (index.html:364-365).
 
+**V3 restyle (2026-10-14).** The BrandMark word is ink in Target (`--v2-brand-word-fill`): the brand gradient is fenced to the credits glyph. The V2 today look keeps its gradient word.
+
 ### TopBar (Changed from V2)
 
 **Purpose.** Brand, today's run, credits, help and the account doors, on every signed-in screen.
@@ -72,9 +74,9 @@ One rule for the ended chip: once the period has ended, every signed-in screen s
 
 ### BrandMark (Changed from V2)
 
-**Purpose.** The BlueAI mark and wordmark: the one place the brand gradient is a fill.
+**Purpose.** The BlueAI mark and wordmark.
 
-**Anatomy.** Logo image (`assets/Logo.png`) and the "BlueAI" wordmark in `--v2-gradient-brand`.
+**Anatomy.** Logo image (`assets/Logo.png`) and the "BlueAI" wordmark in `--v2-brand-word-fill` (ink in Target).
 
 **Variants.** Mark + wordmark; mark only (alt "BlueAI"); stacked (splash).
 
@@ -90,7 +92,7 @@ One rule for the ended chip: once the period has ended, every signed-in screen s
 
 **Responsive.** Not applicable.
 
-**Do / Don't.** Do keep the gradient here and on the credits glyph only. Don't use the gradient as a ring, border or text fill elsewhere. Decision D8 may switch the product to the onBlue site's blue spark; only BrandMark changes.
+**Do / Don't.** Do keep the word in ink (V3 restyle). Don't use the gradient as a ring, border, wordmark or text fill: it lives only in the credits glyph's drawing. Decision D8 may switch the product to the onBlue site's blue spark; only BrandMark changes.
 
 ### Help and more menus (Changed from V2)
 

@@ -35,6 +35,7 @@
     const V2 = function () { return window.WorkerCards && window.WorkerCards.AskBubble; };
     return (
       <G.Section id="ask-card">
+        <G.Note>V3 restyle (2026-10-14): the card sits on the surface (--v2-waiting-fill) with the attention edge at 32%; the yellow fill stays only in the V2 today look.</G.Note>
         <G.Part name="AskCard" status="changed" role="The worker's question, answered with chips, with what each answer costs visible before you tap. Yellow only while it waits for you.">
           <G.StateGrid wide states={[
             { label: 'Pending: title, lead, bullets, question', note: 'Onboarding pitch, V2 copy.', node: <K.AskCard step={PITCH} onAnswer={noop} /> },
@@ -52,7 +53,7 @@
             system={<K.AskCard step={{ lead: 'Want to set this up?', options: [{ id: 'yes', label: 'Yes' }, { id: 'no', label: 'Not now' }] }} onAnswer={noop} />}
             changed="Keeps V2's one-shape-for-every-question idea and its copy. The chips become the shared Chip (one look, a visible hover, 3.24:1 blue text gone); bullet markers come back (the Tailwind preflight hid them); text moves to ink on the yellow; the card settles to white once answered so yellow keeps meaning 'needs you' (decision D13); a consequence line shows before the choice." />
           <G.SpecDrawer rows={[
-            { part: 'Fill and line (pending)', token: '--v2-attention-tint, --v2-attention-line', value: '#fdf6cf, 1px #f3e8a8', ref: 'chat.ask.input-colours' },
+            { part: 'Fill and line (pending)', token: '--v2-waiting-fill, --v2-attention-line', value: 'the surface, 1px attention ink at 32%', ref: 'chat.ask.input-colours' },
             { part: 'Fill and line (settled)', token: '--v2-surface, --v2-line', value: 'white, 1px line' },
             { part: 'Shape', token: '--v2-radius-lg, --v2-bubble-max', value: 'radius 16, max 300, padding 12 16, no shadow', ref: ['chat.ask.bubble', 'chat.ask.shadow'] },
             { part: 'Title', token: '--v2-text-14, --v2-weight-semibold, --v2-ink', value: '14/600 ink (was 13.5/800 #8a6116)', ref: 'chat.ask.title' },

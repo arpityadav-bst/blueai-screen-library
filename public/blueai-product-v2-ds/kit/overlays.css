@@ -16,6 +16,8 @@
 }
 .v2-overlay--center { align-items: center; justify-content: center; padding: var(--v2-space-4); }
 .v2-overlay--bottom { flex-direction: column; justify-content: flex-end; }
+/* A sheet's veil is the light one, so a dialog opening over it stacks to about one veil (V3 restyle, 2026-10-14). */
+.v2-overlay--bottom > .v2-scrim { background: var(--v2-scrim-light); }
 .v2-overlay--gate { z-index: var(--v2-z-gate); }
 .v2-scrim {
   position: absolute; inset: 0; background: var(--v2-scrim);
@@ -31,7 +33,7 @@
 .v2-dialog {
   position: relative; display: flex; flex-direction: column; width: 100%; max-height: 100%;
   background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line);
-  border-radius: var(--v2-radius-lg); box-shadow: var(--v2-shadow-2);
+  border-radius: var(--v2-radius-dialog); box-shadow: var(--v2-shadow-2);
   animation: v2-scale-in var(--v2-dur-4) var(--v2-ease-out) both;
 }
 .v2-dialog--sm { max-width: var(--v2-dialog-sm); }
@@ -45,7 +47,7 @@
 }
 .v2-dialog-head--bare { justify-content: flex-end; padding-bottom: 0; }
 .v2-dialog-head--bare + .v2-dialog-body { padding-top: 0; }
-.v2-dialog-title { flex: 1 1 auto; min-width: 0; margin: 0; padding-top: var(--v2-space-1); } /* type: .v2-text-title-lg (kit/dialog.jsx) */
+.v2-dialog-title { flex: 1 1 auto; min-width: 0; margin: 0; padding-top: var(--v2-space-1); } /* type: .v2-text-title-dialog (kit/dialog.jsx) */
 .v2-dialog-head .v2-ov-close { flex: none; margin-top: calc(-1 * var(--v2-space-05)); }
 .v2-dialog-body {
   flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: var(--v2-space-2) var(--v2-space-5) 0;
@@ -66,7 +68,7 @@
 .v2-sheet {
   position: relative; display: flex; flex-direction: column; max-height: calc(100% - var(--v2-space-10));
   background: var(--v2-surface); border-top: var(--v2-stroke) solid var(--v2-line);
-  border-radius: var(--v2-radius-lg) var(--v2-radius-lg) 0 0; box-shadow: var(--v2-shadow-2);
+  border-radius: var(--v2-radius-dialog) var(--v2-radius-dialog) 0 0; box-shadow: var(--v2-shadow-2-up);
   animation: v2-sheet-up var(--v2-dur-4) var(--v2-ease-out) both;
 }
 .v2-overlay.is-closing > .v2-sheet { animation: v2-sheet-down var(--v2-dur-3) var(--v2-ease-in) both; }

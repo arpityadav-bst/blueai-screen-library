@@ -46,47 +46,6 @@
   const BS_FONT = '"Poppins", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif';
 
 
-  /* The wave behind the CTA, the same idea as boot.js's pixel logo/rain in blueai-desktop
-     (small squares, brand gradient, always moving), rebuilt fresh for this no-canvas prototype
-     rather than ported: that engine is a full grid-assembly particle system with no single
-     "wave" output to lift, and blueai-product doesn't share code with blueai-desktop at all
-     (separate design systems by project convention). This is TWO overlapping SVG layers of the
-     exact same wavy path, one filled with the brand's own cyan→purple gradient (the "color
-     tone" asked for), one filled with a small-square pattern at low opacity (the "pixel" texture)
-     drawn twice side by side and scrolled by exactly one tile-width so the loop is seamless.
-     translateX animates -400px → 0, i.e. content moves toward larger X, rightward on screen,
-     not the app's existing `ba-marquee` direction (which moves left). */
-  function PixelWave({ height = 108 }) {
-    const TILE_W = 400, HUMPS = 4, H = height, HW = TILE_W / HUMPS;
-    const buildPath = (ox) => {
-      let d = 'M' + ox + ',' + (H * 0.62);
-      for (let i = 0; i < HUMPS; i++) {
-        const x0 = ox + i * HW;
-        d += ' C ' + (x0 + HW * 0.25) + ',' + (H * 0.12) + ' ' + (x0 + HW * 0.25) + ',' + (H * 1.05) + ' ' + (x0 + HW * 0.5) + ',' + (H * 0.62);
-        d += ' C ' + (x0 + HW * 0.75) + ',' + (H * 0.18) + ' ' + (x0 + HW * 0.75) + ',' + (H * 1.05) + ' ' + (x0 + HW) + ',' + (H * 0.62);
-      }
-      return d + ' L ' + (ox + TILE_W) + ',' + H + ' L ' + ox + ',' + H + ' Z';
-    };
-    const twoTiles = buildPath(0) + ' ' + buildPath(TILE_W);
-    return (
-      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: H, overflow: 'hidden', zIndex: 0, pointerEvents: 'none' }}>
-        <svg width={TILE_W * 2} height={H} style={{ display: 'block' }}>
-          <defs>
-            <linearGradient id="baWaveGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#0EA4C5" /><stop offset="100%" stopColor="#7B4CFF" />
-            </linearGradient>
-            <pattern id="baWavePixels" width="7" height="7" patternUnits="userSpaceOnUse">
-              <rect width="4" height="4" fill="white" />
-            </pattern>
-          </defs>
-          <g className="ba-wave-scroll">
-            <path d={twoTiles} fill="url(#baWaveGrad)" opacity="0.85" />
-            <path d={twoTiles} fill="url(#baWavePixels)" opacity="0.16" />
-          </g>
-        </svg>
-      </div>);
-  }
-
   /* The progress shell that REPLACES the buttons once the install starts, bar + label, no
      percentage. Shared by both skins; only its palette differs. */
   function ProgressShell({ phase, label, dark }) {

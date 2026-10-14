@@ -7,21 +7,9 @@
    and no shadow; only the sheet, the dialogs and the coach tip float. Blue is progress, selection
    and focus; green is a verified day; money stays ink. */
 
-/* Values the Target set lacks (brief section 11 gap names in brackets). */
-:root {
-  /* [--v2-radius-sheet] The consent dialog's 20px corner, kept as decided and shared by every worker
-     dialog and the mode sheet's top edge, so the three read as one family. */
-  --v3-radius-dialog: 20px;
-  /* [section 3, Sheet / dialog title: 18/600/-0.03em, between --v2-text-16 and -20] */
-  --v3-text-dialog: 18px;
-  /* [--v2-surface-press] The ghost button's pressed fill (the site's --charcoal-3). */
-  --v3-surface-press: #e7eaf1;
-  /* [section 4, Sheet shadow] --v2-shadow-2 cast upward, for a sheet anchored to the bottom edge. */
-  --v3-shadow-sheet: 0 -2px 6px rgba(18, 32, 64, 0.06), 0 -28px 64px -24px rgba(18, 32, 64, 0.32);
-  /* [section 4, scrim split] Half the dialog veil under the mode sheet: the consent dialog stacks
-     its own --v2-scrim on top, and two full veils read as a blackout. */
-  --v3-scrim-sheet: rgba(11, 18, 32, 0.24);
-}
+/* The dialog radius, dialog title size, ghost press, upward sheet cast and the sheet's light veil
+   are design-system tokens since 2026-10-14 (--v2-radius-dialog, --v2-text-18, --v2-surface-press,
+   --v2-shadow-2-up, --v2-scrim-light). */
 
 @keyframes v3-fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes v3-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
@@ -41,7 +29,7 @@
   transition: background 0.35s ease, border-color 0.35s ease, color 0.35s ease;
 }
 .v3-btn-ghost:hover { background: var(--v2-surface-sunken); border-color: var(--v2-line-hover); }
-.v3-btn-ghost:active { background: var(--v3-surface-press); }
+.v3-btn-ghost:active { background: var(--v2-surface-press); }
 .v3-btn-ghost:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 /* A destructive ghost: the red arrives on hover only, the label already says what it does. */
 .v3-btn-ghost--danger:hover { color: var(--v2-danger-ink); border-color: var(--v2-danger-edge); background: var(--v2-danger-ring); }
@@ -49,7 +37,7 @@
 /* Disabled with a reason keeps its label: dimmed, no cast, no hover. */
 .v3-btn-solid:disabled, .v3-btn-solid:disabled:hover {
   opacity: var(--v2-opacity-disabled); box-shadow: none; transform: none; cursor: not-allowed;
-  background: var(--v2-ink); border-color: var(--v2-ink);
+  background: var(--v2-solid); border-color: var(--v2-solid);
 }
 .v3-btn-row { display: flex; gap: var(--v2-space-2); }
 .v3-btn-row > * { flex: 1; min-width: 0; padding: 0 var(--v2-space-3); }
@@ -65,7 +53,7 @@
   background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-lg);
   box-shadow: var(--v2-shadow-2); animation: v3-dialog-in var(--v2-dur-3) var(--v2-ease-out) both;
 }
-.v3-dialog--plain { border-radius: var(--v3-radius-dialog); }
+.v3-dialog--plain { border-radius: var(--v2-radius-dialog); }
 .v3-dialog-head {
   position: sticky; top: 0; z-index: var(--v2-z-sticky); display: flex; align-items: center; gap: var(--v2-space-3);
   padding: var(--v2-space-3) var(--v2-space-3) var(--v2-space-3) var(--v2-space-5);
@@ -73,7 +61,7 @@
 }
 .v3-dialog-title {
   flex: 1; min-width: 0; margin: 0; color: var(--v2-ink); text-wrap: balance;
-  font-size: var(--v3-text-dialog); font-weight: var(--v2-weight-semibold);
+  font-size: var(--v2-text-18); font-weight: var(--v2-weight-semibold);
   line-height: var(--v2-leading-snug); letter-spacing: var(--v2-tracking-display);
 }
 .v3-dialog-body { padding: var(--v2-space-4) var(--v2-space-5) var(--v2-space-5); }
@@ -102,12 +90,12 @@
 /* ---- Mode sheet: slides up over a light veil; the one surface here that casts upward -------- */
 .v3-sheet-scrim {
   position: absolute; inset: 0; z-index: 50; display: flex; flex-direction: column; justify-content: flex-end;
-  background: var(--v3-scrim-sheet); animation: v3-fade-in var(--v2-dur-3) var(--v2-ease-standard) both;
+  background: var(--v2-scrim-light); animation: v3-fade-in var(--v2-dur-3) var(--v2-ease-standard) both;
 }
 .v3-sheet {
   display: flex; flex-direction: column; max-height: 72%; padding: var(--v2-space-5) var(--v2-space-5) var(--v2-space-2);
   background: var(--v2-surface); border-top: var(--v2-stroke) solid var(--v2-line-strong);
-  border-radius: var(--v3-radius-dialog) var(--v3-radius-dialog) 0 0; box-shadow: var(--v3-shadow-sheet);
+  border-radius: var(--v2-radius-dialog) var(--v2-radius-dialog) 0 0; box-shadow: var(--v2-shadow-2-up);
   animation: v3-sheet-up var(--v2-dur-4) var(--v2-ease-out) both;
 }
 .v3-sheet-head { display: flex; align-items: flex-start; gap: var(--v2-space-3); }
@@ -147,7 +135,7 @@
 }
 .v3-dd {
   width: 100%; max-width: var(--v2-dialog-sm); padding: var(--v2-space-6) var(--v2-space-6) var(--v2-space-5); text-align: center;
-  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v3-radius-dialog);
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-dialog);
   box-shadow: var(--v2-shadow-2); animation: v3-dialog-in var(--v2-dur-celebrate) var(--v2-ease-out) both;
 }
 /* The day is PENDING, so the badge is the site's step disc (progress blue), with one ink tick. */
@@ -157,7 +145,7 @@
 }
 .v3-dd-title {
   margin: var(--v2-space-4) 0 0; color: var(--v2-ink); text-wrap: balance;
-  font-size: var(--v3-text-dialog); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-snug); letter-spacing: var(--v2-tracking-display);
+  font-size: var(--v2-text-18); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-snug); letter-spacing: var(--v2-tracking-display);
 }
 .v3-dd-sub, .v3-dd-status { margin: var(--v2-space-1) 0 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); text-wrap: pretty; }
 .v3-dd-status { margin-top: var(--v2-space-15); font-variant-numeric: tabular-nums; }

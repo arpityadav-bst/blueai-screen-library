@@ -65,7 +65,7 @@
 .v2-settings-section { display: flex; flex-direction: column; gap: var(--v2-space-3); padding: var(--v2-space-4);
   font-family: var(--v2-font-ui); scroll-margin: var(--v2-space-4);
   transition: border-color var(--v2-dur-3) var(--v2-ease-out), box-shadow var(--v2-dur-3) var(--v2-ease-out); }
-.v2-settings-section.is-highlighted { border-color: var(--v2-blue); box-shadow: var(--v2-focus-ring); }
+.v2-settings-section.is-highlighted { border-color: var(--v2-select-line); box-shadow: var(--v2-ring-select); }
 .v2-settings-section-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--v2-space-3); }
 .v2-settings-section-text { min-width: 0; }
 /* Type: .v2-text-title and .v2-text-body-sm (kit/settings.jsx). */

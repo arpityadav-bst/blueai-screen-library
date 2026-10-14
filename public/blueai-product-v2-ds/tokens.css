@@ -39,6 +39,8 @@
   --v2-surface-sunken: #f6f6f8; /* wells, segmented track, neutral chips, skeleton base. Absorbs #f1f5f9 (chat_bubbles.jsx:40, index.html:480), #f9fafb (jobs.jsx:48), #f5f7fb (credits_popup_parts.jsx:118), #eef1f6 (chat_product.jsx:188), #f3f5f8 */
   --v2-wash-hover: rgba(0,0,0,0.045); /* hover wash layered on top of a fill. Absorbs hover #f1f5f9 (index.html:291), #f8fafc (product_home.jsx:81, profile.jsx:58), opacity 0.88 / 0.85 / 0.9 hovers (index.html:343, chat_product.jsx:189, byok.jsx:27) */
   --v2-wash-press: rgba(0,0,0,0.07); /* pressed wash on quiet controls. Absorbs scale(0.92 / 0.96) press tricks (index.html:94, 101) */
+  --v2-surface-press: #e7eaf1; /* the ghost (secondary) button's pressed fill; its hover is --v2-surface-sunken. The site's --charcoal-3 (onblue/onblue.css:425-433), added in the V3 restyle, 2026-10-14. Absorbs none */
+  --v2-wash-tint: rgba(18,32,64,0.02); /* the 2% navy fill under chips and quick-reply pills at rest. The site's --wash-2 / --skill-fill, added in the V3 restyle, 2026-10-14. Absorbs none */
 
   /* Line. Role: 1px alpha-black strokes that sit right on any near-white ground.
      onBlue: shared verbatim: --border-soft 10%, --border 15%, --hair 8%, --card-line-hover 20% (onblue/onblue.css:274-275, 319, 376).
@@ -55,13 +57,22 @@
      Why: White on #1990FF is 3.24:1 on every primary button and link (inv-foundations finding 1). Indigo #4f46e5 as nav active is a second accent (shared.jsx:305). Seven blue fills, six blue lines and seven blue inks become eight named roles.
      Absorbs: the V2 values listed on each token below. */
   --v2-blue: #156efe; /* focus outline, selected border, progress fill, current-step disc, active nav indicator. Absorbs #1990FF as focus/selected/progress (index.html:57, needs_bluestacks.jsx:139, ai_mode.jsx:52) */
-  --v2-action: #1268f0; /* primary button fill, send button. Absorbs #1990FF fills (index.html:342, settings.jsx:123, agent_permissions.jsx:179, byok.jsx:26, moneymaker_home.jsx:141, worker_day_done.jsx:163, terms_sheet.jsx:121), #1a90ff, #1275D8, indigo #4f46e5 buttons (jobs.jsx:60) */
+  --v2-action: #1268f0; /* filled blue where a selection needs a white mark (checked checkbox, avatar hue). Not a button: since the V3 restyle, 2026-10-14, the committing button is --v2-solid. Absorbs #1990FF fills (index.html:342, settings.jsx:123, agent_permissions.jsx:179, byok.jsx:26, moneymaker_home.jsx:141, worker_day_done.jsx:163, terms_sheet.jsx:121), #1a90ff, #1275D8, indigo #4f46e5 buttons (jobs.jsx:60) */
   --v2-action-hover: var(--v2-blue-ink); /* primary hover: the blue ink, #0d5ad6 (white 6.09:1), named for its role the way --v2-gutter names --v2-space-4. Absorbs brightness(1.06) and lift hovers (login.jsx:56, terms_sheet.jsx:122) */
   --v2-blue-ink: #0d5ad6; /* blue text: on-tint labels, info notice text, hovered link. Absorbs #1e40af, #1d4ed8, #1763c6, #2563eb, #1e3a8a, #1990FF link text (credits_popup_parts.jsx:110, worker_day_done.jsx:184). The site's light --blue-ink equals --blue #156efe (onblue.css:443), i.e. --v2-blue, not this token */
-  --v2-blue-tint: rgba(21,110,254,0.08); /* info notice fill, user bubble fill. Absorbs #eff6ff, #eaf3ff, #eef6ff, #e8f3ff, #f5f9ff, #f0f7ff, gradient #eef5ff to #e2edff (worker_cards.jsx:25) */
+  --v2-blue-tint: rgba(21,110,254,0.08); /* info badge and banner fill (the user bubble left it in the V3 restyle, 2026-10-14). Absorbs #eff6ff, #eaf3ff, #eef6ff, #e8f3ff, #f5f9ff, #f0f7ff, gradient #eef5ff to #e2edff (worker_cards.jsx:25) */
   --v2-blue-tint-line: rgba(21,110,254,0.24); /* edge of an info tint. Absorbs #bfdbfe, #d6e6fb, #c7dcf5, #bcd6f5, #9ec9f5, #93c5fd */
   --v2-select: rgba(21,110,254,0.12); /* selected fill (choice card, chip, segmented on). Absorbs #eef6ff selected (ai_mode.jsx:51), #eef2ff nav active (shared.jsx:305) */
   --v2-select-line: rgba(21,110,254,0.50); /* selected border. Absorbs 1.5px #1990FF selected (ai_mode.jsx:52) */
+
+  /* Solid. Role: The one committing action per view: an ink fill with a white label, a three-stop ink cast and a real press (hover drops 1px, active 2px).
+     onBlue: shared verbatim: the site's .btn-solid (onblue/onblue.css:354-357, 425-433, 959-986). Appy's decision in the V3 restyle, 2026-10-14.
+     Why: Blue is held to focus, selection, progress, links and the spark; a blue fill on every primary made blue mean 'press me' as well.
+     Absorbs: the V2 values listed on each token below. */
+  --v2-solid: var(--v2-ink); /* primary button and send fill and edge, #0b0b0d (white 19.6:1). Absorbs the primary role of #1990FF fills (index.html:342, settings.jsx:123, byok.jsx:26) */
+  --v2-solid-hover: #26262b; /* primary hover fill and edge, the site's hover ink. Absorbs opacity 0.88 / brightness hovers (index.html:343, login.jsx:56) */
+  --v2-shadow-btn: 0 1px 2px rgba(16,16,19,0.10), 0 3px 7px -2px rgba(16,16,19,0.13), 0 7px 15px -7px rgba(16,16,19,0.16); /* the solid button's resting cast (the one in-flow cast the system keeps: it says 'this commits'). Absorbs the blue glows on primaries (terms_sheet.jsx:121, moneymaker_home.jsx:141) */
+  --v2-shadow-btn-hover: 0 1px 2px rgba(16,16,19,0.15), 0 2px 4px -1px rgba(16,16,19,0.13), 0 4px 8px -6px rgba(16,16,19,0.11); /* the cast pulled in as the button drops 1px. Absorbs none */
 
   /* Status. Role: Five tones used by Badge, Banner, NoticeBubble, StatusTick, DayBar and RunCard: neutral, info, success, attention, danger. Each has tint, line (a pale edge for its tint), ink (and icon where it differs); danger adds one strong edge for errored fields and the rejected day.
      onBlue: success and danger shared verbatim with the site (onblue/onblue.css:314-317, 413-415) so verified days look the same on the dashboard; attention is product-only (PM-pinned 'human input required' yellow); info reuses blue tints; neutral reuses surface-sunken + line + ink-2.
@@ -77,27 +88,29 @@
   --v2-danger-ring: rgba(208,69,74,0.16); /* focus ring on an errored field. Absorbs none (new) */
   --v2-danger-tint: #fdecec; /* danger banner fill, low-balance dot halo. Absorbs #fdecec (index.html:499), #fef2f2 */
   --v2-attention-tint: #fdf6cf; /* the worker needs your answer (AskCard, waiting RunCard). Absorbs #fdf6cf (worker_cards.jsx:19, chat_bubbles.jsx:89), #fff7ed orange warning (chat_bubbles.jsx:72), #fef6e7, #fffbeb (byok_settings.jsx:109) */
-  --v2-attention-line: #f3e8a8; /* edge of attention surfaces. Absorbs #f3e8a8, #fed7aa, #fde68a */
+  --v2-attention-line: rgba(138,97,22,0.32); /* edge of attention surfaces and of a run waiting on you: the attention ink at 32%, like the success and danger lines (the V3 restyle, 2026-10-14; was #f3e8a8). Absorbs #f3e8a8, #fed7aa, #fde68a */
   --v2-attention-ink: #8a6116; /* text and icon on attention (5.07:1). Absorbs #8a6116, #9a3412, #7c2d12, #c2410c, #946612, #92722a, link #f59e0b (login.jsx:242, 2.15:1) */
 
-  /* Brand. Role: Identity, not action. Fenced to the BlueAI mark/wordmark and the credits glyph.
+  /* Brand. Role: Identity, not action. Fenced to the credits glyph's own drawing (the V3 restyle, 2026-10-14).
      onBlue: not shared: the site's mark is the spark in #156efe; which mark the family uses is decision D8.
      Why: The gradient appears three times in one 419px top bar today (wordmark, pill ring, pill number, index.html:326-337). As identity it stays; as a UI fill, ring, bubble or border it goes.
      Absorbs: the V2 values listed on each token below. */
-  --v2-gradient-brand: linear-gradient(90deg, #0EA4C5, #7B4CFF); /* BlueAI wordmark, credits star glyph (mask), boot splash wordmark. Absorbs 135deg / 270deg / to-bottom-right variants (index.html:430, credits_popup_parts.jsx:15, moneymaker.jsx:154), cousins #22ACE0 (login.jsx:174), #A855F7 (login.jsx:160), #1A90FF/#6b53ff (moneymaker.jsx:184), #2f6fed (profile.jsx:31), user bubble #5158ee to #7b4cff (chat_bubbles.jsx:30) */
+  --v2-gradient-brand: linear-gradient(90deg, #0EA4C5, #7B4CFF); /* the credits glyph's stops only: the glyph is V2's own drawing (assets/Credits.svg) shown as an image beside an ink figure, never text, a mask fill, a ring or a wordmark (Target paints nothing with it; the V2 today wordmark reads it through --v2-brand-word-fill). Absorbs 135deg / 270deg / to-bottom-right variants (index.html:430, credits_popup_parts.jsx:15, moneymaker.jsx:154), cousins #22ACE0 (login.jsx:174), #A855F7 (login.jsx:160), #1A90FF/#6b53ff (moneymaker.jsx:184), #2f6fed (profile.jsx:31), user bubble #5158ee to #7b4cff (chat_bubbles.jsx:30) */
 
   /* Look hooks. Role: Parts the two looks draw differently, so tokens-v2-today.css can restore V2 where
      a Target value would otherwise sit in a kit rule. Target values equal the rule's own recipe.
      Why: the "V2 today" look (tokens-v2-today.css) re-values every token; these are the places where a
      re-value alone could not bring V2 back (a gradient bubble, an indigo nav pill, a lifted nav). */
-  --v2-bubble-user-fill: var(--v2-blue-tint); /* user bubble fill: a tint (V2 today: the indigo gradient) */
-  --v2-bubble-user-line: var(--v2-blue-tint-line); /* user bubble edge */
+  --v2-bubble-user-fill: var(--v2-surface-sunken); /* user bubble fill: the grey surface, not a blue tint (the V3 restyle, 2026-10-14; V2 today: the indigo gradient) */
+  --v2-bubble-user-line: var(--v2-line-hair); /* user bubble edge: the hairline */
   --v2-bubble-user-ink: var(--v2-ink); /* user bubble text: ink on the tint */
   --v2-bubble-user-shadow: var(--v2-shadow-0); /* user bubble lift: none, in flow */
   --v2-nav-selected-fill: transparent; /* selected bottom-nav item fill: none, the bar marks it */
   --v2-nav-selected-ink: var(--v2-ink); /* selected bottom-nav label and icon */
   --v2-nav-indicator: var(--v2-blue); /* the 2px bar over the selected item */
   --v2-nav-shadow: none; /* bottom nav lift: none, its top line separates it */
+  --v2-waiting-fill: var(--v2-surface); /* a message waiting on you (needs-input notice, AskCard): the surface, its edge says it (the V3 restyle, 2026-10-14; V2 today: the yellow fill) */
+  --v2-brand-word-fill: var(--v2-ink); /* the BrandMark word: ink (the V3 restyle, 2026-10-14; V2 today: the brand gradient through the text) */
 
   /* Type. Role: One UI face, eight sizes, three weights, four leadings, em-based tracking.
      onBlue: shared: Inter as the only UI face, weights capped at 600, negative tracking that scales with size, uppercase only for the eyebrow (onblue/onblue.css:250, design.md:100-102). Adapted: the product uses the site's working-screen (dashboard) tier, not its marketing ladder.
@@ -111,7 +124,8 @@
   --v2-text-13: 13px; /* body-sm, label, button. Absorbs 12.5, 13 (index.html:337, 526) */
   --v2-text-14: 14px; /* body, bubbles, composer, fields. Absorbs 13.5, 14, 14.5, 15, 15.5 (chat_bubbles.jsx:31, chat_product.jsx:284) */
   --v2-text-16: 16px; /* card title. Absorbs 16, 17 (settings.jsx:13, index.html:525) */
-  --v2-text-20: 20px; /* screen and dialog title, numeral-sm. Absorbs 18, 19, 20, 21, 22 (index.html:439, history.jsx:91, schedule.jsx:118, profile.jsx:75, worker_day_done.jsx:131) */
+  --v2-text-18: 18px; /* dialog and sheet title (600, -0.03em), the site's sheet title. Added in the V3 restyle, 2026-10-14. Absorbs 18 (shared.jsx:75, byok.jsx:58) */
+  --v2-text-20: 20px; /* screen title, empty-state title, numeral-sm. Absorbs 18, 19, 20, 21, 22 (index.html:439, history.jsx:91, schedule.jsx:118, profile.jsx:75, worker_day_done.jsx:131) */
   --v2-text-24: 24px; /* greeting. Absorbs 24, 25, 27 (chat_compare.jsx:100, onboarding.jsx:45, moneymaker.jsx:153) */
   --v2-text-40: 40px; /* display numeral (credits balance). Absorbs 34, 38, 54, 56 (index.html:518, byok.jsx:51, boot_splash.jsx:56); 100 (login.jsx:160) removed */
   --v2-weight-regular: 400; /* body. Absorbs 400 */
@@ -121,7 +135,8 @@
   --v2-leading-tight: 1.2; /* titles. Absorbs 1.18, 1.2, 1.25 */
   --v2-leading-snug: 1.35; /* single-line UI, labels, meta. Absorbs 1.3, 1.35, 1.4, normal */
   --v2-leading-body: 1.5; /* paragraphs and bubbles. Absorbs 1.45, 1.5, 1.55, 1.6, 1.65, '17px', '20px' */
-  --v2-tracking-display: -0.03em; /* 40px numeral. Absorbs -1px, -2px, -4px, -0.7px, and the site's serif em (onblue.css:1451; screens/entry.css .v2-serif-em) */
+  --v2-tracking-figure: -0.045em; /* big figures (credits balance, the out-of-credits 0, the free-credits grant): the site's figure tracking. Added in the V3 restyle, 2026-10-14. Absorbs -1px, -2px (index.html:518, byok.jsx:51) */
+  --v2-tracking-display: -0.03em; /* dialog and sheet titles, the serif em. Absorbs -1px, -2px, -4px, -0.7px, and the site's serif em (onblue.css:1451; screens/entry.css .v2-serif-em) */
   --v2-tracking-title: -0.02em; /* 20 and 24px titles. Absorbs -0.4px, -0.3px, -0.5px, -0.02em */
   --v2-tracking-label: -0.01em; /* 16px titles, buttons. Absorbs -0.01em, -0.015em, -0.2px */
   --v2-tracking-eyebrow: 0.08em; /* uppercase eyebrow only. Absorbs 0.04 to 0.14em (index.html:474, worker_day_done.jsx:153, account_gate.jsx:26) */
@@ -151,7 +166,8 @@
   --v2-radius-xs: 4px; /* checkbox box, DayBar segment, tooltip arrow. Absorbs 2, 4, 5 (jobs.jsx:31, worker_day_done.jsx:76) */
   --v2-radius-sm: 6px; /* buttons, fields, segmented items, menu rows, icon buttons. Absorbs 6, 8, 9 (settings.jsx:123, schedule.jsx:60, ai_mode.jsx:84, index.html:292) */
   --v2-radius-md: 10px; /* rows, banners, composer, menus, tooltips, segmented track, chips that are not pills. Absorbs 10, 11, 12, 14 (index.html:289, chat_product.jsx:260, jobs.jsx:78, history.jsx:96) */
-  --v2-radius-lg: 16px; /* cards, bubbles, dialogs, sheet top corners. Absorbs 16, 18, 20, 24, 36 (index.html:432, login.jsx:68, worker_day_done.jsx:147, moneymaker_steps.jsx:110) */
+  --v2-radius-lg: 16px; /* cards, bubbles, composer. Absorbs 16, 18, 20, 24, 36 (index.html:432, login.jsx:68, worker_day_done.jsx:147, moneymaker_steps.jsx:110) */
+  --v2-radius-dialog: 20px; /* every dialog and the sheet's top edge, one family (Appy's consent decision, kept in the V3 restyle, 2026-10-14). Absorbs 20 (terms_sheet.jsx:113, agent_permissions.jsx:148, worker_day_done.jsx:129, login.jsx:68) */
   --v2-radius-pill: 999px; /* badges, quick-reply chips, credits chip, progress rail. Absorbs 999, 40, 24, 20 on pill buttons (index.html:342, credits_popup_parts.jsx:84, settings.jsx:44) */
   --v2-radius-round: 50%; /* avatars, discs, send button. Absorbs '50%' x40 */
 
@@ -170,13 +186,15 @@
      Absorbs: the V2 values listed on each token below. */
   --v2-shadow-0: none; /* everything in flow: cards, bubbles, banners, rows, bottom nav, composer. Absorbs seven in-flow recipes '0 1px 3px rgba(0,0,0,0.04 to 0.08)' (index.html:432, settings.jsx:10, profile.jsx:30), bottom nav '0 -2px 8px rgba(0,0,0,0.06)' (shared.jsx:300), every coloured glow (chat_bubbles.jsx:30, moneymaker_home.jsx:141, terms_sheet.jsx:121, login.jsx:174, worker_day_done.jsx:151) */
   --v2-shadow-1: 0 1px 2px rgba(18,32,64,0.04), 0 12px 32px -12px rgba(18,32,64,0.18); /* floats over content: menus, popovers, tooltips, coach mark, in-app toast. Absorbs index.html:289, agent_permissions.jsx:141, credits_popup_parts.jsx:118, moneymaker_home.jsx:52 */
-  --v2-shadow-2: 0 2px 6px rgba(18,32,64,0.06), 0 28px 64px -24px rgba(18,32,64,0.32); /* blocks the window: dialogs, sheets, day-done. Absorbs shared.jsx:73, profile.jsx:74, byok.jsx:24, login.jsx:68, worker_day_done.jsx:147, terms_sheet.jsx:113 */
+  --v2-shadow-2-up: 0 -2px 6px rgba(18,32,64,0.06), 0 -28px 64px -24px rgba(18,32,64,0.32); /* --v2-shadow-2 cast upward, for a sheet anchored to the bottom edge. Added in the V3 restyle, 2026-10-14. Absorbs 0 -12px 40px (terms_sheet.jsx:113, agent_permissions.jsx:148) */
+  --v2-shadow-2: 0 2px 6px rgba(18,32,64,0.06), 0 28px 64px -24px rgba(18,32,64,0.32); /* blocks the window: dialogs, day-done. Absorbs shared.jsx:73, profile.jsx:74, byok.jsx:24, login.jsx:68, worker_day_done.jsx:147, terms_sheet.jsx:113 */
 
   /* Overlay. Role: Two scrims: one dim veil for every decision, one frosted gate for sign-in (family match).
      onBlue: shared: --gate-scrim rgba(248,249,251,0.88) + 14px blur (onblue/onblue.css:411-412, 3346-3349) for sign-in only. Adapted: a dim veil for dialogs and sheets. Reason, not blur cost: the app's screens are white, and a white dialog on the site's pale veil separates only by its shadow (card 1.05:1, its 10% line 1.19:1 against the veil), while the dim veil puts the card's edge at 3.3:1 (WCAG 1.4.11), so a consent, sign-out or out-of-credits decision reads as blocking at a glance in a 419px window. The site's Cash out and program sheets use the gate veil too, but draw it without blur (onblue/onblue.css:1365, onblue/apply.html:634 set backdrop-filter to a bare length, which is invalid; the site owner should wrap it in blur()).
      Why: Seven veils for one idea (inv-foundations color.overlay).
      Absorbs: the V2 values listed on each token below. */
   --v2-scrim: rgba(11,18,32,0.48); /* every dialog, sheet and day-done veil. Absorbs rgba(0,0,0,0.5) (shared.jsx:72), rgba(15,23,42,0.45) (profile.jsx:73), rgba(15,23,42,0.5) (byok.jsx:79), rgba(8,10,31,0.44) (terms_sheet.jsx:97), rgba(11,18,32,0.55) (worker_day_done.jsx:144), rgba(11,18,32,0.52) (moneymaker_home.jsx:117) */
+  --v2-scrim-light: rgba(11,18,32,0.24); /* a sheet's veil: half the dialog veil, so a dialog that opens over the sheet (consent over the mode sheet) stacks to about one veil, not a blackout. Added in the V3 restyle, 2026-10-14. Absorbs rgba(15,23,42,0.24) (agent_permissions.jsx:146) */
   --v2-scrim-frost: rgba(248,249,251,0.88); /* sign-in gate veil. Absorbs rgba(255,255,255,0.55) (login.jsx:74) */
   --v2-scrim-blur: 14px; /* sign-in gate blur. Absorbs blur(10px) (login.jsx:74) */
 
@@ -215,6 +233,7 @@
      Absorbs: the V2 values listed on each token below. */
   --v2-focus-outline: 2px solid var(--v2-blue); /* :focus-visible on buttons, chips, tabs, links, rows. Absorbs browser default only (no :focus-visible rule in V2) */
   --v2-focus-offset: 2px; /* outline offset. Absorbs none */
+  --v2-ring-select: 0 0 0 3px var(--v2-select); /* highlight on arrival (a section routed to): the select edge plus this ring, held briefly, never a glow. Added in the V3 restyle, 2026-10-14. Absorbs the 4px blue glow (byok_settings.jsx:58) */
   --v2-focus-ring: 0 0 0 3px rgba(21,110,254,0.16); /* fields and composer, with border --v2-blue. Absorbs 0 0 0 3px rgba(25,144,255,0.12) (index.html:57, chat_product.jsx:260), border-only focus (ai_mode.jsx:182, byok_settings.jsx:95), outline none with nothing (byok_settings.jsx:31) */
 
   /* Opacity. Role: Disabled only; hover never changes opacity.

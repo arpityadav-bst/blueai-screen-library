@@ -4,11 +4,13 @@
 
 **Why:** The worker asks and the partner answers with a tap (Yes, Not now, Just this job), says what went wrong with a tap (Wrong result), and will filter Activity with a tap. V2 draws three chip looks for that: a 1.5px blue outline with #1990FF text at 3.24:1, a dark #334155 selected reason, and a grey back pill, with a hover that lifts but never changes colour (worker_cards.jsx:58; chat_feedback.jsx:77-84; index.html:100-101). One chip with the family's chosen look keeps blue meaning "chosen" and every label legible (P2, P5, P7).
 
+**V3 restyle (2026-10-14).** Chips rest on the 2% navy wash (`--v2-wash-tint` over the surface) with a 10% line and ink-2 labels; hover is the wash plus a 20% line and ink; selected is `--v2-select` with `--v2-select-line`. Decision: chip and pill geometry (height, padding) stays in the Chip rule, not tokens: it belongs to one part (the tokens header rule).
+
 ### Chip (Changed from V2)
 
 **Purpose.** One small pressable label for three jobs: a one-shot reply to the worker, a reason you toggle, a filter.
 
-**Anatomy.** Pill, 28 tall (`--v2-control-sm`; an invisible extension makes the target 32), padding 0 12, 1px `--v2-line-strong`, white. Label 13/500 ink, one line. Optional 16px icon before the label (zap marks the reply that turns on Automatic). Rows wrap with an 8px gap.
+**Anatomy.** Pill, 28 tall (`--v2-control-sm`; an invisible extension makes the target 32), padding 0 12, 1px `--v2-line`, the surface under `--v2-wash-tint`. Label 13/500 ink-2, one line. Optional 16px icon before the label (zap marks the reply that turns on Automatic). Rows wrap with an 8px gap.
 
 **Variants.** Reply (no `selected`: a plain button that answers once; the AskCard hides the row once answered). Reason and filter (`selected` true or false: a toggle with `aria-pressed`). One look for all three; only the behaviour differs.
 

@@ -51,6 +51,7 @@
     const shell = function (node) { return <div style={{ width: '100%' }}>{node}</div>; };
     return (
       <G.Section id="composer">
+        <G.Note>V3 restyle (2026-10-14): send is the solid ink button; stop is the ghost; Stop run in the confirm is the solid primary.</G.Note>
         <G.Part name="Composer" status="changed" role="One field with honest placeholders, a notice slot for standing conditions, and Send that becomes Stop.">
           <G.StateGrid wide states={[
             { label: 'Rest', node: shell(<K.Composer onSend={noop} />) },
@@ -128,7 +129,7 @@
             changed="V2's one button is 34 round, fills #1990FF for Send (white on it is 3.24:1), shows hover by fading, and stops a paid job on one click with no trace ('Stop task'). The system keeps one button that swaps Send for Stop, at 36 round: Send on action blue (4.92:1), Stop white with a 1px line and a 16 stop glyph, hover as colour and wash, and stopping a paid job asks first and leaves a stopped run card." />
           <G.SpecDrawer rows={[
             { part: 'Size', token: '--v2-control-md, --v2-radius-round', value: '36 round (was 34)', ref: 'chat.composer.send-size' },
-            { part: 'Send', token: '--v2-action, --v2-action-hover, --v2-on-color', value: '#1268f0, hover #0f5ad4, white glyph (was #1990FF, 3.24:1)', ref: 'chat.composer.send' },
+            { part: 'Send', token: '--v2-solid, --v2-solid-hover, --v2-shadow-btn', value: '#0b0b0d, hover #26262b, white glyph (was #1990FF, 3.24:1)', ref: 'chat.composer.send' },
             { part: 'Send disabled', token: '--v2-surface-sunken, --v2-ink-4', value: 'neutral, not pale blue', ref: 'chat.composer.send' },
             { part: 'Stop', token: '--v2-surface, --v2-line-strong, --v2-ink-2', value: 'white, 1px line, stop glyph 16', ref: ['chat.composer.stop-border', 'chat.composer.stop-glyph'] },
             { part: 'Hover', token: '--v2-wash-hover', value: 'colour and wash in CSS, never opacity', ref: 'chat.composer.hover' },

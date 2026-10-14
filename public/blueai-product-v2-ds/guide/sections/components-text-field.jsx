@@ -47,6 +47,7 @@
     const ep = function (extra) { return Object.assign({ label: ENDPOINT, placeholder: ENDPOINT_EX, width: '100%' }, extra); };
     return (
       <G.Section id="text-field">
+        <G.Note>V3 restyle (2026-10-14): the field stays 40 tall (the app's density, not the site's 44) and every field label is 13/500 above it, in dialogs and on pages: one field language, already tokens.</G.Note>
         <G.Part name="TextField" status="changed" role="One question: a label above, one box, and a message line that says what is wrong, what is happening, or what to type.">
           <ul className="g-list">
             <li>Label 13/500 ink, 6 above the box. Optional or Required as a quiet 12px flag beside it.</li>

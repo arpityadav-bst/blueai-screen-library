@@ -4,13 +4,15 @@
 
 **Why:** The worker acts on the partner's own accounts, so every action needs a rank: the one that commits (I agree, turn on; Got it), the frequent second one (Cancel), the third (Not now), the one that destroys (Remove). V2 gives most of them the same blue fill in six radii with three hover models and blue glows, and white on its #1990FF is 3.24:1 (index.html:351, byok.jsx:22). The system takes the site's ladder and shape (radius 6, 13/500, a real press, disabled with a reason; onblue/onblue.css:959-999, onblue/apply.html:411) and an AA action blue (P2, P5, P6, P7).
 
+**V3 restyle (2026-10-14).** The ladder is one component with three skins and Appy's decision D1 is settled: `primary` is the site's solid ink button (`--v2-solid`, hover `--v2-solid-hover` with the cast pulled in and a 1px drop, active 2px, `--v2-shadow-btn`), `secondary` is the ghost (`--v2-surface-panel`, 15% line, no cast; hover `--v2-surface-sunken`, pressed `--v2-surface-press`), `quiet` is unchanged. Geometry: radius 6, 500, tracking -0.02em, heights 44 / 36 (28 sm); lg labels are 14. Decision on destruction: no red solid. `danger` is now the trigger skin (a ghost whose red arrives on hover); the confirm's commit is the solid primary, named for what is lost (section 52). The reason line under a disabled control is a pattern: 12 ink-3, an optional 16 icon, tied by `aria-describedby`.
+
 ### Button (Changed from V2)
 
 **Purpose.** Every pressable action that is not inside a sentence. One primary per view: the action that commits.
 
 **Anatomy.** Box: height 28 / 36 / 44, radius 6 (`--v2-radius-sm`), 1px edge, padding 0 12 / 16 / 20. Label: 13/500 (`--v2-text-13`, `--v2-weight-medium`), tracking -0.01em, one line, ellipsis if it must. Optional 16px icon before (`icon`) or after (`iconRight`), gap 8 (6 at sm). Loading: a 16px Spinner takes the leading icon's place; the label stays. Disabled reason: 12/1.35 ink-3 under the button, 6 below.
 
-**Variants.** `primary`: `--v2-action` #1268f0 fill and edge, white label (4.92:1); hover `--v2-action-hover`. `secondary` (default): white, 1px `--v2-line-strong`, ink label; hover adds `--v2-wash-hover` and `--v2-line-hover`. `quiet`: no box, ink-2 label; hover wash + ink. `danger`: `--v2-danger-ink` #c03a40 fill, white label (5.36:1); hover adds `--v2-wash-press`. Use danger for the primary of the confirm that names what is lost, and for the trigger that opens that confirm (Disconnect YouTube); never for an action that costs nothing (section 52 is the rule).
+**Variants.** `primary`: `--v2-solid` #0b0b0d fill and edge, white label (19.6:1), `--v2-shadow-btn`; hover `--v2-solid-hover` #26262b, `--v2-shadow-btn-hover`, 1px drop. `secondary` (default), the ghost: `--v2-surface-panel`, 1px `--v2-line-strong`, ink label, no cast; hover `--v2-surface-sunken` and `--v2-line-hover`; pressed `--v2-surface-press`. `quiet`: no box, ink-2 label; hover wash + ink. `danger`: the ghost at rest; on hover the label turns `--v2-danger-ink`, the edge `--v2-danger-edge`, the fill `--v2-danger-tint`. Use it for the trigger that opens a destructive confirm (Disconnect YouTube); the confirm's commit is the solid primary named for what is lost; never for an action that costs nothing (section 52 is the rule).
 
 **Sizes.** sm 28 (`--v2-control-sm`) for dense rows; md 36 (`--v2-control-md`) default; lg 44 (`--v2-control-lg`) for full-width sheet and dialog actions (`full`). sm grows an invisible ::after to the 32px hit floor.
 
@@ -18,19 +20,19 @@
 
 **Props.** `variant` ('primary' | 'secondary' | 'quiet' | 'danger', default 'secondary'), `size` ('sm' | 'md' | 'lg'), `icon`, `iconRight` (icon names, section 08), `loading`, `disabled`, `disabledReason` (string printed under it), `full`, `type` ('button'), `onClick`, `href` (renders an a), `external` (new tab, external glyph, "opens in a new tab" for screen readers), `className`, `children`.
 
-**Motion.** Colour and edge over `--v2-dur-1` (120ms) `--v2-ease-standard`; press 1px over `--v2-dur-1` `--v2-ease-out`. Reduced motion: no transitions, no press travel. No glow, no lift, no brightness filter.
+**Motion.** Colour, edge and cast over `--v2-dur-1` (120ms) `--v2-ease-standard`; press 1px (the solid: 1px on hover, 2px active) over `--v2-dur-1` `--v2-ease-out`. Reduced motion: no transitions, no press travel. No glow, no lift, no brightness filter.
 
-**Accessibility.** White labels only on `--v2-action` or `--v2-danger-ink`. Disabled stays in the tab order with the reason linked by `aria-describedby`. Focus ring always visible. Targets at least 32px. The label is the action, in sentence case, no trailing ellipsis.
+**Accessibility.** White labels only on `--v2-solid` (or `--v2-action` on a checked control). Disabled stays in the tab order with the reason linked by `aria-describedby`. Focus ring always visible. Targets at least 32px. The label is the action, in sentence case, no trailing ellipsis.
 
 **Responsive.** Fixed 419px window: sheets and dialogs use `size="lg" full`; rows use sm or md. On the compact 640px window nothing changes size.
 
-**Do / Don't.** Do keep one primary per view. Do print why a button is disabled. Do keep the label while loading. Don't put two filled buttons side by side. Don't hover by opacity (it lowers contrast that must hold). Don't add a glow, a lift or a pill. Primary fill blue or ink is decision D1: one token either way.
+**Do / Don't.** Do keep one primary per view. Do print why a button is disabled. Do keep the label while loading. Don't put two filled buttons side by side. Don't hover by opacity (it lowers contrast that must hold). Don't add a glow, a lift or a pill. Don't put a red fill on a commit. Decision D1 is settled: the primary is the solid ink (V3 restyle, 2026-10-14).
 
 ### Primary in V2 today (Changed from V2)
 
 **Purpose.** Shows the change where a partner meets it: the out-of-credits card's Got it.
 
-**Anatomy.** V2: pill, 15/700, #1990FF, white at 3.24:1, opacity 0.9 hover (byok.jsx:26-27). System: radius 6, 13/500, #1268f0, white at 4.92:1, `--v2-action-hover`.
+**Anatomy.** V2: pill, 15/700, #1990FF, white at 3.24:1, opacity 0.9 hover (byok.jsx:26-27). System: radius 6, 13/500, the solid ink #0b0b0d, white at 19.6:1, `--v2-solid-hover` (V3 restyle).
 
 **Variants.** None.
 

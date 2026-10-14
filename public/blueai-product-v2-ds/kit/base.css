@@ -99,7 +99,12 @@
 /* 3. Text styles: size / weight / leading / tracking / ink, one recipe per role ---------------- */
 .v2-text-display {
   font-size: var(--v2-text-40); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-display);
-  letter-spacing: var(--v2-tracking-display); color: var(--v2-ink); font-variant-numeric: tabular-nums;
+  letter-spacing: var(--v2-tracking-figure); color: var(--v2-ink); font-variant-numeric: tabular-nums;
+}
+/* Dialog and sheet titles: the site's sheet title, 18/600/-0.03em (V3 restyle, 2026-10-14). */
+.v2-text-title-dialog {
+  font-size: var(--v2-text-18); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-snug);
+  letter-spacing: var(--v2-tracking-display); color: var(--v2-ink); text-wrap: balance;
 }
 .v2-text-greeting {
   font-size: var(--v2-text-24); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-tight);
@@ -252,13 +257,8 @@
 .v2-icon--20 { width: var(--v2-icon-md); height: var(--v2-icon-md); stroke-width: calc(var(--v2-icon-stroke) * 1.2); }
 .v2-icon--24 { width: var(--v2-icon-lg); height: var(--v2-icon-lg); stroke-width: var(--v2-icon-stroke); }
 .v2-icon--inline { display: inline-block; vertical-align: -0.2em; }
-/* The credits glyph is identity, so it is the one icon that does not take currentColor: the brand
-   gradient painted through the glyph as a mask. */
-.v2-icon--credits {
-  background: var(--v2-gradient-brand);
-  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-  -webkit-mask-position: center; mask-position: center;
-  -webkit-mask-size: contain; mask-size: contain;
-}
+/* The credits glyph is identity, so it is the one icon that does not take currentColor: V2's own
+   drawing (assets/Credits.svg) as an image, never a mask fill (V3 restyle, 2026-10-14). */
+.v2-icon--credits { object-fit: contain; }
 /* An unknown name renders an empty box of the right size, so a typo never shifts the layout. */
 .v2-icon--missing { border-radius: var(--v2-radius-xs); outline: var(--v2-stroke) dashed var(--v2-line-strong); outline-offset: -1px; }

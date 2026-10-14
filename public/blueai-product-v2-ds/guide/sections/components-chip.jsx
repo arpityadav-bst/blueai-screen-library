@@ -66,9 +66,10 @@
     );
     return (
       <G.Section id="chip">
+        <G.Note>V3 restyle (2026-10-14): chips rest on the 2% navy wash (--v2-wash-tint) with a 10% line and ink-2 labels; hover is the wash plus a 20% line and ink; selected is the select fill and edge. Pill geometry stays in the Chip rule, not tokens.</G.Note>
         <G.Part name="Chip" status="changed" role="One chip for three jobs: a one-shot reply to the worker, a reason you toggle, a filter. Same look; only the behaviour differs.">
           <ul className="g-list">
-            <li>Pill, 28 tall (--v2-control-sm, invisible 32 target), padding 0 12, 1px line-strong, white.</li>
+            <li>Pill, 28 tall (--v2-control-sm, invisible 32 target), padding 0 12, 1px line, the surface under the 2% wash.</li>
             <li>Label 13/500 ink, one line; an optional 16px icon before it (zap marks the option that turns on Automatic).</li>
             <li>Reply: a plain button that answers once. Reason and filter: toggles that carry aria-pressed and show the chosen look.</li>
             <li>Rows wrap with an 8px gap.</li>
@@ -97,7 +98,7 @@
             system={<div className="v2-stack v2-gap-5">{replies}<Reasons /></div>}
             changed="Three chip looks (a 1.5px blue outline with #1990FF text at 3.24:1, a dark #334155 selected reason, a grey back pill) become one: a 1px neutral pill whose hover is a wash, not a lift, and whose selected state is the family's blue 12% fill and an ink label with a check. Toggles now say they are pressed." />
           <G.SpecDrawer rows={[
-            { part: 'Shape', token: '--v2-radius-pill, --v2-line-strong', value: '28 tall (--v2-control-sm, invisible 32 target), pill, padding 0 12, 1px 15% black (V2: 1.5px #c7dcf5; 1px #e2e8f0 + shadow)', ref: ['actions-inputs.chip.reply', 'actions-inputs.chip.reason-idle', 'actions-inputs.chip.reason-shape', 'actions-inputs.chip.back'] },
+            { part: 'Shape', token: '--v2-radius-pill, --v2-line, --v2-wash-tint', value: '28 tall (--v2-control-sm, invisible 32 target), pill, padding 0 12, 1px 10% black on the 2% wash (V2: 1.5px #c7dcf5; 1px #e2e8f0 + shadow)', ref: ['actions-inputs.chip.reply', 'actions-inputs.chip.reason-idle', 'actions-inputs.chip.reason-shape', 'actions-inputs.chip.back'] },
             { part: 'Label', token: '--v2-text-13, --v2-weight-medium, --v2-ink', value: '13/500 ink (V2: 12.5/700 #1990FF at 3.24:1; 12/500 #475569)', ref: ['actions-inputs.chip.reply', 'actions-inputs.chip.reason-shape'] },
             { part: 'Hover', token: '--v2-wash-hover, --v2-line-hover', value: 'wash + 20% edge (V2: lifts 1px, no colour change)', ref: 'actions-inputs.chip.reply-hover' },
             { part: 'Press', token: '--v2-wash-press', value: 'deeper wash (V2: scale 0.96)', ref: 'actions-inputs.chip.reply-press' },

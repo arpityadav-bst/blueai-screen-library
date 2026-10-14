@@ -4,6 +4,8 @@
 
 **Why:** The money depends on a day's state (pending verification, verified, not counted), so that state needs one unmistakable label on every row and card. V2 has five pill systems for it: the AI Mode status chip (12/600, ai_mode.jsx:38), the Jobs badge (radius 4 with a line, jobs.jsx:31), "Active" (10/700 uppercase, index.html:483), "Verified" (11.5/700, profile.jsx:50) and "Not enrolled" (11/600 uppercase at 0.12em, account_gate.jsx:26). One Badge replaces all five.
 
+**V3 restyle (2026-10-14).** The status pill has five tones: neutral, busy, ok (success), danger, attention. Busy (a neutral or info badge with `busy`) is work in progress, so it is blue: `--v2-select` fill, `--v2-blue-ink` label, a pulsing `--v2-blue` dot.
+
 ### Badge (Changed from V2)
 
 **Purpose.** A short state on a row or card: a day (Pending verification, Verified, Not counted), a run (Running, Waiting for you), an app (Connected, Signed out), a mode or a download (Paused, Download failed). It labels; it never takes a click.

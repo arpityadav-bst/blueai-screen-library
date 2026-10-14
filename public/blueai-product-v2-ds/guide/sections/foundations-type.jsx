@@ -6,7 +6,7 @@
 
   // [class, sample node, size/weight/leading/tracking, ink, use, ref id or null]
   const LADDER = [
-    ['v2-text-display', '2,000', '40 / 600 / 1 / -0.03em, tabular', '--v2-ink', 'Credits balance numeral (proposed figure: the daily grant)', null],
+    ['v2-text-display', '2,000', '40 / 600 / 1 / -0.045em, tabular', '--v2-ink', 'Credits balance numeral (proposed figure: the daily grant)', null],
     ['v2-text-greeting', 'Hi, Alex', '24 / 600 / 1.2 / -0.02em', '--v2-ink', "Home greeting, welcome title (proposed: V2's 'Hi, Alex' carries an emoji)", 'foundations.type.greeting'],
     ['v2-text-title-lg', 'AI Credits', '20 / 600 / 1.2 / -0.02em', '--v2-ink', 'Every screen title and dialog title', 'foundations.type.title-ai-credits'],
     ['v2-text-numeral-sm', '7', '20 / 600 / 1 / -0.02em, tabular', '--v2-ink', "Counts beside a label: '7 of 20 days'", 'foundations.type.day-count-copy'],
@@ -40,6 +40,7 @@
     const K = window.V2Kit || {};
     return (
       <G.Section id="type">
+        <G.Note>V3 restyle (2026-10-14): --v2-text-18 for dialog and sheet titles (.v2-text-title-dialog, 18/600/-0.03em) and --v2-tracking-figure -0.045em for big figures (.v2-text-display). Eyebrow strings are sentence case in the source; uppercase comes from CSS only.</G.Note>
         <G.Part name="Type ladder" status="changed" role="Thirteen text styles, one recipe per role: size, weight, leading, tracking and ink travel together, so a screen never re-decides how loud a line is.">
           <G.StateGrid wide states={LADDER.map(function (row) {
             return { label: '.' + row[0] + '  ' + row[2], note: row[4], node: <div style={{ width: '100%' }}>{sample(row)}</div> };

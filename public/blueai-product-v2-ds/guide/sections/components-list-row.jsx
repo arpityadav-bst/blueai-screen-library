@@ -12,6 +12,7 @@
     const sw = K.Switch ? <K.Switch checked onChange={noop} label="Automatic" /> : null;
     return (
       <G.Section id="list-row">
+        <G.Note>V3 restyle (2026-10-14): the settings row and the ledger row are one component. A control in the trailing slot is a settings row; a value is a ledger line in the site's ledger look: muted label, the value in ink.</G.Note>
         <G.Part name="ListRow" status="changed" role="The line every settings, account, activity and notification list is made of. One shape, five variants.">
           <G.Stage ground="canvas" width="shell">
             <Card padding="none">
@@ -67,7 +68,7 @@
             { part: 'Padding', token: '--v2-space-3 / --v2-space-4', value: '12px 16px', ref: ['display-feedback.row.profile', 'display-feedback.row.nav'] },
             { part: 'Label', token: '--v2-text-14 / --v2-weight-medium / --v2-ink', value: '14px / 500', ref: ['display-feedback.row.profile-label', 'display-feedback.row.settings-label'] },
             { part: 'Description', token: '--v2-text-13 / --v2-ink-3', value: '13px, 6.0:1', ref: 'display-feedback.row.settings-hint' },
-            { part: 'Value', token: '--v2-text-14 / --v2-ink-2', value: '14px / 400, tabular', ref: 'display-feedback.row.profile-value' },
+            { part: 'Value', token: '--v2-text-14 / --v2-ink', value: '14px / 400 ink, tabular; the label steps to ink-3 (ledger)', ref: 'display-feedback.row.profile-value' },
             { part: 'Divider', token: '--v2-line-hair', value: '1px, inset 16, between rows only', ref: ['display-feedback.row.profile', 'display-feedback.row.settings'] },
             { part: 'Hover (nav only)', token: '--v2-wash-hover', value: 'black 4.5% wash, in CSS', ref: 'display-feedback.row.nav-hover' },
             { part: 'Pressed', token: '--v2-wash-press', value: 'black 7% wash' },
