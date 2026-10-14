@@ -10,9 +10,10 @@
 // the user, deletes the per-release "is this change material?" judgment call, and produces a
 // fresh consent record for every version.
 // Nothing here is invented fresh:
-//   - overlay containment + card palette: login.jsx (absolute inset-0 against .ba-app; white
-//     card, #111827/-0.4px title, #6b7280 body, #e5e7eb hairline)
-//   - CTA: login.jsx's flat #1990FF pill + its shared hover lift (blueBtn's exact values)
+//   - overlay containment: login.jsx (absolute inset-0 against .ba-app)
+//   - V3, Phase 2 look: Target tokens and the site's language, as the rest of the entry screens
+//     (entry.css): surface sheet with a 1px top line, Inter 600 title, the solid dark CTA, ink
+//     underlined legal links
 //   - motion: the house curve cubic-bezier(0.22,1,0.36,1) used across this product's intros
 //   - consent line: the website SignInDialog's approved sentence shape, re-pointed at the
 //     BlueAI Partner Program Terms (see the note on MODES for why that document, not the TOU)
@@ -31,9 +32,9 @@
 
   const TERMS_URL = '/onblue/terms';
 
+  // V3, Phase 2: the site's underlined ink link (entry.css .v3-link--ink), not a blue one.
   const LegalLink = ({ anchor, children }) => (
-    <a href={TERMS_URL + '#' + anchor} target="_blank" rel="noopener"
-      style={{ color: '#1990FF', textDecoration: 'underline', textUnderlineOffset: 2, fontWeight: 600 }}>
+    <a href={TERMS_URL + '#' + anchor} target="_blank" rel="noopener" className="v3-link v3-link--ink">
       {children}
     </a>
   );
@@ -94,7 +95,7 @@
     return (
       <div role="dialog" aria-modal="true" aria-label={cfg.title}
         className={'tsh-scrim' + (leaving ? ' tsh-out' : '')}
-        style={{ position: 'absolute', inset: 0, zIndex: 120, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', background: 'rgba(8,10,31,0.44)' }}>
+        style={{ position: 'absolute', inset: 0, zIndex: 120, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', background: 'var(--v2-scrim)', fontFamily: 'var(--v2-font-ui)' }}>
         <style>{`
           @keyframes tshScrimIn { from { opacity: 0; } to { opacity: 1; } }
           @keyframes tshScrimOut { from { opacity: 1; } to { opacity: 0; } }
@@ -110,17 +111,14 @@
         `}</style>
 
         <div className="tsh-sheet"
-          style={{ background: 'white', borderRadius: '20px 20px 0 0', borderTop: '1px solid #e5e7eb', boxShadow: '0 -12px 40px rgba(8,10,31,0.18)', padding: '26px 24px 24px' }}>
-          <h2 style={{ fontSize: 20, fontWeight: 800, color: '#111827', letterSpacing: '-0.4px', lineHeight: 1.25 }}>
+          style={{ background: 'var(--v2-surface)', borderRadius: 'var(--v2-radius-lg) var(--v2-radius-lg) 0 0', borderTop: 'var(--v2-stroke) solid var(--v2-line)', padding: 'var(--v2-space-6)' }}>
+          <h2 className="v3-gate-title">
             {cfg.title}
           </h2>
-          <p style={{ marginTop: 8, fontSize: 13, color: '#6b7280', lineHeight: 1.6 }}>
+          <p style={{ marginTop: 'var(--v2-space-2)', fontSize: 'var(--v2-text-14)', color: 'var(--v2-ink-2)', lineHeight: 'var(--v2-leading-body)' }}>
             {cfg.body()}
           </p>
-          <button onClick={close}
-            style={{ width: '100%', marginTop: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: '#1990FF', border: 'none', borderRadius: 999, padding: '13px 28px', fontSize: 15, fontWeight: 700, color: 'white', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 16px rgba(25,144,255,0.35)', transition: 'transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease' }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.filter = 'brightness(1.06)'; e.currentTarget.style.boxShadow = '0 6px 18px rgba(25,144,255,0.42)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.filter = ''; e.currentTarget.style.boxShadow = '0 4px 16px rgba(25,144,255,0.35)'; }}>
+          <button type="button" onClick={close} className="v3-btn-solid v3-btn-full" style={{ marginTop: 'var(--v2-space-5)' }}>
             {cfg.cta}
           </button>
         </div>

@@ -8,9 +8,6 @@
   <title>BlueAI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <!-- Space Grotesk: creator-brand's own heading face (globals.css --font-head), loaded for the
-       MoneyMaker welcome screen only (moneymaker.jsx), which borrows that page's design theme. -->
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
   <!-- Best-guess match for BlueStacks App Player's own UI font, used ONLY by the dark
        ("bluestacks" skin) install dialog, see BS_FONT in install_dialog.jsx. Not a
        confirmed match; falls back to Segoe UI if wrong or slow to load. -->
@@ -31,6 +28,9 @@
   <!-- V3: the design system's Target tokens (--v2-*). Base is /blueai-product-v3/, so this resolves to
        /blueai-product-v2-ds/tokens.css. Read-only here: never edit the DS folder from V3. -->
   <link rel="stylesheet" href="../blueai-product-v2-ds/tokens.css" />
+  <!-- V3, Phase 2: the entry screens (welcome, sign-in modal, account gate, terms sheet) in the
+       onBlue site's language on those tokens: solid dark button, step discs, dot grid, links. -->
+  <link rel="stylesheet" href="entry.css" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -236,17 +236,6 @@
 <script type="text/babel" src="blueai/chat_compare.jsx"></script>
 <!-- Onboarding welcome for the logged-out cold start (exposes window.Onboarding) -->
 <script type="text/babel" src="blueai/onboarding.jsx"></script>
-<!-- MoneyMaker welcome screen's background decoration (exposes window.MoneyMakerBackdrop) -->
-<script type="text/babel" src="blueai/moneymaker_backdrop.jsx"></script>
-<!-- MoneyMaker welcome screen's full-color step icons (exposes window.MoneyMakerIcons), must
-     load before moneymaker.jsx, which reads window.MoneyMakerIcons at its own top level. -->
-<script type="text/babel" src="blueai/moneymaker_icons.jsx"></script>
-<!-- MoneyMaker welcome screen's hero logo, glow, ring, mark, grain (exposes window.MoneyMakerLogo)
-     must load before moneymaker.jsx, which reads window.MoneyMakerLogo at its own top level. -->
-<script type="text/babel" src="blueai/moneymaker_logo.jsx"></script>
-<!-- MoneyMaker welcome screen's steps card (exposes window.MoneyMakerSteps), must load before
-     moneymaker.jsx, which reads window.MoneyMakerSteps at its own top level. -->
-<script type="text/babel" src="blueai/moneymaker_steps.jsx"></script>
 <!-- MoneyMaker's post-login in-chat card (exposes window.MoneyMakerHomeCard), must load before
      moneymaker.jsx, which reads window.MoneyMakerHomeCard at its own top level to re-export it. -->
 <script type="text/babel" src="blueai/moneymaker_home.jsx"></script>

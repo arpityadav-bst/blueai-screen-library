@@ -20,8 +20,8 @@
   /* Dollar glyph: designer-supplied SVG asset (filled, not stroke), swapped in for the earlier
      custom-drawn version. Down to ONE use now, the card's tile. Two former uses are gone: an
      oversized card watermark, cut because it sat behind the description text and read as a smudge
-     (and two dollar signs on one small card was one too many); and the welcome screen's step-2 tile,
-     which in this tree uses the designer-supplied IcoCodeFolder instead, see moneymaker_icons.jsx.
+     (and two dollar signs on one small card was one too many); and the welcome screen's step-2 tile
+     (the welcome now uses numbered step discs, V3 Phase 2).
      Kept parameterised anyway; it costs nothing and the card renders it at a non-default size. */
   function IcoDollar({ size = 22, color = '#1BA07A' }) {
     return (

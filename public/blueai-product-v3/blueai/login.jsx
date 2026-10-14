@@ -64,21 +64,20 @@ function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep, onOpenBr
   // maxWidth widened 288→360 so the browser step's "Use the account you applied with" line fits
   // on one row instead of wrapping (shared by all three of this step's screens: browser/signing/
   // success: harmless there, just more breathing room around already-centered content).
-  const card = (children) =>
-  <div style={{ width: '100%', maxWidth: 360, background: 'white', borderRadius: 20, border: '1px solid #e5e7eb', padding: '40px 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.14)' }}>
-      {children}
-    </div>;
+  // V3, Phase 2: the card is the Target surface with a 1px line and no shadow (entry.css
+  // .v3-gate-card), on the frost scrim, in the site's language like the welcome behind it.
+  const card = (children) => <div className="v3-gate-card">{children}</div>;
 
 
   return (
-    <div style={{ position: 'absolute', inset: 0, zIndex: 100, display: 'flex', flexDirection: 'column', background: 'rgba(255,255,255,0.55)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>
+    <div style={{ position: 'absolute', inset: 0, zIndex: 100, display: 'flex', flexDirection: 'column', fontFamily: 'var(--v2-font-ui)', background: 'var(--v2-scrim-frost)', backdropFilter: 'blur(var(--v2-scrim-blur))', WebkitBackdropFilter: 'blur(var(--v2-scrim-blur))' }}>
       <style>{`@keyframes loginSpin{to{transform:rotate(360deg)}} @keyframes cfGlow{0%,100%{opacity:.55}50%{opacity:.85}}`}</style>
 
       {/* Close: on every step, as in the live app (ai-worker LoginModal.tsx renders it always),
          except the account check (ROB-21388), which blocks the home screen. */}
       {step !== 'gate' && step !== 'confirm' &&
-      <button onClick={onClose}
-      style={{ position: 'absolute', top: 14, right: 14, width: 34, height: 34, borderRadius: '50%', background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <button type="button" onClick={onClose} aria-label="Close" className="v3-icon-btn"
+      style={{ position: 'absolute', top: 'var(--v2-space-3)', right: 'var(--v2-space-3)' }}>
           <IcoXClose size={18} />
         </button>
       }
@@ -225,25 +224,27 @@ function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep, onOpenBr
         {/* ── CHECK BROWSER ── */}
         {step === 'browser' && card(
           <>
-            <img src="assets/Browser.svg" alt="" style={{ width: 64, height: 64 }} onError={(e) => {e.target.style.display = 'none';}} />
+            <span className="v3-gate-mark" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" style={{ strokeWidth: 'var(--v2-icon-stroke)' }}>
+                <rect x="3" y="4.5" width="18" height="15" rx="2.5" /><path d="M3 9h18" /><path d="M6.5 6.75h.01M9 6.75h.01" />
+              </svg>
+            </span>
             <div>
-              <p style={{ fontSize: 17, fontWeight: 700, color: '#111827' }}>Check your browser</p>
-              <p style={{ marginTop: 5, fontSize: 13, color: '#6b7280', lineHeight: 1.5 }}>Finish logging in from your web browser</p>
+              <p className="v3-gate-title">Check your browser</p>
+              <p className="v3-gate-body">Finish logging in from your web browser</p>
             </div>
-            {/* Same info-blue palette as needs_bluestacks.jsx's Bubble (bg/border/ink/icon),
-               the product's one established "blue notice" treatment, reused rather than a new tone. */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 12, padding: '10px 14px', boxSizing: 'border-box' }}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+            {/* A neutral notice: blue is held to focus, selection and the logo on these screens. */}
+            <div className="v3-notice">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ strokeWidth: 'var(--v2-icon-stroke)' }}>
                 <circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" />
               </svg>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#1e40af', textAlign: 'left' }}>Use the account you applied with</span>
+              <span>Use the account you applied with</span>
             </div>
-            <div style={{ width: '100%', height: 1, background: 'linear-gradient(90deg,transparent,rgba(35,38,66,0.18),transparent)' }} />
-            <button onClick={handleSignIn} {...linkHover('#f59e0b', '#d97706')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#f59e0b', fontWeight: 500, fontFamily: 'inherit', transition: 'color 0.15s ease' }}>
+            <hr className="v3-rule" />
+            <button type="button" onClick={handleSignIn} className="v3-link" style={{ fontSize: 'var(--v2-text-13)' }}>
               Not seeing the browser tab?
             </button>
-            <button onClick={handleSignIn} {...blueBtn('none')}
-            style={{ background: '#1990FF', border: 'none', borderRadius: 999, padding: '10px 24px', fontSize: 14, fontWeight: 600, color: 'white', cursor: 'pointer', fontFamily: 'inherit', boxShadow: 'none', transition: BTN_TRANSITION }}>
+            <button type="button" onClick={handleSignIn} className="v3-btn-solid">
               Try again
             </button>
           </>
@@ -252,12 +253,12 @@ function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep, onOpenBr
         {/* ── SIGNING IN ── */}
         {step === 'signing' && card(
           <>
-            <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: 36, height: 36, borderRadius: '50%', border: '3.5px solid #e0e7ff', borderTopColor: '#4f46e5', animation: 'loginSpin 0.8s linear infinite' }} />
-            </div>
+            <span className="v3-gate-mark" aria-hidden="true">
+              <span style={{ width: 'var(--v2-icon-lg)', height: 'var(--v2-icon-lg)', borderRadius: 'var(--v2-radius-round)', border: '2.5px solid var(--v2-line)', borderTopColor: 'var(--v2-ink)', animation: 'loginSpin var(--v2-dur-spin) linear infinite' }} />
+            </span>
             <div>
-              <p style={{ fontSize: 17, fontWeight: 700, color: '#111827' }}>Signing in…</p>
-              <p style={{ marginTop: 5, fontSize: 13, color: '#6b7280', lineHeight: 1.5 }}>Please wait while we complete your sign-in</p>
+              <p className="v3-gate-title">Signing in…</p>
+              <p className="v3-gate-body">Please wait while we complete your sign-in</p>
             </div>
           </>
         )}
@@ -265,13 +266,14 @@ function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep, onOpenBr
         {/* ── SUCCESS ── */}
         {step === 'success' && card(
           <>
-            <img src="assets/CheckmarkGreen.svg" alt="" style={{ width: 64, height: 64 }} />
+            <span className="v3-gate-mark v3-gate-mark--success" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
+            </span>
             <div>
-              <p style={{ fontSize: 17, fontWeight: 700, color: '#111827' }}>Logged in</p>
-              <p style={{ marginTop: 5, fontSize: 13, color: '#6b7280' }}>Welcome back!</p>
+              <p className="v3-gate-title">Logged in</p>
+              <p className="v3-gate-body">Welcome back!</p>
             </div>
-            <button onClick={() => onSuccess?.()} {...blueBtn('0 2px 8px rgba(25,144,255,0.3)')}
-            style={{ background: '#1990FF', border: 'none', borderRadius: 999, padding: '10px 32px', fontSize: 14, fontWeight: 600, color: 'white', cursor: 'pointer', boxShadow: '0 2px 8px rgba(25,144,255,0.3)', fontFamily: 'inherit', transition: BTN_TRANSITION }}>
+            <button type="button" onClick={() => onSuccess?.()} className="v3-btn-solid">
               Continue
             </button>
           </>

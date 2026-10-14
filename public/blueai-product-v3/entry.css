@@ -1,0 +1,150 @@
+/* BlueAI Product V3: the entry screens (MoneyMaker welcome, sign-in modal, account gate, terms
+   sheet), drawn in the onBlue Agentic site's language on the Target tokens (--v2-*). Phase 2.
+   Structure follows the design system's entry patterns (blueai-product-v2-ds/screens/entry.css,
+   design-md 56, 67, 68); the effects are the site's own (experiments/onblue-vesper/onblue.css).
+   Blue is held to the logo, focus and selection; actions are the site's solid dark button. */
+
+/* The site's light-theme .btn-solid recipe (onblue.css:354-357, 425-433). The Target set has no
+   solid-dark button tokens, so the hover fill and the two shadow stacks live here, once. */
+:root {
+  --v3-solid-hover: #26262b;
+  --v3-solid-shadow: 0 1px 2px rgba(16, 16, 19, 0.1), 0 3px 7px -2px rgba(16, 16, 19, 0.13), 0 7px 15px -7px rgba(16, 16, 19, 0.16);
+  --v3-solid-shadow-hover: 0 1px 2px rgba(16, 16, 19, 0.15), 0 2px 4px -1px rgba(16, 16, 19, 0.13), 0 4px 8px -6px rgba(16, 16, 19, 0.11);
+}
+
+/* ---- Primary action: the site's .btn-solid (onblue.css:959-986), press from :536-543 --------- */
+.v3-btn-solid {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--v2-space-2);
+  height: var(--v2-control-lg); padding: 0 var(--v2-space-6);
+  border: var(--v2-stroke) solid var(--v2-ink); border-radius: var(--v2-radius-sm);
+  background: var(--v2-ink); color: var(--v2-on-color); box-shadow: var(--v3-solid-shadow);
+  font-family: var(--v2-font-ui); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium);
+  letter-spacing: var(--v2-tracking-title); line-height: 1; white-space: nowrap; cursor: pointer;
+  transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, transform 0.18s ease;
+}
+.v3-btn-solid:hover {
+  background: var(--v3-solid-hover); border-color: var(--v3-solid-hover);
+  box-shadow: var(--v3-solid-shadow-hover); transform: translateY(1px);
+}
+.v3-btn-solid:active { transform: translateY(2px); }
+.v3-btn-solid:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+.v3-btn-full { width: 100%; }
+.v3-btn-solid svg { flex: none; }
+
+/* ---- Inline link: the site's underlined link (onblue.css:1224-1232) ------------------------- */
+.v3-link {
+  padding: 0; border: 0; background: none; cursor: pointer;
+  font: inherit; color: var(--v2-ink-3);
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
+  text-decoration-color: var(--v2-link-underline);
+  transition: color var(--v2-dur-1) var(--v2-ease-standard), text-decoration-color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v3-link:hover { color: var(--v2-ink); text-decoration-color: currentColor; }
+.v3-link:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); border-radius: var(--v2-radius-xs); }
+/* In a sentence that is already muted: the link carries the ink, as the site's are. */
+.v3-link--ink { color: var(--v2-ink); font-weight: var(--v2-weight-medium); }
+
+.v3-sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+/* ---- Welcome (section 67) --------------------------------------------------------------------- */
+/* The site's quiet texture: a faint grey dot grid on the canvas, strongest behind the content and
+   dissolving toward the window edges, the way the site's glyph field fades out (onblue.css:3198). */
+.v3-dotgrid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle, var(--v2-line-strong) 1px, transparent 1.5px);
+  background-size: 18px 18px; background-position: center;
+  -webkit-mask-image: radial-gradient(75% 65% at 50% 46%, #000 0%, rgba(0, 0, 0, 0.5) 55%, transparent 100%);
+  mask-image: radial-gradient(75% 65% at 50% 46%, #000 0%, rgba(0, 0, 0, 0.5) 55%, transparent 100%);
+}
+.v3-welcome-title {
+  margin: 0; color: var(--v2-ink); text-align: center; text-wrap: balance;
+  font-family: var(--v2-font-ui); font-size: var(--v2-text-24); font-weight: var(--v2-weight-semibold);
+  line-height: var(--v2-leading-tight); letter-spacing: var(--v2-tracking-title);
+}
+/* The site's one serif phrase in a title (onblue.css:1183-1191): Instrument Serif italic, the blue. */
+.v3-serif-em {
+  font-family: var(--v2-font-serif); font-style: italic; font-weight: var(--v2-weight-regular);
+  font-size: 1.08em; letter-spacing: var(--v2-tracking-display); color: var(--v2-blue);
+}
+/* In-flow card: a 1px line, no shadow. */
+.v3-card {
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line);
+  border-radius: var(--v2-radius-lg); padding: var(--v2-space-4);
+}
+
+/* Numbered steps: the site's step disc (onblue.css:1887-1899), scaled to the window. */
+.v3-steps { display: flex; flex-direction: column; gap: var(--v2-space-4); margin: 0; padding: 0; list-style: none; }
+.v3-step { display: flex; align-items: flex-start; gap: var(--v2-space-3); }
+.v3-step-num {
+  flex: none; display: grid; place-items: center;
+  width: var(--v2-control-sm); height: var(--v2-control-sm); border-radius: var(--v2-radius-round);
+  background: var(--v2-select); border: var(--v2-stroke) solid var(--v2-select-line);
+  color: var(--v2-ink); font-size: var(--v2-text-13); font-weight: var(--v2-weight-semibold);
+  line-height: 1; font-variant-numeric: tabular-nums;
+}
+/* Centres the first line of text on the 28px disc. */
+.v3-step-text {
+  margin: 0; min-width: 0;
+  padding-top: calc((var(--v2-control-sm) - var(--v2-text-14) * var(--v2-leading-body)) / 2);
+  font-size: var(--v2-text-14); line-height: var(--v2-leading-body); color: var(--v2-ink-2);
+}
+
+/* ---- Sign-in modal and account gate (sections 56, 68) ----------------------------------------- */
+.v3-gate-card {
+  width: 100%; max-width: 360px; display: flex; flex-direction: column; align-items: center;
+  gap: var(--v2-space-4); padding: var(--v2-space-10) var(--v2-space-8); text-align: center;
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg);
+}
+.v3-gate-mark {
+  flex: none; display: grid; place-items: center;
+  width: calc(var(--v2-icon-lg) * 2); height: calc(var(--v2-icon-lg) * 2); border-radius: var(--v2-radius-round);
+  background: var(--v2-surface-sunken); color: var(--v2-ink-2);
+}
+.v3-gate-mark--success { background: var(--v2-success-tint); color: var(--v2-success-ink); }
+.v3-gate-title {
+  margin: 0; color: var(--v2-ink); font-size: var(--v2-text-20); font-weight: var(--v2-weight-semibold);
+  line-height: var(--v2-leading-tight); letter-spacing: var(--v2-tracking-title);
+}
+.v3-gate-body { margin: var(--v2-space-15) 0 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); }
+.v3-gate-email {
+  margin: var(--v2-space-05) 0 0; color: var(--v2-ink); font-size: var(--v2-text-16); font-weight: var(--v2-weight-semibold);
+  line-height: var(--v2-leading-snug); letter-spacing: var(--v2-tracking-label); overflow-wrap: anywhere;
+}
+/* A neutral notice: the account hint on the browser step. */
+.v3-notice {
+  display: flex; align-items: center; justify-content: center; gap: var(--v2-space-2); width: 100%;
+  padding: var(--v2-space-3) var(--v2-space-4); border-radius: var(--v2-radius-md);
+  background: var(--v2-surface-sunken); border: var(--v2-stroke) solid var(--v2-line-hair);
+  color: var(--v2-ink-2); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); text-align: left;
+}
+.v3-notice svg { flex: none; color: var(--v2-ink-3); }
+.v3-rule { width: 100%; height: var(--v2-stroke); background: var(--v2-line-hair); border: 0; }
+.v3-badge {
+  display: inline-flex; align-items: center; height: var(--v2-badge-h); padding: 0 var(--v2-space-3);
+  border-radius: var(--v2-radius-pill); background: var(--v2-surface-sunken); color: var(--v2-ink-3);
+  font-size: var(--v2-text-11); font-weight: var(--v2-weight-medium); letter-spacing: var(--v2-tracking-eyebrow); text-transform: uppercase;
+}
+.v3-note { margin: 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); }
+/* Option B: the account to continue as, one pressable row with a line edge. */
+.v3-account {
+  display: flex; align-items: center; gap: var(--v2-space-3); width: 100%;
+  padding: var(--v2-space-3) var(--v2-space-4); text-align: left; cursor: pointer; font: inherit;
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-md);
+  transition: background var(--v2-dur-1) var(--v2-ease-standard), border-color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v3-account:hover { background: var(--v2-surface-panel); border-color: var(--v2-line-hover); }
+.v3-account:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+.v3-avatar {
+  flex: none; display: grid; place-items: center; border-radius: var(--v2-radius-round);
+  color: var(--v2-on-color); font-weight: var(--v2-weight-semibold); line-height: 1;
+}
+.v3-icon-btn {
+  display: grid; place-items: center; width: var(--v2-control-md); height: var(--v2-control-md);
+  border: 0; border-radius: var(--v2-radius-round); background: none; color: var(--v2-ink-3); cursor: pointer;
+  transition: background var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v3-icon-btn:hover { background: var(--v2-wash-hover); color: var(--v2-ink); }
+.v3-icon-btn:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
