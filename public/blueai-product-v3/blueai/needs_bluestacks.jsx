@@ -69,26 +69,27 @@
      place: once clicked, a ProgressBubble appears right below carrying the same information
      (what's installing), so a lingering disabled "Get BlueStacks" button would just be a second,
      redundant thing saying the same thing. This also blocks a second click from queuing a
-     duplicate install: there's no debounce anywhere upstream of this component. */
+     duplicate install: there's no debounce anywhere upstream of this component.
+
+     V3 (phase 4): the chat's one bubble language (chat.css). Info-blue becomes a plain bubble with
+     a quiet info mark in the muted ink (blue is not a surface, and nothing here needs a tone), and
+     Get BlueStacks is the view's one committing action, the solid ink button. */
   function Bubble({ app, onGet }) {
     const [clicked, setClicked] = useState(false);
     return (
-      <div className="ba-msg-in" style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 10 }}>
-        <div style={{ maxWidth: 300, background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 16, padding: '12px 14px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: clicked ? 0 : 11 }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}>
-              <circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" />
+      <div className="ba-msg-in v3-msg">
+        <div className="v3-bubble">
+          <div className="v3-toned">
+            <svg className="v3-toned-icon v3-ico v3-tone-quiet" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" /><line x1="12" y1="16" x2="12" y2="11.5" /><line x1="12" y1="8" x2="12.01" y2="8" />
             </svg>
-            <p style={{ fontSize: 13, lineHeight: 1.5, color: '#1e40af' }}>
+            <p className="v3-toned-body">
               This one runs inside BlueStacks App Player. I drive {app} there, and BlueStacks isn’t installed on this PC yet.
             </p>
           </div>
           {!clicked &&
-            <button onClick={() => { setClicked(true); onGet(); }}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, width: '100%', background: '#1990FF', border: 'none', borderRadius: 10, padding: '10px 0', fontSize: 13.5, fontWeight: 700, color: 'white', cursor: 'pointer', fontFamily: 'inherit', transition: 'opacity 0.15s ease' }}
-              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
-              <img src="assets/BlueStacks.png" alt="" style={{ width: 20, height: 20, borderRadius: 4 }} onError={(e) => { e.target.style.display = 'none'; }} />
+            <button type="button" onClick={() => { setClicked(true); onGet(); }} className="v3-btn-solid v3-btn-sm v3-btn-full v3-bs-get">
+              <img src="assets/BlueStacks.png" alt="" className="v3-bs-logo" onError={(e) => { e.target.style.display = 'none'; }} />
               Get BlueStacks
             </button>}
         </div>
@@ -102,7 +103,9 @@
      usable while this ticks up, which is the actual point of putting it in the conversation
      instead of a popup. Kept in the app's own blue (matching the Bubble above it), not the
      screenshot's purple: that purple is the live app's AUTO-GAMEPLAY skill's own branding, a
-     different feature; reusing it here would borrow a color identity that means something else. */
+     different feature; reusing it here would borrow a color identity that means something else.
+     V3 (phase 4): a plain bubble; the blue is held to what it means, progress (the spinner and the
+     bar), and the done state turns to the green tick because the install has been reached. */
   function ProgressBubble({ app, onDone }) {
     const [pct, setPct] = useState(0);
     const DURATION = 3000;   // matches the old InstallDialog's downloadMs for BlueStacks
@@ -126,17 +129,17 @@
     // the done state swaps to a static checkmark rather than just leaving the spin running.
     const done = pct >= 100;
     return (
-      <div className="ba-msg-in" style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 10 }}>
-        <div style={{ maxWidth: 300, width: '100%', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 16, padding: '12px 14px 13px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
-          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.07em', color: '#2563eb', textTransform: 'uppercase', marginBottom: 9 }}>Installing</p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 9 }}>
+      <div className="ba-msg-in v3-msg">
+        <div className="v3-bubble v3-bs-progress">
+          <p className="v3-eyebrow">Installing</p>
+          <div className="v3-bs-row">
             {done
-              ? <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1990FF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="20 6 9 17 4 12" /></svg>
-              : <span className="ba-ring-spin" aria-hidden="true" />}
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#1e40af' }}>Getting ready {pct}%</span>
+              ? <svg className="v3-ico v3-tone-success" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0 }}><polyline points="20 6 9 17 4 12" /></svg>
+              : <span className="v3-spin" aria-hidden="true" />}
+            <span className="v3-bs-pct">Getting ready {pct}%</span>
           </div>
-          <div style={{ height: 6, borderRadius: 999, background: '#dbeafe', overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: pct + '%', borderRadius: 999, background: '#1990FF' }} />
+          <div className="v3-bs-track">
+            <div className="v3-bs-fill" style={{ width: pct + '%' }} />
           </div>
         </div>
       </div>);

@@ -1,4 +1,9 @@
 // BlueAI: Schedule Screen
+/* V3 (phase 4, worker.css): in-flow cards with a 1px line and no cast; the next run is a muted line
+   with one ink figure (blue is not for data); Edit and Delete are ghosts (Delete turns red on
+   hover only); the one committing action per view is the solid ink button (Create, and Create
+   schedule on the empty state), so the header's New is a ghost. Fields follow the site's: label
+   above, 1px line, blue edge and soft ring on focus. */
 
 const { useState } = React;
 
@@ -18,33 +23,29 @@ function repeatLabel(sch) {
 
 function ScheduleCard({ task, onEdit, onDelete }) {
   return (
-    <li style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 12, padding: 16, marginBottom: 12, listStyle: 'none', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-      <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', marginBottom: 12 }}>{task.name}</h3>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 7, marginBottom: 14 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#6b7280' }}>
-          <svg width="14" height="14" fill="none" stroke="#9ca3af" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <span><strong style={{ color: '#374151' }}>Schedule:</strong> {repeatLabel(task.schedule)}</span>
+    <li className="v3-card v3-sched">
+      <h3 className="v3-sched-title">{task.name}</h3>
+      <div className="v3-sched-meta">
+        <div className="v3-sched-line">
+          <IcoCalendar size={16} stroke={1.75} />
+          <span><strong>Schedule:</strong> {repeatLabel(task.schedule)}</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#6b7280' }}>
-          <svg width="14" height="14" fill="none" stroke="#9ca3af" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div className="v3-sched-line">
+          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
           <span>
-            <strong style={{ color: '#374151' }}>Next run:</strong>{' '}
-            <span style={{ color: '#1990FF', fontWeight: 500 }}>
+            <strong>Next run:</strong>{' '}
+            <span className="v3-figure">
               {task.next_run ? new Date(task.next_run).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A'}
             </span>
           </span>
         </div>
       </div>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button onClick={onEdit} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, border: '1px solid #e2e8f0', borderRadius: 8, background: 'white', padding: '9px 12px', fontSize: 13, fontWeight: 500, color: '#374151', cursor: 'pointer', fontFamily: 'inherit', transition: 'background 0.12s' }}
-          onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
-          onMouseLeave={e => e.currentTarget.style.background = 'white'}>
-          <IcoPencilEdit size={13} /> Edit
+      <div className="v3-btn-row">
+        <button type="button" onClick={onEdit} className="v3-btn-ghost v3-btn-sm">
+          <IcoPencilEdit size={14} /> Edit
         </button>
-        <button onClick={onDelete} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, border: '1px solid #e2e8f0', borderRadius: 8, background: 'white', padding: '9px 12px', fontSize: 13, fontWeight: 500, color: '#374151', cursor: 'pointer', fontFamily: 'inherit', transition: 'background 0.12s, color 0.12s, border-color 0.12s' }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#fef2f2'; e.currentTarget.style.borderColor = '#fecaca'; e.currentTarget.style.color = '#dc2626'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#374151'; }}>
-          <IcoTrashBin size={13} /> Delete
+        <button type="button" onClick={onDelete} className="v3-btn-ghost v3-btn-ghost--danger v3-btn-sm">
+          <IcoTrashBin size={14} /> Delete
         </button>
       </div>
     </li>
@@ -57,30 +58,29 @@ function CreateScheduleModal({ isOpen, onClose, onSave }) {
   const [repeat, setRepeat] = useState('daily');
   const canSave = name.trim() && prompt.trim();
   const submit = e => { e.preventDefault(); if (!canSave) return; onSave({ id: 'st' + Date.now(), name: name.trim(), schedule: { type: repeat }, next_run: new Date(Date.now() + 86400000).toISOString() }); setName(''); setPrompt(''); setRepeat('daily'); onClose(); };
-  const fieldStyle = { width: '100%', border: '1px solid #d1d5db', borderRadius: 8, padding: '9px 12px', fontSize: 14, outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' };
   return (
     <ModalOverlay isOpen={isOpen} onClose={onClose} title="Schedule task">
-      <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <form onSubmit={submit} className="v3-form">
         <div>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#374151', marginBottom: 6 }}>Task name <span style={{ color: '#ef4444' }}>*</span></label>
-          <input className="ba-field" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Daily rewards collection" style={fieldStyle} />
+          <label htmlFor="sched-name" className="v3-label">Task name <span className="v3-req">*</span></label>
+          <input id="sched-name" className="v3-field" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Daily rewards collection" />
         </div>
         <div>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#374151', marginBottom: 6 }}>Task prompt <span style={{ color: '#ef4444' }}>*</span></label>
-          <textarea className="ba-field" value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Describe what BlueAI should do…" rows={3} style={{ ...fieldStyle, resize: 'vertical' }} />
+          <label htmlFor="sched-prompt" className="v3-label">Task prompt <span className="v3-req">*</span></label>
+          <textarea id="sched-prompt" className="v3-field" value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Describe what BlueAI should do…" rows={3} />
         </div>
         <div>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#374151', marginBottom: 6 }}>Repeat</label>
-          <select className="ba-field" value={repeat} onChange={e => setRepeat(e.target.value)} style={{ ...fieldStyle, background: 'white', cursor: 'pointer' }}>
+          <label htmlFor="sched-repeat" className="v3-label">Repeat</label>
+          <select id="sched-repeat" className="v3-field" value={repeat} onChange={e => setRepeat(e.target.value)}>
             <option value="once">One time</option>
             <option value="daily">Daily</option>
             <option value="weekly">Weekly</option>
             <option value="monthly">Monthly</option>
           </select>
         </div>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button type="button" onClick={onClose} style={{ flex: 1, padding: '10px', borderRadius: 8, background: 'white', border: '1px solid #e2e8f0', fontSize: 14, fontWeight: 500, color: '#374151', cursor: 'pointer', fontFamily: 'inherit' }}>Cancel</button>
-          <button type="submit" disabled={!canSave} style={{ flex: 1, padding: '10px', borderRadius: 8, background: canSave ? '#1990FF' : '#bfdbfe', border: 'none', fontSize: 14, fontWeight: 600, color: canSave ? 'white' : '#93c5fd', cursor: canSave ? 'pointer' : 'default', fontFamily: 'inherit' }}>Create</button>
+        <div className="v3-btn-row">
+          <button type="button" onClick={onClose} className="v3-btn-ghost">Cancel</button>
+          <button type="submit" disabled={!canSave} className="v3-btn-solid">Create</button>
         </div>
       </form>
     </ModalOverlay>
@@ -93,46 +93,45 @@ function ScheduleScreen({ isLoading }) {
   const [confirmId, setConfirmId] = useState(null);
 
   if (isLoading) return (
-    <div style={{ paddingTop: 14 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
-        <Shimmer h={24} w={150} r={7} />
-        <Shimmer h={32} w={64} r={8} />
+    <div className="v3-tab">
+      <div className="v3-tab-head">
+        <Shimmer h={24} w={150} r={6} />
+        <Shimmer h={36} w={72} r={6} />
       </div>
-      {[1, 2].map(i => (
-        <div key={i} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 12, padding: 16, marginBottom: 12 }}>
-          <Shimmer h={17} w="65%" r={6} extra={{ marginBottom: 14 }} />
-          <Shimmer h={12} w="80%" r={5} extra={{ marginBottom: 8 }} />
-          <Shimmer h={12} w="60%" r={5} extra={{ marginBottom: 16 }} />
-          <div style={{ display: 'flex', gap: 8 }}>
-            <Shimmer h={36} r={8} extra={{ flex: 1 }} />
-            <Shimmer h={36} r={8} extra={{ flex: 1 }} />
+      <div className="v3-list">
+        {[1, 2].map(i => (
+          <div key={i} className="v3-skel">
+            <Shimmer h={17} w="65%" r={6} extra={{ marginBottom: 14 }} />
+            <Shimmer h={12} w="80%" r={5} extra={{ marginBottom: 8 }} />
+            <Shimmer h={12} w="60%" r={5} extra={{ marginBottom: 16 }} />
+            <div style={{ display: 'flex', gap: 8 }}>
+              <Shimmer h={36} r={6} extra={{ flex: 1 }} />
+              <Shimmer h={36} r={6} extra={{ flex: 1 }} />
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 
   return (
-    <div style={{ paddingTop: 14, paddingBottom: 20 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: '#111827' }}>Scheduled tasks</h1>
-        <button onClick={() => setShowCreate(true)}
-          style={{ display: 'flex', alignItems: 'center', gap: 5, background: '#1990FF', color: 'white', border: 'none', borderRadius: 20, padding: '6px 13px 6px 10px', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
-          <IcoPlusSmall size={11} /> New
+    <div className="v3-tab">
+      <div className="v3-tab-head">
+        <h1 className="v3-cat-title">Scheduled tasks</h1>
+        <button type="button" onClick={() => setShowCreate(true)} className="v3-btn-ghost v3-btn-sm">
+          <IcoPlusSmall size={12} color="currentColor" /> New
         </button>
       </div>
 
       {tasks.length === 0 ? (
-        <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 12, padding: '48px 20px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
-          <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#f3e8ff', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
-            <svg width="24" height="24" fill="none" stroke="#9333ea" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          </div>
-          <p style={{ fontSize: 15, fontWeight: 600, color: '#374151', marginBottom: 6 }}>No scheduled tasks</p>
-          <p style={{ fontSize: 13, color: '#9ca3af', marginBottom: 16, lineHeight: 1.5 }}>Schedule jobs to run automatically at specific times.</p>
-          <button onClick={() => setShowCreate(true)} style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 8, padding: '9px 20px', fontSize: 14, fontWeight: 600, color: '#1990FF', cursor: 'pointer', fontFamily: 'inherit' }}>Create schedule</button>
+        <div className="v3-card v3-empty v3-empty--card">
+          <div className="v3-empty-mark"><IcoCalendar size={24} stroke={1.75} /></div>
+          <p className="v3-empty-title">No scheduled tasks</p>
+          <p className="v3-empty-text">Schedule jobs to run automatically at specific times.</p>
+          <button type="button" onClick={() => setShowCreate(true)} className="v3-btn-solid v3-btn-sm">Create schedule</button>
         </div>
       ) : (
-        <ul style={{ padding: 0, margin: 0 }}>
+        <ul className="v3-list">
           {tasks.map(t => (
             <ScheduleCard key={t.id} task={t} onEdit={() => {}} onDelete={() => setConfirmId(t.id)} />
           ))}
@@ -142,11 +141,11 @@ function ScheduleScreen({ isLoading }) {
       <CreateScheduleModal isOpen={showCreate} onClose={() => setShowCreate(false)} onSave={t => setTasks(prev => [...prev, t])} />
 
       <ModalOverlay isOpen={!!confirmId} onClose={() => setConfirmId(null)} title="Confirm delete">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <p style={{ fontSize: 14, color: '#6b7280', lineHeight: 1.6 }}>Are you sure you want to delete this scheduled task? This action cannot be undone.</p>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button onClick={() => setConfirmId(null)} style={{ flex: 1, padding: '10px', borderRadius: 8, background: 'white', border: '1px solid #e2e8f0', fontSize: 14, fontWeight: 500, color: '#374151', cursor: 'pointer', fontFamily: 'inherit' }}>Cancel</button>
-            <button onClick={() => { setTasks(p => p.filter(t => t.id !== confirmId)); setConfirmId(null); }} style={{ flex: 1, padding: '10px', borderRadius: 8, background: '#ef4444', border: 'none', fontSize: 14, fontWeight: 600, color: 'white', cursor: 'pointer', fontFamily: 'inherit' }}>Delete</button>
+        <div className="v3-form">
+          <p className="v3-dlg-text">Are you sure you want to delete this scheduled task? This action cannot be undone.</p>
+          <div className="v3-btn-row">
+            <button type="button" onClick={() => setConfirmId(null)} className="v3-btn-ghost">Cancel</button>
+            <button type="button" onClick={() => { setTasks(p => p.filter(t => t.id !== confirmId)); setConfirmId(null); }} className="v3-btn-solid">Delete</button>
           </div>
         </div>
       </ModalOverlay>

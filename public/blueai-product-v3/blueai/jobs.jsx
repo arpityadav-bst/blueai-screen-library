@@ -106,13 +106,16 @@ function JobCard({ job }) {
   );
 }
 
+/* V3 (phase 4, worker.css): the tab is an empty state today. It names what will appear, on a
+   sunken mark in the muted ink (no coloured circle, no illustration); the skeleton cards take the
+   in-flow card (1px line, 16 radius, no cast). */
 function JobsScreen({ isLoading }) {
   if (isLoading) return (
-    <div style={{ paddingTop: 14 }}>
-      <Shimmer h={26} w={120} r={7} extra={{ marginBottom: 20 }} />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <div className="v3-tab">
+      <Shimmer h={26} w={120} r={6} extra={{ marginBottom: 20 }} />
+      <div className="v3-list">
         {[1, 2, 3].map(i => (
-          <div key={i} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 12, padding: '14px 16px' }}>
+          <div key={i} className="v3-skel">
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
               <Shimmer h={16} w="62%" r={6} />
               <Shimmer h={22} w={52} r={999} />
@@ -127,18 +130,10 @@ function JobsScreen({ isLoading }) {
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '70vh', textAlign: 'center', padding: '0 32px' }}>
-      {/* Icon circle */}
-      <div style={{ width: 120, height: 120, borderRadius: '50%', background: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 28 }}>
-        <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
-          <rect x="2" y="7" width="20" height="14" rx="2.5" fill="#7C5C52"/>
-          <path d="M16 7V5.5A2.5 2.5 0 0 0 13.5 3h-3A2.5 2.5 0 0 0 8 5.5V7" fill="#7C5C52"/>
-          <rect x="2" y="7" width="20" height="14" rx="2.5" fill="none" stroke="#6B4A40" strokeWidth="0.5"/>
-          <rect x="9" y="10.5" width="6" height="2" rx="0.5" fill="#C89A85" opacity="0.7"/>
-        </svg>
-      </div>
-      <h2 style={{ fontSize: 22, fontWeight: 800, color: '#1e293b', marginBottom: 12, letterSpacing: '-0.3px' }}>Coming Soon</h2>
-      <p style={{ fontSize: 14, color: '#6b7280', lineHeight: 1.65, maxWidth: 260 }}>
+    <div className="v3-empty v3-empty--page">
+      <div className="v3-empty-mark"><IcoBriefcase size={24} stroke={1.75} /></div>
+      <h2 className="v3-empty-title">Coming Soon</h2>
+      <p className="v3-empty-text">
         We are working on this section to bring you new opportunities. Check back soon for updates!
       </p>
     </div>

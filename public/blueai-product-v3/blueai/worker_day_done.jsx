@@ -38,8 +38,9 @@
   const { useState } = React;
   const RULE = { rate: 1, target: 20, bonus: 10, programEnd: 'Nov 1' };
   const DONE_BEFORE = 6;        // days already verified before today's run (19 for the Day 20 case)
-  const GREEN = '#1BA07A';
-  const INK = '#111827', MUTED = '#6b7280', FAINT = '#9ca3af', LINE = '#e5e7eb', TRACK = '#e9edf2';
+  /* V3 (phase 4, worker.css): today's day is PENDING, so its marks are the progress blue (the
+     site's step disc, an outlined segment); green arrives only with the second tick, when the day
+     is verified. Money stays ink. */
 
   // The preview's picks: how today's run ends, and which option draws it. Numbers derive from them.
   let end = 'job', style = 'days';   // days-led ships (Abhisht, 2026-10-12): no money on the message
@@ -60,10 +61,10 @@
   }
   const money = (n) => '$' + n;
 
-  /* One tick or two. */
-  function Tick({ double, color = FAINT, size = 14 }) {
+  /* One tick or two, in the colour of the text around it. */
+  function Tick({ double, size = 14 }) {
     return (
-      <svg width={double ? Math.round(size * 1.4) : size} height={size} viewBox={double ? '0 0 34 24' : '0 0 24 24'} fill="none" stroke={color} strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, display: 'inline-block', verticalAlign: '-2px' }}>
+      <svg width={double ? Math.round(size * 1.4) : size} height={size} viewBox={double ? '0 0 34 24' : '0 0 24 24'} fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0, display: 'inline-block', verticalAlign: '-2px' }}>
         {double ? <><polyline points="18 6 7 17 2 12" /><polyline points="30 6 19 17 15.5 13.5" /></> : <polyline points="20 6 9 17 4 12" />}
       </svg>);
   }
@@ -121,18 +122,17 @@
     if (style === 'plain' || !step || step.end === 'failed' || step.end === 'declined') return null;
     const e = step.end, n = numbers(e), c = COPY[e];
     const sub = c.sub && typeof c.sub === 'object' ? c.sub[style] : c.sub;
-    const status = (style === 'money' ? '+' + money(n.gained) + ' · ' : '') + (e === 'day20' ? '' : 'Day ' + n.day + ' of ' + n.target + ' · ') + PENDING;
+    // The money option leads with the dollar as the line's one bold ink figure (brief section 9).
+    const status = (e === 'day20' ? '' : 'Day ' + n.day + ' of ' + n.target + ' · ') + PENDING;
     return (
-      <div style={{ position: 'absolute', inset: 0, zIndex: 50, background: 'rgba(11,18,32,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, animation: 'baMsgIn 0.25s ease both' }} onClick={onClose}>
-        <style>{'@keyframes ddPop { from { opacity: 0; transform: translateY(14px) scale(0.94); } to { opacity: 1; transform: none; } }'}</style>
-        <div role="dialog" aria-label={c.title} onClick={(ev) => ev.stopPropagation()}
-          style={{ width: 280, background: 'white', borderRadius: 20, padding: '24px 22px 18px', textAlign: 'center', boxShadow: '0 30px 80px rgba(0,0,0,0.45)', animation: 'ddPop 0.45s cubic-bezier(0.22,1,0.36,1) both' }}>
-          <span style={{ width: 44, height: 44, margin: '0 auto', borderRadius: '50%', background: GREEN, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Tick color="white" size={22} /></span>
-          <p style={{ fontSize: 17, fontWeight: 800, color: INK, lineHeight: 1.3, marginTop: 14 }}>{c.title}</p>
-          {sub && <p style={{ fontSize: 13, color: MUTED, lineHeight: 1.5, marginTop: 3 }}>{sub}</p>}
-          <p style={{ fontSize: 13, color: MUTED, lineHeight: 1.5, marginTop: 6 }}>{status}</p>
-          {explain && <p style={{ fontSize: 11.5, color: FAINT, lineHeight: 1.45, marginTop: 6 }}>{VERIFY_NOTE}</p>}
-          <button onClick={onClose} style={{ width: '100%', marginTop: 18, background: '#1990FF', border: 'none', borderRadius: 10, padding: '10px 12px', fontSize: 13.5, fontWeight: 750, color: 'white', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 3px 10px rgba(25,144,255,0.3)' }}>Got it</button>
+      <div className="v3-dd-scrim" onClick={onClose}>
+        <div role="dialog" aria-label={c.title} className="v3-dd" onClick={(ev) => ev.stopPropagation()}>
+          <span className="v3-dd-badge"><Tick size={20} /></span>
+          <p className="v3-dd-title">{c.title}</p>
+          {sub && <p className="v3-dd-sub">{sub}</p>}
+          <p className="v3-dd-status">{style === 'money' && <><span className="v3-figure">{'+' + money(n.gained)}</span>{' · '}</>}{status}</p>
+          {explain && <p className="v3-dd-note">{VERIFY_NOTE}</p>}
+          <button type="button" onClick={onClose} className="v3-btn-solid v3-btn-full">Got it</button>
         </div>
       </div>);
   }
@@ -148,13 +148,13 @@
     if (style === 'plain') return null;
     const n = numbers('failed');   // before today's run: everything so far is verified, nothing pending
     return (
-      <div style={{ background: 'white', border: '1px solid ' + LINE, borderRadius: 16, padding: '12px 15px 11px', marginBottom: 10, boxShadow: '0 6px 24px rgba(15,23,42,0.06)' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 13.5, fontWeight: 800, color: INK }}>Day {n.day} of {n.target}{style === 'money' && <span style={{ fontWeight: 600, color: MUTED }}> · {money(n.balance)} earned</span>}</span>
-          <a href="https://bluestacks.ai/dashboard" target="_blank" rel="noopener" style={{ fontSize: 11.5, fontWeight: 700, color: '#1990FF', textDecoration: 'none', whiteSpace: 'nowrap' }}>Earnings ↗</a>
+      <div className="v3-progress">
+        <div className="v3-progress-head">
+          <span className="v3-progress-title">Day {n.day} of {n.target}{style === 'money' && <span> · <span className="v3-figure">{money(n.balance)}</span> earned</span>}</span>
+          <a href="https://bluestacks.ai/dashboard" target="_blank" rel="noopener" className="v3-link v3-progress-link">Earnings ↗</a>
         </div>
-        <div style={{ display: 'flex', gap: 2, marginTop: 9 }}>{Array.from({ length: n.target }, (_, i) => <span key={i} style={{ flex: 1, height: 4, borderRadius: 2, boxSizing: 'border-box', background: i < n.verified ? GREEN : (i < n.day ? 'white' : TRACK), border: i >= n.verified && i < n.day ? '1px solid ' + GREEN : 'none' }} />)}</div>
-        <p style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11.5, color: MUTED, marginTop: 8 }}><Tick double color={GREEN} size={12} /> Yesterday’s run verified.</p>
+        <div className="v3-segs" aria-hidden="true">{Array.from({ length: n.target }, (_, i) => <span key={i} className={'v3-seg' + (i < n.verified ? ' v3-seg--done' : (i < n.day ? ' v3-seg--pending' : ''))} />)}</div>
+        <p className="v3-progress-note"><span className="v3-verified"><Tick double size={12} /></span> Yesterday’s run verified.</p>
       </div>);
   }
 

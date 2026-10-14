@@ -68,14 +68,16 @@ function ModalOverlay({ isOpen, onClose, title, children, plain }) {
        OutOfCreditsModal already are. It was `fixed` while the page was a single centred card,
        where the difference didn't show. It shows now: the scene's scaler carries a transform, so
        a fixed overlay would be positioned against the whole desktop and centre its dialog over
-       the BlueStacks window instead of inside the app. */
-    style={{ position: 'absolute', inset: 0, zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)', padding: '16px 20px 80px' }}>
-      <div style={{ position: 'relative', width: '100%', maxWidth: 382, maxHeight: '88vh', overflowY: 'auto', background: 'white', borderRadius: plain ? 20 : 12, boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
-        {!plain && <div style={{ position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', background: 'white', borderBottom: '1px solid #e5e7eb' }}>
-          <h2 style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>{title}</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', padding: 4, borderRadius: 6 }}><IcoXClose size={18} /></button>
+       the BlueStacks window instead of inside the app.
+       V3 (phase 4, worker.css .v3-dialog*): the Target dim veil, a white panel with a 1px line and
+       the floating cast, the sheet title type, a quiet round X; `plain` keeps its 20px corners. */
+    className="v3-dialog-scrim">
+      <div role="dialog" aria-modal="true" aria-label={title} className={'v3-dialog' + (plain ? ' v3-dialog--plain' : '')}>
+        {!plain && <div className="v3-dialog-head">
+          <h2 className="v3-dialog-title">{title}</h2>
+          <button type="button" onClick={onClose} aria-label="Close" className="v3-icon-btn"><IcoXClose size={18} /></button>
         </div>}
-        <div style={{ padding: plain ? '22px 22px 20px' : '16px 20px 20px' }}>{plain && <h2 style={{ fontSize: 18, fontWeight: 700, color: '#111827', lineHeight: 1.35, marginBottom: 10 }}>{title}</h2>}{children}</div>
+        <div className="v3-dialog-body">{plain && <h2 className="v3-dialog-title">{title}</h2>}{children}</div>
       </div>
     </div>);
 

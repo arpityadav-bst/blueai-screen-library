@@ -34,6 +34,10 @@
   <!-- V3, Phase 3: the chat screen (bubbles, progress notes, composer, feedback, home rows, history)
        in the same language: one bubble on the surface with a 1px line, pills, quiet buttons. -->
   <link rel="stylesheet" href="chat.css" />
+  <!-- V3, Phase 4: the worker (mode chip, ribbon, mode sheet and switches, consent, run-complete
+       moment, home progress and worker cards, BlueStacks bubbles, Jobs and Schedule) and the shared
+       dialog chrome, in the same language. Reuses entry.css and chat.css classes. -->
+  <link rel="stylesheet" href="worker.css" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -81,9 +85,8 @@
     @keyframes tabFadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     .tab-anim { animation: tabFadeUp 0.18s ease; }
     @keyframes ba-shimmer { 0% { background-position: -600px 0; } 100% { background-position: 600px 0; } }
-    /* Small spinning ring: the in-chat BlueStacks install progress card (needs_bluestacks.jsx). */
+    /* Spin (chat.jsx's loader). The BlueStacks install ring moved to worker.css (.v3-spin), phase 4. */
     @keyframes ba-spin { to { transform: rotate(360deg); } }
-    .ba-ring-spin { display: inline-block; width: 13px; height: 13px; flex-shrink: 0; border-radius: 50%; border: 2px solid #bfdbfe; border-top-color: #1990FF; animation: ba-spin 0.8s linear infinite; }
     /* Install dialog's background wave (install_dialog.jsx's PixelWave), two tile-widths drawn
        side by side, scrolled by exactly one tile so the loop is seamless. -400px→0 (not the
        app's existing ba-marquee direction, which goes the other way) so it reads as moving right. */
@@ -100,14 +103,7 @@
     .ba-chips-in { animation: baMsgIn var(--v2-dur-3) var(--v2-ease-out); }
     .ba-thanks-in { animation: baThanksIn var(--v2-dur-2) var(--v2-ease-out); }
     @media (prefers-reduced-motion: reduce) { .ba-msg-in, .ba-chips-in, .ba-thanks-in { animation: none; } }
-    /* Mode sheet + app switches (agent_permissions.jsx): the slide-up over a light scrim, and the
-       switch's keyboard focus ring (Settings' Worker > Apps uses the same switches). */
-    @keyframes baSheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    @keyframes baScrimIn { from { opacity: 0; } to { opacity: 1; } }
-    .ba-sheet-scrim { animation: baScrimIn 0.24s ease both; }
-    .ba-sheet { animation: baSheetUp 0.36s cubic-bezier(0.22,1,0.36,1) both; }
-    .ba-switch:focus-visible { outline: 2px solid #1990FF; outline-offset: 2px; }
-    @media (prefers-reduced-motion: reduce) { .ba-sheet-scrim, .ba-sheet { animation: none; } }
+    /* The mode sheet and its app switches (agent_permissions.jsx) moved to worker.css, phase 4. */
 
     /* ---- V3 Phase 1: the shell in the Target look (tokens only). Top bar (design-md 30), its menus,
        bottom nav (31) and splash dots (33). Lines, not shadows, on everything in flow; one blue for
