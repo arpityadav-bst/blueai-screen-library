@@ -119,7 +119,7 @@
        bottom nav (31) and splash dots (33). Lines, not shadows, on everything in flow; one blue for
        selected and open states; Inter 400/500/600; a 2px blue focus ring on every control. ---- */
     .ba-topbar {
-      position: relative; z-index: var(--v2-z-header); display: flex; align-items: center; justify-content: space-between;
+      position: relative; z-index: var(--v2-z-header); display: flex; align-items: center; justify-content: flex-end;
       gap: var(--v2-space-2); flex: none; height: var(--v2-topbar-h); padding: 0 var(--v2-space-3) 0 var(--v2-gutter);
       background: var(--v2-surface); border-bottom: var(--v2-stroke) solid var(--v2-line);
     }
@@ -375,7 +375,7 @@ const CONFIG = {
 };
 
 // Live header (newer than the export, matched to the live app screenshots):
-// logo · credits pill · New Chat · "?" help menu (FAQ / Report Issue) · kebab (Chat History / Profile / Earnings ↗ / Logout).
+// credits pill · New Chat · "?" help menu (FAQ / Report Issue) · kebab (Chat History / Profile / Earnings ↗ / Logout).
 // Logged-out (onboarding): strips to just the brand lockup, no credits/New Chat/help/kebab, matching the cold start.
 function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenHistory, onOpenCredits, onOpenProfile, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -420,14 +420,13 @@ function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenHistory, 
   const DASHBOARD_URL = 'https://blueai-screen-library.vercel.app/experiments/onblue-vesper/apply.html';
 
   /* V3 Phase 1, the Target top bar (design-md 30): 52 tall, surface, one hairline, no shadow; the
-     onBlue BlueAI logo on the gutter; a hairline credits chip (the low dot in the danger ink); New
+     no logo (the title bar already carries it, Appy 2026-10-14); a hairline credits chip (the low dot in the danger ink); New
      Chat as a quiet secondary pill; Help and More as 32px icon buttons that stay blue while their
      menu is open. Every handler, menu row and the Earnings link are unchanged. Styles: .ba-topbar
      and friends in this file's <style>. */
   const closeHelp = () => setHelpOpen(false);
   return (
     <header className={'ba-topbar' + (isLoggedIn ? '' : ' ba-topbar--out')}>
-      <window.BlueAILogo size={18} />
       {isLoggedIn &&
       <div className="ba-topbar-actions">
         {/* Credits chip: opens the AI Credits balance screen */}

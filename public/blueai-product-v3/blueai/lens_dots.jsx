@@ -36,13 +36,14 @@
         const dx = (x - cx) / (w * 0.62), dy = (y - cy) / (h * 0.6);
         const t = Math.min(1, Math.max(0, (Math.sqrt(dx * dx + dy * dy) - 0.35) / 0.65));
         const s = t * t * (3 - 2 * t);            // 0 in the middle, 1 at the edges
-        const r = 1.2 + 2.4 * s;                  // softer as it nears the edge
-        dot(x, y, r, INK, 0.26 / (1 + 1.6 * s));  // the same perceived density while it spreads
+        const r = 1.1 + 2.2 * s;                  // softer as it nears the edge
+        const fade = 1 - 0.85 * s;                // and fading out toward the edge
+        dot(x, y, r, INK, 0.13 * fade / (1 + 1.2 * s));  // very subtle overall
         if (s > 0.05) {
           const len = Math.hypot(x - cx, y - cy) || 1, o = 2.6 * s;
           const ux = (x - cx) / len, uy = (y - cy) / len;
-          dot(x + ux * o, y + uy * o, r, FRINGE_L, 0.55 * s);   // red outward
-          dot(x - ux * o, y - uy * o, r, FRINGE_R, 0.55 * s);   // cyan inward
+          dot(x + ux * o, y + uy * o, r, FRINGE_L, 0.32 * s * fade);   // red outward
+          dot(x - ux * o, y - uy * o, r, FRINGE_R, 0.32 * s * fade);   // cyan inward
         }
       }
     }

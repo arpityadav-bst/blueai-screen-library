@@ -32,7 +32,6 @@
 
     return (
       <header className={'ba-topbar' + (isLoggedIn ? '' : ' ba-topbar--out')}>
-        <window.BlueAILogo size={18} />
         <div className="ba-topbar-actions">
           {/* Credits chip: only when logged in */}
           {isLoggedIn &&
