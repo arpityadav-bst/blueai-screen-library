@@ -459,7 +459,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 **Anatomy.** Thirteen classes in kit/base.css (size / weight / leading / tracking, ink), plus the row label the list-row parts set themselves:
 - `.v2-text-display` 40 / 600 / 1 / -0.045em (`--v2-tracking-figure`), ink, tabular: credits balance.
 - `.v2-text-title-dialog` 18 / 600 / 1.35 / -0.03em, ink: dialog and sheet titles (V3 restyle).
-- `.v2-text-greeting` 24 / 600 / 1.2 / -0.02em, ink: home greeting, welcome title.
+- `.v2-text-greeting` 24 / 500 / 1.2 / -0.04em (`--v2-tracking-hero`), ink: home greeting, welcome title, screen titles. Titles 24 and up follow the site's weight and tracking (review round 1, 2026-10-14).
 - `.v2-text-title-lg` 20 / 600 / 1.2 / -0.02em, ink: every screen and dialog title.
 - `.v2-text-numeral-sm` 20 / 600 / 1 / -0.02em, ink, tabular: "7" in "7 of 20 days".
 - `.v2-text-title` 16 / 600 / 1.2 / -0.01em, ink: card titles, section heads.
@@ -470,10 +470,10 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 - Row label (no class): 14 / 500 / 1.35, ink. The list-row parts set it in their own CSS (ListRow, section 18), so a screen never sets it by hand.
 - `.v2-text-meta` 12 / 400 / 1.35, ink-4 (4.77:1): timestamps, counts, hints, and only on surface, panel or canvas at rest. Never the only carrier of a consequence.
 - `.v2-text-caption` 12 / 400 / 1.35, ink-3 (6.0:1): a small line that says something: disabled reasons, field helpers and messages, dialog footnotes, notes under a block (`kit/base.css:145-151`; Button, Checkbox, TextField, Dialog, Feedback, BYOK). It is also the small line on a tint, wash or sunken surface, where meta's ink-4 drops under 4.5:1 (4.42:1 on sunken).
-- `.v2-text-eyebrow` 11 / 500 / 1 / 0.08em, uppercase, ink-3: section labels only. The 0.08em is adapted from the site's 0.14em.
+- `.v2-text-eyebrow` 11 / 500 / 1 / 0.14em, uppercase, ink-3: section labels only, at the site's band-head tracking (review round 1, 2026-10-14; was 0.08em).
 - `.v2-text-mono` 13 / 400 / 1.35, mono, ink-2: keys, endpoints, model ids.
 
-**Variants.** Faces: `--v2-font-ui` (Inter, then system-ui and Segoe UI), `--v2-font-mono`, `--v2-font-serif` (Instrument Serif italic, site-language sign-in pages only). Weights: 400 body, 500 labels, 600 titles and figures. Helpers: `.v2-tabular`, `.v2-truncate`, `.v2-prose`.
+**Variants.** Faces: `--v2-font-ui` (Inter, then system-ui and Segoe UI), `--v2-font-mono`, `--v2-font-serif` (Instrument Serif italic, site-language sign-in pages only). Weights: 400 body, 500 labels and titles 24 and up, 600 titles and figures. Helpers: `.v2-tabular`, `.v2-truncate`, `.v2-prose`.
 
 **Sizes.** 11, 12, 13, 14, 16, 20, 24, 40 (`--v2-text-*`). Nothing in between.
 
@@ -885,7 +885,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Anatomy.** Box: height 28 / 36 / 44, radius 6 (`--v2-radius-sm`), 1px edge, padding 0 12 / 16 / 20. Label: 13/500 (`--v2-text-13`, `--v2-weight-medium`), tracking -0.01em, one line, ellipsis if it must. Optional 16px icon before (`icon`) or after (`iconRight`), gap 8 (6 at sm). Loading: a 16px Spinner takes the leading icon's place; the label stays. Disabled reason: 12/1.35 ink-3 under the button, 6 below.
 
-**Variants.** `primary`: `--v2-solid` #0b0b0d fill and edge, white label (19.6:1), `--v2-shadow-btn`; hover `--v2-solid-hover` #26262b, `--v2-shadow-btn-hover`, 1px drop. `secondary` (default), the ghost: `--v2-surface-panel`, 1px `--v2-line-strong`, ink label, no cast; hover `--v2-surface-sunken` and `--v2-line-hover`; pressed `--v2-surface-press`. `quiet`: no box, ink-2 label; hover wash + ink. `danger`: the ghost at rest; on hover the label turns `--v2-danger-ink`, the edge `--v2-danger-edge`, the fill `--v2-danger-tint`. Use it for the trigger that opens a destructive confirm (Disconnect YouTube); the confirm's commit is the solid primary named for what is lost; never for an action that costs nothing (section 52 is the rule).
+**Variants.** `primary`: `--v2-solid` #0b0b0d fill and edge, white label (19.6:1), `--v2-shadow-btn`; hover `--v2-solid-hover` #26262b, `--v2-shadow-btn-hover`, 1px drop. `secondary` (default), the ghost: `--v2-surface-panel`, 1px `--v2-line-strong`, ink label, no cast; hover `--v2-surface-sunken` and `--v2-line-hover`; pressed `--v2-surface-press`. `quiet`: no box, ink-2 label; hover wash + ink. `danger`: the ghost at rest; on hover the label turns `--v2-danger-ink`, the edge `--v2-danger-edge`, the fill `--v2-danger-tint`. Use it for the trigger that opens a destructive confirm (Disconnect YouTube); the confirm's commit is the solid primary named for what is lost; never for an action that costs nothing (section 52 is the rule). Review round 1 (2026-10-14): `destructive` is a destructive confirm's commit (Delete, the sign-out confirm): the solid primary in Target (`--v2-button-destructive-fill`, `--v2-button-destructive-hover`), red in V2 today. Secondary and danger read look hooks (`--v2-button-secondary-fill`, `-line`, `-ink`; `--v2-button-danger-fill`, `-line`, `-ink`, `-hover-fill`) so V2 today keeps its white outline buttons; danger hovers to `--v2-danger-tint`.
 
 **Sizes.** sm 28 (`--v2-control-sm`) for dense rows; md 36 (`--v2-control-md`) default; lg 44 (`--v2-control-lg`) for full-width sheet and dialog actions (`full`). sm grows an invisible ::after to the 32px hit floor.
 
@@ -1077,13 +1077,13 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Why:** "Keep the partner in control" is one of the product's three jobs, and its controls are choices: Always ask or Automatic per app, own key on or off, when to run, which notifications. V2 has three switches (one of which deletes the saved key when turned off; the per-app mode switch, since 2026-10-14, is the one real role=switch) and an option card built from plain buttons (shared.jsx:49; byok_settings.jsx:26, 64; agent_permissions.jsx:108; ai_mode.jsx:47). Its segmented control, which declared a radiogroup without the keys it promised, became that mode switch on 2026-10-14. The system gives each a real role and keyboard, the site's one chosen look (blue 12% fill, blue 50% edge, ink; onblue/apply.html:930), and edges that clear 3:1 (P4, P6, P7).
 
-**V3 restyle (2026-10-14).** One switch for the product: 40 by 24, off is the sunken track with a 15% line, on is `--v2-blue` (a selection), the knob white with a 1px line and no cast; `role="switch"` and `aria-checked`. The off edge is 1.41:1, the same recorded exception as the field edge (section 09): the knob's side and the label carry the state. RadioCard's pending state is documented as the selection edge dashed; disabled is 0.45 with a reason line.
+**V3 restyle (2026-10-14).** One switch for the product: 40 by 24, off is a 20% fill (`--v2-switch-off-fill`, `--v2-line-hover`; review round 1, 2026-10-14: the sunken track left the knob at 1.08:1), on is `--v2-action` carrying the white knob, the knob's edge `--v2-switch-knob-shadow` (a 1px ring, no cast); `role="switch"` and `aria-checked`. The off edge is 1.41:1, the same recorded exception as the field edge (section 09): the knob's side and the label carry the state. RadioCard's pending state is documented as the selection edge dashed; disabled is 0.45 with a reason line.
 
 ### Switch (Changed from V2)
 
 **Purpose.** On or off, applied at once. A switch enables or disables; it never deletes anything.
 
-**Anatomy.** Track 40 by 24, pill. Off: `--v2-surface-sunken` with a 1px `--v2-line-strong` edge, an 18px white knob with a 1px `--v2-line` ring at left 2. On: `--v2-blue` fill and edge, the knob at right 2 with no ring. Row form: label 14/500 ink and an optional description 13/1.5 ink-3 on the left, the switch on the right, gap 16; the label is clickable.
+**Anatomy.** Track 40 by 24, pill. Off: `--v2-switch-off-fill` (20% black), no edge, an 18px white knob with its `--v2-switch-knob-shadow` ring at left 2. On: `--v2-action` fill and edge, the knob at right 2. V2 today: slate-300 track, the knob's small cast. Row form: label 14/500 ink and an optional description 13/1.5 ink-3 on the left, the switch on the right, gap 16; the label is clickable.
 
 **Variants.** With label row (default when `label` is visible); bare (`hideLabel`, for a list row that already names it).
 
@@ -1181,7 +1181,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Anatomy.** Pill, 28 tall (`--v2-control-sm`; an invisible extension makes the target 32), padding 0 12, 1px `--v2-line`, the surface under `--v2-wash-tint`. Label 13/500 ink-2, one line. Optional 16px icon before the label (zap marks the reply that turns on Automatic). Rows wrap with an 8px gap.
 
-**Variants.** Reply (no `selected`: a plain button that answers once; the AskCard hides the row once answered). Reason and filter (`selected` true or false: a toggle with `aria-pressed`). One look for all three; only the behaviour differs.
+**Variants.** Reply (no `selected`: a plain button that answers once; the AskCard hides the row once answered). Reason and filter (`selected` true or false: a toggle with `aria-pressed`). One look for all three; only the behaviour differs. Review round 1 (2026-10-14): the label, the selected fill, edge and label and the lift read look hooks (`--v2-chip-ink`, `--v2-chip-selected-fill`, `-line`, `-ink`, `--v2-chip-shadow`): Target is unchanged, V2 today gets its slate-700 selected chip and faint lift back.
 
 **Sizes.** One, 28.
 
@@ -1427,7 +1427,7 @@ Plus: no mark, dot, icon, busy dot.
 
 **Variants.** Inherit (takes the text colour). On colour (`--v2-on-color`, inside a filled button). Done (a `check` in `--v2-success`).
 
-**Sizes.** 12 (the Switch's busy thumb), 16 (buttons, rows, steps, beside text), 32 (standalone). Stroke 1.5 / 2 / 4.
+**Sizes.** 12 (the Switch's busy thumb), 16 (buttons, rows, steps, beside text), 24 (a wait inside a mark, the sign-in card's signing step; review round 1, 2026-10-14), 32 (standalone). Stroke 1.5 / 2 / 3 / 4.
 
 **States.**
 - Delayed: hidden for the first 300ms, space held, so fast work never flashes. New.
@@ -1542,7 +1542,7 @@ Any icon can replace the default (Automatic uses `zap`).
 - locked (`locked`, icon `lock`; the update state passes `download`): "Update BlueAI to keep running" / "This version can’t run jobs anymore, so runs are paused. Update now and today can still count. It takes about a minute." + Update now (section 69, `screens/system-states.jsx:121-123`).
 (All proposed copy.)
 
-**Sizes.** One; adapts to the width of its container.
+**Sizes.** One; adapts to the width of its container. Review round 1 (2026-10-14): the box, the mark and the type read look hooks (`--v2-empty-fill`, `-line`, `-radius`, `--v2-empty-mark-fill`, `-mark-ink`, `--v2-empty-title-size`, `-title-ink`, `--v2-empty-body-ink`). Target: no box, the sunken mark, 20/600 ink, ink-3 body. V2 today: a white box with a slate edge and radius 12, the purple mark, a 15px title. On a page the state fills the space under the screen header (no fixed viewport height).
 
 **States.**
 - Static. V2 today: the Jobs tab (`?start=worker`, then Jobs); Schedule's empty state only after deleting both seeded rows.
@@ -1628,11 +1628,11 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Purpose.** A decision or a short task the partner must finish or decline before going on: consent to Automatic, sign out, disconnect, out of credits, the day-done moment.
 
-**Anatomy.** Scrim `--v2-scrim` over the window. Panel centred with a 16px inset: `--v2-surface`, 1px `--v2-line`, radius 20 (`--v2-radius-dialog`), `--v2-shadow-2`. Header: title 18/600 `--v2-ink` (tracking -0.03em) taking the row, a 32px IconButton named Close beside it. Body: 14/1.5 `--v2-ink-2`, padding 20, scrolls when tall. Actions: 44px Buttons of equal width, 8px apart, secondary first, primary last. Optional footer note 12 `--v2-ink-3`. Layer `--v2-z-dialog` (100). One dialog at a time; if two ever overlap, mount order decides which is on top (section 06), which only settles the overlap, it does not make stacking a pattern.
+**Anatomy.** Scrim `--v2-scrim` over the window. Panel centred with a symmetric 20px inset (`--v2-space-5`, review round 1, 2026-10-14): `--v2-surface`, 1px `--v2-line`, radius 20 (`--v2-radius-dialog`), `--v2-shadow-2`. Header: title 18/600 `--v2-ink` (tracking -0.03em) taking the row, a 32px IconButton named Close beside it. Body: 14/1.5 `--v2-ink-2`, padding 20, scrolls when tall. Actions: 44px Buttons of equal width, 8px apart, secondary first, primary last. Optional footer note 12 `--v2-ink-3`. Layer `--v2-z-dialog` (100). One dialog at a time; if two ever overlap, mount order decides which is on top (section 06), which only settles the overlap, it does not make stacking a pattern.
 
 **Variants.** `task` (md, Close, scrim click cancels). `consent` (md, Close, scrim click does nothing, the primary's label is the agreement: "I agree, turn on"). `alert` (see AlertDialog). `celebration` (sm, centred, no Close, scrim click closes: DayDone). `scrim="frost"` puts it on the sign-in gate veil and layer (`--v2-z-gate`), sign-in only.
 
-**Sizes.** sm 320 (`--v2-dialog-sm`): alert, celebration, out of credits. md 382 (`--v2-dialog-md`): task, consent. Height up to the window less 16px each side.
+**Sizes.** sm 320 (`--v2-dialog-sm`): alert, celebration, out of credits. md 382 (`--v2-dialog-md`): task, consent. Height up to the window less 20px each side.
 
 **States.** Closed (nothing mounted); opening; open; busy (the primary loads; Esc, the scrim and Close wait); closing; over a menu (the menu closes first, focus comes back to the menu button). In V2 today: ModalOverlay as Confirm delete on the Schedule tab (schedule.jsx:144); the Automatic consent at `?start=worker&v=1`, open the mode chip, pick Automatic, in ModalOverlay's plain frame since 2026-10-14 (no header, divider or X; agent_permissions.jsx:189); out of credits at `?credits=0` then send a message (byok.jsx:76).
 
@@ -1652,7 +1652,7 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Anatomy.** Dialog sm with role alertdialog, no Close: the title is the question, the body says what changes, two actions: Cancel and the action named for itself.
 
-**Variants.** Confirm: the solid primary (`--v2-solid`). Destructive: the same solid primary, its label naming what is lost (V3 restyle: no red fill).
+**Variants.** Confirm: the solid primary (`--v2-solid`). Destructive: Button `destructive`, the same solid in Target (V3 restyle: no red fill; V2 today paints it red through `--v2-button-destructive-fill`), its label naming what is lost.
 
 **Sizes.** sm 320.
 
@@ -3191,7 +3191,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Anatomy:**
   1. Ground `--v2-canvas`, padding 40 24 16; no decoration. AppFrame chrome-free (no top bar, no nav).
   2. BrandMark 48, logo only (the title does the talking).
-  3. Title 24/600 ink, leading 1.2, `-0.02em`, balanced, at most 320 wide, with one serif italic word in blue ink (`--v2-font-serif`, `--v2-blue-ink`, 1.06em: the site's title em, `onblue/onblue.css:1446-1453`).
+  3. Title 24/500 ink, leading 1.2, `-0.04em` (`--v2-tracking-hero`, review round 1, 2026-10-14), balanced, at most 320 wide, with one serif italic word in blue (`--v2-font-serif`, `--v2-blue`, 1.06em, the soft `--v2-em-glow`: the site's title em, `onblue/onblue.css:1446-1453`).
   4. Steps: one Card (radius 16, 1px line, padding 16) holding an ordered list of two rows. Each row: a 28 step disc (`--v2-select` fill, `--v2-select-line` edge, ink figure 13/600, the site's step-num) and the step text 14 ink-2, first line centred on the disc.
   5. One Button, primary lg (44) full width: "Sign in to get started".
   6. Foot: a muted standalone Link "Program Terms" (13/500 ink-3, 32 target) that opens the legal page in a new tab.
@@ -4161,6 +4161,13 @@ About 3,000 of V2’s lines never render. They are listed here and never specime
 **Status:** Meta (no parts).
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
+
+### 2026-10-14: Review round 1 of V3: switch, destructive confirm, look hooks, titles
+
+- New tokens: --v2-tracking-hero -0.04em (titles 24 and up, at weight 500: .v2-text-greeting and the welcome title), --v2-em-glow (the serif em's glow), and look hooks so V2 today keeps V2's own secondary, danger, destructive confirm, switch, empty state and chips (--v2-button-secondary-*, --v2-button-danger-*, --v2-button-destructive-fill and -hover, --v2-switch-off-fill, --v2-switch-knob-shadow, --v2-empty-*, --v2-chip-*).
+- Re-valued: --v2-tracking-eyebrow is the site's 0.14em in both looks (was 0.08em).
+- Kit: Switch off is a 20% fill the white knob reads on, on is --v2-action (the sunken off track left the knob at 1.08:1); Button gains variant destructive (a destructive confirm's commit); Spinner gains a 24 size; dialogs centre with a symmetric 20 inset; the serif em takes --v2-em-glow.
+- Why: review round 1 of BlueAI Product V3, which now consumes the kit's stylesheets instead of re-implementing them.
 
 ### 2026-10-14: Target look aligned with the onBlue Agentic site after the V3 restyle
 

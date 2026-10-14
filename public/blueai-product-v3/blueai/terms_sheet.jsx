@@ -1,7 +1,8 @@
 // BlueAI: Terms bottom sheet. One component, two modes, all mounted inside .ba-app like
-// every other in-app overlay (login gate z100, boot splash z200, this sits between at z120,
-// above the gate because acceptance conceptually precedes sign-in, below the splash so a cold
-// start still boots on top of it):
+// every other in-app overlay. It is the kit's sheet (review round 1: the same sheet as the mode
+// sheet) on the gate layer (--v2-z-gate), mounted after the login gate so it sits above it, since
+// acceptance conceptually precedes sign-in, and below the splash (--v2-z-splash) so a cold start
+// still boots on top of it:
 //   'firstrun' : first cold start: "Before you start" + "Agree and continue".
 //   'update'   : the terms changed: same sheet, update wording.
 // BOTH modes are blocking, no close, no scrim dismiss, no Esc; the only way forward is the CTA.
@@ -11,10 +12,9 @@
 // fresh consent record for every version.
 // Nothing here is invented fresh:
 //   - overlay containment: login.jsx (absolute inset-0 against .ba-app)
-//   - V3, Phase 2 look: Target tokens and the site's language, as the rest of the entry screens
-//     (entry.css): surface sheet with a 1px top line, Inter 600 title, the solid dark CTA, ink
-//     underlined legal links
-//   - motion: the house curve cubic-bezier(0.22,1,0.36,1) used across this product's intros
+//   - look: the kit's sheet (kit/overlays.css): the light veil, radius 20 on top, the 1px line, the
+//     upward cast, the 18px dialog title, the primary CTA, the kit's underlined ink legal links
+//   - motion: the kit's sheet entry and exit (v2-sheet-up / v2-sheet-down, kit/motion.css)
 //   - consent line: the website SignInDialog's approved sentence shape, re-pointed at the
 //     BlueAI Partner Program Terms (see the note on MODES for why that document, not the TOU)
 //   - links: the real legal page (same tabs/anchors the website links), new tab on purpose,
@@ -32,10 +32,10 @@
 
   const TERMS_URL = '/onblue/terms';
 
-  // V3, Phase 2: the site's underlined ink link (entry.css .v3-link--ink), not a blue one.
+  // The kit's underlined ink link, not a blue one.
   const LegalLink = ({ anchor, children }) => (
-    <a href={TERMS_URL + '#' + anchor} target="_blank" rel="noopener" className="v3-link v3-link--ink">
-      {children}
+    <a href={TERMS_URL + '#' + anchor} target="_blank" rel="noopener" className="v2-link">
+      <span className="v2-link-text">{children}</span>
     </a>
   );
 
@@ -88,39 +88,25 @@
   function TermsSheet({ mode, onDone }) {
     const cfg = MODES[mode] || MODES.firstrun;
     // Accepting plays the exit (sheet slides back down, scrim fades) BEFORE unmounting,
-    // 'leaving' drives the exit classes, the timeout matches their 0.32s duration.
+    // 'leaving' sets the kit's .is-closing, whose exit (--v2-dur-3) the timeout outlasts.
     const [leaving, setLeaving] = useState(false);
     const close = () => { if (leaving) return; setLeaving(true); setTimeout(() => onDone?.(), 340); };
 
     return (
-      <div role="dialog" aria-modal="true" aria-label={cfg.title}
-        className={'tsh-scrim' + (leaving ? ' tsh-out' : '')}
-        style={{ position: 'absolute', inset: 0, zIndex: 120, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', background: 'var(--v2-scrim)', fontFamily: 'var(--v2-font-ui)' }}>
-        <style>{`
-          @keyframes tshScrimIn { from { opacity: 0; } to { opacity: 1; } }
-          @keyframes tshScrimOut { from { opacity: 1; } to { opacity: 0; } }
-          @keyframes tshSheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-          @keyframes tshSheetDown { from { transform: translateY(0); } to { transform: translateY(100%); } }
-          .tsh-scrim { animation: tshScrimIn 0.3s ease both; }
-          .tsh-sheet { animation: tshSheetUp 0.45s cubic-bezier(0.22,1,0.36,1) both; }
-          .tsh-scrim.tsh-out { animation: tshScrimOut 0.32s ease both; }
-          .tsh-out .tsh-sheet { animation: tshSheetDown 0.32s cubic-bezier(0.5,0,0.75,0.4) both; }
-          @media (prefers-reduced-motion: reduce) {
-            .tsh-scrim, .tsh-sheet, .tsh-scrim.tsh-out, .tsh-out .tsh-sheet { animation: none !important; }
-          }
-        `}</style>
-
-        <div className="tsh-sheet"
-          style={{ background: 'var(--v2-surface)', borderRadius: 'var(--v2-radius-lg) var(--v2-radius-lg) 0 0', borderTop: 'var(--v2-stroke) solid var(--v2-line)', padding: 'var(--v2-space-6)' }}>
-          <h2 className="v3-gate-title">
-            {cfg.title}
-          </h2>
-          <p style={{ marginTop: 'var(--v2-space-2)', fontSize: 'var(--v2-text-14)', color: 'var(--v2-ink-2)', lineHeight: 'var(--v2-leading-body)' }}>
-            {cfg.body()}
-          </p>
-          <button type="button" onClick={close} className="v3-btn-solid v3-btn-full" style={{ marginTop: 'var(--v2-space-5)' }}>
-            {cfg.cta}
-          </button>
+      <div className={'v2-overlay v2-overlay--bottom v2-overlay--gate' + (leaving ? ' is-closing' : '')}>
+        <div className="v2-scrim" aria-hidden="true" />
+        <div role="dialog" aria-modal="true" aria-label={cfg.title} className="v2-sheet">
+          <div className="v2-dialog-head">
+            <h2 className="v2-dialog-title v2-text-title-dialog">{cfg.title}</h2>
+          </div>
+          <div className="v2-sheet-body">
+            <p className="v2-text-body">{cfg.body()}</p>
+          </div>
+          <div className="v2-ov-actions">
+            <button type="button" onClick={close} className="v2-button v2-button--primary v2-button--lg v2-button--full">
+              {cfg.cta}
+            </button>
+          </div>
         </div>
       </div>);
   }

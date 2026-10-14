@@ -1,8 +1,8 @@
 /* BlueAI: Product chat screen: the conversation, the composer, and the send rules.
    Home = the greeting (ProductHomeScreen.IntroCard) over the category home. Conversation =
    the task-progress + feedback engine ported from "ChatView Feedback.html".
-   V3 (phase 3): the composer and send button are drawn by chat.css (lined field, blue focus
-   ring, send on the solid-ink step of the button ladder, Stop on the ghost step).
+   V3: the composer is the kit's (kit/chat.css, design-md 38, review round 1): a radius-10 box, a
+   1.5px blue focus edge, the round 36px send (sunken with an ink-4 glyph while there is nothing to send), Stop the ghost.
 
    Bubbles, the step scripts, the feedback control and the category home were split into
    chat_bubbles.jsx / chat_feedback.jsx / product_home.jsx (2026-08-10) when this file hit 648
@@ -184,18 +184,18 @@
        (product level), with Send moving down beside it. Version 2 keeps the one-row composer. */
     const modeChip = permUi === 'chatbox' && !isOnboarding;
     const sendBtn = (
-      <button onClick={() => (running ? stop() : run())} disabled={!running && !draft.trim()}
+      <button type="button" onClick={() => (running ? stop() : run())} disabled={!running && !draft.trim()} aria-disabled={!running && !draft.trim()}
         aria-label={running ? 'Stop task' : 'Send message'} title={running ? 'Stop' : 'Send'}
-        className={'v3-btn-solid v3-send' + (running ? ' v3-send--stop' : '')}>
+        className={'v2-sendstop ' + (running ? 'v2-sendstop--stop' : 'v2-sendstop--send')}>
         {running
-          ? <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor" /></svg>
-          : <svg className="v3-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5" /><polyline points="5 12 12 5 19 12" /></svg>}
+          ? <svg className="v2-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor" /></svg>
+          : <svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5" /><polyline points="5 12 12 5 19 12" /></svg>}
       </button>);
 
     return (
       <>
         <div style={{ flex: 1, overflow: 'hidden' }}>
-          <div ref={scrollRef} style={{ height: '100%', overflowY: 'auto', scrollbarWidth: 'thin', padding: 'var(--v2-space-4)' }}>
+          <div ref={scrollRef} style={{ height: '100%', overflowY: 'auto', padding: 'var(--v2-space-4)' }}>
             {showStates ? <ChatStatesPreview /> : <>
               {/* Greeting shows on the pre-conversation view, it clears once a task is sent (both
                  onboarding + default). Onboarding chat pads the greeting down to match the design;
@@ -246,7 +246,7 @@
         </div>
 
         {/* Composer: hidden while the "Chat states" dev preview is on (nothing to type/send) */}
-        {!showStates && <div className="v3-composer-wrap">
+        {!showStates && <div className={'v2-composer v3-composer' + (isOnboarding && !started ? ' is-focus' : '')}>
           {/* Onboarding nudge: a pulsing "Send a message to watch BlueAI work" pill sits just
              above the composer until a message is attempted (matches the design's OnboardingChat).
              It floats, so it is the one thing here with a shadow; the blue dot is the live mark. */}
@@ -257,10 +257,10 @@
             </div>}
           {/* ROB-21350 Version 2: the Automatic ribbon, only once the worker has started in this chat. */}
           {permUi === 'ribbon' && workerStarted && <window.AgentPermissions.AutoRibbon />}
-          {/* Focus shows as the blue edge + ring (:focus-within). The onboarding "type here"
-             moment (is-emph) borrows the same look until the first message is attempted. */}
-          <div className={'v3-composer' + (modeChip ? ' v3-composer--stack' : '') + (isOnboarding && !started ? ' is-emph' : '')}>
-            <textarea ref={taRef} className="v3-composer-input" value={draft} disabled={running || scheduledOoc} rows={1}
+          {/* Focus shows as the blue edge + ring (:focus-within). The onboarding "type here" moment
+             borrows the same look (.is-focus on the composer) until the first message is attempted. */}
+          <div className={'v2-composer-box' + (modeChip ? ' v3-composer-box--stack' : '') + (running || scheduledOoc ? ' is-readonly' : '')}>
+            <textarea ref={taRef} className="v2-composer-input" value={draft} disabled={running || scheduledOoc} rows={1}
               aria-label="Message BlueAI"
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(); } }}

@@ -34,18 +34,18 @@
 (function () {
   const { useState, useEffect, useRef } = React;
 
-  /* V3 (phase 4): the worker's controls in the site's language (worker.css): a quiet chip, a
-     panel-band ribbon, a sheet with one select-blue switch per app, and the consent on the button
-     ladder (Cancel ghost, "I agree, turn on" solid ink). Icons take the Target stroke (.v3-ico). */
+  /* V3 (phase 4; kit parts since review round 1): a quiet kit button for the chip, a panel-band
+     ribbon (worker.css), the kit's sheet with one kit switch per app, and the consent on the
+     button ladder (Cancel secondary, "I agree, turn on" primary). Icons are the kit's icon box. */
   const stroke = (size, paths) =>
-    <svg className="v3-ico" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>{paths}</svg>;
+    <svg className={window.icoCls(size)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths}</svg>;
   const IcoShieldCheck = ({ size = 16 }) => stroke(size, <><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></>);
   const IcoZap = ({ size = 16 }) => stroke(size, <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />);
   // App marks, in the product's own stroke style rather than brand logos.
   const IcoYouTube = ({ size = 16 }) => stroke(size, <><rect x="2.5" y="5" width="19" height="14" rx="4" /><path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none" /></>);
   const IcoInstagram = ({ size = 16 }) => stroke(size, <><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="3.8" /><circle cx="17.3" cy="6.7" r="0.9" fill="currentColor" stroke="none" /></>);
   const IcoChevron = () =>
-    <svg className="v3-ico v3-mode-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><polyline points="6 15 12 9 18 15" /></svg>;
+    <svg className="v2-icon v3-mode-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 15 12 9 18 15" /></svg>;
 
   const MODES = [
     { id: 'always', title: 'Always ask', sub: 'Asks before each job starts, then runs it to the end', Icon: IcoShieldCheck },
@@ -101,10 +101,9 @@
           const on = cur[a.id] === 'auto';
           return (
             <li key={a.id} className="v3-app">
-              <span className="v3-row-tile"><a.Icon size={18} /></span>
+              <span className="v3-row-tile"><a.Icon size={20} /></span>
               <span className="v3-app-name">{a.name}</span>
-              <button type="button" role="switch" aria-checked={on} aria-label={'Run ' + a.name + ' jobs without asking'} className="v3-switch"
-                onClick={() => requestMode(a.id, on ? 'always' : 'auto')} />
+              <Toggle enabled={on} label={'Run ' + a.name + ' jobs without asking'} onToggle={() => requestMode(a.id, on ? 'always' : 'auto')} />
             </li>);
         })}
       </ul>);
@@ -113,9 +112,10 @@
   /* ── The mode sheet ── Rendered ONCE, at App level inside .ba-app like AutoConfirm, so it is
      scoped to the product window whichever control opened it. Slides up over a light scrim; the
      scrim, Esc and the close button shut it. Focus moves to the close button on open and back to
-     the opener on close. z50 keeps it under the consent dialog (ModalOverlay, z60), which opens
-     on top of it when a switch is turned on; Esc then answers the dialog, not the sheet. The list
-     scrolls inside the sheet once there are more apps than fit. */
+     the opener on close. It is the kit's sheet (kit/overlays.css) on the dialog layer, mounted
+     before the consent dialog (AutoConfirm), so the consent opens on top of it when a switch is
+     turned on; Esc then answers the dialog, not the sheet. The list scrolls inside the sheet once
+     there are more apps than fit. */
   function ModeSheet() {
     const { sheetOpen: open, confirming: asking } = usePermissionMode();
     const closeRef = useRef(null);
@@ -137,16 +137,17 @@
     }, [open, asking]);
     if (!open) return null;
     return (
-      <div className="v3-sheet-scrim" onClick={(e) => { if (e.target === e.currentTarget) closeSheet(); }}>
-        <div role="dialog" aria-modal="true" aria-labelledby="ap-sheet-title" className="v3-sheet">
-          <div className="v3-sheet-head">
-            <div>
-              <h2 id="ap-sheet-title" className="v3-dialog-title">Apps BlueAI can run on its own</h2>
-              <p className="v3-sheet-sub">New apps always start on Always ask.</p>
+      <div className="v2-overlay v2-overlay--bottom">
+        <div className="v2-scrim" onClick={closeSheet} aria-hidden="true" />
+        <div role="dialog" aria-modal="true" aria-labelledby="ap-sheet-title" className="v2-sheet">
+          <div className="v2-dialog-head">
+            <div className="v2-grow">
+              <h2 id="ap-sheet-title" className="v2-dialog-title v2-text-title-dialog">Apps BlueAI can run on its own</h2>
+              <p className="v2-text-body-sm v3-sheet-sub">New apps always start on Always ask.</p>
             </div>
-            <button ref={closeRef} type="button" onClick={closeSheet} aria-label="Close" className="v3-icon-btn v3-sheet-close"><IcoXClose size={18} /></button>
+            <button ref={closeRef} type="button" onClick={closeSheet} aria-label="Close" className="v2-icon-button v2-ov-close"><IcoXClose /></button>
           </div>
-          <div className="v3-sheet-list"><AppSwitchList /></div>
+          <div className="v2-sheet-body"><AppSwitchList /></div>
         </div>
       </div>);
   }
@@ -159,8 +160,8 @@
     const auto = on();
     const m = byId(auto.length ? 'auto' : 'always');
     return (
-      <button type="button" onClick={openSheet} aria-haspopup="dialog" aria-expanded={open} title="Mode" className="v3-quiet v3-mode-chip">
-        <m.Icon size={14} />{summary(auto)}<IcoChevron />
+      <button type="button" onClick={openSheet} aria-haspopup="dialog" aria-expanded={open} title="Mode" className="v2-button v2-button--quiet v2-button--sm">
+        <m.Icon size={16} />{summary(auto)}<IcoChevron />
       </button>);
   }
 
@@ -176,11 +177,11 @@
     return (
       <ModalOverlay plain isOpen={!!app} onClose={cancelConfirm} title={a ? 'Run ' + a.name + ' jobs automatically?' : ''}>
         {a && <>
-          <p className="v3-dlg-text">BlueAI will take paid {a.name} jobs on its own and like, comment, follow and post from your account.</p>
-          <p className="v3-note v3-dlg-note">Switch back anytime in Settings.</p>
+          <p className="v2-text-body">BlueAI will take paid {a.name} jobs on its own and like, comment, follow and post from your account.</p>
+          <p className="v2-text-body-sm v3-dlg-note">Switch back anytime in Settings.</p>
           <div className="v3-btn-row v3-dlg-actions">
-            <button type="button" onClick={cancelConfirm} className="v3-btn-ghost">Cancel</button>
-            <button type="button" onClick={agreeAuto} className="v3-btn-solid">I agree, turn on</button>
+            <button type="button" onClick={cancelConfirm} className="v2-button v2-button--secondary v2-button--lg">Cancel</button>
+            <button type="button" onClick={agreeAuto} className="v2-button v2-button--primary v2-button--lg">I agree, turn on</button>
           </div>
         </>}
       </ModalOverlay>);
@@ -197,10 +198,10 @@
     const auto = on();
     if (!auto.length) return null;
     return (
-      <div className="ba-msg-in v3-ribbon">
-        <span className="v3-ribbon-icon"><IcoZap size={14} /></span>
+      <div className="v2-anim-pop-in v3-ribbon">
+        <span className="v3-ribbon-icon"><IcoZap size={16} /></span>
         <span className="v3-ribbon-text">{summary(auto)}</span>
-        <button type="button" onClick={openSheet} aria-haspopup="dialog" className="v3-quiet v3-mode-chip">Change</button>
+        <button type="button" onClick={openSheet} aria-haspopup="dialog" className="v2-button v2-button--quiet v2-button--sm">Change</button>
       </div>);
   }
 

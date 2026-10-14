@@ -5,12 +5,13 @@
    local model on the user's own PC to cut token usage, either BlueAI's bundled model
    ("Auto", recommended) or the user's own local VLM endpoint ("Custom").
 
-   V3, Phase 5 (settings.css): the Settings card and row language. The choices are the site's
+   V3, Phase 5 (settings.css; kit cards, badges, banners, fields and buttons since review round 1):
+   the Settings card and row language. The choices are the site's
    selection (12% blue fill, 50% blue edge), pending is the same edge dashed. Status pills carry
    their tone (progress blue, verified green, failed red, paused amber) and nothing else does.
    Hybrid unavailable is disabled with a reason: the card keeps its label at 45% and one muted line
    under the choices says why. Retry and View are links; Download & enable opens the dialog, where
-   the commit is the solid ink button. The pieces and the dialog live in ai_mode_parts.jsx. */
+   the commit is the primary button. The pieces and the dialog live in ai_mode_parts.jsx. */
 (function () {
   const { useState, useRef, useEffect } = React;
 
@@ -30,9 +31,9 @@
     const applyOff = !customConfigured || applying;
 
     return (
-      <section className="v3-card v3-set-card">
-        <h2 className="v3-set-title">AI Mode</h2>
-        <p className="v3-set-desc">Choose where AI processing happens.</p>
+      <section className="v2-card v3-set-card">
+        <h2 className="v2-text-title v3-set-title">AI Mode</h2>
+        <p className="v2-text-body-sm v3-set-desc">Choose where AI processing happens.</p>
 
         <div className="v3-choices">
           <OptionCard title="Cloud" sub="Default. Uses cloud AI." selected={!hybridActive} onClick={onPickCloud} />
@@ -56,7 +57,7 @@
             {method === 'auto' &&
               <div className="v3-stack">
                 {autoInProgress ? (
-                  <div className="v3-panel">
+                  <div className="v2-card v2-card--inset">
                     <div className="v3-prog-head">
                       <span className="v3-prog-label">{status === 'downloading' ? 'Downloading Hybrid AI…' : status === 'installing' ? 'Installing Hybrid AI…' : 'Checking…'}</span>
                       <div className="v3-row-gap">
@@ -70,8 +71,8 @@
                   </div>
                 ) : status === 'idle' ? (
                   <>
-                    <p className="v3-set-desc" style={{ margin: 0 }}>Additional files of 3 to 4 GB are required to enable Hybrid mode.</p>
-                    <button type="button" onClick={onOpenModal} className="v3-btn-ghost v3-btn-sm" style={{ alignSelf: 'flex-start' }}>Download &amp; enable</button>
+                    <p className="v2-text-body-sm">Additional files of 3 to 4 GB are required to enable Hybrid mode.</p>
+                    <button type="button" onClick={onOpenModal} className="v2-button v2-button--secondary" style={{ alignSelf: 'flex-start' }}>Download &amp; enable</button>
                   </>
                 ) : (
                   <>
@@ -84,7 +85,7 @@
                     </div>
                     {status === 'running' && conflict && <InfoBanner tone="amber" icon={<WarnIcon />}>{CONFLICT}</InfoBanner>}
                     {status === 'running' && !conflict &&
-                      <p className="v3-set-desc" style={{ margin: 0 }}>Hybrid mode uses your PC for supported tasks to help reduce token usage.</p>}
+                      <p className="v2-text-body-sm">Hybrid mode uses your PC for supported tasks to help reduce token usage.</p>}
                     {status === 'blocked' && <InfoBanner tone="amber" icon={<WarnIcon />}>{CONFLICT}</InfoBanner>}
                     {failed &&
                       <>
@@ -98,17 +99,15 @@
             {method === 'custom' &&
               <div className="v3-stack">
                 <div className="v3-form" style={{ gap: 'var(--v2-space-3)' }}>
-                  <div>
-                    <label htmlFor="vlm-endpoint" className="v3-label">VLM endpoint</label>
-                    <input id="vlm-endpoint" type="text" value={endpoint} onChange={(e) => onEndpoint(e.target.value)} placeholder="http://127.0.0.1:11434/api/chat" className="v3-field" />
-                  </div>
-                  <div>
-                    <label htmlFor="vlm-model" className="v3-label">VLM model</label>
-                    <input id="vlm-model" type="text" value={model} onChange={(e) => onModel(e.target.value)} placeholder="qwen3-vl:4b-instruct" className="v3-field" />
-                  </div>
+                  <Field id="vlm-endpoint" label="VLM endpoint">
+                    <input id="vlm-endpoint" type="text" value={endpoint} onChange={(e) => onEndpoint(e.target.value)} placeholder="http://127.0.0.1:11434/api/chat" className="v2-field-input" />
+                  </Field>
+                  <Field id="vlm-model" label="VLM model">
+                    <input id="vlm-model" type="text" value={model} onChange={(e) => onModel(e.target.value)} placeholder="qwen3-vl:4b-instruct" className="v2-field-input" />
+                  </Field>
                 </div>
                 <div className="v3-set-line">
-                  <button type="button" onClick={onApplyCustom} disabled={applyOff} aria-describedby={!customConfigured ? 'vlm-why' : undefined} className="v3-btn-solid v3-btn-sm">
+                  <button type="button" onClick={onApplyCustom} disabled={applyOff} aria-disabled={applyOff} aria-describedby={!customConfigured ? 'vlm-why' : undefined} className="v2-button v2-button--primary">
                     Apply
                   </button>
                   <div className="v3-row-gap">
@@ -117,7 +116,7 @@
                   </div>
                 </div>
                 {customConfigured && status === 'running' && !conflict &&
-                  <p className="v3-set-desc" style={{ margin: 0 }}>Hybrid mode uses your local VLM for supported tasks to help reduce token usage.</p>}
+                  <p className="v2-text-body-sm">Hybrid mode uses your local VLM for supported tasks to help reduce token usage.</p>}
                 {customConfigured && status === 'running' && conflict && <InfoBanner tone="amber" icon={<WarnIcon />}>{CONFLICT}</InfoBanner>}
                 {customConfigured && status === 'startup_failed' &&
                   <InfoBanner tone="red" icon={<ErrIcon />}>Couldn't reach that endpoint. Check the URL and model, then try again.</InfoBanner>}

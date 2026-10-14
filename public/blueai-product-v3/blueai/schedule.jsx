@@ -1,9 +1,10 @@
 // BlueAI: Schedule Screen
-/* V3 (phase 4, worker.css): in-flow cards with a 1px line and no cast; the next run is a muted line
-   with one ink figure (blue is not for data); Edit and Delete are ghosts (Delete turns red on
-   hover only); the one committing action per view is the solid ink button (Create, and Create
-   schedule on the empty state), so the header's New is a ghost. Fields follow the site's: label
-   above, 1px line, blue edge and soft ring on focus. */
+/* V3 (phase 4; kit parts since review round 1): kit cards with a 1px line and no cast; the next run
+   is a muted line with one ink figure (blue is not for data); Edit is secondary and Delete the
+   danger trigger (red on hover only), its confirm the destructive commit; the one committing action
+   per view is the primary (Create, and Create schedule on the empty state), so the header's New is
+   secondary. Kit fields: label above, 1px line, blue edge and soft ring on focus. The title sits in
+   the one screen header, 24px. */
 
 const { useState } = React;
 
@@ -23,15 +24,15 @@ function repeatLabel(sch) {
 
 function ScheduleCard({ task, onEdit, onDelete }) {
   return (
-    <li className="v3-card v3-sched">
-      <h3 className="v3-sched-title">{task.name}</h3>
+    <li className="v2-card v3-sched">
+      <h3 className="v2-text-title v3-sched-title">{task.name}</h3>
       <div className="v3-sched-meta">
         <div className="v3-sched-line">
-          <IcoCalendar size={16} stroke={1.75} />
+          <IcoCalendar size={16} />
           <span><strong>Schedule:</strong> {repeatLabel(task.schedule)}</span>
         </div>
         <div className="v3-sched-line">
-          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+          <svg className="v2-icon" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
           <span>
             <strong>Next run:</strong>{' '}
             <span className="v3-figure">
@@ -41,11 +42,11 @@ function ScheduleCard({ task, onEdit, onDelete }) {
         </div>
       </div>
       <div className="v3-btn-row">
-        <button type="button" onClick={onEdit} className="v3-btn-ghost v3-btn-sm">
-          <IcoPencilEdit size={14} /> Edit
+        <button type="button" onClick={onEdit} className="v2-button v2-button--secondary">
+          <IcoPencilEdit /> Edit
         </button>
-        <button type="button" onClick={onDelete} className="v3-btn-ghost v3-btn-ghost--danger v3-btn-sm">
-          <IcoTrashBin size={14} /> Delete
+        <button type="button" onClick={onDelete} className="v2-button v2-button--danger">
+          <IcoTrashBin /> Delete
         </button>
       </div>
     </li>
@@ -61,26 +62,21 @@ function CreateScheduleModal({ isOpen, onClose, onSave }) {
   return (
     <ModalOverlay isOpen={isOpen} onClose={onClose} title="Schedule task">
       <form onSubmit={submit} className="v3-form">
-        <div>
-          <label htmlFor="sched-name" className="v3-label">Task name <span className="v3-req">*</span></label>
-          <input id="sched-name" className="v3-field" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Daily rewards collection" />
-        </div>
-        <div>
-          <label htmlFor="sched-prompt" className="v3-label">Task prompt <span className="v3-req">*</span></label>
-          <textarea id="sched-prompt" className="v3-field" value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Describe what BlueAI should do…" rows={3} />
-        </div>
-        <div>
-          <label htmlFor="sched-repeat" className="v3-label">Repeat</label>
-          <select id="sched-repeat" className="v3-field" value={repeat} onChange={e => setRepeat(e.target.value)}>
-            <option value="once">One time</option>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-          </select>
-        </div>
+        <Field id="sched-name" label="Task name" required>
+          <input id="sched-name" className="v2-field-input" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Daily rewards collection" />
+        </Field>
+        <Field id="sched-prompt" label="Task prompt" required className="v2-field--area">
+          <textarea id="sched-prompt" className="v2-field-input v2-field-input--area" value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Describe what BlueAI should do…" rows={3} />
+        </Field>
+        <SelectField id="sched-repeat" label="Repeat" value={repeat} onChange={e => setRepeat(e.target.value)}>
+          <option value="once">One time</option>
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+        </SelectField>
         <div className="v3-btn-row">
-          <button type="button" onClick={onClose} className="v3-btn-ghost">Cancel</button>
-          <button type="submit" disabled={!canSave} className="v3-btn-solid">Create</button>
+          <button type="button" onClick={onClose} className="v2-button v2-button--secondary v2-button--lg">Cancel</button>
+          <button type="submit" disabled={!canSave} aria-disabled={!canSave} className="v2-button v2-button--primary v2-button--lg">Create</button>
         </div>
       </form>
     </ModalOverlay>
@@ -93,14 +89,14 @@ function ScheduleScreen({ isLoading }) {
   const [confirmId, setConfirmId] = useState(null);
 
   if (isLoading) return (
-    <div className="v3-tab">
-      <div className="v3-tab-head">
+    <div>
+      <div className="v3-screen-head">
         <Shimmer h={24} w={150} r={6} />
         <Shimmer h={36} w={72} r={6} />
       </div>
       <div className="v3-list">
         {[1, 2].map(i => (
-          <div key={i} className="v3-skel">
+          <div key={i} className="v2-card">
             <Shimmer h={17} w="65%" r={6} extra={{ marginBottom: 14 }} />
             <Shimmer h={12} w="80%" r={5} extra={{ marginBottom: 8 }} />
             <Shimmer h={12} w="60%" r={5} extra={{ marginBottom: 16 }} />
@@ -115,20 +111,19 @@ function ScheduleScreen({ isLoading }) {
   );
 
   return (
-    <div className="v3-tab">
-      <div className="v3-tab-head">
-        <h1 className="v3-cat-title">Scheduled tasks</h1>
-        <button type="button" onClick={() => setShowCreate(true)} className="v3-btn-ghost v3-btn-sm">
-          <IcoPlusSmall size={12} color="currentColor" /> New
+    <div>
+      <ScreenHead title="Scheduled tasks">
+        <button type="button" onClick={() => setShowCreate(true)} className="v2-button v2-button--secondary">
+          <IcoPlusSmall /> New
         </button>
-      </div>
+      </ScreenHead>
 
       {tasks.length === 0 ? (
-        <div className="v3-card v3-empty v3-empty--card">
-          <div className="v3-empty-mark"><IcoCalendar size={24} stroke={1.75} /></div>
-          <p className="v3-empty-title">No scheduled tasks</p>
-          <p className="v3-empty-text">Schedule jobs to run automatically at specific times.</p>
-          <button type="button" onClick={() => setShowCreate(true)} className="v3-btn-solid v3-btn-sm">Create schedule</button>
+        <div className="v2-card v2-empty">
+          <div className="v2-empty-icon"><IcoCalendar size={24} /></div>
+          <p className="v2-text-title-lg v2-empty-title">No scheduled tasks</p>
+          <p className="v2-text-body v2-empty-body">Schedule jobs to run automatically at specific times.</p>
+          <div className="v2-empty-actions"><button type="button" onClick={() => setShowCreate(true)} className="v2-button v2-button--primary">Create schedule</button></div>
         </div>
       ) : (
         <ul className="v3-list">
@@ -142,10 +137,10 @@ function ScheduleScreen({ isLoading }) {
 
       <ModalOverlay isOpen={!!confirmId} onClose={() => setConfirmId(null)} title="Confirm delete">
         <div className="v3-form">
-          <p className="v3-dlg-text">Are you sure you want to delete this scheduled task? This action cannot be undone.</p>
+          <p className="v2-text-body">Are you sure you want to delete this scheduled task? This action cannot be undone.</p>
           <div className="v3-btn-row">
-            <button type="button" onClick={() => setConfirmId(null)} className="v3-btn-ghost">Cancel</button>
-            <button type="button" onClick={() => { setTasks(p => p.filter(t => t.id !== confirmId)); setConfirmId(null); }} className="v3-btn-solid">Delete</button>
+            <button type="button" onClick={() => setConfirmId(null)} className="v2-button v2-button--secondary v2-button--lg">Cancel</button>
+            <button type="button" onClick={() => { setTasks(p => p.filter(t => t.id !== confirmId)); setConfirmId(null); }} className="v2-button v2-button--destructive v2-button--lg">Delete</button>
           </div>
         </div>
       </ModalOverlay>

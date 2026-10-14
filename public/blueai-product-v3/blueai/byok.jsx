@@ -19,9 +19,9 @@
 //
 // Exposes window.Byok = { OutOfCreditsCard, OutOfCreditsModal } (+ ByokSettings from byok_settings.jsx).
 //
-// V3, Phase 5: the popup is a dialog in the shared frame (worker.css .v3-dialog*, the dim veil and
-// the floating cast), at the confirm width. The zero is an ink figure beside the credits glyph, the
-// hairline closes the statement off, and "Got it", the one way out, is the solid ink button.
+// V3, Phase 5: the popup is the kit's dialog (kit/overlays.css since review round 1: the dim veil,
+// one radius, one edge), at the confirm width. The zero is an ink figure beside the credits glyph,
+// the hairline closes the statement off, and "Got it", the one way out, is the primary button.
 (function () {
   /* The out-of-credits card. Hitting zero in V2 is a "come back tomorrow" state, not a purchase
      moment, so this is dismiss-only. It was called TopUpCard until the model changed; a name
@@ -45,23 +45,23 @@
       <div className="v3-dlg-center">
         <div className="v3-cr-figure">
           <img src="assets/Credits.svg" alt="" className="v3-cr-glyph" />
-          <span className="v3-cr-value">0</span>
+          <span className="v2-text-display">0</span>
         </div>
-        <hr className="v3-rule v3-dlg-rule" />
-        {/* The (i) sits to the right of the title. Its tooltip opens upward, over the 0, so it
-           never covers the two lines below or the button. */}
-        <div className="v3-dlg-headline">
-          <h2 className="v3-dialog-title">Out of credits</h2>
+        <hr className="v2-divider v3-dlg-rule" />
+        {/* The (i) sits to the right of the title, out of flow, so the title stays centred. Its
+           tooltip opens upward, over the 0, so it never covers the two lines below or the button. */}
+        <div className="v3-titled">
+          <h2 className="v2-text-title-dialog">Out of credits</h2>
           <P.InfoTip dir="up" />
         </div>
         {/* Two sentences, two lines, as drawn. Separate blocks rather than one wrapping
            paragraph, so the break always lands after "credits." instead of wherever the
            available width happens to put it. */}
-        <p className="v3-dlg-text">
+        <p className="v2-text-body">
           <span>You&rsquo;ve used all of today&rsquo;s AI credits.</span>
           <span>Credits will be refreshed in <strong className="v3-figure" style={{ whiteSpace: 'nowrap' }}>{left}</strong>.</span>
         </p>
-        <button type="button" onClick={onDismiss} className="v3-btn-solid v3-btn-full v3-dlg-actions">Got it</button>
+        <button type="button" onClick={onDismiss} className="v2-button v2-button--primary v2-button--lg v2-button--full v3-dlg-actions">Got it</button>
       </div>
     );
   }
@@ -70,10 +70,14 @@
      Closes on the X, on the backdrop, and on "Got it", which all route to the same onClose. */
   function OutOfCreditsModal({ onClose }) {
     return (
-      <div onClick={(e) => { if (e.target === e.currentTarget) onClose(); }} className="v3-dialog-scrim" style={{ zIndex: 'var(--v2-z-dialog)' }}>
-        <div role="dialog" aria-modal="true" aria-label="Out of credits" className="v3-dialog v3-dialog--plain v3-dialog--sm" style={{ overflow: 'visible' }}>
-          <button type="button" aria-label="Close" onClick={onClose} className="v3-icon-btn v3-dlg-x"><IcoXClose size={18} /></button>
-          <div className="v3-dialog-body">
+      <div className="v2-overlay v2-overlay--center">
+        <div className="v2-scrim" onClick={onClose} aria-hidden="true" />
+        <div role="dialog" aria-modal="true" aria-label="Out of credits" className="v2-dialog v2-dialog--sm">
+          <div className="v2-dialog-head v2-dialog-head--bare">
+            <button type="button" aria-label="Close" onClick={onClose} className="v2-icon-button v2-ov-close"><IcoXClose /></button>
+          </div>
+          {/* overflow visible: the (i)'s tooltip opens up over the 0, past the body's edge. */}
+          <div className="v2-dialog-body" style={{ overflow: 'visible' }}>
             <OutOfCreditsCard onDismiss={onClose} />
           </div>
         </div>

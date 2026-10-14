@@ -32,10 +32,18 @@
 .v2-button--primary:hover:not([aria-disabled="true"]), .v2-button--primary.is-hover {
   background-color: var(--v2-solid-hover); border-color: var(--v2-solid-hover); box-shadow: var(--v2-shadow-btn-hover); transform: translateY(1px);
 }
-.v2-button--primary[aria-disabled="true"] { box-shadow: none; }
+.v2-button--primary[aria-disabled="true"], .v2-button--destructive[aria-disabled="true"] { box-shadow: none; }
+/* destructive: a destructive confirm's commit (Delete, Sign out's confirm). In Target it is the solid
+   primary; the V2 today look paints it red through its look hooks (review round 1, 2026-10-14). */
+.v2-button--destructive {
+  background-color: var(--v2-button-destructive-fill); border-color: var(--v2-button-destructive-fill); color: var(--v2-on-color); box-shadow: var(--v2-shadow-btn);
+}
+.v2-button--destructive:hover:not([aria-disabled="true"]), .v2-button--destructive.is-hover {
+  background-color: var(--v2-button-destructive-hover); border-color: var(--v2-button-destructive-hover); box-shadow: var(--v2-shadow-btn-hover); transform: translateY(1px);
+}
 /* secondary: the frequent second action, the site's ghost: panel fill, 15% line, no cast; hover to
-   the sunken surface, pressed to --v2-surface-press. */
-.v2-button--secondary { background-color: var(--v2-surface-panel); border-color: var(--v2-line-strong); color: var(--v2-ink); }
+   the sunken surface, pressed to --v2-surface-press. Rest reads the look hooks (V2 today: white). */
+.v2-button--secondary { background-color: var(--v2-button-secondary-fill); border-color: var(--v2-button-secondary-line); color: var(--v2-button-secondary-ink); }
 .v2-button--secondary:hover:not([aria-disabled="true"]), .v2-button--secondary.is-hover {
   background-color: var(--v2-surface-sunken); border-color: var(--v2-line-hover);
 }
@@ -45,15 +53,16 @@
   background-color: var(--v2-wash-hover); color: var(--v2-ink);
 }
 /* danger: the trigger of an action that destroys (Remove, Disconnect). A ghost whose red arrives on
-   hover only; the label already says what it does. The confirm's commit is the solid primary (V3 restyle, 2026-10-14). */
-.v2-button--danger { background-color: var(--v2-surface-panel); border-color: var(--v2-line-strong); color: var(--v2-ink); }
+   hover only; the label already says what it does. The confirm's commit is the destructive variant above. */
+.v2-button--danger { background-color: var(--v2-button-danger-fill); border-color: var(--v2-button-danger-line); color: var(--v2-button-danger-ink); }
 .v2-button--danger:hover:not([aria-disabled="true"]), .v2-button--danger.is-hover {
-  background-color: var(--v2-danger-tint); border-color: var(--v2-danger-edge); color: var(--v2-danger-ink);
+  background-color: var(--v2-button-danger-hover-fill); border-color: var(--v2-danger-edge); color: var(--v2-danger-ink);
 }
 
 /* press: a real drop (the site's press, 2px on the solid), the ghost to its pressed fill */
 .v2-button:active:not([aria-disabled="true"]), .v2-button.is-active { transform: translateY(1px); }
-.v2-button--primary:active:not([aria-disabled="true"]), .v2-button--primary.is-active { transform: translateY(2px); }
+.v2-button--primary:active:not([aria-disabled="true"]), .v2-button--primary.is-active,
+.v2-button--destructive:active:not([aria-disabled="true"]), .v2-button--destructive.is-active { transform: translateY(2px); }
 .v2-button--secondary:active:not([aria-disabled="true"]), .v2-button--secondary.is-active,
 .v2-button--danger:active:not([aria-disabled="true"]), .v2-button--danger.is-active { background-color: var(--v2-surface-press); }
 .v2-button--quiet:active:not([aria-disabled="true"]), .v2-button--quiet.is-active { background-color: var(--v2-wash-press); }
@@ -138,8 +147,8 @@
   height: var(--v2-control-sm);
   padding: 0 var(--v2-space-3);
   border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-pill);
-  background-color: var(--v2-surface); background-image: linear-gradient(var(--v2-wash-tint), var(--v2-wash-tint)); color: var(--v2-ink-2);
-  font-family: var(--v2-font-ui); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium);
+  background-color: var(--v2-surface); background-image: linear-gradient(var(--v2-wash-tint), var(--v2-wash-tint)); color: var(--v2-chip-ink);
+  box-shadow: var(--v2-chip-shadow); font-family: var(--v2-font-ui); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium);
   letter-spacing: var(--v2-tracking-label); line-height: var(--v2-leading-display);
   white-space: nowrap; cursor: pointer; user-select: none;
   transition: background-color var(--v2-dur-2) var(--v2-ease-standard),
@@ -155,14 +164,15 @@
 /* selected: the family's chosen look (P6, onblue/apply.html:949): blue 12% fill, blue 50% edge,
    ink label (16.75:1 on the fill). The edge is 2.05:1, so Chip also draws a check: never hue alone.
    One rule, two grounds: on white (Chip, RadioCard) the edge is --v2-select-line; on the sunken
-   track (Segmented, Tabs) it is full --v2-blue at 1.5px (4.15:1), because those carry no check. */
+   track (Segmented, Tabs) it is full --v2-blue at 1.5px (4.15:1), because those carry no check.
+   The chip reads its look hooks (V2 today: slate-700 with a white label). */
 .v2-chip[aria-pressed="true"], .v2-chip.is-selected {
-  background-image: linear-gradient(var(--v2-select), var(--v2-select));
-  border-color: var(--v2-select-line); color: var(--v2-ink);
+  background-image: linear-gradient(var(--v2-chip-selected-fill), var(--v2-chip-selected-fill));
+  border-color: var(--v2-chip-selected-line); color: var(--v2-chip-selected-ink);
 }
 .v2-chip[aria-pressed="true"]:hover:not([aria-disabled="true"]), .v2-chip.is-selected.is-hover {
-  background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)), linear-gradient(var(--v2-select), var(--v2-select));
-  border-color: var(--v2-select-line);
+  background-image: linear-gradient(var(--v2-wash-hover), var(--v2-wash-hover)), linear-gradient(var(--v2-chip-selected-fill), var(--v2-chip-selected-fill));
+  border-color: var(--v2-chip-selected-line); color: var(--v2-chip-selected-ink);
 }
 .v2-chip:focus-visible, .v2-chip.is-focus { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 .v2-chip[aria-disabled="true"] { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
@@ -176,5 +186,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .v2-button:active:not([aria-disabled="true"]), .v2-button.is-active,
-  .v2-button--primary:hover:not([aria-disabled="true"]), .v2-button--primary.is-hover { transform: none; }
+  .v2-button--primary:hover:not([aria-disabled="true"]), .v2-button--primary.is-hover,
+  .v2-button--destructive:hover:not([aria-disabled="true"]), .v2-button--destructive.is-hover { transform: none; }
 }

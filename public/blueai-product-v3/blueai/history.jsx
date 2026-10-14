@@ -1,4 +1,5 @@
-// BlueAI: Chat History (in-app screen; accordion of past sessions). V3 styles live in chat.css.
+// BlueAI: Chat history (in-app screen; accordion of past sessions). V3 styles live in chat.css; the
+// header is the shared ScreenHead (settings.css), as on every pushed screen (review round 1).
 // Matches the live product: the app header + bottom nav stay, there is NO overlay,
 // NO close "X", and NO composer, the screen replaces the whole chat area.
 // Each row is an accordion: tap to expand the FULL past conversation inline. The
@@ -89,8 +90,8 @@
   function ChatHistoryScreen() {
     const [openId, setOpenId] = useState(null);
     return (
-      <div className="tab-anim v3-hist">
-        <h1 className="v3-screen-title">Chat History</h1>
+      <div className="v2-anim-fade-up v3-screen">
+        <ScreenHead title="Chat history" />
         <div className="v3-hist-list">
           {HISTORY_ITEMS.map((it) => {
             const isOpen = openId === it.id;
@@ -98,15 +99,15 @@
               <div key={it.id} className="v3-hist-item">
                 <button className="v3-hist-head" aria-expanded={isOpen} onClick={() => setOpenId(isOpen ? null : it.id)}>
                   <span style={{ flex: 1, minWidth: 0 }}>
-                    <span className="v3-hist-title" style={{ display: 'block' }}>{it.title}</span>
-                    <span className="v3-hist-meta" style={{ display: 'block' }}>{it.n} messages · {it.when}</span>
+                    <span className="v3-hist-title">{it.title}</span>
+                    <span className="v2-text-meta v3-hist-meta">{it.n} messages · {it.when}</span>
                   </span>
-                  <svg className="v3-hist-chev v3-ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <svg className="v2-icon v3-hist-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <polyline points="6 9 12 15 18 9" />
                   </svg>
                 </button>
                 {isOpen &&
-                  <div className="ba-msg-in v3-hist-body">
+                  <div className="v2-anim-pop-in v3-hist-body">
                     {buildConvo(it).map((m, i) => <HistMsg key={i} m={m} />)}
                   </div>}
               </div>

@@ -4,6 +4,12 @@
   const G = window.V2Guide;
 
   const ENTRIES = [
+    ['2026-10-14', 'Review round 1 of V3: switch, destructive confirm, look hooks, titles', [
+      'New tokens: --v2-tracking-hero -0.04em (titles 24 and up, at weight 500: .v2-text-greeting and the welcome title), --v2-em-glow (the serif em’s glow), and look hooks so V2 today keeps V2’s own secondary, danger, destructive confirm, switch, empty state and chips (--v2-button-secondary-*, --v2-button-danger-*, --v2-button-destructive-fill and -hover, --v2-switch-off-fill, --v2-switch-knob-shadow, --v2-empty-*, --v2-chip-*).',
+      'Re-valued: --v2-tracking-eyebrow is the site’s 0.14em in both looks (was 0.08em).',
+      'Kit: Switch off is a 20% fill the white knob reads on, on is --v2-action (the sunken off track left the knob at 1.08:1); Button gains variant destructive (a destructive confirm’s commit); Spinner gains a 24 size; dialogs centre with a symmetric 20 inset; the serif em takes --v2-em-glow.',
+      'Why: review round 1 of BlueAI Product V3, which now consumes the kit’s stylesheets instead of re-implementing them.',
+    ]],
     ['2026-10-14', 'Target look aligned with the onBlue Agentic site after the V3 restyle', [
       'Target look aligned with the onBlue Agentic site after the V3 restyle: the committing action is the site’s solid ink button (new --v2-solid, --v2-solid-hover, --v2-shadow-btn, --v2-shadow-btn-hover; decision D1 settled), the ghost presses to new --v2-surface-press, chips rest on new --v2-wash-tint, and blue is held to focus, selection, progress, links and the spark.',
       'New tokens: --v2-text-18 (dialog and sheet titles, .v2-text-title-dialog), --v2-tracking-figure (big figures), --v2-radius-dialog 20 (every dialog and the sheet’s top edge), --v2-shadow-2-up (sheets), --v2-scrim-light (a sheet’s veil), --v2-ring-select (highlight on arrival), and look hooks --v2-waiting-fill and --v2-brand-word-fill; each also in tokens-v2-today.css with V2’s value.',

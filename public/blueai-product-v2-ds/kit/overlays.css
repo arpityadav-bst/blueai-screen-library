@@ -14,7 +14,7 @@
   position: absolute; inset: 0; z-index: var(--v2-z-dialog); display: flex;
   font-family: var(--v2-font-ui); color: var(--v2-ink-2); text-align: left;
 }
-.v2-overlay--center { align-items: center; justify-content: center; padding: var(--v2-space-4); }
+.v2-overlay--center { align-items: center; justify-content: center; padding: var(--v2-space-5); } /* symmetric 20 (review round 1, 2026-10-14) */
 .v2-overlay--bottom { flex-direction: column; justify-content: flex-end; }
 /* A sheet's veil is the light one, so a dialog opening over it stacks to about one veil (V3 restyle, 2026-10-14). */
 .v2-overlay--bottom > .v2-scrim { background: var(--v2-scrim-light); }

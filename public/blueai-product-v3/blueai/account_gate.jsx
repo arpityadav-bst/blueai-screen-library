@@ -7,23 +7,23 @@
 // account". Switch account signs the shared session out, which signs App Player out too, and the
 // browser opens (signin_page.jsx).
 //
-// V3, Phase 2: Target tokens and the site's language (entry.css .v3-*): Inter, a lined account
-// row, the solid dark button for the one action, an underlined ink link for the quiet one. The
-// avatar fill is the account's own data (account.hue), not a theme colour.
+// V3, Phase 2: Target tokens and the site's language (entry.css .v3-*; kit avatar, badge, button and
+// link since review round 1): Inter, a lined account row, the primary button for the one action, an
+// underlined ink link for the quiet one. The avatar fill is the account's own data (account.hue).
 
 (function () {
   function GateCard({ account, fromPlayer, onSwitch }) {
     return (
       <>
-        <span className="v3-avatar" style={{ width: 'var(--v2-mark-xl)', height: 'var(--v2-mark-xl)', background: account.hue, fontSize: 'var(--v2-text-20)' }}>{account.name[0]}</span>
+        <span className="v2-avatar v2-avatar--56" style={{ background: account.hue }}>{account.name[0]}</span>
         <div>
-          <p className="v3-note">Signed in as</p>
+          <p className="v2-text-body-sm">Signed in as</p>
           <p className="v3-gate-email">{account.email}</p>
-          {fromPlayer && <p className="v3-gate-body" style={{ marginTop: 'var(--v2-space-1)' }}>from App Player on this PC</p>}
+          {fromPlayer && <p className="v2-text-body-sm v3-gate-body" style={{ marginTop: 'var(--v2-space-1)' }}>from App Player on this PC</p>}
         </div>
-        <span className="v3-badge">Not enrolled</span>
-        <button type="button" onClick={onSwitch} className="v3-btn-solid">Switch account</button>
-        <p className="v3-note">App Player will be signed out too.</p>
+        <span className="v2-badge"><span className="v2-badge-dot" aria-hidden="true" /><span className="v2-badge-label">Not enrolled</span></span>
+        <button type="button" onClick={onSwitch} className="v2-button v2-button--primary v2-button--lg">Switch account</button>
+        <p className="v2-text-body-sm">App Player will be signed out too.</p>
       </>
     );
   }
@@ -34,18 +34,18 @@
     return (
       <>
         <div>
-          <p className="v3-gate-title">Continue to BlueAI</p>
-          <p className="v3-gate-body">Signed in on App Player on this PC</p>
+          <p className="v2-text-title-lg">Continue to BlueAI</p>
+          <p className="v2-text-body-sm v3-gate-body">Signed in on App Player on this PC</p>
         </div>
         <button type="button" onClick={onContinue} className="v3-account">
-          <span className="v3-avatar" style={{ width: 'var(--v2-mark-md)', height: 'var(--v2-mark-md)', background: account.hue, fontSize: 'var(--v2-text-14)' }}>{account.name[0]}</span>
+          <span className="v2-avatar" style={{ background: account.hue }}>{account.name[0]}</span>
           <span style={{ minWidth: 0 }}>
-            <span style={{ display: 'block', fontSize: 'var(--v2-text-14)', fontWeight: 'var(--v2-weight-semibold)', lineHeight: 'var(--v2-leading-snug)', color: 'var(--v2-ink)' }}>Continue as {account.first}</span>
-            <span style={{ display: 'block', fontSize: 'var(--v2-text-13)', lineHeight: 'var(--v2-leading-snug)', color: 'var(--v2-ink-3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{account.email}</span>
+            <span className="v3-account-name">Continue as {account.first}</span>
+            <span className="v3-account-email">{account.email}</span>
           </span>
         </button>
-        <p className="v3-note">Not you?{' '}
-          <button type="button" onClick={onSwitch} className="v3-link v3-link--ink">Switch account</button>
+        <p className="v2-text-body-sm">Not you?{' '}
+          <button type="button" onClick={onSwitch} className="v2-link"><span className="v2-link-text">Switch account</span></button>
         </p>
       </>
     );

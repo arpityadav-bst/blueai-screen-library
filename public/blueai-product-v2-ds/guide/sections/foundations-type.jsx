@@ -7,7 +7,7 @@
   // [class, sample node, size/weight/leading/tracking, ink, use, ref id or null]
   const LADDER = [
     ['v2-text-display', '2,000', '40 / 600 / 1 / -0.045em, tabular', '--v2-ink', 'Credits balance numeral (proposed figure: the daily grant)', null],
-    ['v2-text-greeting', 'Hi, Alex', '24 / 600 / 1.2 / -0.02em', '--v2-ink', "Home greeting, welcome title (proposed: V2's 'Hi, Alex' carries an emoji)", 'foundations.type.greeting'],
+    ['v2-text-greeting', 'Hi, Alex', '24 / 500 / 1.2 / -0.04em', '--v2-ink', "Home greeting, welcome title, screen titles (proposed: V2's 'Hi, Alex' carries an emoji)", 'foundations.type.greeting'],
     ['v2-text-title-lg', 'AI Credits', '20 / 600 / 1.2 / -0.02em', '--v2-ink', 'Every screen title and dialog title', 'foundations.type.title-ai-credits'],
     ['v2-text-numeral-sm', '7', '20 / 600 / 1 / -0.02em, tabular', '--v2-ink', "Counts beside a label: '7 of 20 days'", 'foundations.type.day-count-copy'],
     ['v2-text-title', 'BlueStacks Instance', '16 / 600 / 1.2 / -0.01em', '--v2-ink', 'Card titles, section heads', 'foundations.type.card-title'],
@@ -17,7 +17,7 @@
     ['v2-text-label', 'Switch account', '13 / 500 / 1.35 / -0.01em', '--v2-ink-2', 'Buttons, chips, nav, menu rows', 'foundations.blue.gate-label'],
     ['v2-text-meta', '11:04 am', '12 / 400 / 1.35 / 0', '--v2-ink-4', 'Timestamps and counts only, never a line that carries a consequence (proposed sample)', null],
     ['v2-text-caption', 'Turning this off keeps your saved key.', '12 / 400 / 1.35 / 0', '--v2-ink-3', 'Helpers, disabled reasons, footnotes: any line that carries a consequence (6.0:1; proposed sample)', null],
-    ['v2-text-eyebrow', 'Plan', '11 / 500 / 1 / 0.08em, uppercase', '--v2-ink-3', 'Section labels only; status words are Badges', 'foundations.type.eyebrow'],
+    ['v2-text-eyebrow', 'Plan', '11 / 500 / 1 / 0.14em, uppercase', '--v2-ink-3', 'Section labels only; status words are Badges', 'foundations.type.eyebrow'],
     ['v2-text-mono', 'claude-haiku-4-5', '13 / 400 / 1.35 / 0, mono', '--v2-ink-2', 'Keys, endpoints, model ids', 'foundations.type.mono-hint'],
   ];
   function sample(row) {

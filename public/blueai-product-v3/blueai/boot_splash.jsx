@@ -5,17 +5,10 @@
   const { useState, useEffect } = React;
 
   /* ── Shimmer block ─────────────────────────────────────────── */
+  /* The kit's skeleton block (kit/feedback.css .v2-skel) with its shimmer (kit/motion.css
+     .v2-anim-shimmer, on the token clock); only the block's size and radius are this call's. */
   function Shimmer({ w = '100%', h, r = 8, extra = {} }) {
-    return (
-      <div style={{
-        width: w, height: h, borderRadius: r, flexShrink: 0,
-        // Target skeleton (V3 Phase 1): sunken base with a hairline-dark sweep, on the token clock.
-        background: 'linear-gradient(90deg, var(--v2-surface-sunken) 25%, var(--v2-line-hair) 50%, var(--v2-surface-sunken) 75%)',
-        backgroundSize: '800px 100%',
-        animation: 'ba-shimmer var(--v2-dur-shimmer) ease-in-out infinite',
-        ...extra,
-      }} />
-    );
+    return <div className="v2-skel v2-anim-shimmer" style={{ width: w, height: h, borderRadius: r, flexShrink: 0, ...extra }} />;
   }
 
   /* ── Boot Splash ───────────────────────────────────────────── */
@@ -35,70 +28,47 @@
       return () => [msgT, fadeT, doneT].forEach(clearTimeout);
     }, []);
 
-    /* V3 Phase 1, the Target splash (design-md 33): surface ground, the onBlue BlueAI logo, three
-       6px blue dots pulsing (progress, not brand), one status line in ink-3. Same two messages and
-       the same timings as before; the fade runs on --v2-dur-4 with the departure curve, well inside
-       the 500ms before onDone. Reduced motion stops the dots (.ba-splash-dot in index.html). */
+    /* V3 Phase 1, the Target splash (design-md 33), the kit's since review round 1 (kit/shell.css
+       .v2-splash): surface ground, the onBlue BlueAI logo, three 6px blue dots pulsing (progress,
+       not brand), one status line in ink-3. Same two messages and the same timings as before; the
+       fade runs on --v2-dur-4 with the departure curve, well inside the 500ms before onDone. */
     return (
-      <div style={{
-        position: 'absolute', inset: 0, zIndex: 'var(--v2-z-splash)',
-        background: 'var(--v2-surface)',
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        fontFamily: 'var(--v2-font-ui)',
-        opacity: fading ? 0 : 1,
-        transition: 'opacity var(--v2-dur-4) var(--v2-ease-in)',
-        pointerEvents: fading ? 'none' : 'auto',
-        userSelect: 'none',
-      }}>
+      <div className={'v2-splash' + (fading ? ' is-fading' : '')}>
         <window.BlueAILogo size={30} />
-
-        <div aria-hidden="true" style={{ display: 'flex', gap: 'var(--v2-space-15)', marginTop: 'var(--v2-space-10)' }}>
-          {[0, 1, 2].map(i => (
-            <span key={i} className="ba-splash-dot" style={{ animationDelay: 'calc(var(--v2-dur-pulse) * ' + i + ' / 6)' }} />
-          ))}
+        <div className="v2-splash-dots" aria-hidden="true">
+          <span className="v2-splash-dot" /><span className="v2-splash-dot" /><span className="v2-splash-dot" />
         </div>
-
-        <p role="status" style={{
-          marginTop: 'var(--v2-space-3)',
-          fontSize: 'var(--v2-text-13)', lineHeight: 'var(--v2-leading-snug)',
-          color: 'var(--v2-ink-3)', fontWeight: 'var(--v2-weight-regular)',
-        }}>{MSGS[idx]}</p>
+        <p role="status" className="v2-splash-status">{MSGS[idx]}</p>
       </div>
     );
   }
 
-  /* ── Home skeleton (chat cold-start; mirrors ProductHome's card list) ── */
+  /* ── Home skeleton (chat cold-start; mirrors ProductHome's card list) ──
+     Review round 1: it matches the real rows (chat.css .v3-row: padding 12, gap 8, radius 10, a
+     36px tile at radius 6), and the blue "focused" last card is gone. */
   function HomeSkeleton() {
-    const card = (focused) => ({
-      background: 'var(--v2-surface)',
-      border: 'var(--v2-stroke) solid ' + (focused ? 'var(--v2-blue-tint-line)' : 'var(--v2-line)'),
-      borderRadius: 'var(--v2-radius-md)', padding: '11px 12px',
-      display: 'flex', alignItems: 'center', gap: 12,
-    });
+    const row = {
+      display: 'flex', alignItems: 'center', gap: 'var(--v2-space-3)', padding: 'var(--v2-space-3)',
+      background: 'var(--v2-surface)', border: 'var(--v2-stroke) solid var(--v2-line)', borderRadius: 'var(--v2-radius-md)'
+    };
     return (
       <div>
-        {/* "WHAT WOULD YOU LIKE TO DO?" label placeholder */}
-        <Shimmer w={150} h={9} r={4} extra={{ marginBottom: 12 }} />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+        {/* "What would you like to do?" eyebrow placeholder */}
+        <Shimmer w={150} h={9} r={4} extra={{ marginBottom: 'var(--v2-space-2)' }} />
+        <div className="v3-rows">
           {[0, 1, 2, 3].map(i => (
-            <div key={i} style={card(false)}>
-              <Shimmer w={36} h={36} r={10} />
-              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 7 }}>
+            <div key={i} style={row}>
+              <Shimmer w="var(--v2-control-md)" h="var(--v2-control-md)" r="var(--v2-radius-sm)" />
+              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 'var(--v2-space-15)' }}>
                 <Shimmer w="46%" h={10} r={5} />
                 <Shimmer w="82%" h={9} r={5} />
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--v2-space-1)', flexShrink: 0 }}>
                 <Shimmer w={34} h={9} r={5} />
-                <Shimmer w={10} h={10} r={3} />
+                <Shimmer w={16} h={16} r={4} />
               </div>
             </div>
           ))}
-          {/* last card lands focused, as in the live cold-start */}
-          <div style={card(true)}>
-            <Shimmer w={32} h={32} r="50%" />
-            <Shimmer w="58%" h={10} r={5} />
-          </div>
         </div>
       </div>
     );

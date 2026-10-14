@@ -4,19 +4,19 @@
    "below", icons only, success only) is chosen by the CALLER, not here.
 
    V3 (phase 3): every bubble now sits on the white surface, so the control no longer needs a
-   per-tone palette. One look for every placement (chat.css): quiet icon buttons, the site's pills
-   for the reasons, and the select blue for whatever is chosen.
+   per-tone palette. One look for every placement, all kit parts (review round 1): 28px icon
+   buttons (a vote is the pressed look), chips for the reasons, a kit field and a quiet 32px submit.
    Exposes window.ChatFeedback. */
 (function () {
   const { useState, useRef, useEffect } = React;
 
   /* ───────── Icons ───────── */
-  function ThumbIcon({ dir, size = 16, filled = false }) {
+  function ThumbIcon({ dir, filled = false }) {
     const up = "M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3";
     const down = "M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zM17 2h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3";
     return (
-      <svg className="v3-ico" width={size} height={size} viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor"
-        strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }} aria-hidden="true">
+      <svg className="v2-icon" viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor"
+        strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d={dir === 'up' ? up : down} />
       </svg>);
   }
@@ -67,21 +67,22 @@
     };
 
     return (
-      <div ref={rootRef} className="ba-chips-in" style={{ marginTop: 'var(--v2-space-2)' }}>
-        <p className="v3-fb-label" style={{ color: 'var(--v2-ink-3)', marginBottom: 'var(--v2-space-15)' }}>What went wrong?</p>
-        <div className="v3-pills">
+      <div ref={rootRef} className="v2-anim-pop-in" style={{ marginTop: 'var(--v2-space-2)' }}>
+        <p className="v2-text-caption v2-fb-prompt" style={{ marginBottom: 'var(--v2-space-15)' }}>What went wrong?</p>
+        <div className="v2-fb-chips">
           {FB_REASONS.map((r) => {
             const sel = reason === r;
             return (
-              <button key={r} onClick={() => { if (r === 'Other' || !sel) { setSubmitted(false); } onPick(sel ? null : r); }}
-                className={'v3-pill' + (sel ? ' is-selected' : '')} aria-pressed={sel}>
+              <button key={r} type="button" onClick={() => { if (r === 'Other' || !sel) { setSubmitted(false); } onPick(sel ? null : r); }}
+                className="v2-chip" aria-pressed={sel}>
                 {r}
               </button>);
           })}
         </div>
         {isOther &&
-          <div className="ba-chips-in" style={{ display: 'flex', alignItems: 'flex-end', gap: 'var(--v2-space-15)', marginTop: 'var(--v2-space-2)' }}>
-            <textarea className="ba-field v3-fb-field" value={otherText} autoFocus rows={1}
+          <div className="v2-anim-pop-in v2-fb-other" style={{ marginTop: 'var(--v2-space-2)' }}>
+            <div className={'v2-field' + (submitted ? ' is-disabled' : '')}><div className="v2-field-box">
+            <textarea className="v2-field-input v3-fb-input" value={otherText} autoFocus rows={1}
               placeholder="Provide additional feedback"
               disabled={submitted}
               onChange={(e) => {
@@ -92,13 +93,13 @@
                 el.style.overflowY = el.scrollHeight > maxH ? 'auto' : 'hidden';
               }}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); } }} />
-            {/* Submit is this row's one committing action: the solid ink button. Sent = the green
-                tick, green meaning "reached". */}
-            <button onClick={submit} disabled={submitted} aria-label="Submit feedback"
-              className={'v3-btn-solid v3-send' + (submitted ? ' v3-send--sent' : '')} style={{ height: 'var(--v2-control-md)', width: 'var(--v2-control-md)' }}>
+            </div></div>
+            {/* Submit: a quiet 32px icon button (review round 1), the reply is not the view's commit.
+                Sent swaps the arrow for a tick (2px mark geometry) and holds the button. */}
+            <button type="button" onClick={submit} disabled={submitted} aria-disabled={submitted} aria-label="Submit feedback" className="v2-icon-button">
               {submitted
-                ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
-                : <svg className="v3-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5" /><polyline points="5 12 12 5 19 12" /></svg>}
+                ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
+                : <svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5" /><polyline points="5 12 12 5 19 12" /></svg>}
             </button>
           </div>}
       </div>);
@@ -137,12 +138,12 @@
       const selected = vote === dir;
       return (
         <button key={dir} onClick={() => cast(dir)} aria-label={dir === 'up' ? 'Good result' : 'Bad result'} aria-pressed={selected}
-          className={'v3-fb-btn' + (selected ? ' is-selected' : '') + (vote && !selected ? ' is-dim' : '')}>
-          <ThumbIcon dir={dir} size={16} filled={selected} />
+          className={'v2-icon-button v2-icon-button--28' + (vote && !selected ? ' v3-fb-dim' : '')}>
+          <ThumbIcon dir={dir} filled={selected} />
         </button>);
     };
     const labelText = thanks ? 'Thanks for the feedback' : (vote ? '' : (withLabel ? 'Did I get this right?' : ''));
-    const label = <span className={'v3-fb-label' + (thanks ? ' ba-thanks-in' : '')}>{labelText}</span>;
+    const label = <span className={'v2-text-caption v2-fb-thanks' + (thanks ? ' ba-thanks-in' : '')}>{labelText}</span>;
     const chips = showChips && <ReasonChips reason={reason} onPick={pickReason} onOtherSubmit={otherSubmitted} />;
 
     // Inside the bubble (stamp / inside): label left, thumbs right, under a hairline.

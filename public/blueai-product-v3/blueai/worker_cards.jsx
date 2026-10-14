@@ -14,20 +14,21 @@
   const WF = () => window.WorkerFlow;
   /* V3 (phase 3): both cards speak the chat's one bubble language (chat.css). The live app's
      AwaitInput yellow (ai-worker Message.tsx:20) becomes the Target attention tokens: a white
-     bubble whose edge turns, with the waiting-on-you mark, the same as FinalBubble's needsInput. */
+     bubble whose edge turns, with the waiting-on-you mark, the same as FinalBubble's needsInput.
+     The eyebrow, the badge and the reply chips are the kit's (review round 1). */
   const ToneIcon = (p) => React.createElement(window.ChatBubbles.ToneIcon, p);
 
   function PlanCard() {
     const P = WF().PLAN;
     return (
-      <div className="ba-msg-in v3-msg">
+      <div className="v2-anim-pop-in v3-msg">
         <div className="v3-bubble">
-          <p className="v3-eyebrow">PLAN</p>
+          <p className="v2-text-eyebrow">Plan</p>
           <p style={{ marginTop: 'var(--v2-space-1)' }}>{P.summary}</p>
           <ol className="v3-bubble-list">
             {P.steps.map((s) => <li key={s}>{s}</li>)}
           </ol>
-          <span className="v3-count" style={{ marginTop: 'var(--v2-space-2)' }}>Suggested skill: {P.skill}</span>
+          <span className="v2-badge" style={{ marginTop: 'var(--v2-space-2)' }}><span className="v2-badge-label">Suggested skill: {P.skill}</span></span>
         </div>
       </div>);
   }
@@ -40,7 +41,7 @@
       onAnswer(o.id);
     };
     return (
-      <div className="ba-msg-in v3-msg">
+      <div className="v2-anim-pop-in v3-msg">
         <div className="v3-bubble v3-bubble--input v3-toned">
           <ToneIcon tone="input" />
           <div className="v3-toned-body">
@@ -54,13 +55,13 @@
           </div>
         </div>
         {pending && <>
-          <div className="v3-pills" style={{ marginTop: 'var(--v2-space-2)' }}>
+          <div className="v2-ask-chips" style={{ marginTop: 'var(--v2-space-2)' }}>
             {step.options.map((o) =>
-              <button key={o.id} className="v3-pill" onClick={() => choose(o)}>
+              <button key={o.id} type="button" className="v2-chip" onClick={() => choose(o)}>
                 {o.label}
               </button>)}
           </div>
-          {step.hint && <p className="v3-ask-hint">{step.hint}</p>}
+          {step.hint && <p className="v2-text-caption v3-ask-hint">{step.hint}</p>}
         </>}
       </div>);
   }

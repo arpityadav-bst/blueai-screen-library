@@ -8,7 +8,7 @@
 // screens/welcome.jsx, design-md/67). No gradient anywhere: the site's plain spark mark in its blue,
 // a quiet grey dot grid on the canvas, an Inter 600 headline with one Instrument Serif italic
 // phrase, the site's numbered step discs in one lined card, and the site's solid dark button.
-// Styles live in entry.css (.v3-*); this file only lays them out and runs the intro.
+// Styles live in entry.css (.v3-*) and the kit (card, button, link); this file lays them out and runs the intro.
 //
 // Exposes window.MoneyMaker = { MoneyMakerWelcome, MoneyMakerHome, PROMPT }, MoneyMakerHome and
 // PROMPT live in moneymaker_home.jsx (300-line split) and are re-exported here unchanged.
@@ -66,7 +66,7 @@
         <div style={{ position: 'relative', zIndex: 'var(--v2-z-raised)', display: 'flex', flexDirection: 'column', '--mm-shift': `${shift}px` }}>
           <div className="mm-title" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--v2-space-4)' }}>
             <window.BlueAILogo wordmark={false} mark={48} />
-            <h1 className="v3-welcome-title">
+            <h1 className="v2-text-greeting v3-welcome-title">
               An AI that turns your social accounts <em className="v3-serif-em">into income.</em>
             </h1>
           </div>
@@ -75,20 +75,20 @@
              opening offset is derived from, and display:flex keeps the card's top margin inside
              offsetHeight instead of collapsing through the wrapper. */}
           <div ref={belowRef} style={{ display: 'flex', flexDirection: 'column' }}>
-            <div className="mm-card v3-card" style={{ marginTop: 'var(--v2-space-8)' }}>
+            <div className="mm-card v2-card" style={{ marginTop: 'var(--v2-space-8)' }}>
               <ol className="v3-steps" aria-label="How it works">
                 {STEPS.map((text, i) => (
                   <li className="v3-step" key={i}>
                     <span className="v3-step-num" aria-hidden="true">{i + 1}</span>
-                    <p className="v3-step-text"><span className="v3-sr-only">Step {i + 1}: </span>{text}</p>
+                    <p className="v3-step-text"><span className="v2-sr-only">Step {i + 1}: </span>{text}</p>
                   </li>
                 ))}
               </ol>
             </div>
 
-            <button type="button" onClick={onSignIn} className="mm-cta v3-btn-solid v3-btn-full" style={{ marginTop: 'var(--v2-space-8)' }}>
+            <button type="button" onClick={onSignIn} className="mm-cta v2-button v2-button--primary v2-button--lg v2-button--full" style={{ marginTop: 'var(--v2-space-8)' }}>
               Sign in to get started
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ strokeWidth: 'var(--v2-icon-stroke)' }}><path d="M9 5l7 7-7 7" /></svg>
+              <svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
             </button>
           </div>
         </div>
@@ -96,8 +96,8 @@
         {/* Pinned to the bottom of the screen, outside the centred column. Quiet and underlined,
            as the site's links are. Still a no-op, as in V2. */}
         <div className="mm-terms" style={{ position: 'absolute', left: 0, right: 0, bottom: 'var(--v2-space-6)', zIndex: 'var(--v2-z-raised)', display: 'flex', justifyContent: 'center', fontSize: 'var(--v2-text-12)' }}>
-          <button type="button" onClick={(e) => e.preventDefault()} className="v3-link">
-            Terms &amp; Conditions
+          <button type="button" onClick={(e) => e.preventDefault()} className="v2-link v2-link--muted">
+            <span className="v2-link-text">Terms &amp; Conditions</span>
           </button>
         </div>
       </div>);

@@ -107,9 +107,9 @@
   letter-spacing: var(--v2-tracking-display); color: var(--v2-ink); text-wrap: balance;
 }
 .v2-text-greeting {
-  font-size: var(--v2-text-24); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-tight);
-  letter-spacing: var(--v2-tracking-title); color: var(--v2-ink); text-wrap: balance;
-}
+  font-size: var(--v2-text-24); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-tight);
+  letter-spacing: var(--v2-tracking-hero); color: var(--v2-ink); text-wrap: balance;
+} /* titles 24 and up follow the site: 500, -0.04em (review round 1, 2026-10-14) */
 .v2-text-title-lg {
   font-size: var(--v2-text-20); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-tight);
   letter-spacing: var(--v2-tracking-title); color: var(--v2-ink);
@@ -161,8 +161,8 @@
   font-size: var(--v2-text-12); font-weight: var(--v2-weight-regular); line-height: var(--v2-leading-snug);
   letter-spacing: 0; color: var(--v2-ink-3);
 }
-/* Section labels only. 0.08em is adapted from the site's 0.14em marketing band heads
-   (onblue/onblue.css:1287-1295): at 11px in a 419px window the wider tracking scatters the word. */
+/* Section labels only, at the site's band-head tracking, 0.14em (onblue/onblue.css:1287-1295; review
+   round 1, 2026-10-14, was 0.08em). */
 .v2-text-eyebrow {
   font-size: var(--v2-text-11); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-display);
   letter-spacing: var(--v2-tracking-eyebrow); text-transform: uppercase; color: var(--v2-ink-3);

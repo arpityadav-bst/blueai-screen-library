@@ -72,16 +72,13 @@
     return (
       <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: K.T.font, background: 'radial-gradient(260px 260px at 4% 6%, rgba(21,110,254,0.06), transparent 70%), radial-gradient(240px 240px at 97% 96%, rgba(21,110,254,0.05), transparent 70%), #f8f9fb' }}>
         <div style={{ width: 336, padding: '28px 32px 30px', background: '#fff', border: '1px solid #eceef2', borderRadius: 20, boxShadow: '0 14px 34px -14px rgba(15,23,42,0.14)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <svg viewBox="0 0 24 24" width="22" height="22" fill={K.T.blue} aria-hidden="true"><path d={K.SPARK} /></svg>
-            <span style={{ fontSize: 19, fontWeight: 600, letterSpacing: '-0.02em', color: '#1f2937' }}>Blue<span style={{ color: K.T.blue }}>AI</span></span>
+          <window.BlueAILogo size={19} />
+          <div style={{ marginTop: 22, width: 52, height: 52, borderRadius: '50%', background: 'var(--v2-blue-tint)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke={K.T.blue} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
           </div>
-          <div style={{ marginTop: 22, width: 52, height: 52, borderRadius: '50%', background: '#e9f0fe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke={K.T.blue} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
-          </div>
-          <p style={{ marginTop: 18, fontSize: 21, fontWeight: 600, letterSpacing: '-0.02em', color: '#111827' }}>You're signed in</p>
-          <p style={{ marginTop: 8, fontSize: 13, color: '#4b5563' }}>Return to the BlueAI app to continue.</p>
-          <p style={{ marginTop: 14, fontSize: 11, color: '#9ca3af' }}>You can close this window.</p>
+          <p style={{ marginTop: 18, fontSize: 21, fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--v2-ink)' }}>You're signed in</p>
+          <p style={{ marginTop: 8, fontSize: 13, color: 'var(--v2-ink-2)' }}>Return to the BlueAI app to continue.</p>
+          <p style={{ marginTop: 14, fontSize: 11, color: 'var(--v2-ink-4)' }}>You can close this window.</p>
         </div>
       </div>
     );

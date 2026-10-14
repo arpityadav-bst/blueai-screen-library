@@ -33,7 +33,7 @@
 
   const ANATOMY = [
     ['Mark', 'BrandMark 48, logo only (the wordmark would repeat the title’s job)'],
-    ['Title', '24/600 ink, balanced, one serif italic word in blue ink (the site’s title-lg em)'],
+    ['Title', '24/500 ink, -0.04em, balanced, one serif italic word in blue with its soft glow (the site’s title-lg em)'],
     ['Steps', 'one Card, two rows: a 28px step disc (blue tint, blue edge, ink figure) and the PM’s line'],
     ['Action', 'one primary Button, lg 44, full width: Sign in to get started'],
     ['Terms', 'a muted standalone Link at the foot, Program Terms, opens the legal page in a new tab'],
@@ -78,7 +78,7 @@
             { part: 'Ground', token: '--v2-canvas', value: '#fafbfb; padding 40 24 16', ref: 'entry-patterns.welcome.canvas' },
             { part: 'Decoration', token: null, value: 'none (grid, orbs, grain and hero logo removed)', ref: ['entry-patterns.welcome.backdrop', 'entry-patterns.welcome.hero-logo'] },
             { part: 'Mark', token: 'BrandMark 48', value: 'logo 48, no wordmark' },
-            { part: 'Title', token: '--v2-text-24, --v2-weight-semibold, --v2-tracking-title', value: '24/600 ink, leading 1.2, text-wrap balance', ref: 'entry-patterns.welcome.title-type' },
+            { part: 'Title', token: '--v2-text-24, --v2-weight-medium, --v2-tracking-hero', value: '24/500 ink, leading 1.2, -0.04em, text-wrap balance', ref: 'entry-patterns.welcome.title-type' },
             { part: 'Title copy', token: null, value: 'PM copy, verbatim; the site pays $30 for 20 days (D3)', ref: ['entry-patterns.welcome.headline', 'entry-patterns.welcome.headline-em', 'entry-patterns.family.pay'] },
             { part: 'Serif word', token: '--v2-font-serif, --v2-blue-ink', value: 'Instrument Serif italic 400, 1.06em', ref: 'entry-patterns.family.title-em' },
             { part: 'Steps card', token: 'Card', value: 'radius 16, 1px --v2-line, padding 16, no shadow', ref: 'entry-patterns.welcome.step-card' },

@@ -12,7 +12,7 @@
 
 **Anatomy.** Pill, 28 tall (`--v2-control-sm`; an invisible extension makes the target 32), padding 0 12, 1px `--v2-line`, the surface under `--v2-wash-tint`. Label 13/500 ink-2, one line. Optional 16px icon before the label (zap marks the reply that turns on Automatic). Rows wrap with an 8px gap.
 
-**Variants.** Reply (no `selected`: a plain button that answers once; the AskCard hides the row once answered). Reason and filter (`selected` true or false: a toggle with `aria-pressed`). One look for all three; only the behaviour differs.
+**Variants.** Reply (no `selected`: a plain button that answers once; the AskCard hides the row once answered). Reason and filter (`selected` true or false: a toggle with `aria-pressed`). One look for all three; only the behaviour differs. Review round 1 (2026-10-14): the label, the selected fill, edge and label and the lift read look hooks (`--v2-chip-ink`, `--v2-chip-selected-fill`, `-line`, `-ink`, `--v2-chip-shadow`): Target is unchanged, V2 today gets its slate-700 selected chip and faint lift back.
 
 **Sizes.** One, 28.
 

@@ -7,10 +7,10 @@
 // Saved key state lives in App (shared with the credits screen + out-of-credits popup);
 // the in-progress provider/key entry is local. Exposes window.Byok.ByokSettings.
 //
-// V3, Phase 5: the Settings card and row language (settings.css), the product's one switch
-// (shared.jsx Toggle, worker.css .v3-switch), the shared select and field, a neutral notice for the
-// empty state, a ghost Remove that turns red only on hover, and the solid ink Validate & Save. Routed
-// here from the credits screen, the card takes a passing selection ring instead of a blue glow.
+// V3, Phase 5: the Settings card and row language (settings.css), on kit parts since review round 1:
+// the product's one switch (shared.jsx Toggle, the kit's .v2-switch), the kit select and field, a
+// neutral kit banner for the empty state, the danger Remove (red only on hover), and the primary
+// Validate & Save. Routed here from the credits screen, the card takes a passing selection ring.
 (function () {
   const { useState, useRef, useEffect } = React;
 
@@ -47,11 +47,11 @@
     const cancel = () => { setPicked(null); setKeyVal(''); };
 
     return (
-      <section ref={rootRef} data-section="byok" className={'v3-card v3-set-card' + (glow ? ' is-highlight' : '')}>
+      <section ref={rootRef} data-section="byok" className={'v2-card v3-set-card' + (glow ? ' is-highlight' : '')}>
         <div className="v3-set-head">
           <div className="v3-set-head-main">
-            <h2 className="v3-set-title">Bring Your Own Key</h2>
-            <p className="v3-set-desc">Use your own API key from OpenAI, Anthropic, or another provider. Usage is billed directly to your provider account, with no BlueAI credits consumed.</p>
+            <h2 className="v2-text-title v3-set-title">Bring Your Own Key</h2>
+            <p className="v2-text-body-sm v3-set-desc">Use your own API key from OpenAI, Anthropic, or another provider. Usage is billed directly to your provider account, with no BlueAI credits consumed.</p>
           </div>
           <Toggle enabled={on} label="Toggle Bring Your Own Key" onToggle={() => { if (on) { setOn(false); onRemove(); setPicked(null); setKeyVal(''); } else { setOn(true); } }} />
         </div>
@@ -62,9 +62,9 @@
               <div className="v3-set-line">
                 <div style={{ minWidth: 0 }}>
                   <p className="v3-set-label">{provider}</p>
-                  <p className="v3-set-hint v3-mono">{masked}</p>
+                  <p className="v2-text-meta v3-set-hint v3-mono">{masked}</p>
                 </div>
-                <button type="button" onClick={onRemove} className="v3-btn-ghost v3-btn-ghost--danger v3-btn-sm">Remove</button>
+                <button type="button" onClick={onRemove} className="v2-button v2-button--danger">Remove</button>
               </div>
             </div>
             <div className="v3-set-row">
@@ -81,14 +81,15 @@
         {on && !keyAdded && picked && (
           <div style={{ marginTop: 'var(--v2-space-4)' }}>
             <p className="v3-set-label" style={{ marginBottom: 'var(--v2-space-2)' }}>{picked}</p>
-            <div className="v3-panel">
-              <label htmlFor="byok-key" className="v3-label">API Key</label>
-              <input id="byok-key" value={keyVal} onChange={(e) => setKeyVal(e.target.value)} type="text" spellCheck={false} autoComplete="off" placeholder={PROVIDERS[picked].hint}
-                className="v3-field v3-mono" />
-              <p className="v3-set-hint">Your key is stored encrypted on this device only.</p>
+            <div className="v2-card v2-card--inset">
+              <Field id="byok-key" label="API Key" className="v2-field--mono">
+                <input id="byok-key" value={keyVal} onChange={(e) => setKeyVal(e.target.value)} type="text" spellCheck={false} autoComplete="off" placeholder={PROVIDERS[picked].hint}
+                  className="v2-field-input" />
+              </Field>
+              <p className="v2-text-meta v3-set-hint">Your key is stored encrypted on this device only.</p>
               <div className="v3-set-actions">
-                <button type="button" onClick={cancel} className="v3-btn-ghost v3-btn-sm">Cancel</button>
-                <button type="button" onClick={save} className="v3-btn-solid v3-btn-sm">Validate &amp; Save</button>
+                <button type="button" onClick={cancel} className="v2-button v2-button--secondary">Cancel</button>
+                <button type="button" onClick={save} className="v2-button v2-button--primary">Validate &amp; Save</button>
               </div>
             </div>
           </div>
@@ -96,9 +97,9 @@
 
         {on && !keyAdded && !picked && (
           <div style={{ marginTop: 'var(--v2-space-4)' }}>
-            <div className="v3-set-notice">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" className="v3-ico" aria-hidden="true"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
-              <span>No API key configured. Add one to get started.</span>
+            <div className="v2-banner v3-set-notice">
+              <span className="v2-banner-icon"><svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg></span>
+              <span className="v2-banner-text">No API key configured. Add one to get started.</span>
             </div>
             <SelectField aria-label="Add a provider" value="" empty onChange={(e) => { if (e.target.value) setPicked(e.target.value); }}>
               <option value="" disabled>Add a provider</option>

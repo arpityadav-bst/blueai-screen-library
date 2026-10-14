@@ -5,10 +5,10 @@
 // gates on sign-in (window.LoginModal).
 //
 // V3, Phase 5: drawn like the phase 2 welcome (moneymaker.jsx) it sits beside: the canvas with the
-// lens dot field (texture is allowed on a welcome), the spark mark, an Inter 600 title with one
+// lens dot field (texture is allowed on a welcome), the spark mark, an Inter 500 title with one
 // Instrument Serif phrase, and the tasks as the chat home's own rows (chat.css .v3-row: a 1px line,
 // a sunken tile with the category glyph in ink, a quiet chevron). The per-task tint colours are
-// gone: colour is a signal here, never decoration. "Just type it." is the site's underlined link.
+// gone: colour is a signal here, never decoration. "Just type it." is the kit's underlined link.
 // Exposes window.Onboarding = { OnboardingWelcome, SUGGESTIONS }.
 (function () {
   // Glyphs match the design's TASKS (game / discover / social ChatCatIcon).
@@ -51,20 +51,20 @@
           </div>
 
           <p className="ob-pk-item v3-ob-hi" style={{ animationDelay: '0.1s' }}>Hi, I'm BlueAI</p>
-          <h1 className="ob-pk-item v3-welcome-title" style={{ animationDelay: '0.2s' }}>What can I do for you <em className="v3-serif-em">first?</em></h1>
+          <h1 className="ob-pk-item v2-text-greeting v3-welcome-title" style={{ animationDelay: '0.2s' }}>What can I do for you <em className="v3-serif-em">first?</em></h1>
 
           <div className="v3-rows">
             {SUGGESTIONS.map((t, i) => (
               <button key={t.key} type="button" onClick={() => onPick(t)} className="ob-pk-item v3-row" style={{ animationDelay: 0.3 + i * 0.1 + 's' }}>
                 <span className="v3-row-tile v3-row-tile--lg">
-                  <C.ChatCatIcon type={t.icon} size={22} />
+                  <C.ChatCatIcon type={t.icon} size={24} />
                 </span>
                 <span className="v3-row-main">
                   <span className="v3-row-title">{t.title}</span>
                   <span className="v3-row-desc">{t.desc}</span>
                 </span>
                 <span className="v3-row-end">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" className="v3-ico" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
+                  <svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
                 </span>
               </button>
             ))}
@@ -72,7 +72,7 @@
 
           <p className="ob-pk-item v3-ob-more" style={{ animationDelay: '0.65s' }}>
             Something else in mind?{' '}
-            <button type="button" onClick={onTypeIt} className="v3-link v3-link--ink">Just type it.</button>
+            <button type="button" onClick={onTypeIt} className="v2-link"><span className="v2-link-text">Just type it.</span></button>
           </p>
         </div>
       </div>);

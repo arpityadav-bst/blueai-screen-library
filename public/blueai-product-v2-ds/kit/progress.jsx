@@ -47,10 +47,10 @@
     );
   }
 
-  /* Spinner: one ring in currentColor at 12, 16 or 32. It waits (300ms by default) before it
+  /* Spinner: one ring in currentColor at 12, 16, 24 or 32. It waits (300ms by default) before it
      appears, so fast work never flashes, and holds its space meanwhile. done swaps it for a
      check in success green, so a finished step never reads as stuck. */
-  const SPIN = [12, 16, 32];
+  const SPIN = [12, 16, 24, 32];
   function Spinner({ size, label, delay, done, variant, className }) {
     const s = SPIN.indexOf(size) >= 0 ? size : 16;
     const wait = delay == null ? 300 : delay;
@@ -66,7 +66,7 @@
       <span className={cx('v2-spinner', 'v2-spinner--' + s, variant === 'on-color' && 'v2-spinner--on-color',
         done && 'v2-spinner--done', !visible && 'is-waiting', className)}
         role={label ? 'status' : undefined} aria-hidden={label ? undefined : true}>
-        {done ? <Ico name="check" size={s === 32 ? 24 : 16} /> : null}
+        {done ? <Ico name="check" size={s >= 24 ? 24 : 16} /> : null}
         {!done && visible ? (
           <svg className="v2-anim-spin" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
             <circle className="v2-spinner-track" cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" />

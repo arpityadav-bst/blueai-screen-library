@@ -10,11 +10,11 @@
 
 **Purpose.** A decision or a short task the partner must finish or decline before going on: consent to Automatic, sign out, disconnect, out of credits, the day-done moment.
 
-**Anatomy.** Scrim `--v2-scrim` over the window. Panel centred with a 16px inset: `--v2-surface`, 1px `--v2-line`, radius 20 (`--v2-radius-dialog`), `--v2-shadow-2`. Header: title 18/600 `--v2-ink` (tracking -0.03em) taking the row, a 32px IconButton named Close beside it. Body: 14/1.5 `--v2-ink-2`, padding 20, scrolls when tall. Actions: 44px Buttons of equal width, 8px apart, secondary first, primary last. Optional footer note 12 `--v2-ink-3`. Layer `--v2-z-dialog` (100). One dialog at a time; if two ever overlap, mount order decides which is on top (section 06), which only settles the overlap, it does not make stacking a pattern.
+**Anatomy.** Scrim `--v2-scrim` over the window. Panel centred with a symmetric 20px inset (`--v2-space-5`, review round 1, 2026-10-14): `--v2-surface`, 1px `--v2-line`, radius 20 (`--v2-radius-dialog`), `--v2-shadow-2`. Header: title 18/600 `--v2-ink` (tracking -0.03em) taking the row, a 32px IconButton named Close beside it. Body: 14/1.5 `--v2-ink-2`, padding 20, scrolls when tall. Actions: 44px Buttons of equal width, 8px apart, secondary first, primary last. Optional footer note 12 `--v2-ink-3`. Layer `--v2-z-dialog` (100). One dialog at a time; if two ever overlap, mount order decides which is on top (section 06), which only settles the overlap, it does not make stacking a pattern.
 
 **Variants.** `task` (md, Close, scrim click cancels). `consent` (md, Close, scrim click does nothing, the primary's label is the agreement: "I agree, turn on"). `alert` (see AlertDialog). `celebration` (sm, centred, no Close, scrim click closes: DayDone). `scrim="frost"` puts it on the sign-in gate veil and layer (`--v2-z-gate`), sign-in only.
 
-**Sizes.** sm 320 (`--v2-dialog-sm`): alert, celebration, out of credits. md 382 (`--v2-dialog-md`): task, consent. Height up to the window less 16px each side.
+**Sizes.** sm 320 (`--v2-dialog-sm`): alert, celebration, out of credits. md 382 (`--v2-dialog-md`): task, consent. Height up to the window less 20px each side.
 
 **States.** Closed (nothing mounted); opening; open; busy (the primary loads; Esc, the scrim and Close wait); closing; over a menu (the menu closes first, focus comes back to the menu button). In V2 today: ModalOverlay as Confirm delete on the Schedule tab (schedule.jsx:144); the Automatic consent at `?start=worker&v=1`, open the mode chip, pick Automatic, in ModalOverlay's plain frame since 2026-10-14 (no header, divider or X; agent_permissions.jsx:189); out of credits at `?credits=0` then send a message (byok.jsx:76).
 
@@ -34,7 +34,7 @@
 
 **Anatomy.** Dialog sm with role alertdialog, no Close: the title is the question, the body says what changes, two actions: Cancel and the action named for itself.
 
-**Variants.** Confirm: the solid primary (`--v2-solid`). Destructive: the same solid primary, its label naming what is lost (V3 restyle: no red fill).
+**Variants.** Confirm: the solid primary (`--v2-solid`). Destructive: Button `destructive`, the same solid in Target (V3 restyle: no red fill; V2 today paints it red through `--v2-button-destructive-fill`), its label naming what is lost.
 
 **Sizes.** sm 320.
 

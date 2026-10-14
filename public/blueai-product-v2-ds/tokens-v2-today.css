@@ -68,6 +68,7 @@
 
   /* Brand. */
   --v2-gradient-brand: linear-gradient(90deg, #0EA4C5, #7B4CFF); /* wordmark, pill ring, balance (index.html:326, 333, 431) */
+  --v2-em-glow: none; /* V2 has no serif em, so no glow */
 
   /* Look hooks: parts V2 draws differently from Target (defined in tokens.css too). */
   --v2-bubble-user-fill: linear-gradient(135deg, #5158ee, #7b4cff); /* user bubble (chat_bubbles.jsx:30) */
@@ -80,6 +81,30 @@
   --v2-nav-selected-ink: #4f46e5; /* active tab label and icon (shared.jsx:305) */
   --v2-nav-indicator: transparent; /* V2 marks the tab with the pill only, no bar (shared.jsx:305) */
   --v2-nav-shadow: 0 -2px 8px rgba(0,0,0,0.06); /* bottom nav lift (shared.jsx:300) */
+  --v2-button-secondary-fill: #ffffff; /* V2's outline buttons sit on white */
+  --v2-button-secondary-line: #e2e8f0; /* their slate-200 edge */
+  --v2-button-secondary-ink: #374151; /* gray-700 label */
+  --v2-button-danger-fill: #ffffff; /* Remove: white with a red edge and label (byok_settings.jsx:74) */
+  --v2-button-danger-line: #fecaca; /* red-200 edge (byok_settings.jsx:74) */
+  --v2-button-danger-ink: #dc2626; /* red-600 label (byok_settings.jsx:74) */
+  --v2-button-danger-hover-fill: #fef2f2; /* red-50 hover */
+  --v2-button-destructive-fill: #ef4444; /* Delete and Logout confirm fills (schedule.jsx:149, profile.jsx:79) */
+  --v2-button-destructive-hover: #ef4444; /* V2 dims by opacity, it keeps the red */
+  --v2-switch-off-fill: #cbd5e1; /* slate-300 off track, no edge (shared.jsx Toggle) */
+  --v2-switch-knob-shadow: 0 1px 3px rgba(15,23,42,0.25); /* the knob's cast (shared.jsx Toggle) */
+  --v2-empty-fill: #ffffff; /* V2's empty states sit in a white box */
+  --v2-empty-line: #e2e8f0; /* its edge */
+  --v2-empty-radius: 12px; /* its radius */
+  --v2-empty-mark-fill: #f3e8ff; /* purple-100 mark disc */
+  --v2-empty-mark-ink: #9333ea; /* purple-600 glyph */
+  --v2-empty-title-size: 15px; /* 15px title */
+  --v2-empty-title-ink: #374151; /* gray-700 title */
+  --v2-empty-body-ink: #9ca3af; /* gray-400 body */
+  --v2-chip-ink: #475569; /* slate-600 chip label (chat_bubbles.jsx:41) */
+  --v2-chip-selected-fill: #334155; /* slate-700 selected chip */
+  --v2-chip-selected-line: #334155; /* its edge */
+  --v2-chip-selected-ink: #ffffff; /* white label on it */
+  --v2-chip-shadow: 0 1px 2px rgba(0,0,0,0.04); /* the chips' faint lift */
 
   /* Type: Plus Jakarta Sans, half-pixel sizes, heavier weights. */
   --v2-font-ui: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; /* V2's face; V2's stack (index.html:34) lists -apple-system first, so a Mac shows SF: here the face leads */
@@ -103,9 +128,10 @@
   --v2-leading-body: 1.5; /* paragraphs, 31 uses */
   --v2-tracking-display: -1px; /* balance 54/800/-1px (index.html:518, byok.jsx:51) */
   --v2-tracking-figure: -1px; /* balance 54/800/-1px (index.html:518, byok.jsx:51) */
+  --v2-tracking-hero: -0.4px; /* V2's 24px titles take its page-title tracking (chat_compare.jsx:100) */
   --v2-tracking-title: -0.4px; /* page titles (history.jsx:91, terms_sheet.jsx:114) */
   --v2-tracking-label: 0; /* V2 card titles and buttons set no tracking (settings.jsx:13, index.html:342) */
-  --v2-tracking-eyebrow: 0.08em; /* eyebrow, 7 uses (product_home.jsx:92) */
+  --v2-tracking-eyebrow: 0.14em; /* the site's band-head tracking, both looks (review round 1, 2026-10-14; V2's 7 eyebrows use 0.08em, product_home.jsx:92) */
   --v2-tracking-mini: 0.02em; /* 4 uses (type.letter-spacing) */
 
   /* Space: each step takes the value V2 uses most in its range (space.scale counts). */

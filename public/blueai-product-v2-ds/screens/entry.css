@@ -21,8 +21,8 @@
 }
 .v2-welcome-title {
   max-width: var(--v2-dialog-sm); margin: 0;
-  font-size: var(--v2-text-24); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-tight);
-  letter-spacing: var(--v2-tracking-title); color: var(--v2-ink); text-wrap: balance;
+  font-size: var(--v2-text-24); font-weight: var(--v2-weight-medium); line-height: var(--v2-leading-tight);
+  letter-spacing: var(--v2-tracking-hero); color: var(--v2-ink); text-wrap: balance;
 }
 /* The signed-out variant's one line under the title: what signing out means for the 20 days. */
 .v2-welcome-line {
@@ -33,7 +33,7 @@
    highlight: one per title at most, never on a button or a number. */
 .v2-serif-em {
   font-family: var(--v2-font-serif); font-style: italic; font-weight: var(--v2-weight-regular);
-  font-size: 1.06em; letter-spacing: var(--v2-tracking-display); color: var(--v2-blue);
+  font-size: 1.06em; letter-spacing: var(--v2-tracking-display); color: var(--v2-blue); text-shadow: var(--v2-em-glow);
 } /* the site's .title-lg em (onblue.css:1446-1453): -0.03em, and its light --blue-ink is --blue (:443) */
 .v2-welcome-foot {
   display: flex; justify-content: center; padding-top: var(--v2-space-4);

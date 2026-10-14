@@ -5,19 +5,18 @@
 // eyeballed from a screenshot: Inter for everything, Instrument Serif italic for the one <em>
 // word in a title, an 11px letter-spaced eyebrow between two hairlines, the 38px spark mark,
 // outline "door" buttons at radius 6 with the solid black button reserved for the one action
-// that commits, and underlined inline links. Sizes are the site's own at this window's width,
+// that commits (the kit primary since review round 1), and underlined inline links. Sizes are the site's own at this window's width,
 // so the title is 40px here where the hero's is 64.
 
 (function () {
+  // The site's values, read from the Target tokens they equal (review round 1).
   const T = {
-    font: "'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif",
-    serif: "'Instrument Serif', 'Times New Roman', Times, serif",
-    bg: '#f7f7f9', card: '#fdfdfd',
-    ink: '#0b0b0d', ledeInk: '#3c4049', muted: '#5f636b', dim: '#767b85',
-    border: 'rgba(0,0,0,0.15)', borderHover: 'rgba(0,0,0,0.2)', rule: 'rgba(0,0,0,0.32)', hover: 'rgba(0,0,0,0.045)',
-    underline: 'rgba(0,0,0,0.35)', blue: '#156efe'
+    font: 'var(--v2-font-ui)', serif: 'var(--v2-font-serif)',
+    bg: 'var(--v2-surface-sunken)', card: 'var(--v2-surface-panel)',
+    ink: 'var(--v2-ink)', ledeInk: 'var(--v2-ink-2)', muted: 'var(--v2-ink-3)', dim: 'var(--v2-ink-4)',
+    border: 'var(--v2-line-strong)', borderHover: 'var(--v2-line-hover)', rule: 'var(--v2-link-underline)', hover: 'var(--v2-wash-hover)',
+    underline: 'var(--v2-link-underline)', blue: 'var(--v2-blue)'
   };
-  const SPARK = 'M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z';
   const hover = (on, off) => ({ onMouseEnter: (e) => Object.assign(e.currentTarget.style, on), onMouseLeave: (e) => Object.assign(e.currentTarget.style, off) });
 
   // The page: the site's pale ground with the soft blur its gate shows over it, content centred.
@@ -28,9 +27,8 @@
       </div>
     </div>
   );
-  const Mark = () => (
-    <svg viewBox="0 0 24 24" width="32" height="32" fill={T.blue} aria-hidden="true" style={{ display: 'block', marginBottom: 14, filter: 'drop-shadow(0 0 13px rgba(21,110,254,0.18))' }}><path d={SPARK} /></svg>
-  );
+  // The spark: the product logo's own mark and glow (logo.jsx), at the site's 32.
+  const Mark = () => <window.BlueAILogo wordmark={false} mark={32} label="" style={{ marginBottom: 14 }} />;
   const Eyebrow = ({ children }) => (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 14, color: T.dim, fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', whiteSpace: 'nowrap', marginBottom: 14 }}>
       <i style={{ display: 'block', width: 60, height: 1, background: 'linear-gradient(90deg, transparent, ' + T.rule + ')' }} />
@@ -39,7 +37,7 @@
     </span>
   );
   const Title = ({ children }) => <h1 style={{ fontSize: 40, fontWeight: 500, lineHeight: 1.08, letterSpacing: '-0.04em', color: T.ink }}>{children}</h1>;
-  const Em = ({ children }) => <em style={{ fontFamily: T.serif, fontStyle: 'italic', fontWeight: 400, fontSize: '1.06em', letterSpacing: '-0.03em', color: T.blue }}>{children}</em>;
+  const Em = ({ children }) => <em style={{ fontFamily: T.serif, fontStyle: 'italic', fontWeight: 400, fontSize: '1.06em', letterSpacing: '-0.03em', color: T.blue, textShadow: 'var(--v2-em-glow)' }}>{children}</em>;
   const Lede = ({ children }) => <p style={{ maxWidth: 440, marginTop: 14, color: T.ledeInk, fontSize: 15.5, fontWeight: 400, lineHeight: 1.55, letterSpacing: '-0.015em' }}>{children}</p>;
   const Opts = ({ children, top = 26 }) => <div style={{ width: '100%', maxWidth: 380, marginTop: top, display: 'grid', gap: 10 }}>{children}</div>;
 
@@ -51,12 +49,9 @@
       {icon}{children}
     </button>
   );
-  // The solid button: the site's one shape for the action that commits. Presses down 1px, as its CTAs do.
+  // The solid button: the site's one shape for the action that commits, which is the kit's primary.
   const Solid = ({ children, onClick }) => (
-    <button type="button" onClick={onClick} {...hover({ transform: 'translateY(1px)' }, { transform: '' })}
-      style={{ ...BTN, border: '1px solid ' + T.ink, background: T.ink, color: '#fff', transition: 'transform 0.12s ease' }}>
-      {children}
-    </button>
+    <button type="button" onClick={onClick} className="v2-button v2-button--primary v2-button--lg v2-button--full">{children}</button>
   );
   // "First time here? See how it works": a muted sentence carrying one underlined action.
   const Link = ({ children, onClick }) => (
@@ -80,5 +75,5 @@
     <span style={{ width: size, height: size, borderRadius: '50%', flexShrink: 0, background: account.hue, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: Math.round(size * 0.42), fontWeight: 500, fontFamily: T.font }}>{account.name[0]}</span>
   );
 
-  window.SiteKit = { T, SPARK, Shell, Mark, Eyebrow, Title, Em, Lede, Opts, Opt, Solid, Link, Alt, Legal, U, Arrow, GoogleG, Avatar };
+  window.SiteKit = { T, Shell, Mark, Eyebrow, Title, Em, Lede, Opts, Opt, Solid, Link, Alt, Legal, U, Arrow, GoogleG, Avatar };
 })();

@@ -4,8 +4,8 @@
    danger for the one that destroys; an underlined ink link for actions inside a sentence; a bare
    icon button for the header. Every state lives in kit/actions.css. Spec: design-md/11-button.md.
 
-   Button     {variant 'primary'|'secondary'|'quiet'|'danger' (default 'secondary': primary is
-              always a choice), size 'sm'|'md'|'lg' (28/36/44), icon, iconRight (icon names),
+   Button     {variant 'primary'|'secondary'|'quiet'|'danger'|'destructive' (default 'secondary':
+              primary is always a choice; destructive is a destructive confirm's commit), size 'sm'|'md'|'lg' (28/36/44), icon, iconRight (icon names),
               loading, disabled, disabledReason, full, type ('button'), onClick, href, external,
               className, children}
               Disabled stays focusable (aria-disabled) so the reason printed beside it can be
@@ -58,7 +58,7 @@
     }
     const inner = (
       <>
-        {loading ? <Spin onColor={variant === 'primary'} /> : <Ico name={icon} />}
+        {loading ? <Spin onColor={variant === 'primary' || variant === 'destructive'} /> : <Ico name={icon} />}
         <span className="v2-button-label">{children}</span>
         {loading ? null : <Ico name={trailing} />}
         {external ? <span className="v2-sr-only">{NEW_TAB}</span> : null}

@@ -13,7 +13,7 @@
 **Anatomy.** Thirteen classes in kit/base.css (size / weight / leading / tracking, ink), plus the row label the list-row parts set themselves:
 - `.v2-text-display` 40 / 600 / 1 / -0.045em (`--v2-tracking-figure`), ink, tabular: credits balance.
 - `.v2-text-title-dialog` 18 / 600 / 1.35 / -0.03em, ink: dialog and sheet titles (V3 restyle).
-- `.v2-text-greeting` 24 / 600 / 1.2 / -0.02em, ink: home greeting, welcome title.
+- `.v2-text-greeting` 24 / 500 / 1.2 / -0.04em (`--v2-tracking-hero`), ink: home greeting, welcome title, screen titles. Titles 24 and up follow the site's weight and tracking (review round 1, 2026-10-14).
 - `.v2-text-title-lg` 20 / 600 / 1.2 / -0.02em, ink: every screen and dialog title.
 - `.v2-text-numeral-sm` 20 / 600 / 1 / -0.02em, ink, tabular: "7" in "7 of 20 days".
 - `.v2-text-title` 16 / 600 / 1.2 / -0.01em, ink: card titles, section heads.
@@ -24,10 +24,10 @@
 - Row label (no class): 14 / 500 / 1.35, ink. The list-row parts set it in their own CSS (ListRow, section 18), so a screen never sets it by hand.
 - `.v2-text-meta` 12 / 400 / 1.35, ink-4 (4.77:1): timestamps, counts, hints, and only on surface, panel or canvas at rest. Never the only carrier of a consequence.
 - `.v2-text-caption` 12 / 400 / 1.35, ink-3 (6.0:1): a small line that says something: disabled reasons, field helpers and messages, dialog footnotes, notes under a block (`kit/base.css:145-151`; Button, Checkbox, TextField, Dialog, Feedback, BYOK). It is also the small line on a tint, wash or sunken surface, where meta's ink-4 drops under 4.5:1 (4.42:1 on sunken).
-- `.v2-text-eyebrow` 11 / 500 / 1 / 0.08em, uppercase, ink-3: section labels only. The 0.08em is adapted from the site's 0.14em.
+- `.v2-text-eyebrow` 11 / 500 / 1 / 0.14em, uppercase, ink-3: section labels only, at the site's band-head tracking (review round 1, 2026-10-14; was 0.08em).
 - `.v2-text-mono` 13 / 400 / 1.35, mono, ink-2: keys, endpoints, model ids.
 
-**Variants.** Faces: `--v2-font-ui` (Inter, then system-ui and Segoe UI), `--v2-font-mono`, `--v2-font-serif` (Instrument Serif italic, site-language sign-in pages only). Weights: 400 body, 500 labels, 600 titles and figures. Helpers: `.v2-tabular`, `.v2-truncate`, `.v2-prose`.
+**Variants.** Faces: `--v2-font-ui` (Inter, then system-ui and Segoe UI), `--v2-font-mono`, `--v2-font-serif` (Instrument Serif italic, site-language sign-in pages only). Weights: 400 body, 500 labels and titles 24 and up, 600 titles and figures. Helpers: `.v2-tabular`, `.v2-truncate`, `.v2-prose`.
 
 **Sizes.** 11, 12, 13, 14, 16, 20, 24, 40 (`--v2-text-*`). Nothing in between.
 

@@ -4,13 +4,13 @@
 
 **Why:** "Keep the partner in control" is one of the product's three jobs, and its controls are choices: Always ask or Automatic per app, own key on or off, when to run, which notifications. V2 has three switches (one of which deletes the saved key when turned off; the per-app mode switch, since 2026-10-14, is the one real role=switch) and an option card built from plain buttons (shared.jsx:49; byok_settings.jsx:26, 64; agent_permissions.jsx:108; ai_mode.jsx:47). Its segmented control, which declared a radiogroup without the keys it promised, became that mode switch on 2026-10-14. The system gives each a real role and keyboard, the site's one chosen look (blue 12% fill, blue 50% edge, ink; onblue/apply.html:930), and edges that clear 3:1 (P4, P6, P7).
 
-**V3 restyle (2026-10-14).** One switch for the product: 40 by 24, off is the sunken track with a 15% line, on is `--v2-blue` (a selection), the knob white with a 1px line and no cast; `role="switch"` and `aria-checked`. The off edge is 1.41:1, the same recorded exception as the field edge (section 09): the knob's side and the label carry the state. RadioCard's pending state is documented as the selection edge dashed; disabled is 0.45 with a reason line.
+**V3 restyle (2026-10-14).** One switch for the product: 40 by 24, off is a 20% fill (`--v2-switch-off-fill`, `--v2-line-hover`; review round 1, 2026-10-14: the sunken track left the knob at 1.08:1), on is `--v2-action` carrying the white knob, the knob's edge `--v2-switch-knob-shadow` (a 1px ring, no cast); `role="switch"` and `aria-checked`. The off edge is 1.41:1, the same recorded exception as the field edge (section 09): the knob's side and the label carry the state. RadioCard's pending state is documented as the selection edge dashed; disabled is 0.45 with a reason line.
 
 ### Switch (Changed from V2)
 
 **Purpose.** On or off, applied at once. A switch enables or disables; it never deletes anything.
 
-**Anatomy.** Track 40 by 24, pill. Off: `--v2-surface-sunken` with a 1px `--v2-line-strong` edge, an 18px white knob with a 1px `--v2-line` ring at left 2. On: `--v2-blue` fill and edge, the knob at right 2 with no ring. Row form: label 14/500 ink and an optional description 13/1.5 ink-3 on the left, the switch on the right, gap 16; the label is clickable.
+**Anatomy.** Track 40 by 24, pill. Off: `--v2-switch-off-fill` (20% black), no edge, an 18px white knob with its `--v2-switch-knob-shadow` ring at left 2. On: `--v2-action` fill and edge, the knob at right 2. V2 today: slate-300 track, the knob's small cast. Row form: label 14/500 ink and an optional description 13/1.5 ink-3 on the left, the switch on the right, gap 16; the label is clickable.
 
 **Variants.** With label row (default when `label` is visible); bare (`hideLabel`, for a list row that already names it).
 

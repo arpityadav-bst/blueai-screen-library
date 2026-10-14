@@ -1,83 +1,26 @@
-/* BlueAI Product V3: the worker (mode chip, Automatic ribbon, mode sheet and its app switches, the
-   consent dialog, the run-complete moment, the home progress card, the BlueAI worker home card, the
-   BlueStacks bubbles, the Jobs and Schedule tabs) and the shared dialog chrome they open in, drawn
-   in the onBlue Agentic site's language on the Target tokens (--v2-*). Phase 4.
-   Reuses entry.css (.v3-btn-solid, .v3-link, .v3-note, .v3-icon-btn) and chat.css (.v3-bubble,
-   .v3-toned, .v3-note-line, .v3-quiet, .v3-row-*, .v3-eyebrow). In-flow surfaces take a 1px line
-   and no shadow; only the sheet, the dialogs and the coach tip float. Blue is progress, selection
-   and focus; green is a verified day; money stays ink. */
+/* BlueAI Product V3: the worker (mode chip, Automatic ribbon, the mode sheet's app rows, the
+   run-complete moment's contents, the home progress card, the BlueAI worker home card and its coach,
+   the BlueStacks bubbles, the Schedule tab), drawn in the onBlue Agentic site's language on the
+   Target tokens (--v2-*). Phase 4.
+   Kit parts (review round 1, 2026-10-14): every dialog and sheet is the kit overlay (.v2-overlay,
+   .v2-scrim, .v2-dialog, .v2-sheet: one radius, one edge, one entry), the switch, buttons, fields,
+   the empty state, the spinner and the skeleton card are kit classes. In-flow surfaces take a 1px
+   line and no shadow; blue is progress, selection and focus; green is a verified day; money is ink. */
 
-/* The dialog radius, dialog title size, ghost press, upward sheet cast and the sheet's light veil
-   are design-system tokens since 2026-10-14 (--v2-radius-dialog, --v2-text-18, --v2-surface-press,
-   --v2-shadow-2-up, --v2-scrim-light). */
-
-@keyframes v3-fade-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes v3-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-@keyframes v3-sheet-up { from { transform: translateY(100%); } to { transform: none; } }
-@keyframes v3-dialog-in { from { opacity: 0; transform: translateY(8px) scale(0.97); } to { opacity: 1; transform: none; } }
-@keyframes v3-spin { to { transform: rotate(360deg); } }
-
-/* ---- Button ladder, second step and sizes (brief section 5) ---------------------------------- */
-/* Ghost: the same geometry as .v3-btn-solid, a panel fill and a 15% line, no cast (it is in flow). */
-.v3-btn-ghost {
-  display: inline-flex; align-items: center; justify-content: center; gap: var(--v2-space-2);
-  height: var(--v2-control-lg); padding: 0 var(--v2-space-6);
-  border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-sm);
-  background: var(--v2-surface-panel); color: var(--v2-ink);
-  font-family: var(--v2-font-ui); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium);
-  letter-spacing: var(--v2-tracking-title); line-height: 1; white-space: nowrap; cursor: pointer;
-  transition: background 0.35s ease, border-color 0.35s ease, color 0.35s ease;
-}
-.v3-btn-ghost:hover { background: var(--v2-surface-sunken); border-color: var(--v2-line-hover); }
-.v3-btn-ghost:active { background: var(--v2-surface-press); }
-.v3-btn-ghost:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
-/* A destructive ghost: the red arrives on hover only, the label already says what it does. */
-.v3-btn-ghost--danger:hover { color: var(--v2-danger-ink); border-color: var(--v2-danger-edge); background: var(--v2-danger-ring); }
-.v3-btn-sm { height: var(--v2-control-md); padding: 0 var(--v2-space-4); font-size: var(--v2-text-13); }
-/* Disabled with a reason keeps its label: dimmed, no cast, no hover. */
-.v3-btn-solid:disabled, .v3-btn-solid:disabled:hover {
-  opacity: var(--v2-opacity-disabled); box-shadow: none; transform: none; cursor: not-allowed;
-  background: var(--v2-solid); border-color: var(--v2-solid);
-}
+/* ---- Button row and dialog text spacing (inside a kit dialog body) ---------------------------- */
 .v3-btn-row { display: flex; gap: var(--v2-space-2); }
-.v3-btn-row > * { flex: 1; min-width: 0; padding: 0 var(--v2-space-3); }
-
-/* ---- Dialog chrome (shared.jsx's ModalOverlay): the dim veil, a floating white panel -------- */
-.v3-dialog-scrim {
-  position: absolute; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center;
-  padding: var(--v2-space-4) var(--v2-space-5) calc(var(--v2-nav-h) + var(--v2-space-6));
-  background: var(--v2-scrim); animation: v3-fade-in var(--v2-dur-2) var(--v2-ease-out) both;
-}
-.v3-dialog {
-  position: relative; width: 100%; max-width: var(--v2-dialog-md); max-height: 88vh; overflow-y: auto;
-  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-lg);
-  box-shadow: var(--v2-shadow-2); animation: v3-dialog-in var(--v2-dur-3) var(--v2-ease-out) both;
-}
-.v3-dialog--plain { border-radius: var(--v2-radius-dialog); }
-.v3-dialog-head {
-  position: sticky; top: 0; z-index: var(--v2-z-sticky); display: flex; align-items: center; gap: var(--v2-space-3);
-  padding: var(--v2-space-3) var(--v2-space-3) var(--v2-space-3) var(--v2-space-5);
-  background: var(--v2-surface); border-bottom: var(--v2-stroke) solid var(--v2-line);
-}
-.v3-dialog-title {
-  flex: 1; min-width: 0; margin: 0; color: var(--v2-ink); text-wrap: balance;
-  font-size: var(--v2-text-18); font-weight: var(--v2-weight-semibold);
-  line-height: var(--v2-leading-snug); letter-spacing: var(--v2-tracking-display);
-}
-.v3-dialog-body { padding: var(--v2-space-4) var(--v2-space-5) var(--v2-space-5); }
-.v3-dialog--plain .v3-dialog-body { padding: var(--v2-space-6) var(--v2-space-6) var(--v2-space-5); }
-/* The consent's spacing decisions: title 10px above the body, the note 12px under it, buttons 20px under that. */
-.v3-dialog--plain .v3-dialog-title { margin-bottom: calc(var(--v2-space-2) + var(--v2-space-05)); }
-.v3-dlg-text { margin: 0; color: var(--v2-ink-2); font-size: var(--v2-text-14); line-height: var(--v2-leading-body); text-wrap: pretty; }
+.v3-btn-row > * { flex: 1; min-width: 0; }
+.v3-btn-row > .v2-button { padding: 0 var(--v2-space-3); }
+/* The consent's spacing: the note 12 under the text, the buttons 20 under that. */
 .v3-dlg-note { margin-top: var(--v2-space-3); }
 .v3-dlg-actions { margin-top: var(--v2-space-5); }
 
 /* ---- Mode chip, Automatic ribbon --------------------------------------------------------------- */
-.v3-mode-chip { font-size: var(--v2-text-12); }
 .v3-mode-chev { color: var(--v2-ink-4); }
-/* One quiet in-flow line above the composer: a panel band with a 1px line, no blue fill. */
+/* One quiet in-flow line above the composer box (the composer's gap spaces it): a panel band with
+   a 1px line, no blue fill. */
 .v3-ribbon {
-  display: flex; align-items: center; gap: var(--v2-space-2); margin-bottom: var(--v2-space-15);
+  display: flex; align-items: center; gap: var(--v2-space-2);
   padding: var(--v2-space-05) var(--v2-space-05) var(--v2-space-05) var(--v2-space-3);
   background: var(--v2-surface-panel); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md);
 }
@@ -87,78 +30,30 @@
   line-height: var(--v2-leading-snug); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-/* ---- Mode sheet: slides up over a light veil; the one surface here that casts upward -------- */
-.v3-sheet-scrim {
-  position: absolute; inset: 0; z-index: 50; display: flex; flex-direction: column; justify-content: flex-end;
-  background: var(--v2-scrim-light); animation: v3-fade-in var(--v2-dur-3) var(--v2-ease-standard) both;
-}
-.v3-sheet {
-  display: flex; flex-direction: column; max-height: 72%; padding: var(--v2-space-5) var(--v2-space-5) var(--v2-space-2);
-  background: var(--v2-surface); border-top: var(--v2-stroke) solid var(--v2-line-strong);
-  border-radius: var(--v2-radius-dialog) var(--v2-radius-dialog) 0 0; box-shadow: var(--v2-shadow-2-up);
-  animation: v3-sheet-up var(--v2-dur-4) var(--v2-ease-out) both;
-}
-.v3-sheet-head { display: flex; align-items: flex-start; gap: var(--v2-space-3); }
-.v3-sheet-head > div { flex: 1; min-width: 0; }
-.v3-sheet-sub { margin: var(--v2-space-1) 0 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); }
-.v3-sheet-close { flex: none; margin: calc(-1 * var(--v2-space-15)) calc(-1 * var(--v2-space-2)) 0 0; }
-.v3-sheet-list { margin-top: var(--v2-space-2); min-height: 0; overflow-y: auto; }
-
-/* App rows: mark, name, one switch; rows divided by the hairline, as the site's ledger is. */
+/* ---- App rows (the mode sheet's body and Settings > Worker > Apps) ----------------------------- */
 .v3-apps { margin: 0; padding: 0; list-style: none; }
 .v3-app { display: flex; align-items: center; gap: var(--v2-space-3); padding: var(--v2-space-3) 0; }
 .v3-app + .v3-app { border-top: var(--v2-stroke) solid var(--v2-line-hair); }
+.v3-sheet-sub { margin: var(--v2-space-1) 0 0; } /* type: .v2-text-body-sm, under the sheet title */
 .v3-app-name { flex: 1; min-width: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); letter-spacing: var(--v2-tracking-label); }
-/* The switch in the site's control look: off is a sunken track with a 15% line, on is the select
-   blue (a selection, which is one of blue's jobs). The knob carries a 1px line, never a cast. */
-.v3-switch {
-  position: relative; flex: none; width: calc(var(--v2-mark-sm) + var(--v2-space-4)); height: var(--v2-mark-sm); padding: 0;
-  border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-pill);
-  background: var(--v2-surface-sunken); cursor: pointer;
-  transition: background var(--v2-dur-2) var(--v2-ease-standard), border-color var(--v2-dur-2) var(--v2-ease-standard);
-}
-.v3-switch:hover { border-color: var(--v2-line-hover); }
-.v3-switch::after {
-  content: ''; position: absolute; top: var(--v2-space-05); left: var(--v2-space-05);
-  width: calc(var(--v2-mark-sm) - var(--v2-space-15)); height: calc(var(--v2-mark-sm) - var(--v2-space-15));
-  border-radius: var(--v2-radius-round); background: var(--v2-surface); box-shadow: 0 0 0 var(--v2-stroke) var(--v2-line);
-  transition: transform var(--v2-dur-2) var(--v2-ease-out);
-}
-.v3-switch[aria-checked="true"] { background: var(--v2-blue); border-color: var(--v2-blue); }
-.v3-switch[aria-checked="true"]::after { transform: translateX(var(--v2-space-4)); box-shadow: none; }
-.v3-switch:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 
-/* ---- Run complete (the centre moment) ---------------------------------------------------------- */
-.v3-dd-scrim {
-  position: absolute; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
-  padding: var(--v2-space-6); background: var(--v2-scrim); animation: v3-fade-in var(--v2-dur-3) var(--v2-ease-out) both;
-}
-.v3-dd {
-  width: 100%; max-width: var(--v2-dialog-sm); padding: var(--v2-space-6) var(--v2-space-6) var(--v2-space-5); text-align: center;
-  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-dialog);
-  box-shadow: var(--v2-shadow-2); animation: v3-dialog-in var(--v2-dur-celebrate) var(--v2-ease-out) both;
-}
+/* ---- Run complete (the centre moment, a kit celebration dialog) -------------------------------- */
+.v3-dd .v2-dialog-body { padding: var(--v2-space-6) var(--v2-space-6) var(--v2-space-5); }
 /* The day is PENDING, so the badge is the site's step disc (progress blue), with one ink tick. */
 .v3-dd-badge {
   display: grid; place-items: center; width: var(--v2-control-lg); height: var(--v2-control-lg); margin: 0 auto;
   border-radius: var(--v2-radius-round); background: var(--v2-select); border: var(--v2-stroke) solid var(--v2-select-line); color: var(--v2-ink);
 }
-.v3-dd-title {
-  margin: var(--v2-space-4) 0 0; color: var(--v2-ink); text-wrap: balance;
-  font-size: var(--v2-text-18); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-snug); letter-spacing: var(--v2-tracking-display);
-}
-.v3-dd-sub, .v3-dd-status { margin: var(--v2-space-1) 0 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); text-wrap: pretty; }
-.v3-dd-status { margin-top: var(--v2-space-15); font-variant-numeric: tabular-nums; }
-.v3-dd-note { margin: var(--v2-space-2) 0 0; color: var(--v2-ink-4); font-size: var(--v2-text-12); line-height: var(--v2-leading-body); text-wrap: pretty; }
-.v3-dd .v3-btn-solid { margin-top: var(--v2-space-5); }
+.v3-dd-title { margin: var(--v2-space-4) 0 0; } /* type: .v2-text-title-dialog */
+.v3-dd-sub { margin: var(--v2-space-1) 0 0; text-wrap: pretty; } /* type: .v2-text-body-sm */
+.v3-dd-status { margin: var(--v2-space-15) 0 0; font-variant-numeric: tabular-nums; } /* type: .v2-text-body-sm */
+.v3-dd-note { margin: var(--v2-space-2) 0 0; text-wrap: pretty; } /* type: .v2-text-meta */
+.v3-dd-cta { margin-top: var(--v2-space-5); }
 /* One bold ink figure in a muted line (brief section 9): money is ink 600, never green. */
 .v3-figure { color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
 
 /* ---- Home progress card: 20 thin day segments ------------------------------------------------ */
-.v3-progress {
-  margin-bottom: var(--v2-space-3); padding: var(--v2-space-3) var(--v2-space-4);
-  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg);
-}
+.v3-progress { margin-bottom: var(--v2-space-3); padding: var(--v2-space-3) var(--v2-space-4); }
 .v3-progress-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--v2-space-3); }
 .v3-progress-title {
   color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold);
@@ -169,28 +64,27 @@
 .v3-segs { display: flex; gap: var(--v2-space-05); margin-top: var(--v2-space-2); }
 .v3-seg { flex: 1; height: var(--v2-rail-thin); border-radius: var(--v2-radius-pill); background: var(--v2-surface-sunken); }
 .v3-seg--done { background: var(--v2-success); }
-.v3-seg--pending { background: var(--v2-surface); box-shadow: inset 0 0 0 var(--v2-stroke) var(--v2-select-line); }
-.v3-progress-note {
-  display: flex; align-items: center; gap: var(--v2-space-15); margin: var(--v2-space-2) 0 0;
-  color: var(--v2-ink-3); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug);
-}
+/* Pending: a solid select fill (review round 1: a 1px ring on a 4px bar did not read). */
+.v3-seg--pending { background: var(--v2-select); }
+.v3-progress-note { display: flex; align-items: center; gap: var(--v2-space-15); margin: var(--v2-space-2) 0 0; }
 .v3-verified { display: flex; color: var(--v2-success); }
 
 /* ---- BlueAI worker home card + the first-run coach -------------------------------------------- */
+/* The coach's veil covers the top bar (--v2-z-header) and stays under every dialog (--v2-z-dialog). */
 .v3-coach-scrim {
-  position: absolute; inset: 0; z-index: 40; background: var(--v2-scrim); cursor: pointer;
-  animation: v3-fade-in var(--v2-dur-4) var(--v2-ease-out) both;
+  position: absolute; inset: 0; z-index: var(--v2-z-popover); background: var(--v2-scrim); cursor: pointer;
+  animation: v2-fade var(--v2-dur-4) var(--v2-ease-out) both;
 }
 .v3-wk-stack { position: relative; }
-.v3-wk-stack.is-coaching { z-index: 41; }
-.v3-wk-home {
-  padding: var(--v2-space-4); border-radius: var(--v2-radius-lg);
-  animation: v3-rise var(--v2-dur-4) var(--v2-ease-out) both;
-}
+.v3-wk-stack.is-coaching { z-index: calc(var(--v2-z-popover) + var(--v2-z-raised)); }
+.v3-wk-home { padding: var(--v2-space-4); border-radius: var(--v2-radius-lg); animation: v2-fade-up var(--v2-dur-4) var(--v2-ease-out) both; }
 /* Lit by the coach, the card sits above the veil, so for that moment it floats. */
 .v3-wk-home.is-lit { border-color: var(--v2-line-strong); box-shadow: var(--v2-shadow-2); }
-.v3-wk-home .v3-btn-solid { flex: none; }
-.v3-coach { display: flex; justify-content: flex-end; padding-right: var(--v2-space-2); margin-top: var(--v2-space-3); animation: v3-rise var(--v2-dur-4) var(--v2-ease-out) 150ms both; }
+.v3-wk-home .v2-button { flex: none; }
+.v3-coach {
+  display: flex; justify-content: flex-end; padding-right: var(--v2-space-2); margin-top: var(--v2-space-3);
+  animation: v2-fade-up var(--v2-dur-4) var(--v2-ease-out) var(--v2-dur-1) both;
+}
 .v3-coach-tip {
   position: relative; padding: var(--v2-space-3) var(--v2-space-2) var(--v2-space-2) var(--v2-space-4);
   background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-md);
@@ -206,7 +100,6 @@
 .v3-coach-actions { display: flex; justify-content: flex-end; margin-top: var(--v2-space-1); }
 
 /* ---- BlueStacks bubbles (needs_bluestacks.jsx) ------------------------------------------------- */
-.v3-tone-quiet { color: var(--v2-ink-3); }
 .v3-bs-get { margin-top: var(--v2-space-3); }
 .v3-bs-logo { width: var(--v2-icon-md); height: var(--v2-icon-md); border-radius: var(--v2-radius-xs); }
 .v3-bs-progress { width: 100%; }
@@ -214,53 +107,20 @@
 .v3-bs-pct { color: var(--v2-ink); font-size: var(--v2-text-13); font-weight: var(--v2-weight-semibold); font-variant-numeric: tabular-nums; }
 .v3-bs-track { height: var(--v2-rail); margin-top: var(--v2-space-2); border-radius: var(--v2-radius-pill); background: var(--v2-surface-sunken); overflow: hidden; }
 .v3-bs-fill { height: 100%; border-radius: var(--v2-radius-pill); background: var(--v2-blue); }
-.v3-spin {
-  display: inline-block; flex: none; width: var(--v2-icon-sm); height: var(--v2-icon-sm); border-radius: var(--v2-radius-round);
-  border: calc(var(--v2-stroke) * 2) solid var(--v2-select); border-top-color: var(--v2-blue);
-  animation: v3-spin var(--v2-dur-spin) linear infinite;
-}
+.v3-bs-spin { color: var(--v2-blue); } /* the kit spinner in the progress blue */
 
 /* ---- Jobs and Schedule tabs -------------------------------------------------------------------- */
-.v3-tab { padding: var(--v2-space-4) 0 var(--v2-space-5); }
-.v3-tab-head { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3); margin-bottom: var(--v2-space-4); }
+/* A tab page fills the band under its header, so an empty state centres in what is left. */
+.v3-tabpage { display: flex; flex-direction: column; min-height: 100%; }
+.v3-fill { flex: 1; justify-content: center; }
 .v3-list { display: flex; flex-direction: column; gap: var(--v2-space-3); margin: 0; padding: 0; list-style: none; }
 .v3-sched { display: flex; flex-direction: column; gap: var(--v2-space-3); }
-.v3-sched-title { margin: 0; color: var(--v2-ink); font-size: var(--v2-text-16); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-snug); letter-spacing: var(--v2-tracking-label); }
+.v3-sched-title { margin: 0; } /* type: .v2-text-title */
 .v3-sched-meta { display: flex; flex-direction: column; gap: var(--v2-space-15); }
 .v3-sched-line { display: flex; align-items: center; gap: var(--v2-space-2); color: var(--v2-ink-3); font-size: var(--v2-text-13); }
-.v3-sched-line svg { flex: none; color: var(--v2-ink-4); }
+.v3-sched-line svg { color: var(--v2-ink-4); }
 .v3-sched-line strong { color: var(--v2-ink-2); font-weight: var(--v2-weight-medium); }
 .v3-sched-line .v3-figure { font-weight: var(--v2-weight-medium); font-variant-numeric: tabular-nums; }
-/* Empty states name what will appear; a sunken mark, no colour. */
-.v3-empty { display: flex; flex-direction: column; align-items: center; gap: var(--v2-space-2); text-align: center; }
-.v3-empty--page { justify-content: center; height: 70vh; padding: 0 var(--v2-space-8); }
-.v3-empty--card { padding: var(--v2-space-10) var(--v2-space-5); }
-.v3-empty-mark {
-  display: grid; place-items: center; width: var(--v2-mark-xl); height: var(--v2-mark-xl); margin-bottom: var(--v2-space-2);
-  border-radius: var(--v2-radius-round); background: var(--v2-surface-sunken); color: var(--v2-ink-3);
-}
-.v3-empty-title { margin: 0; color: var(--v2-ink); font-size: var(--v2-text-20); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-tight); letter-spacing: var(--v2-tracking-title); }
-.v3-empty-text { max-width: var(--v2-measure-tip); margin: 0; color: var(--v2-ink-3); font-size: var(--v2-text-14); line-height: var(--v2-leading-body); text-wrap: pretty; }
-.v3-empty .v3-btn-solid { margin-top: var(--v2-space-2); }
-/* Form fields (brief section 5): label above, 1px line, blue edge and soft ring on focus. */
+/* Forms: kit fields (label above, 1px line, blue edge and ring on focus) stacked 16 apart. */
 .v3-form { display: flex; flex-direction: column; gap: var(--v2-space-4); }
-.v3-label { display: block; margin-bottom: var(--v2-space-15); color: var(--v2-ink-2); font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium); }
 .v3-req { color: var(--v2-danger-ink); }
-.v3-field {
-  display: block; width: 100%; min-height: var(--v2-field-h); padding: var(--v2-space-2) var(--v2-space-3);
-  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-sm);
-  color: var(--v2-ink); font-size: var(--v2-text-14); line-height: var(--v2-leading-body); outline: none;
-  transition: border-color var(--v2-dur-2) var(--v2-ease-standard), box-shadow var(--v2-dur-2) var(--v2-ease-standard);
-}
-.v3-field::placeholder { color: var(--v2-ink-placeholder); }
-.v3-field:hover:not(:focus) { border-color: var(--v2-line-hover); }
-.v3-field:focus { border-color: var(--v2-blue); box-shadow: var(--v2-focus-ring); }
-textarea.v3-field { resize: vertical; }
-select.v3-field { cursor: pointer; }
-.v3-skel { padding: var(--v2-space-4); background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg); }
-
-@media (prefers-reduced-motion: reduce) {
-  .v3-dialog-scrim, .v3-dialog, .v3-sheet-scrim, .v3-sheet, .v3-dd-scrim, .v3-dd,
-  .v3-coach-scrim, .v3-wk-home, .v3-coach, .v3-spin { animation: none; }
-  .v3-switch, .v3-switch::after { transition: none; }
-}

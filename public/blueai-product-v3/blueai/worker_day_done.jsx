@@ -38,7 +38,7 @@
   const { useState } = React;
   const RULE = { rate: 1, target: 20, bonus: 10, programEnd: 'Nov 1' };
   const DONE_BEFORE = 6;        // days already verified before today's run (19 for the Day 20 case)
-  /* V3 (phase 4, worker.css): today's day is PENDING, so its marks are the progress blue (the
+  /* V3 (phase 4, worker.css; the dialog is the kit's since review round 1): today's day is PENDING, so its marks are the progress blue (the
      site's step disc, an outlined segment); green arrives only with the second tick, when the day
      is verified. Money stays ink. */
 
@@ -61,10 +61,11 @@
   }
   const money = (n) => '$' + n;
 
-  /* One tick or two, in the colour of the text around it. */
-  function Tick({ double, size = 14 }) {
+  /* One tick or two, in the colour of the text around it. 16 or 20 tall; a tick is mark geometry,
+     so its stroke renders 2px at every size (48 / size in the 24-unit glyph, design-md 08). */
+  function Tick({ double, size = 16 }) {
     return (
-      <svg width={double ? Math.round(size * 1.4) : size} height={size} viewBox={double ? '0 0 34 24' : '0 0 24 24'} fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0, display: 'inline-block', verticalAlign: '-2px' }}>
+      <svg width={double ? Math.round(size * 1.4) : size} height={size} viewBox={double ? '0 0 34 24' : '0 0 24 24'} fill="none" stroke="currentColor" strokeWidth={48 / size} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0, display: 'inline-block', verticalAlign: '-2px' }}>
         {double ? <><polyline points="18 6 7 17 2 12" /><polyline points="30 6 19 17 15.5 13.5" /></> : <polyline points="20 6 9 17 4 12" />}
       </svg>);
   }
@@ -125,14 +126,17 @@
     // The money option leads with the dollar as the line's one bold ink figure (brief section 9).
     const status = (e === 'day20' ? '' : 'Day ' + n.day + ' of ' + n.target + ' · ') + PENDING;
     return (
-      <div className="v3-dd-scrim" onClick={onClose}>
-        <div role="dialog" aria-label={c.title} className="v3-dd" onClick={(ev) => ev.stopPropagation()}>
-          <span className="v3-dd-badge"><Tick size={20} /></span>
-          <p className="v3-dd-title">{c.title}</p>
-          {sub && <p className="v3-dd-sub">{sub}</p>}
-          <p className="v3-dd-status">{style === 'money' && <><span className="v3-figure">{'+' + money(n.gained)}</span>{' · '}</>}{status}</p>
-          {explain && <p className="v3-dd-note">{VERIFY_NOTE}</p>}
-          <button type="button" onClick={onClose} className="v3-btn-solid v3-btn-full">Got it</button>
+      <div className="v2-overlay v2-overlay--center v3-dd">
+        <div className="v2-scrim" onClick={onClose} aria-hidden="true" />
+        <div role="dialog" aria-label={c.title} className="v2-dialog v2-dialog--sm v2-dialog--center">
+          <div className="v2-dialog-body">
+            <span className="v3-dd-badge"><Tick size={20} /></span>
+            <p className="v2-text-title-dialog v3-dd-title">{c.title}</p>
+            {sub && <p className="v2-text-body-sm v3-dd-sub">{sub}</p>}
+            <p className="v2-text-body-sm v3-dd-status">{style === 'money' && <><span className="v3-figure">{'+' + money(n.gained)}</span>{' · '}</>}{status}</p>
+            {explain && <p className="v2-text-meta v3-dd-note">{VERIFY_NOTE}</p>}
+            <button type="button" onClick={onClose} className="v2-button v2-button--primary v2-button--lg v2-button--full v3-dd-cta">Got it</button>
+          </div>
         </div>
       </div>);
   }
@@ -148,13 +152,13 @@
     if (style === 'plain') return null;
     const n = numbers('failed');   // before today's run: everything so far is verified, nothing pending
     return (
-      <div className="v3-progress">
+      <div className="v2-card v3-progress">
         <div className="v3-progress-head">
           <span className="v3-progress-title">Day {n.day} of {n.target}{style === 'money' && <span> · <span className="v3-figure">{money(n.balance)}</span> earned</span>}</span>
-          <a href="https://bluestacks.ai/dashboard" target="_blank" rel="noopener" className="v3-link v3-progress-link">Earnings ↗</a>
+          <a href="https://bluestacks.ai/dashboard" target="_blank" rel="noopener" className="v2-link v3-progress-link"><span className="v2-link-text">Earnings ↗</span></a>
         </div>
         <div className="v3-segs" aria-hidden="true">{Array.from({ length: n.target }, (_, i) => <span key={i} className={'v3-seg' + (i < n.verified ? ' v3-seg--done' : (i < n.day ? ' v3-seg--pending' : ''))} />)}</div>
-        <p className="v3-progress-note"><span className="v3-verified"><Tick double size={12} /></span> Yesterday’s run verified.</p>
+        <p className="v2-text-caption v3-progress-note"><span className="v3-verified"><Tick double /></span> Yesterday’s run verified.</p>
       </div>);
   }
 

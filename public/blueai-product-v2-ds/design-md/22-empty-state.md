@@ -25,7 +25,7 @@
 - locked (`locked`, icon `lock`; the update state passes `download`): "Update BlueAI to keep running" / "This version can’t run jobs anymore, so runs are paused. Update now and today can still count. It takes about a minute." + Update now (section 69, `screens/system-states.jsx:121-123`).
 (All proposed copy.)
 
-**Sizes.** One; adapts to the width of its container.
+**Sizes.** One; adapts to the width of its container. Review round 1 (2026-10-14): the box, the mark and the type read look hooks (`--v2-empty-fill`, `-line`, `-radius`, `--v2-empty-mark-fill`, `-mark-ink`, `--v2-empty-title-size`, `-title-ink`, `--v2-empty-body-ink`). Target: no box, the sunken mark, 20/600 ink, ink-3 body. V2 today: a white box with a slate edge and radius 12, the purple mark, a 15px title. On a page the state fills the space under the screen header (no fixed viewport height).
 
 **States.**
 - Static. V2 today: the Jobs tab (`?start=worker`, then Jobs); Schedule's empty state only after deleting both seeded rows.

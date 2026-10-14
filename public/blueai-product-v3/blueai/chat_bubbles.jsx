@@ -3,7 +3,7 @@
    state (user · status · warning · needs-BlueStacks lives in needs_bluestacks.jsx · final
    success/fail/needs-input · thinking), plus the two step scripts ChatScreen plays.
 
-   V3 (phase 3): one bubble language, styled in chat.css. Every message sits on the surface with a
+   V3 (phase 3): one bubble language, styled in chat.css (the icon box and links are the kit's). Every message sits on the surface with a
    1px line; the user's own is the quiet sunken surface. Tone rides on one icon in the tone's ink,
    and the edge turns only when the run stopped (failed, or waiting on you). Status and thinking
    are progress notes, not bubbles.
@@ -24,7 +24,7 @@
     return text.split('\n').map((line, li) =>
       <p key={li}>
         {line.split(urlRe).map((part, pi) => urlRe.test(part)
-          ? <a key={pi} href="#" onClick={(e) => e.preventDefault()} className="v3-link v3-link--ink" style={{ wordBreak: 'break-all' }}>{part}</a>
+          ? <a key={pi} href="#" onClick={(e) => e.preventDefault()} className="v2-link" style={{ wordBreak: 'break-all' }}><span className="v2-link-text">{part}</span></a>
           : <span key={pi}>{part}</span>)}
       </p>);
   }
@@ -40,14 +40,14 @@
   const TONE_INK = { success: 'v3-tone-success', warning: 'v3-tone-attention', input: 'v3-tone-attention', fail: 'v3-tone-danger' };
   function ToneIcon({ tone }) {
     return (
-      <svg className={'v3-toned-icon v3-ico ' + TONE_INK[tone]} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      <svg className={'v2-icon v3-toned-icon ' + TONE_INK[tone]} viewBox="0 0 24 24" fill="none" stroke="currentColor"
         strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{TONE_PATHS[tone]}</svg>);
   }
 
   /* ───────── Bubbles ───────── */
   function UserBubble({ content }) {
     return (
-      <div className="ba-msg-in v3-msg v3-msg--user">
+      <div className="v2-anim-pop-in v3-msg v3-msg--user">
         <div className="v3-bubble v3-bubble--user">
           <p>{content}</p>
           <p className="v3-bubble-stamp">{fmtStamp()}</p>
@@ -57,7 +57,7 @@
 
   // A progress line: a note in the run's margin, not a bubble.
   function StatusBubble({ content }) {
-    return <p className="ba-msg-in v3-note-line">{content}</p>;
+    return <p className="v2-anim-pop-in v3-note-line">{content}</p>;
   }
 
   /* Warning = a heads-up shown mid-task that does NOT block progress (distinct from the
@@ -74,7 +74,7 @@
   function WarningBubble({ title, content }) {
     const body = Array.isArray(content) ? content : [content];
     return (
-      <div className="ba-msg-in v3-msg">
+      <div className="v2-anim-pop-in v3-msg">
         <div className="v3-bubble v3-toned">
           <ToneIcon tone="warning" />
           <div className="v3-toned-body">
@@ -102,7 +102,7 @@
         withLabel={feedback.withLabel} vote={feedback.vote} onVote={feedback.onVote}
         reason={feedback.reason} onReason={feedback.onReason} />;
     return (
-      <div className="ba-msg-in v3-msg">
+      <div className="v2-anim-pop-in v3-msg">
         <div className={'v3-bubble' + S.edge}>
           <div className="v3-toned">
             <ToneIcon tone={S.icon} />
@@ -118,9 +118,9 @@
   // Working: three progress dots (the blue is progress) and a muted note.
   function ThinkingBubble() {
     return (
-      <div className="ba-msg-in v3-working" role="status">
+      <div className="v2-anim-pop-in v3-working" role="status">
         <span className="v3-working-dots" aria-hidden="true"><span /><span /><span /></span>
-        <span className="v3-working-text">Working on it…</span>
+        <span className="v2-text-meta">Working on it…</span>
       </div>);
   }
 
@@ -201,7 +201,7 @@
     ];
     return (
       <div style={{ marginTop: 'var(--v2-space-1)' }}>
-        <p className="v3-eyebrow" style={{ marginBottom: 'var(--v2-space-3)' }}>CHAT STATES PREVIEW</p>
+        <p className="v2-text-eyebrow" style={{ marginBottom: 'var(--v2-space-3)' }}>Chat states preview</p>
         {examples.map((ex) => (
           <div key={ex.key} style={{ marginBottom: 'var(--v2-space-4)' }}>
             <UserBubble content={ex.user} />

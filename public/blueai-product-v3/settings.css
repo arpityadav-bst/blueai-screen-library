@@ -1,44 +1,52 @@
-/* BlueAI Product V3: credits, settings, profile, the remaining dialogs and the onboarding entry,
-   drawn in the onBlue Agentic site's language on the Target tokens (--v2-*). Phase 5.
-   Reuses entry.css (.v3-btn-solid, .v3-link, .v3-card, .v3-gate-*, .v3-rule, .v3-badge, .v3-icon-btn),
-   chat.css (.v3-row*, .v3-count, .v3-screen-title) and worker.css (.v3-btn-ghost, .v3-btn-sm,
-   .v3-btn-row, .v3-dialog*, .v3-dlg-*, .v3-switch, .v3-field, .v3-label, .v3-figure).
+/* BlueAI Product V3: the pushed screens and tabs' one header, credits, settings, profile, the
+   remaining dialog contents and the onboarding entry, drawn in the onBlue Agentic site's language
+   on the Target tokens (--v2-*). Phase 5.
+   Kit parts (review round 1, 2026-10-14): cards (.v2-card, --inset), badges, banners, fields and
+   selects, switches, buttons, links, avatars and dividers; text from the kit's type ladder.
    One settings row language: label left in ink, control right, one muted hint under, rows split
-   by the hairline (the site's ledger). Sections are in-flow cards: 1px line, no shadow. Money and
-   balances are ink 600; green is only verified or reached; blue is selection, progress, focus. */
+   by the hairline (the site's ledger). Money and balances are ink 600; green is only verified or
+   reached; blue is selection, progress, focus. */
 
 @keyframes v3-breathe { 0%, 100% { opacity: 0.6; } 50% { opacity: 0.3; } }
 
-/* ---- A pushed screen (AI Credits, Profile): canvas ground, title row, padded body ------------ */
-.v3-screen { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; background: var(--v2-canvas); }
-.v3-screen-head { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3); padding: var(--v2-space-4) var(--v2-space-3) 0 var(--v2-space-4); }
-.v3-screen-head .v3-screen-title { padding: 0; }
-.v3-screen-body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: var(--v2-space-3); padding: var(--v2-space-4) var(--v2-space-4) var(--v2-space-5); }
+/* ---- Screens and tabs: one header (24px title, 16 above and below), a scrolling canvas -------- */
+.v3-screen-head {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3);
+  min-height: var(--v2-hit-min); box-sizing: content-box; padding: var(--v2-space-4) 0;
+}
+.v3-screen-title { margin: 0; min-width: 0; } /* type: .v2-text-greeting */
+.v3-screen {
+  flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column;
+  padding: 0 var(--v2-gutter) var(--v2-space-5); background: var(--v2-canvas);
+}
+.v3-screen-body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: var(--v2-space-3); }
+.v3-screen-body--fit { flex: none; }
 .v3-mono { font-family: var(--v2-font-mono); }
-.v3-badge--ok { background: var(--v2-success-tint); color: var(--v2-success-ink); box-shadow: inset 0 0 0 var(--v2-stroke) var(--v2-success-line); }
 
 /* ---- Credits: one figure, one note, the ledger's line between them ---------------------------- */
 .v3-cr-card { flex: 1; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--v2-space-8) var(--v2-space-5); text-align: center; }
 .v3-cr-figure { display: flex; align-items: center; justify-content: center; gap: var(--v2-space-2); }
 .v3-cr-glyph { flex: none; width: calc(var(--v2-icon-lg) + var(--v2-space-1)); height: calc(var(--v2-icon-lg) + var(--v2-space-1)); }
-.v3-cr-value {
-  color: var(--v2-ink); font-size: var(--v2-text-40); font-weight: var(--v2-weight-semibold); line-height: 1;
-  letter-spacing: var(--v2-tracking-figure); font-variant-numeric: tabular-nums;
-}
 .v3-cr-explain { width: 100%; margin-top: var(--v2-space-6); padding-top: var(--v2-space-5); border-top: var(--v2-stroke) solid var(--v2-line-hair); }
-.v3-cr-title { margin: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold); letter-spacing: var(--v2-tracking-label); }
-.v3-cr-text { margin: var(--v2-space-1) 0 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); }
+/* Type: .v2-text-body-sm; each sentence on its own line, the countdown unbroken. */
+.v3-cr-text { margin: var(--v2-space-1) 0 0; }
 .v3-cr-text > span { display: block; }
-.v3-cr-text strong { color: var(--v2-ink); font-weight: var(--v2-weight-semibold); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.v3-cr-text strong { white-space: nowrap; font-variant-numeric: tabular-nums; }
 /* Out of credits: a page-level note above the card, in the panel surface, not an alarm. The dot is
    the credits chip's low dot, so the two read as the same signal. */
 .v3-cr-out { flex: none; padding: var(--v2-space-3) var(--v2-space-4); text-align: center; background: var(--v2-surface-panel); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md); }
-.v3-cr-out-title { display: flex; align-items: center; justify-content: center; gap: var(--v2-space-15); margin: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold); letter-spacing: var(--v2-tracking-label); }
 .v3-low-dot { flex: none; width: var(--v2-space-2); height: var(--v2-space-2); border-radius: var(--v2-radius-round); background: var(--v2-danger-ink); }
+/* A centred title with a trailing (i): the (i) leaves the flow, so the words stay centred. */
+.v3-titled {
+  position: relative; display: flex; align-items: center; justify-content: center; gap: var(--v2-space-15);
+  width: fit-content; margin: 0 auto;
+}
+.v3-titled > .v3-info { position: absolute; left: calc(100% + var(--v2-space-1)); top: 50%; transform: translateY(-50%); }
+.v3-cr-out-title { color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold); letter-spacing: var(--v2-tracking-label); }
 /* Own key: the state, the two facts it runs on, one routine way to Settings. */
 .v3-cr-key { display: flex; align-items: center; gap: var(--v2-space-3); }
 .v3-cr-key-mark { flex: none; display: grid; place-items: center; width: var(--v2-mark-lg); height: var(--v2-mark-lg); border-radius: var(--v2-radius-round); background: var(--v2-surface-sunken); color: var(--v2-ink-2); }
-.v3-cr-key-title { display: flex; align-items: center; gap: var(--v2-space-2); margin: 0; color: var(--v2-ink); font-size: var(--v2-text-16); font-weight: var(--v2-weight-semibold); letter-spacing: var(--v2-tracking-label); }
+.v3-cr-key-title { display: flex; align-items: center; gap: var(--v2-space-2); margin: 0; }
 .v3-cr-facts { display: flex; flex-wrap: wrap; gap: var(--v2-space-2); margin: var(--v2-space-4) 0; }
 
 /* ---- The (i) and its tooltip (credits_popup_parts.jsx) ---------------------------------------- */
@@ -49,10 +57,9 @@
   transition: background var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
 }
 .v3-info-btn:hover { background: var(--v2-wash-hover); color: var(--v2-ink); }
-.v3-info-btn[aria-expanded="true"] { background: var(--v2-select); color: var(--v2-blue-ink); }
-.v3-info-btn--danger { color: var(--v2-danger-ink); }
-.v3-info-btn--danger[aria-expanded="true"] { background: var(--v2-danger-ring); color: var(--v2-danger-ink); }
-.v3-info-btn:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+/* Open is not a selection: ink on the press wash, the kit IconButton's open look (review round 1). */
+.v3-info-btn[aria-expanded="true"] { background: var(--v2-wash-press); color: var(--v2-ink); }
+.v3-info-btn--danger, .v3-info-btn--danger[aria-expanded="true"] { color: var(--v2-danger-ink); }
 /* 260 wide, starting 189px left of a 24px icon, so a centred title row keeps it in the window. */
 .v3-tip { position: absolute; left: -189px; z-index: var(--v2-z-popover); width: var(--v2-measure-tip); text-align: left; }
 .v3-tip--up { bottom: calc(100% + var(--v2-space-2)); }
@@ -72,30 +79,26 @@
 .v3-explain p { margin: 0; color: var(--v2-ink-2); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); }
 .v3-learn { display: inline-block; font-size: var(--v2-text-13); }
 
-/* ---- Dialog extras: the corner X, centred content, the out-of-credits figure ---------------- */
-.v3-dialog--sm { max-width: var(--v2-dialog-sm); }
-.v3-dlg-x { position: absolute; top: var(--v2-space-2); right: var(--v2-space-2); z-index: var(--v2-z-raised); }
+/* ---- Dialog contents: centred content, the out-of-credits figure ------------------------------ */
 .v3-dlg-center { text-align: center; }
-.v3-dlg-center .v3-dlg-text > span { display: block; }
+.v3-dlg-center .v2-text-body > span { display: block; }
 .v3-dlg-rule { margin: var(--v2-space-4) 0; }
-.v3-dlg-headline { display: flex; align-items: center; justify-content: center; gap: var(--v2-space-15); }
-.v3-dialog--plain .v3-dlg-headline .v3-dialog-title { flex: none; margin-bottom: 0; }
-.v3-dlg-center .v3-dlg-headline { margin-bottom: calc(var(--v2-space-2) + var(--v2-space-05)); }
+.v3-dlg-center .v3-titled { margin-bottom: calc(var(--v2-space-2) + var(--v2-space-05)); }
 .v3-dlg-strong { margin-top: var(--v2-space-2); color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
 .v3-dlg-done { display: flex; align-items: flex-start; gap: var(--v2-space-3); }
 .v3-mark-md { width: var(--v2-mark-md); height: var(--v2-mark-md); }
 
 /* ---- Settings: section cards and the one row language ----------------------------------------- */
-.v3-set { display: flex; flex-direction: column; gap: var(--v2-space-3); padding: var(--v2-space-4) 0 var(--v2-space-5); }
+.v3-set { display: flex; flex-direction: column; gap: var(--v2-space-3); }
 .v3-set-card { transition: border-color var(--v2-dur-3) var(--v2-ease-standard), box-shadow var(--v2-dur-3) var(--v2-ease-standard); }
 /* Routed here from the credits screen: a passing selection ring, not a glow. */
 .v3-set-card.is-highlight { border-color: var(--v2-select-line); box-shadow: var(--v2-ring-select); }
 .v3-set-head { display: flex; align-items: flex-start; gap: var(--v2-space-3); }
 .v3-set-head-main { flex: 1; min-width: 0; }
-.v3-set-title { margin: 0; color: var(--v2-ink); font-size: var(--v2-text-16); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-snug); letter-spacing: var(--v2-tracking-label); }
-.v3-set-desc { margin: var(--v2-space-1) 0 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); text-wrap: pretty; }
-.v3-set-desc strong { color: var(--v2-ink); font-weight: var(--v2-weight-medium); }
-.v3-set-note { margin: var(--v2-space-1) 0 0; color: var(--v2-ink-4); font-size: var(--v2-text-12); line-height: var(--v2-leading-body); }
+.v3-set-title { margin: 0; } /* type: .v2-text-title */
+/* Type: .v2-text-body-sm (desc), .v2-text-meta (note, hint); these only space them. */
+.v3-set-desc { margin: var(--v2-space-1) 0 0; text-wrap: pretty; }
+.v3-set-note, .v3-set-hint { margin: var(--v2-space-1) 0 0; }
 /* An outside service's mark (BlueStacks, Telegram) identifies it; BlueAI's own sections carry none. */
 .v3-set-brand { flex: none; display: grid; place-items: center; width: var(--v2-control-md); height: var(--v2-control-md); border-radius: var(--v2-radius-sm); background: var(--v2-surface-sunken); color: var(--v2-ink-2); }
 .v3-set-brand img { width: var(--v2-icon-md); height: var(--v2-icon-md); object-fit: contain; border-radius: var(--v2-radius-xs); }
@@ -105,26 +108,13 @@
 .v3-set-row:last-child { padding-bottom: 0; }
 .v3-set-line { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3); min-height: var(--v2-control-md); }
 .v3-set-label { margin: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); letter-spacing: var(--v2-tracking-label); }
-.v3-set-hint { margin: var(--v2-space-1) 0 0; color: var(--v2-ink-4); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); }
 .v3-set-actions { display: flex; align-items: center; justify-content: flex-end; gap: var(--v2-space-2); margin-top: var(--v2-space-4); }
 .v3-set-actions--start { justify-content: flex-start; }
 .v3-set-saved { display: inline-flex; align-items: center; gap: var(--v2-space-15); margin-right: auto; color: var(--v2-success-ink); font-size: var(--v2-text-13); }
-.v3-set-saved svg { flex: none; color: var(--v2-success); }
-.v3-set-notice {
-  display: flex; align-items: flex-start; gap: var(--v2-space-2); margin-bottom: var(--v2-space-3);
-  padding: var(--v2-space-2) var(--v2-space-3); border-radius: var(--v2-radius-md);
-  background: var(--v2-surface-sunken); border: var(--v2-stroke) solid var(--v2-line-hair);
-  color: var(--v2-ink-2); font-size: var(--v2-text-13); line-height: var(--v2-leading-body);
-}
-.v3-set-notice svg, .v3-reason svg { flex: none; margin-top: var(--v2-space-05); color: var(--v2-ink-3); }
-.v3-panel { padding: var(--v2-space-3); background: var(--v2-surface-panel); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md); }
+.v3-set-saved svg { color: var(--v2-success); }
+.v3-set-notice { margin-bottom: var(--v2-space-3); }
 .v3-field--sm { width: 150px; }
 .v3-field--md { width: 200px; }
-.v3-select { position: relative; flex: none; }
-.v3-select select { appearance: none; -webkit-appearance: none; padding-right: var(--v2-space-8); }
-.v3-select select.is-empty { color: var(--v2-ink-placeholder); }
-.v3-select option { color: var(--v2-ink); }
-.v3-select-chev { position: absolute; top: 50%; right: var(--v2-space-3); transform: translateY(-50%); color: var(--v2-ink-3); pointer-events: none; }
 
 /* Telegram pairing */
 .v3-tg { display: flex; flex-direction: column; gap: var(--v2-space-4); }
@@ -135,48 +125,27 @@
   color: var(--v2-ink); font-family: var(--v2-font-mono); font-size: var(--v2-text-20); font-weight: var(--v2-weight-semibold); letter-spacing: 0.3em; font-variant-numeric: tabular-nums;
 }
 
-/* ---- AI Mode: choice cards, status pills, notices, the setup progress --------------------- */
+/* ---- AI Mode: choice cards, notices, the setup progress -------------------------------------- */
 .v3-choices { display: flex; gap: var(--v2-space-2); margin-top: var(--v2-space-4); }
 .v3-choice {
   flex: 1; min-width: 0; padding: var(--v2-space-3); text-align: left; cursor: pointer; font: inherit;
   background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-md);
   transition: background var(--v2-dur-1) var(--v2-ease-standard), border-color var(--v2-dur-1) var(--v2-ease-standard);
 }
-.v3-choice:hover:not(:disabled) { background: var(--v2-surface-panel); border-color: var(--v2-line-hover); }
+.v3-choice:hover:not(:disabled) { background: var(--v2-surface-sunken); border-color: var(--v2-line-hover); }
 .v3-choice.is-selected, .v3-choice.is-selected:hover { background: var(--v2-select); border-color: var(--v2-select-line); }
 .v3-choice.is-pending, .v3-choice.is-pending:hover { border-style: dashed; border-color: var(--v2-select-line); }
 .v3-choice:disabled { opacity: var(--v2-opacity-disabled); cursor: not-allowed; }
-.v3-choice:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
 .v3-choice-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--v2-space-15); margin-bottom: var(--v2-space-05); }
-.v3-choice-title { color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold); letter-spacing: var(--v2-tracking-label); }
-.v3-choice-check { flex: none; color: var(--v2-blue); }
-.v3-choice-sub { margin: 0; color: var(--v2-ink-3); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); }
-.v3-tag {
-  display: inline-flex; align-items: center; padding: 0 var(--v2-space-15); border-radius: var(--v2-radius-xs);
-  background: var(--v2-surface-sunken); color: var(--v2-ink-3); font-size: var(--v2-text-11); font-weight: var(--v2-weight-medium);
-  line-height: var(--v2-leading-body); white-space: nowrap;
-}
-.v3-tag--attn { background: var(--v2-attention-tint); color: var(--v2-attention-ink); box-shadow: inset 0 0 0 var(--v2-stroke) var(--v2-attention-line); }
+.v3-choice-title { color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); letter-spacing: var(--v2-tracking-label); }
+.v3-choice-check { color: var(--v2-blue); }
+.v3-choice-sub { margin: 0; } /* type: .v2-text-caption */
 .v3-subgroup { margin-top: var(--v2-space-4); padding-top: var(--v2-space-4); border-top: var(--v2-stroke) solid var(--v2-line-hair); }
 .v3-subgroup-label { margin: 0; color: var(--v2-ink-2); font-size: var(--v2-text-12); font-weight: var(--v2-weight-semibold); letter-spacing: var(--v2-tracking-label); }
 .v3-stack { display: flex; flex-direction: column; gap: var(--v2-space-3); margin-top: var(--v2-space-4); }
 /* Disabled with a reason: one muted line under the control says why. */
 .v3-reason { display: flex; align-items: flex-start; gap: var(--v2-space-15); margin: var(--v2-space-2) 0 0; color: var(--v2-ink-3); font-size: var(--v2-text-12); line-height: var(--v2-leading-body); }
-.v3-banner { display: flex; align-items: flex-start; gap: var(--v2-space-2); padding: var(--v2-space-2) var(--v2-space-3); border: var(--v2-stroke) solid; border-radius: var(--v2-radius-md); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); }
-.v3-banner svg { flex: none; margin-top: var(--v2-space-05); }
-.v3-banner--attn { background: var(--v2-attention-tint); border-color: var(--v2-attention-line); color: var(--v2-attention-ink); }
-.v3-banner--danger { background: var(--v2-danger-tint); border-color: var(--v2-danger-line); color: var(--v2-danger-ink); }
-.v3-status {
-  display: inline-flex; align-items: center; gap: var(--v2-space-15); height: var(--v2-badge-h); padding: 0 var(--v2-space-2);
-  border-radius: var(--v2-radius-pill); background: var(--v2-surface-sunken); color: var(--v2-ink-3);
-  font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium); white-space: nowrap;
-}
-.v3-status-dot { flex: none; width: var(--v2-space-15); height: var(--v2-space-15); border-radius: var(--v2-radius-round); background: currentColor; }
-.v3-status--busy { background: var(--v2-select); color: var(--v2-blue-ink); }
-.v3-status--busy .v3-status-dot { animation: ba-v3-pulse var(--v2-dur-pulse) var(--v2-ease-standard) infinite; }
-.v3-status--ok { background: var(--v2-success-tint); color: var(--v2-success-ink); }
-.v3-status--danger { background: var(--v2-danger-tint); color: var(--v2-danger-ink); }
-.v3-status--attn { background: var(--v2-attention-tint); color: var(--v2-attention-ink); }
+.v3-reason svg { margin-top: var(--v2-space-05); color: var(--v2-ink-3); }
 .v3-prog-head { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-3); margin-bottom: var(--v2-space-2); }
 .v3-prog-label { color: var(--v2-ink); font-size: var(--v2-text-13); font-weight: var(--v2-weight-semibold); }
 .v3-prog-pct { color: var(--v2-ink); font-size: var(--v2-text-12); font-weight: var(--v2-weight-semibold); font-variant-numeric: tabular-nums; }
@@ -188,9 +157,7 @@
 
 /* ---- Profile: identity, the account ledger, sign out ------------------------------------------ */
 .v3-prof-id { display: flex; align-items: center; gap: var(--v2-space-4); }
-/* The avatar's colour is the person's picture (placeholder art), not UI colour. */
-.v3-prof-avatar { flex: none; display: grid; place-items: center; width: var(--v2-mark-xl); height: var(--v2-mark-xl); border-radius: var(--v2-radius-round); font-size: var(--v2-text-24); line-height: 1; }
-.v3-prof-name { margin: 0; color: var(--v2-ink); font-size: var(--v2-text-20); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-tight); letter-spacing: var(--v2-tracking-title); }
+.v3-prof-name { margin: 0; } /* type: .v2-text-title-lg */
 .v3-ledger { margin-top: var(--v2-space-2); }
 .v3-ledger-row { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--v2-space-3); padding: var(--v2-space-3) 0; }
 .v3-ledger-row + .v3-ledger-row { border-top: var(--v2-stroke) solid var(--v2-line-hair); }
@@ -198,7 +165,7 @@
 .v3-ledger-label { flex: none; color: var(--v2-ink-3); font-size: var(--v2-text-14); }
 .v3-ledger-value { min-width: 0; margin: 0; text-align: right; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-medium); overflow-wrap: anywhere; }
 .v3-ledger-value--empty { color: var(--v2-ink-4); font-weight: var(--v2-weight-regular); }
-.v3-ledger-value .v3-badge { margin-top: var(--v2-space-15); }
+.v3-ledger-value .v2-badge { margin-top: var(--v2-space-15); }
 .v3-row-icon { flex: none; color: var(--v2-ink-3); }
 
 /* ---- Entry leftovers: the onboarding welcome and the free-credits sign-in ------------------- */
@@ -208,10 +175,5 @@
 .v3-ob .v3-rows { margin-top: var(--v2-space-6); }
 .v3-ob-more { max-width: var(--v2-measure); margin: var(--v2-space-5) auto 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); text-align: center; }
 .v3-signin-tick { display: inline-flex; align-items: center; gap: var(--v2-space-15); margin: 0; color: var(--v2-ink-3); font-size: var(--v2-text-13); }
-.v3-signin-tick svg { flex: none; color: var(--v2-ink-4); }
+.v3-signin-tick svg { color: var(--v2-ink-4); }
 .v3-signin-terms { font-size: var(--v2-text-12); }
-
-@media (prefers-reduced-motion: reduce) {
-  .v3-status--busy .v3-status-dot, .v3-prog-fill.is-indet { animation: none; }
-  .v3-set-card, .v3-prog-fill { transition: none; }
-}

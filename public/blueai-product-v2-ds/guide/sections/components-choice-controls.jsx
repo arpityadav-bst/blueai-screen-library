@@ -80,7 +80,7 @@
     const mark = function (o, cls) { return MODES.map(function (m) { return m.value === o ? Object.assign({}, m, { className: cls }) : m; }); };
     return (
       <G.Section id="choice-controls">
-        <G.Note>V3 restyle (2026-10-14): one switch for the product: 40x24, off the sunken track with a 15% line, on --v2-blue (a selection), a white knob with a 1px line and no cast; role switch with aria-checked. The off edge is a recorded exception like the field edge (the knob and the label carry the state). RadioCard pending is the selection edge dashed.</G.Note>
+        <G.Note>V3 restyle (2026-10-14): one switch for the product: 40x24, off a 20% fill (--v2-switch-off-fill; review round 1: the sunken track left the knob at 1.08:1), on --v2-action carrying the white knob, a knob ring and no cast; role switch with aria-checked. The off edge is a recorded exception like the field edge (the knob and the label carry the state). RadioCard pending is the selection edge dashed.</G.Note>
         <G.Part name="Switch" status="changed" role="On or off, applied at once. A switch only enables or disables; it never deletes anything.">
           {missing('BYOK_COPY', 'kit/advanced.jsx') || <G.StateGrid states={[
             { label: 'Off', node: <K.Switch {...sw()} /> },
@@ -94,7 +94,7 @@
           ]} />}
           <G.Stage ground="surface" width="shell"><SwitchRow /></G.Stage>
           <ul className="g-list">
-            <li>Track 40 by 24, pill. Off: the sunken track, 1px 15% line, an 18px white knob with a 1px line. On: blue fill, the knob slides, no ring.</li>
+            <li>Track 40 by 24, pill. Off: a 20% fill, no edge, an 18px white knob with a 1px ring. On: the action blue, the knob slides.</li>
             <li>Row: label 14/500 ink and description 13 ink-3 on the left, the switch on the right; the label is clickable. role=switch, a 32px target. The row's copy is the own-key panel's (section 49); the disabled rows' reasons are proposed.</li>
           </ul>
           <G.CompareRow
@@ -103,8 +103,8 @@
             changed="Three switches (32x18 with a spring, 46x26 as a pressed button, and since 2026-10-14 the 40x24 per-app mode switch, the one real role=switch) become one role=switch. Off gets an edge that can be seen (V2's grey tracks are 1.48:1). And a switch never deletes: in V2, switching Bring Your Own Key off removes the saved key. Try it on the left." />
           <G.SpecDrawer rows={[
             { part: 'Track', token: '--v2-radius-pill', value: '40x24 (V2: 32x18, 46x26 and 40x24)', ref: ['actions-inputs.switch.shared', 'actions-inputs.switch.byok', 'actions-inputs.switch.mode'] },
-            { part: 'Off', token: '--v2-ink-4, --v2-surface', value: '1px #6e737c edge, white, thumb 12 ink-4 (V2: fill #d1d5db / #cbd5e1)', ref: ['actions-inputs.switch.shared-colours', 'actions-inputs.switch.byok-colours', 'actions-inputs.switch.mode-colours'] },
-            { part: 'On', token: '--v2-blue, --v2-surface', value: '#156efe fill, knob 18 white (V2 #1990FF)' },
+            { part: 'Off', token: '--v2-switch-off-fill, --v2-switch-knob-shadow', value: '20% black fill, no edge, white knob with a 1px ring (V2: fill #d1d5db / #cbd5e1, a knob cast)', ref: ['actions-inputs.switch.shared-colours', 'actions-inputs.switch.byok-colours', 'actions-inputs.switch.mode-colours'] },
+            { part: 'On', token: '--v2-action, --v2-surface', value: '#1268f0 fill, knob 18 white (V2 #1990FF)' },
             { part: 'Motion', token: '--v2-dur-2, --v2-ease-out', value: 'thumb slides 180ms, no overshoot (V2: a spring)', ref: 'actions-inputs.switch.shared-spring' },
             { part: 'Role', token: null, value: 'role=switch, aria-checked (V2 BYOK: aria-pressed button; V2 mode: already role=switch, named per app)', ref: ['actions-inputs.switch.shared-role', 'actions-inputs.switch.byok-pressed', 'actions-inputs.switch.mode-role'] },
             { part: 'Busy', token: null, value: 'aria-busy, the thumb becomes a 12 spinner, clicks ignored' },

@@ -10,7 +10,7 @@
 - **Anatomy:**
   1. Ground `--v2-canvas`, padding 40 24 16; no decoration. AppFrame chrome-free (no top bar, no nav).
   2. BrandMark 48, logo only (the title does the talking).
-  3. Title 24/600 ink, leading 1.2, `-0.02em`, balanced, at most 320 wide, with one serif italic word in blue ink (`--v2-font-serif`, `--v2-blue-ink`, 1.06em: the site's title em, `onblue/onblue.css:1446-1453`).
+  3. Title 24/500 ink, leading 1.2, `-0.04em` (`--v2-tracking-hero`, review round 1, 2026-10-14), balanced, at most 320 wide, with one serif italic word in blue (`--v2-font-serif`, `--v2-blue`, 1.06em, the soft `--v2-em-glow`: the site's title em, `onblue/onblue.css:1446-1453`).
   4. Steps: one Card (radius 16, 1px line, padding 16) holding an ordered list of two rows. Each row: a 28 step disc (`--v2-select` fill, `--v2-select-line` edge, ink figure 13/600, the site's step-num) and the step text 14 ink-2, first line centred on the disc.
   5. One Button, primary lg (44) full width: "Sign in to get started".
   6. Foot: a muted standalone Link "Program Terms" (13/500 ink-3, 32 target) that opens the legal page in a new tab.

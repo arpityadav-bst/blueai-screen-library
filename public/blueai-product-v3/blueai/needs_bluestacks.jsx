@@ -77,10 +77,10 @@
   function Bubble({ app, onGet }) {
     const [clicked, setClicked] = useState(false);
     return (
-      <div className="ba-msg-in v3-msg">
+      <div className="v2-anim-pop-in v3-msg">
         <div className="v3-bubble">
           <div className="v3-toned">
-            <svg className="v3-toned-icon v3-ico v3-tone-quiet" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg className="v2-icon v3-toned-icon v3-tone-quiet" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="9" /><line x1="12" y1="16" x2="12" y2="11.5" /><line x1="12" y1="8" x2="12.01" y2="8" />
             </svg>
             <p className="v3-toned-body">
@@ -88,7 +88,7 @@
             </p>
           </div>
           {!clicked &&
-            <button type="button" onClick={() => { setClicked(true); onGet(); }} className="v3-btn-solid v3-btn-sm v3-btn-full v3-bs-get">
+            <button type="button" onClick={() => { setClicked(true); onGet(); }} className="v2-button v2-button--primary v2-button--full v3-bs-get">
               <img src="assets/BlueStacks.png" alt="" className="v3-bs-logo" onError={(e) => { e.target.style.display = 'none'; }} />
               Get BlueStacks
             </button>}
@@ -104,8 +104,8 @@
      instead of a popup. Kept in the app's own blue (matching the Bubble above it), not the
      screenshot's purple: that purple is the live app's AUTO-GAMEPLAY skill's own branding, a
      different feature; reusing it here would borrow a color identity that means something else.
-     V3 (phase 4): a plain bubble; the blue is held to what it means, progress (the spinner and the
-     bar), and the done state turns to the green tick because the install has been reached. */
+     V3 (phase 4): a plain bubble; the blue is held to what it means, progress (the kit spinner and
+     the bar), and the done state turns to the green tick because the install has been reached. */
   function ProgressBubble({ app, onDone }) {
     const [pct, setPct] = useState(0);
     const DURATION = 3000;   // matches the old InstallDialog's downloadMs for BlueStacks
@@ -129,13 +129,13 @@
     // the done state swaps to a static checkmark rather than just leaving the spin running.
     const done = pct >= 100;
     return (
-      <div className="ba-msg-in v3-msg">
+      <div className="v2-anim-pop-in v3-msg">
         <div className="v3-bubble v3-bs-progress">
-          <p className="v3-eyebrow">Installing</p>
+          <p className="v2-text-eyebrow">Installing</p>
           <div className="v3-bs-row">
             {done
-              ? <svg className="v3-ico v3-tone-success" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0 }}><polyline points="20 6 9 17 4 12" /></svg>
-              : <span className="v3-spin" aria-hidden="true" />}
+              ? <svg className="v3-tone-success" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
+              : <Spinner className="v3-bs-spin" />}
             <span className="v3-bs-pct">Getting ready {pct}%</span>
           </div>
           <div className="v3-bs-track">

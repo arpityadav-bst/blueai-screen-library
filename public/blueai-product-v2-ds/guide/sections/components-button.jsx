@@ -6,13 +6,13 @@
   const row = 'v2-hstack v2-wrap v2-gap-3';
   /* V2 copy, quoted (refs below). */
   const COPY = { agree: 'I agree, turn on', cancel: 'Cancel', notNow: 'Not now', remove: 'Remove', gotIt: 'Got it',
-    apply: 'Apply', validate: 'Validate & Save', learn: 'Learn more', earnings: 'Earnings', notYou: 'Not you?', switchAcc: 'Switch account' };
+    apply: 'Apply', del: 'Delete', validate: 'Validate & Save', learn: 'Learn more', earnings: 'Earnings', notYou: 'Not you?', switchAcc: 'Switch account' };
   const FAQ = 'https://bluestacks.ai/getting-started#ai-credits';
   const DASH = 'https://bluestacks.ai/dashboard';
   const REASON = 'Add the endpoint and the model first.';
   const VARIANTS = [
     ['primary', COPY.agree, 'Primary'], ['secondary', COPY.cancel, 'Secondary'],
-    ['quiet', COPY.notNow, 'Quiet'], ['danger', COPY.remove, 'Danger'],
+    ['quiet', COPY.notNow, 'Quiet'], ['danger', COPY.remove, 'Danger'], ['destructive', COPY.del, 'Destructive'],
   ];
 
   function statesFor(K, v) {
@@ -80,7 +80,8 @@
             { part: 'Glow', token: '--v2-shadow-0', value: 'none (V2: blue glows)', ref: ['actions-inputs.button.day-done-glow', 'actions-inputs.button.terms-glow'] },
             { part: 'Secondary', token: '--v2-surface-panel, --v2-line-strong, --v2-surface-press', value: 'the ghost: panel, 1px 15% black, ink; hover sunken + 20% edge; pressed #e7eaf1', ref: ['actions-inputs.button.cancel', 'actions-inputs.onblue.ghost-hover'] },
             { part: 'Quiet', token: '--v2-ink-2, --v2-wash-hover', value: 'no box at rest, ink-2; hover wash + ink' },
-            { part: 'Danger', token: '--v2-danger-ink, --v2-danger-edge, --v2-danger-tint', value: 'a ghost that turns red on hover; only for the trigger that opens a destructive confirm (Disconnect YouTube); the commit is the solid primary, section 52 (V2 Remove: #dc2626 outline, no confirm)', ref: 'actions-inputs.button.remove' },
+            { part: 'Danger', token: '--v2-danger-ink, --v2-danger-edge, --v2-danger-tint', value: 'a ghost that turns red on hover; only for the trigger that opens a destructive confirm (Disconnect YouTube); the commit is the destructive variant, section 52 (V2 Remove: #dc2626 outline, no confirm)', ref: 'actions-inputs.button.remove' },
+            { part: 'Destructive', token: '--v2-button-destructive-fill, --v2-button-destructive-hover', value: 'a destructive confirm’s commit (Delete): the solid primary in Target, red in V2 today (review round 1, 2026-10-14)' },
             { part: 'Press', token: '--v2-dur-1', value: 'translateY(1px), 120ms' },
             { part: 'Focus', token: '--v2-focus-outline, --v2-focus-offset', value: '2px #156efe, offset 2 (V2: none)' },
             { part: 'Disabled', token: '--v2-opacity-disabled', value: '0.45, aria-disabled, reason 12/ink-3 below', ref: ['actions-inputs.button.apply-disabled', 'actions-inputs.onblue.disabled', 'actions-inputs.onblue.disabled-why'] },

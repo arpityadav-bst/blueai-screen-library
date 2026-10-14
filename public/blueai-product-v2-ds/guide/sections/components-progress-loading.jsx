@@ -82,7 +82,7 @@
 
           <G.SpecDrawer rows={[
             { part: 'Ring', token: null, value: 'currentColor, track at 20%, arc a quarter turn', ref: ['display-feedback.spinner.ring', 'display-feedback.spinner.login'] },
-            { part: 'Sizes', token: null, value: '12, 16, 32 (stroke 1.5, 2, 4)', ref: ['display-feedback.spinner.ring', 'display-feedback.spinner.login'] },
+            { part: 'Sizes', token: null, value: '12, 16, 24, 32 (stroke 1.5, 2, 3, 4); 24 is a wait inside a mark (the sign-in card)', ref: ['display-feedback.spinner.ring', 'display-feedback.spinner.login'] },
             { part: 'Turn', token: '--v2-dur-spin', value: '.v2-anim-spin: 800ms linear; half speed under reduced motion', ref: 'display-feedback.spinner.ring' },
             { part: 'Delay', token: null, value: '300ms before it shows' },
             { part: 'Done', token: '--v2-success', value: 'check 16 (24 at 32)', ref: 'display-feedback.spinner.done-check' },

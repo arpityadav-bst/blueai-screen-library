@@ -22,12 +22,13 @@
      oversized card watermark, cut because it sat behind the description text and read as a smudge
      (and two dollar signs on one small card was one too many); and the welcome screen's step-2 tile
      (the welcome now uses numbered step discs, V3 Phase 2).
-     Kept parameterised anyway; it costs nothing and the card renders it at a non-default size.
-     V3 (phase 4): it takes the tile's ink (money is ink, never green). */
-  function IcoDollar({ size = 22 }) {
+     Kept parameterised anyway; it costs nothing.
+     V3 (phase 4): it takes the tile's ink (money is ink, never green). Review round 1: redrawn as an
+     outline in the product's stroke set (Lucide dollar-sign), so it is no longer the one filled glyph. */
+  function IcoDollar({ size = 24 }) {
     return (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M13.558 14.82c0-.453-.128-.813-.382-1.078-.25-.272-.675-.52-1.278-.747a15.837 15.837 0 0 1-1.561-.673 5.255 5.255 0 0 1-1.129-.772 3.23 3.23 0 0 1-.73-1.029c-.172-.393-.258-.86-.258-1.403 0-.935.299-1.702.897-2.3.597-.597 1.391-.945 2.382-1.045V4.66a.664.664 0 0 1 1.328 0v1.137c.98.138 1.746.548 2.3 1.228.372.455.619 1 .74 1.637.104.543-.358.995-.91.995h-.4c-.552 0-.96-.464-1.14-.986a1.534 1.534 0 0 0-.274-.5c-.272-.332-.637-.498-1.096-.498-.454 0-.805.13-1.054.39-.25.255-.374.609-.374 1.062 0 .421.122.759.365 1.013.244.255.695.515 1.353.78.665.266 1.21.518 1.636.756.426.232.785.498 1.079.797.293.293.517.63.672 1.012.155.377.232.817.232 1.32 0 .941-.293 1.705-.88 2.291-.586.587-1.394.933-2.423 1.038v.992a.66.66 0 0 1-1.32 0v-.984c-1.134-.122-2.014-.523-2.64-1.203-.426-.473-.706-1.052-.84-1.737-.104-.542.358-.995.91-.995h.4c.552 0 .962.465 1.153.984.075.206.18.385.311.536.316.348.767.522 1.353.522.487 0 .872-.127 1.154-.381.282-.26.424-.609.424-1.046Z" />
+      <svg className={window.icoCls(size)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <line x1="12" y1="2" x2="12" y2="22" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
       </svg>);
   }
 
@@ -49,7 +50,7 @@
         <div className="v3-coach-tip" role="note">
           <p className="v3-coach-title">{title}</p>
           <div className="v3-coach-actions">
-            <button type="button" onClick={onOkay} className="v3-quiet">Okay</button>
+            <button type="button" onClick={onOkay} className="v2-button v2-button--quiet v2-button--sm">Okay</button>
           </div>
         </div>
       </div>);
@@ -75,19 +76,19 @@
 
      THE SCRIM: absolute inset-0, which resolves against .ba-app. That's verified, not assumed: the
      five wrappers between this component and .ba-app (the marginTop:4 div, the chat scroller, its
-     overflow:hidden parent, the 420px chat column, and ChatScreen's own fragment) are all
+     overflow:hidden parent, the chat column, and ChatScreen's own fragment) are all
      position:static with no transform, and .ba-app is position:relative. Two consequences worth
      knowing before anyone refactors that chain: overflow alone doesn't clip an absolute box whose
      containing block is an ancestor of the clipper, which is why the scrim escapes the chat
      scroll-area: but a transform ANYWHERE in that chain would capture it and it would clip. The
-     jobs/schedule/settings tabs wrap their content in .tab-anim, whose tabFadeUp animates transform;
+     jobs/schedule/settings tabs wrap their content in .v2-anim-fade-up, which animates transform;
      the chat branch does not, and that is load-bearing.
 
-     zIndex 40 covers the TopNavbar (20), the composer (positioned, auto) and the bottom nav
-     (static), and stays under the in-app modals (shared.jsx's 60); the card+tooltip column lifts to
-     41 ONLY WHILE COACHING. It used to stay at 41 for good, which left the card out-ranking the
-     header after the scrim was gone, so the header's kebab dropdown (60, but inside the header's
-     own z-20 layer) rendered underneath the card (Abhisht, 2026-09-30). With no scrim there is
+     The scrim's --v2-z-popover covers the top bar (--v2-z-header), the composer (positioned, auto)
+     and the bottom nav (static), and stays under the in-app dialogs (--v2-z-dialog); the
+     card+tooltip column lifts one step above it ONLY WHILE COACHING. It used to stay lifted for
+     good, which left the card out-ranking the header after the scrim was gone, so the header's
+     kebab dropdown (inside the header's own layer) rendered underneath the card (Abhisht, 2026-09-30). With no scrim there is
      nothing to sit above, so the column drops back to auto. Dismiss = Okay, clicking the scrim, or
      just running the skill, the conversation replaces this component entirely. */
   function MoneyMakerHome({ onRun }) {
@@ -105,14 +106,14 @@
           {back && <window.WorkerDayDone.EarningsStrip />}
           <div role="button" tabIndex={0} onClick={run} className={'v3-row v3-wk-home' + (coaching ? ' is-lit' : '')}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); run(); } }}>
-            <span className="v3-row-tile v3-row-tile--lg"><IcoDollar size={22} /></span>
+            <span className="v3-row-tile v3-row-tile--lg"><IcoDollar size={24} /></span>
             <div className="v3-row-main">
               {/* Renamed 2026-09-09 (designer directive: MoneyMaker -> "BlueAI worker"). */}
               <p className="v3-row-title">BlueAI worker</p>
               <p className="v3-row-desc">Finds jobs that fit you and runs them on your account.</p>
             </div>
-            <button type="button" onClick={(e) => { e.stopPropagation(); run(); }} className="v3-btn-solid v3-btn-sm">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+            <button type="button" onClick={(e) => { e.stopPropagation(); run(); }} className="v2-button v2-button--primary">
+              <svg className="v2-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
               Run
             </button>
           </div>

@@ -6,9 +6,9 @@
 // today: frosted full-window backdrop, X in the window corner, 300px card.
 //
 // V3, Phase 5: the pieces the product itself shows (the (i), its tooltip, the explainer and the
-// Learn more link) take settings.css classes: an ink-4 (i) that turns to the selection blue while
-// open, a white floating tooltip with the Target float shadow, the explainer as a lined panel, and
-// the site's underlined ink link. The countdown helpers are unchanged. The card pieces below them
+// Learn more link) take settings.css classes: an ink-4 (i) that turns ink on the press wash while
+// open (review round 1: open is not a selection), a white floating tooltip with the Target float
+// shadow, the explainer as a lined panel, and the kit's underlined ink link. The countdown helpers are unchanged. The card pieces below them
 // (Hero, Title, Body, GotIt, Card...) are the comparison page's copy of the live app and keep V2's
 // values on purpose, so "Now" still matches what users see today.
 //
@@ -91,7 +91,7 @@
   const InfoButton = ({ open, onClick, palette = 'blue' }) => (
     <button type="button" aria-label="What are credits?" aria-expanded={open} onClick={onClick}
       className={'v3-info-btn' + (palette === 'red' ? ' v3-info-btn--danger' : '')}>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" className="v3-ico" aria-hidden="true"><circle cx="12" cy="12" r="9.5" /><path d="M12 11v6" /><path d="M12 7.5h.01" /></svg>
+      <svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5" /><path d="M12 11v6" /><path d="M12 7.5h.01" /></svg>
     </button>
   );
   const TextLink = ({ children, onClick, open }) => (
@@ -103,9 +103,9 @@
   const EXPLAIN_CREDITS = 'BlueAI runs on credits. Every job and chat uses some. You get limited credits each day, enough for 4 to 5 jobs.';
   const EXPLAIN_LIMIT = 'BlueAI has a daily limit. Every job and chat uses some of it. It’s enough for 4 to 5 jobs.';
 
-  // The "Learn more" text link. Opens the website FAQ. The site's link: ink, underlined at 32%.
+  // The "Learn more" text link. Opens the website FAQ. The kit's link: ink, underlined at 32%.
   const LearnLink = ({ style }) => (
-    <a href={FAQ_URL} target="_blank" rel="noreferrer" className="v3-link v3-link--ink v3-learn" style={style}>Learn more &#8599;</a>
+    <a href={FAQ_URL} target="_blank" rel="noreferrer" className="v2-link v3-learn" style={style}><span className="v2-link-text">Learn more &#8599;</span></a>
   );
 
   // The explanation. `words` picks the vocabulary: 'credits' (A to C) or 'limit' (D).

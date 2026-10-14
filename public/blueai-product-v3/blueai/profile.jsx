@@ -1,9 +1,10 @@
 // BlueAI: Profile (in-app screen) + Logout confirm modal.
 // Opened from the kebab → Profile. Matches the live product's content: avatar, name/email, an
 // Account Information card, and a Sign out row that confirms via a modal. V3, Phase 5: in-flow
-// cards with a 1px line, the account as the site's ledger, the green only on "Verified".
+// cards with a 1px line, the account as the site's ledger, the green only on "Verified". Review
+// round 1: kit cards, badge, avatar and dialog; the screen header; a neutral avatar.
 // Exposes window.Profile = { ProfileScreen, LogoutModal }. (Account values match live;
-// the avatar art isn't in the export, so it's a best-effort placeholder.)
+// the avatar art isn't in the export, so the avatar is the neutral initial disc.)
 (function () {
   const ACCOUNT = {
     name: 'Arpit Yadav',
@@ -25,25 +26,27 @@
 
   function ProfileScreen({ onSignOut }) {
     return (
-      <div className="tab-anim v3-screen">
-        <div className="v3-screen-body" style={{ flex: 'none' }}>
-          {/* Identity: avatar, name, email. No banner: the person is the content. */}
-          <section className="v3-card v3-prof-id">
-            <div className="v3-prof-avatar" style={{ background: '#A3D977' /* avatar art placeholder, not UI colour */ }} aria-hidden="true">🦇</div>
+      <div className="v2-anim-fade-up v3-screen">
+        <ScreenHead title="Profile" />
+        <div className="v3-screen-body v3-screen-body--fit">
+          {/* Identity: avatar, name, email. No banner: the person is the content. The avatar is the
+             kit's neutral disc (the initial on the sunken surface): no placeholder art colour. */}
+          <section className="v2-card v3-prof-id">
+            <span className="v2-avatar v2-avatar--56 v2-avatar--app" aria-hidden="true">{ACCOUNT.name[0]}</span>
             <div style={{ minWidth: 0 }}>
-              <p className="v3-prof-name">{ACCOUNT.name}</p>
-              <p className="v3-set-desc" style={{ overflowWrap: 'anywhere' }}>{ACCOUNT.email}</p>
+              <p className="v2-text-title-lg v3-prof-name">{ACCOUNT.name}</p>
+              <p className="v2-text-body-sm v3-set-desc" style={{ overflowWrap: 'anywhere' }}>{ACCOUNT.email}</p>
             </div>
           </section>
 
           {/* Account Information */}
-          <section className="v3-card">
-            <h2 className="v3-set-title">Account Information</h2>
+          <section className="v2-card">
+            <h2 className="v2-text-title v3-set-title">Account Information</h2>
             <div className="v3-ledger">
               <Row label="Handle">{ACCOUNT.handle}</Row>
               <Row label="Email">
                 <p style={{ margin: 0 }}>{ACCOUNT.email}</p>
-                <span className="v3-badge v3-badge--ok">Verified</span>
+                <span className="v2-badge v2-badge--success"><span className="v2-badge-dot" aria-hidden="true" /><span className="v2-badge-label">Verified</span></span>
               </Row>
               <Row label="Country">{ACCOUNT.country}</Row>
               <Row label="Mobile"><span className="v3-ledger-value--empty">{ACCOUNT.mobile}</span></Row>
@@ -52,28 +55,29 @@
 
           {/* Sign out: a pressable row; the confirm dialog carries the decision. */}
           <button type="button" onClick={onSignOut} className="v3-row">
-            <svg className="v3-row-icon v3-ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+            <svg className="v2-icon v2-icon--20 v3-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
             <span className="v3-row-main v3-row-title">Sign out</span>
-            <span className="v3-row-end"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" className="v3-ico" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg></span>
+            <span className="v3-row-end"><svg className="v2-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg></span>
           </button>
         </div>
       </div>
     );
   }
 
-  // The shared dialog frame (worker.css .v3-dialog*) at the confirm width: one solid ink commit,
-  // a ghost way back. Signing out is reversible, so it is not painted red.
+  // The kit's dialog (kit/overlays.css) at the confirm width: one solid ink commit, a secondary
+  // way back. Signing out is reversible, so it is not painted red (design-md 25).
   function LogoutModal({ isOpen, onCancel, onConfirm }) {
     if (!isOpen) return null;
     return (
-      <div onClick={(e) => { if (e.target === e.currentTarget) onCancel(); }} className="v3-dialog-scrim" style={{ zIndex: 'var(--v2-z-dialog)' }}>
-        <div role="dialog" aria-modal="true" aria-label="Logout" className="v3-dialog v3-dialog--plain v3-dialog--sm">
-          <div className="v3-dialog-body">
-            <h2 className="v3-dialog-title">Logout</h2>
-            <p className="v3-dlg-text">Are you sure you want to sign out?</p>
+      <div className="v2-overlay v2-overlay--center">
+        <div className="v2-scrim" onClick={onCancel} aria-hidden="true" />
+        <div role="dialog" aria-modal="true" aria-label="Logout" className="v2-dialog v2-dialog--sm">
+          <div className="v2-dialog-head"><h2 className="v2-dialog-title v2-text-title-dialog">Logout</h2></div>
+          <div className="v2-dialog-body">
+            <p className="v2-text-body">Are you sure you want to sign out?</p>
             <div className="v3-btn-row v3-dlg-actions">
-              <button type="button" onClick={onCancel} className="v3-btn-ghost">Cancel</button>
-              <button type="button" onClick={onConfirm} className="v3-btn-solid">Logout</button>
+              <button type="button" onClick={onCancel} className="v2-button v2-button--secondary v2-button--lg">Cancel</button>
+              <button type="button" onClick={onConfirm} className="v2-button v2-button--primary v2-button--lg">Logout</button>
             </div>
           </div>
         </div>
