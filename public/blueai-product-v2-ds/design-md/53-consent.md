@@ -2,7 +2,7 @@
 
 **Status:** Changed from V2.
 
-**Why:** V2's consent moments are right: the agreement is the button (`agent_permissions.jsx:178`; V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on)), Automatic is asked every time it is turned on (`agent_permissions.jsx:28`), contracts are agreed and notices acknowledged (`terms_sheet.jsx:49-53`), and every agreement is meant to be recorded server-side with the exact copy shown (`terms_sheet.jsx:23-27`). What V2 lacks is a place to see and withdraw them: only Automatic has one, Settings' Worker card since 2026-10-14 (`settings.jsx:11-20`); watch history is read without asking (`worker_flow.jsx:80`), and the consent buttons have no loading state although each one is a server write.
+**Why:** V2's consent moments are right: the agreement is the button (`agent_permissions.jsx:178`; V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on)), Automatic is asked every time it is turned on (`agent_permissions.jsx:28`), contracts are agreed and notices acknowledged (`terms_sheet.jsx:49-53`), and every agreement is meant to be recorded server-side with the exact copy shown (`terms_sheet.jsx:23-27`). What V2 lacks is a place to see and withdraw them: only Automatic has one, Settings' Worker card since 2026-10-14 (`settings.jsx:11-20`); watch history is read without asking (`worker_flow.jsx:80`), and the consent buttons have no loading state although each one is a server write.
 
 ### Consent rules (Changed from V2)
 

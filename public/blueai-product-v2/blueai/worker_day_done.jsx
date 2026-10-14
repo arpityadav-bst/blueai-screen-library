@@ -68,19 +68,6 @@
       </svg>);
   }
 
-  /* 20 segments, one per qualifying day: verified days solid, the pending day outlined, the rest
-     empty. The last segment carries the bonus, so it is amber until it is reached. */
-  function DayBar({ n }) {
-    return (
-      <div style={{ display: 'flex', gap: 2, marginTop: 7 }}>
-        {Array.from({ length: n.target }, (_, i) => {
-          const last = i === n.target - 1;
-          const bg = i < n.verified ? (last ? '#f59e0b' : GREEN) : (i < n.day ? 'white' : (last ? '#fde68a' : TRACK));
-          const border = i >= n.verified && i < n.day ? '1.5px solid ' + (last ? '#f59e0b' : GREEN) : 'none';
-          return <span key={i} style={{ flex: 1, height: 6, borderRadius: 2, background: bg, border, boxSizing: 'border-box' }} />;
-        })}
-      </div>);
-  }
 
   // Titles. A sub given per style differs between the money and days options.
   const COPY = {
@@ -153,21 +140,20 @@
   /* The worker home, returning person, the next morning: yesterday's run is verified now, so it
      shows two ticks. Above the worker card, same card language (skills.jsx's row). The plain
      option has no numbers anywhere, so it has no strip. */
+  /* MINIMAL since 2026-10-14 (Arpit): the day was said three times ("Day 6 of 20", "14 to go",
+     20 segments). Now the day and Earnings on one row, one thin bar, one quiet verified line. The
+     amber bonus segment went with the segments: nothing on this card talks about money. */
   function EarningsStrip() {
     if (style === 'plain') return null;
     const n = numbers('failed');   // before today's run: everything so far is verified, nothing pending
-    const days = style === 'days';
     return (
       <div style={{ background: 'white', border: '1px solid ' + LINE, borderRadius: 16, padding: '12px 15px 11px', marginBottom: 10, boxShadow: '0 6px 24px rgba(15,23,42,0.06)' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 13.5, fontWeight: 800, color: INK }}>Day {n.day} of {n.target}</span>
-          <span style={{ fontSize: 13.5, fontWeight: 800, color: GREEN }}>{days ? n.toGo + ' to go' : money(n.balance) + ' earned'}</span>
-        </div>
-        <DayBar n={n} />
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 }}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11.5, color: MUTED }}><Tick double color={GREEN} size={12} /> Yesterday’s run verified.</span>
+          <span style={{ fontSize: 13.5, fontWeight: 800, color: INK }}>Day {n.day} of {n.target}{style === 'money' && <span style={{ fontWeight: 600, color: MUTED }}> · {money(n.balance)} earned</span>}</span>
           <a href="https://bluestacks.ai/dashboard" target="_blank" rel="noopener" style={{ fontSize: 11.5, fontWeight: 700, color: '#1990FF', textDecoration: 'none', whiteSpace: 'nowrap' }}>Earnings ↗</a>
         </div>
+        <div style={{ height: 4, borderRadius: 2, background: TRACK, marginTop: 9, overflow: 'hidden' }}><span style={{ display: 'block', width: Math.round(n.verified / n.target * 100) + '%', height: '100%', borderRadius: 2, background: GREEN }} /></div>
+        <p style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11.5, color: MUTED, marginTop: 8 }}><Tick double color={GREEN} size={12} /> Yesterday’s run verified.</p>
       </div>);
   }
 

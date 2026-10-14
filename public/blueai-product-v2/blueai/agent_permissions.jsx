@@ -186,9 +186,10 @@
     const a = app ? appById(app) : null;
     const btn = { flex: 1, borderRadius: 10, padding: '10px 12px', fontSize: 13.5, fontWeight: 700, fontFamily: 'inherit', cursor: 'pointer', whiteSpace: 'nowrap' };
     return (
-      <ModalOverlay isOpen={!!app} onClose={cancelConfirm} title={a ? 'Run ' + a.name + ' jobs automatically?' : ''}>
+      <ModalOverlay plain isOpen={!!app} onClose={cancelConfirm} title={a ? 'Run ' + a.name + ' jobs automatically?' : ''}>
         {a && <>
-          <p style={{ fontSize: 13.5, color: '#4b5563', lineHeight: 1.6 }}>BlueAI will take {a.name} jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime.</p>
+          <p style={{ fontSize: 13.5, color: '#4b5563', lineHeight: 1.6 }}>BlueAI will finish {a.name} jobs on your account without asking, including posting videos.</p>
+          <p style={{ fontSize: 12.5, color: MUTED, lineHeight: 1.5, marginTop: 6 }}>You can turn this off anytime.</p>
           <div style={{ display: 'flex', gap: 8, marginTop: 18 }}>
             <button onClick={cancelConfirm} style={{ ...btn, background: 'white', border: '1px solid #e2e8f0', color: '#374151' }}>Cancel</button>
             <button onClick={agreeAuto} style={{ ...btn, background: ACCENT, border: 'none', color: 'white' }}>I agree, turn on</button>

@@ -98,7 +98,7 @@
 
 **Responsive.** Not applicable.
 
-**Do / Don't.** Do use success for a reached state, matching the site's dashboard. Do keep money in ink ($6 earned). Don't paint dollars green (worker_day_done.jsx:179). Don't invent a sixth tone for one screen.
+**Do / Don't.** Do use success for a reached state, matching the site's dashboard. Do keep money in ink ($6 earned). Don't paint dollars green (V2 stopped on 2026-10-14). Don't invent a sixth tone for one screen.
 
 ### Brand gradient (Changed from V2)
 

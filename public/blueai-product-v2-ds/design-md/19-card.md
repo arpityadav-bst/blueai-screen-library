@@ -35,7 +35,7 @@
 **Anatomy.** A Card containing:
 1. Label: mini-title 13/600 ink, sentence case, 0.02em (`.v2-text-mini-title`; the site's `.mini-title`, onblue.css:1935-1942). One label style per card (the site's mini-title rule, onblue/apply.html:1358).
 2. Figure: optional icon (the credits glyph), value 40/600 `--v2-ink`, tabular, `--v2-tracking-display`; optional unit 14/500 `--v2-ink-3`.
-3. Context: one line, 13 `--v2-ink-3`; figures inside it bold ink ("**13** to go").
+3. Context: one line, 13 `--v2-ink-3`; figures inside it bold ink ("**6** verified, **1** pending").
 4. Action (optional): one link or quiet button (Earnings opens the site).
 
 **Variants.** Display (figure 40). Compact (figure 20, `--v2-tracking-title`, tighter gaps).

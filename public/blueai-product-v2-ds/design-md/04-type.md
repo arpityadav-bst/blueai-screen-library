@@ -72,7 +72,7 @@
 
 **Sizes.** 40, 20, and body size inside notes.
 
-**States.** Credits balance (V2: 54/800 gradient, 38/800 at zero, index.html:527, byok.jsx:51; reach with `?credits=0`). "7 of 20 days" (V2: the home strip's "Day 6 of 20" 13.5/800 ink, worker_day_done.jsx:163, reach with `?day=returning`; the popup's 22/800 green count went with its minimal popup, 2026-10-14). "$6 earned" (V2: 13.5/800 green, worker_day_done.jsx:164; reach with `?day=returning&card=money`).
+**States.** Credits balance (V2: 54/800 gradient, 38/800 at zero, index.html:527, byok.jsx:51; reach with `?credits=0`). "7 of 20 days" (V2: the home strip's "Day 6 of 20" 13.5/800 ink, worker_day_done.jsx:152, reach with `?day=returning`; the popup's 22/800 green count went with its minimal popup, 2026-10-14). "$6 earned" (V2: 600 muted grey after the day count since 2026-10-14, 13.5/800 green before, worker_day_done.jsx:152; reach with `?day=returning&card=money`).
 
 **Props.** Classes only; format with `toLocaleString('en-US')`.
 

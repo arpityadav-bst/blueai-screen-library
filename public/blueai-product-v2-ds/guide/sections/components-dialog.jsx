@@ -3,7 +3,7 @@
   const G = window.V2Guide;
   const { useState } = React;
   const noop = function () {};
-  // V2's consent title and button, quoted (agent_permissions.jsx:186, 191); the body is the kit's proposed one. Its full body is ConsentDialog's (section 46).
+  // V2's consent title and button, quoted (agent_permissions.jsx:189, 195); the body is the kit's proposed one. Its full body is ConsentDialog's (section 46).
   const CONSENT = {
     title: 'Run YouTube jobs automatically?',
     body: 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.', // ConsentBody (kit/permissions.jsx:79); proposed, PM and legal, R51, design-md/46
@@ -109,7 +109,7 @@
           <G.CompareRow
             v2={<Win h={330}><G.Live label="ModalOverlay" get={function () { return window.ModalOverlay; }} props={{ isOpen: true, onClose: noop, title: DELETE.title, children: DELETE.body }} /></Win>}
             system={<D variant="task" title={DELETE.title} description={DELETE.body} actions={[{ label: 'Cancel' }, { label: 'Delete', variant: 'danger' }]} />}
-            changed="Same words on both sides, so only the shell differs (V2's buttons come from each caller). V2 builds its overlays one by one: five widths (280, 300, 340, 360, 382), radii 12, 16 and 20, five different scrims, z-indexes from 50 to 130 with a tie at 120. None moves focus in or gives it back, the close button has no name, and nothing has a busy state, so a slow consent can be clicked twice. The system has one Dialog on one scrim: sm 320 or md 382, radius 16, shadow-2, a 20/600 title that takes the row with a named 32px Close beside it, body 14 in ink-2, actions secondary then primary at 44px." />
+            changed="Same words on both sides, so only the shell differs (V2's buttons come from each caller). V2 builds its overlays one by one: five widths (280, 300, 340, 360, 382), radii 12, 16 and 20, five different scrims, z-indexes from 50 to 130 with a tie at 120. None moves focus in or gives it back, the close button has no name, and nothing has a busy state, so a slow consent can be clicked twice. Since 2026-10-14 ModalOverlay also has a plain frame (no header, divider or X; the title is an h2 in the body), which the Automatic consent uses. The system has one Dialog on one scrim: sm 320 or md 382, radius 16, shadow-2, a 20/600 title that takes the row with a named 32px Close beside it, body 14 in ink-2, actions secondary then primary at 44px." />
           <G.SpecDrawer rows={[
             { part: 'Scrim', token: '--v2-scrim', value: 'rgba(11,18,32,0.48), fades 240ms', ref: ['overlays.dialog.scrim', 'overlays.dialog.logout-scrim', 'overlays.dialog.ooc-scrim', 'overlays.dialog.daydone-scrim'] },
             { part: 'Layer', token: '--v2-z-dialog', value: '100; one at a time; mount order only settles an unavoidable overlap', ref: ['overlays.dialog.scrim', 'overlays.dialog.logout-scrim', 'overlays.dialog.ooc-scrim'] },
@@ -118,7 +118,8 @@
             { part: 'Height', token: null, value: 'up to the window less 16px each side; the body scrolls, title and actions stay', ref: 'overlays.dialog.panel' },
             { part: 'Window inset', token: '--v2-space-4', value: '16px', ref: 'overlays.dialog.padding' },
             { part: 'Shape', token: '--v2-radius-lg, --v2-line, --v2-shadow-2', value: '16px, 1px 10% line, the dialog cast', ref: 'overlays.dialog.panel-shape' },
-            { part: 'Padding', token: '--v2-space-5', value: '20px', ref: ['overlays.dialog.header', 'overlays.dialog.body'] },
+            { part: 'Padding', token: '--v2-space-5', value: '20px (V2: header 16 20, body 16 20 20, plain body 22 22 20)', ref: ['overlays.dialog.header', 'overlays.dialog.body'] },
+            { part: 'V2 plain frame', token: null, value: 'no header, divider or X; the title is an h2 in the body (the consent, since 2026-10-14)', ref: ['overlays.dialog.plain', 'worker.permissions.modal'] },
             { part: 'Title', token: '--v2-text-20, --v2-weight-semibold, --v2-ink', value: '20/600, tracking -0.02em; takes the row', ref: ['overlays.dialog.title', 'overlays.dialog.family-title'] },
             { part: 'Close', token: '--v2-hit-min', value: 'IconButton 32, named Close; hidden on alert and blocking', ref: 'overlays.dialog.close' },
             { part: 'Body', token: '--v2-text-14, --v2-ink-2, --v2-leading-body', value: '14px / 1.5, #3c4049' },

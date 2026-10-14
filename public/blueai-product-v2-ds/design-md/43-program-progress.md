@@ -2,7 +2,7 @@
 
 **Status:** Changed from V2 (StatusTick, DayBar, ProgramStrip); New (ProgramSummary).
 
-**Why:** the 20 days are the partner's pay. V2's strip says 'Day 6 of 20' the morning after the popup said Day 7 (R02), '14 to go' in green has no unit, a rejected day has no way to show (R19), the rules are never stated before the first day ends (R12), and its Earnings link goes somewhere other than the menu's (R29). The site's dashboard says '12 of 20 days' and 'Ends Nov 1, 2026' (`onblue/apply.html:1404, 1409`); the app uses the same words and drops the year while it is the current one ('Ends Nov 1', section 70's date rule).
+**Why:** the 20 days are the partner's pay. V2's strip says 'Day 6 of 20' the morning after the popup said Day 7 (R02), '14 to go' in green had no unit (V2 dropped it on 2026-10-14), a rejected day has no way to show (R19), the rules are never stated before the first day ends (R12), and its Earnings link goes somewhere other than the menu's (R29). The site's dashboard says '12 of 20 days' and 'Ends Nov 1, 2026' (`onblue/apply.html:1404, 1409`); the app uses the same words and drops the year while it is the current one ('Ends Nov 1', section 70's date rule).
 
 ### StatusTick
 
@@ -20,8 +20,8 @@
 ### DayBar
 
 - **Purpose:** the 20 days at a glance; the site's progress bar plus the pending state it lacks.
-- **Anatomy:** 20 segments, height 6, radius 4, gap 2. Verified solid `--v2-success-ink` (the site's goal-bar green); pending surface with a 1.5 inset `--v2-blue` outline (in progress, not reached: one of the three blue exceptions to the neutral pending tone, with the run chip's pending dot and the DayDone badge, section 03); rejected `--v2-danger-tint` with an inset 1px `--v2-danger-edge` (4.53:1, so it reads at 1px), in the slot it would have filled until the next run takes it; out of reach hatched `--v2-line-strong` (slots that can no longer be reached before the end); future `--v2-line`. Legend 12 ink-3 with ticks: '6 verified', '1 pending', '1 not counted', 'n days out of reach'.
-- **Variants:** with or without legend; optional `bonusLabel` at the right end only if decision D3 keeps a day-20 bonus (V2's amber segment becomes a label).
+- **Anatomy:** 20 segments, height 6, radius 4, gap 2. Verified solid `--v2-success-ink` (the site's goal-bar green); pending surface with a 1.5 inset `--v2-blue` outline (in progress, not reached: one of the three blue exceptions to the neutral pending tone, with the run chip's pending dot and the DayDone badge, section 03); rejected `--v2-danger-tint` with an inset 1px `--v2-danger-edge` (4.53:1, so it reads at 1px), in the slot it would have filled until the next run takes it; out of reach hatched `--v2-line-strong` (slots that can no longer be reached before the end); future `--v2-line`. Legend 12 ink-3 with ticks: '6 verified', '1 pending', '1 not counted', 'n days out of reach'. V2 since 2026-10-14: one continuous bar, height 4, radius 2, green fill for the verified share (`worker_day_done.jsx:155`), so a pending, rejected or missed day cannot show.
+- **Variants:** with or without legend; optional `bonusLabel` at the right end only if decision D3 keeps a day-20 bonus (V2 had an amber segment until 2026-10-14).
 - **Sizes:** fills its container.
 - **States:** verified, pending, rejected, out of reach, future. V2: `?day=returning` (strip), `?day=next&end=job` (overlay).
 - **Props:** `days` (segment states) or `worker` (derived by `numbers()`), `target`, `legend`, `bonusLabel`, `label`.
@@ -41,7 +41,7 @@
 - **Motion:** none.
 - **Accessibility:** a section named 'Your 20 days'; Earnings and the info trigger are 32 tall and announce 'opens in a new tab' / 'How your 20 days work'.
 - **Responsive:** foot wraps under 320.
-- **Do / Don't:** Do say the count once, from the ledger. Don't show money or '14 to go' in green; don't use a second Earnings URL.
+- **Do / Don't:** Do say the count once, from the ledger. Don't show money or a remaining count in green (V2 dropped both on 2026-10-14); don't use a second Earnings URL.
 
 ### ProgramSummary
 

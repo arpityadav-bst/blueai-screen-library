@@ -418,7 +418,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Responsive.** Not applicable.
 
-**Do / Don't.** Do use success for a reached state, matching the site's dashboard. Do keep money in ink ($6 earned). Don't paint dollars green (worker_day_done.jsx:179). Don't invent a sixth tone for one screen.
+**Do / Don't.** Do use success for a reached state, matching the site's dashboard. Do keep money in ink ($6 earned). Don't paint dollars green (V2 stopped on 2026-10-14). Don't invent a sixth tone for one screen.
 
 ### Brand gradient (Changed from V2)
 
@@ -516,7 +516,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Sizes.** 40, 20, and body size inside notes.
 
-**States.** Credits balance (V2: 54/800 gradient, 38/800 at zero, index.html:527, byok.jsx:51; reach with `?credits=0`). "7 of 20 days" (V2: the home strip's "Day 6 of 20" 13.5/800 ink, worker_day_done.jsx:163, reach with `?day=returning`; the popup's 22/800 green count went with its minimal popup, 2026-10-14). "$6 earned" (V2: 13.5/800 green, worker_day_done.jsx:164; reach with `?day=returning&card=money`).
+**States.** Credits balance (V2: 54/800 gradient, 38/800 at zero, index.html:527, byok.jsx:51; reach with `?credits=0`). "7 of 20 days" (V2: the home strip's "Day 6 of 20" 13.5/800 ink, worker_day_done.jsx:152, reach with `?day=returning`; the popup's 22/800 green count went with its minimal popup, 2026-10-14). "$6 earned" (V2: 600 muted grey after the day count since 2026-10-14, 13.5/800 green before, worker_day_done.jsx:152; reach with `?day=returning&card=money`).
 
 **Props.** Classes only; format with `toLocaleString('en-US')`.
 
@@ -1335,7 +1335,7 @@ Plus: no mark, dot, icon, busy dot.
 **Anatomy.** A Card containing:
 1. Label: mini-title 13/600 ink, sentence case, 0.02em (`.v2-text-mini-title`; the site's `.mini-title`, onblue.css:1935-1942). One label style per card (the site's mini-title rule, onblue/apply.html:1358).
 2. Figure: optional icon (the credits glyph), value 40/600 `--v2-ink`, tabular, `--v2-tracking-display`; optional unit 14/500 `--v2-ink-3`.
-3. Context: one line, 13 `--v2-ink-3`; figures inside it bold ink ("**13** to go").
+3. Context: one line, 13 `--v2-ink-3`; figures inside it bold ink ("**6** verified, **1** pending").
 4. Action (optional): one link or quiet button (Earnings opens the site).
 
 **Variants.** Display (figure 40). Compact (figure 20, `--v2-tracking-title`, tighter gaps).
@@ -1605,7 +1605,7 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Sizes.** sm 320 (`--v2-dialog-sm`): alert, celebration, out of credits. md 382 (`--v2-dialog-md`): task, consent. Height up to the window less 16px each side.
 
-**States.** Closed (nothing mounted); opening; open; busy (the primary loads; Esc, the scrim and Close wait); closing; over a menu (the menu closes first, focus comes back to the menu button). In V2 today: ModalOverlay as Confirm delete on the Schedule tab (schedule.jsx:144); the Automatic consent at `?start=worker&v=1`, open the mode chip, pick Automatic (agent_permissions.jsx:186); out of credits at `?credits=0` then send a message (byok.jsx:76).
+**States.** Closed (nothing mounted); opening; open; busy (the primary loads; Esc, the scrim and Close wait); closing; over a menu (the menu closes first, focus comes back to the menu button). In V2 today: ModalOverlay as Confirm delete on the Schedule tab (schedule.jsx:144); the Automatic consent at `?start=worker&v=1`, open the mode chip, pick Automatic, in ModalOverlay's plain frame since 2026-10-14 (no header, divider or X; agent_permissions.jsx:189); out of credits at `?credits=0` then send a message (byok.jsx:76).
 
 **Props.** `open`, `onClose`, `title`, `description`, `variant`, `size` ('sm' | 'md'), `role` (override), `dismissible` (false blocks: no Close, no Esc, no scrim), `busy`, `actions` ([{label, onClick, variant 'secondary' | 'primary' | 'danger' | 'quiet', disabled}]), `footer`, `initialFocus` (ref or selector), `labelledBy` (when the title lives in the body), `scrim`, `className`, `children`. `preview` renders it open in place without focus (guide specimens only).
 
@@ -2373,7 +2373,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** Changed from V2 (StatusTick, DayBar, ProgramStrip); New (ProgramSummary).
 
-**Why:** the 20 days are the partner's pay. V2's strip says 'Day 6 of 20' the morning after the popup said Day 7 (R02), '14 to go' in green has no unit, a rejected day has no way to show (R19), the rules are never stated before the first day ends (R12), and its Earnings link goes somewhere other than the menu's (R29). The site's dashboard says '12 of 20 days' and 'Ends Nov 1, 2026' (`onblue/apply.html:1404, 1409`); the app uses the same words and drops the year while it is the current one ('Ends Nov 1', section 70's date rule).
+**Why:** the 20 days are the partner's pay. V2's strip says 'Day 6 of 20' the morning after the popup said Day 7 (R02), '14 to go' in green had no unit (V2 dropped it on 2026-10-14), a rejected day has no way to show (R19), the rules are never stated before the first day ends (R12), and its Earnings link goes somewhere other than the menu's (R29). The site's dashboard says '12 of 20 days' and 'Ends Nov 1, 2026' (`onblue/apply.html:1404, 1409`); the app uses the same words and drops the year while it is the current one ('Ends Nov 1', section 70's date rule).
 
 ### StatusTick
 
@@ -2391,8 +2391,8 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ### DayBar
 
 - **Purpose:** the 20 days at a glance; the site's progress bar plus the pending state it lacks.
-- **Anatomy:** 20 segments, height 6, radius 4, gap 2. Verified solid `--v2-success-ink` (the site's goal-bar green); pending surface with a 1.5 inset `--v2-blue` outline (in progress, not reached: one of the three blue exceptions to the neutral pending tone, with the run chip's pending dot and the DayDone badge, section 03); rejected `--v2-danger-tint` with an inset 1px `--v2-danger-edge` (4.53:1, so it reads at 1px), in the slot it would have filled until the next run takes it; out of reach hatched `--v2-line-strong` (slots that can no longer be reached before the end); future `--v2-line`. Legend 12 ink-3 with ticks: '6 verified', '1 pending', '1 not counted', 'n days out of reach'.
-- **Variants:** with or without legend; optional `bonusLabel` at the right end only if decision D3 keeps a day-20 bonus (V2's amber segment becomes a label).
+- **Anatomy:** 20 segments, height 6, radius 4, gap 2. Verified solid `--v2-success-ink` (the site's goal-bar green); pending surface with a 1.5 inset `--v2-blue` outline (in progress, not reached: one of the three blue exceptions to the neutral pending tone, with the run chip's pending dot and the DayDone badge, section 03); rejected `--v2-danger-tint` with an inset 1px `--v2-danger-edge` (4.53:1, so it reads at 1px), in the slot it would have filled until the next run takes it; out of reach hatched `--v2-line-strong` (slots that can no longer be reached before the end); future `--v2-line`. Legend 12 ink-3 with ticks: '6 verified', '1 pending', '1 not counted', 'n days out of reach'. V2 since 2026-10-14: one continuous bar, height 4, radius 2, green fill for the verified share (`worker_day_done.jsx:155`), so a pending, rejected or missed day cannot show.
+- **Variants:** with or without legend; optional `bonusLabel` at the right end only if decision D3 keeps a day-20 bonus (V2 had an amber segment until 2026-10-14).
 - **Sizes:** fills its container.
 - **States:** verified, pending, rejected, out of reach, future. V2: `?day=returning` (strip), `?day=next&end=job` (overlay).
 - **Props:** `days` (segment states) or `worker` (derived by `numbers()`), `target`, `legend`, `bonusLabel`, `label`.
@@ -2412,7 +2412,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Motion:** none.
 - **Accessibility:** a section named 'Your 20 days'; Earnings and the info trigger are 32 tall and announce 'opens in a new tab' / 'How your 20 days work'.
 - **Responsive:** foot wraps under 320.
-- **Do / Don't:** Do say the count once, from the ledger. Don't show money or '14 to go' in green; don't use a second Earnings URL.
+- **Do / Don't:** Do say the count once, from the ledger. Don't show money or a remaining count in green (V2 dropped both on 2026-10-14); don't use a second Earnings URL.
 
 ### ProgramSummary
 
@@ -2487,7 +2487,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ### ConsentDialog
 
 - **Purpose:** the consent for Automatic, per app, every time.
-- **Anatomy:** kit Dialog, consent variant, md (382): title 20/600 'Run YouTube jobs automatically?', close 32, no scrim dismiss. Body 14 ink-2, the Dialog's description (aria-describedby, so it is read with the dialog), proposed, PM and legal (R51): 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking, posting comments and subscribing to channels in your name.' The line is built from every action a job on that app can include (`WORKER_APPS[].actions`, section 41; `kit/permissions.jsx:75-79`), never a fixed list. V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on): its one paragraph, 'BlueAI will take YouTube jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime.' (`agent_permissions.jsx:188`), names posting videos, which the worker never does, and leaves out the actions it does take; on Automatic the job preview never appears, so this line is the partner's only notice of what will be done in their name. The system keeps what V2 dropped: a per-app table radius 10 (the app being changed tinted blue, Automatic in blue ink with zap, Always ask with shield-check, coming soon in words), a note 12 ink-3 'Each app has its own setting. The others stay on Always ask until you switch them.' and the agreement line 14 'By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime.' (V2's words until 2026-10-14). Added, proposed, 12 ink-3: 'Turn it off in Settings > Worker, or with Change above the chat.' Footer 44: 'Cancel' (secondary) then 'I agree, turn on' (primary). The title and buttons are V2 verbatim (`agent_permissions.jsx:186-191`); the body, table, note, agreement line and turn-off line are not.
+- **Anatomy:** kit Dialog, consent variant, md (382): title 20/600 'Run YouTube jobs automatically?', close 32, no scrim dismiss. Body 14 ink-2, the Dialog's description (aria-describedby, so it is read with the dialog), proposed, PM and legal (R51): 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking, posting comments and subscribing to channels in your name.' The line is built from every action a job on that app can include (`WORKER_APPS[].actions`, section 41; `kit/permissions.jsx:75-79`), never a fixed list. V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on): its sentence, 'BlueAI will finish YouTube jobs on your account without asking, including posting videos.' (`agent_permissions.jsx:191`), names posting videos, which the worker never does, and leaves out the actions it does take; on Automatic the job preview never appears, so this line is the partner's only notice of what will be done in their name. The system keeps what V2 dropped: a per-app table radius 10 (the app being changed tinted blue, Automatic in blue ink with zap, Always ask with shield-check, coming soon in words), a note 12 ink-3 'Each app has its own setting. The others stay on Always ask until you switch them.' and the agreement line 14 'By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime.' (V2's words until 2026-10-14). Added, proposed, 12 ink-3: 'Turn it off in Settings > Worker, or with Change above the chat.' Footer 44: 'Cancel' (secondary) then 'I agree, turn on' (primary). The title and buttons are V2 verbatim (`agent_permissions.jsx:186-191`); the body, table, note, agreement line and turn-off line are not.
 - **Variants:** one per app.
 - **Sizes:** Dialog md.
 - **States:** open; agree busy (primary loading, Esc, scrim and close held), then done (closes, the ribbon appears, the agreement time is recorded per account on the server); cancel (nothing changes, the job question keeps waiting); not saved (`error`: Banner danger 'Not saved, nothing changed. Try again.' in the body, and 'I agree, turn on' is the retry; proposed copy). V2: the Automatic chip on the daily job ask, or the onboarding choice (`?setup` default).
@@ -2750,7 +2750,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** Changed from V2.
 
-**Why:** V2's consent moments are right: the agreement is the button (`agent_permissions.jsx:178`; V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on)), Automatic is asked every time it is turned on (`agent_permissions.jsx:28`), contracts are agreed and notices acknowledged (`terms_sheet.jsx:49-53`), and every agreement is meant to be recorded server-side with the exact copy shown (`terms_sheet.jsx:23-27`). What V2 lacks is a place to see and withdraw them: only Automatic has one, Settings' Worker card since 2026-10-14 (`settings.jsx:11-20`); watch history is read without asking (`worker_flow.jsx:80`), and the consent buttons have no loading state although each one is a server write.
+**Why:** V2's consent moments are right: the agreement is the button (`agent_permissions.jsx:178`; V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on)), Automatic is asked every time it is turned on (`agent_permissions.jsx:28`), contracts are agreed and notices acknowledged (`terms_sheet.jsx:49-53`), and every agreement is meant to be recorded server-side with the exact copy shown (`terms_sheet.jsx:23-27`). What V2 lacks is a place to see and withdraw them: only Automatic has one, Settings' Worker card since 2026-10-14 (`settings.jsx:11-20`); watch history is read without asking (`worker_flow.jsx:80`), and the consent buttons have no loading state although each one is a server write.
 
 ### Consent rules (Changed from V2)
 
@@ -3260,7 +3260,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
   - "By continuing, you agree to the Program Terms and acknowledge the Privacy Policy and Cookie Policy."; legal; `terms_sheet.jsx:67-69` (wording rule `:49-53`); legal.
   - "Agree and continue"; PM; `terms_sheet.jsx:71` (`:60`); live.
   - "Run YouTube jobs automatically?" / "I agree, turn on"; PM; `agent_permissions.jsx:186, 191`; live.
-  - "BlueAI will take YouTube jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime."; PM and legal; `agent_permissions.jsx:188`; live (V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on); its agreement paragraph is gone). Proposed change, sent to the owners (R51): "BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name." (the ConsentDialog body, section 46): the worker never posts videos, and the comment it does post is not named.
+  - "BlueAI will finish YouTube jobs on your account without asking, including posting videos. You can turn this off anytime."; PM and legal; `agent_permissions.jsx:191-192`; live (V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on); its agreement paragraph is gone). Proposed change, sent to the owners (R51): "BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name." (the ConsentDialog body, section 46): the worker never posts videos, and the comment it does post is not named.
   - "Always ask" / "Automatic"; PM; `worker_flow.jsx:78`; live.
 - **States:** live, DRAFT, legal.
 - **Do / Don't:** Do quote these exactly in every part marked In V2; send a proposed change to the owner with the reason. Don't fix a typo or a tone in them silently; don't move legal wording between contexts without legal.
@@ -3463,7 +3463,7 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R02 worker (effort M)
 
-- **V2:** `blueai/worker_day_done.jsx:40, 163; blueai/worker_flow.jsx:42, 168`
+- **V2:** `blueai/worker_day_done.jsx:40, 148; blueai/worker_flow.jsx:42, 168`
 - **Today:** DONE_BEFORE=6 makes tonight's popup 'Day 7 of 20' and tomorrow's strip 'Day 6 of 20'; the strip appears right after Day 1 claiming 'Yesterday’s run verified.'
 - **Recommended:** One ledger (verified, pending, missed, rejected days; target; ends Nov 1) feeding overlay, strip, toast, Activity and the site tile.
 - **Why:** The day count is the partner's pay.
@@ -3484,8 +3484,8 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R05 worker (effort M)
 
-- **V2:** `blueai/settings.jsx:11-20, 144-159; blueai/worker_flow.jsx:67; blueai/agent_permissions.jsx:188`
-- **Today:** 'Pause, stop, or disconnect anytime' has no control; 'turn this off anytime' has one since 2026-10-14, the Worker card in Settings (one switch per app). V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on), and it still makes the promise.
+- **V2:** `blueai/settings.jsx:11-20, 144-159; blueai/worker_flow.jsx:67; blueai/agent_permissions.jsx:192`
+- **Today:** 'Pause, stop, or disconnect anytime' has no control; 'turn this off anytime' has one since 2026-10-14, the Worker card in Settings (one switch per app). V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on), and it still makes the promise.
 - **Recommended:** Settings > Worker (pause until, run window, mode per app, interest profile) and Connected apps (Disconnect).
 - **Why:** Consent that cannot be found to revoke is weak consent (P4).
 
@@ -3554,7 +3554,7 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R15 notifications (effort M)
 
-- **V2:** `blueai/worker_day_done.jsx:188; index.html:1065, 780-787`
+- **V2:** `blueai/worker_day_done.jsx:174; index.html:1065, 780-787`
 - **Today:** 'Open BlueAI to retry and count the day.' opens a cold-started home with no Retry.
 - **Recommended:** Toast opens the persistent Today record; Retry lives on the WorkerCard and in Activity until 9 pm, the day's deadline (section 41), stated with it.
 - **Why:** This is the exact moment money is at stake.
@@ -3589,8 +3589,8 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R51 consent (effort S)
 
-- **V2:** `blueai/agent_permissions.jsx:188`
-- **Today:** The Automatic consent says the worker will finish jobs 'including posting videos'; the worker never posts videos, and the comment it does post in the partner's name is not named. V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on), which dropped 'and other content' but kept 'posting videos'.
+- **V2:** `blueai/agent_permissions.jsx:191`
+- **Today:** The Automatic consent says the worker will finish jobs 'including posting videos'; the worker never posts videos, and the comment it does post in the partner's name is not named. V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on), which dropped 'and other content' but kept 'posting videos'.
 - **Recommended:** Name what a job does, from `WORKER_JOB.actions`: 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.' (section 46). Consent copy, so the PM and legal decide it; the record keeps the version shown (section 53).
 - **Why:** On Automatic the job preview never appears, so this line is the partner's only notice that comments go out under their name.
 
@@ -3626,7 +3626,7 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R24 components (effort M)
 
-- **V2:** `blueai/shared.jsx:57-82; blueai/profile.jsx:69-84; blueai/byok.jsx:76-89; blueai/worker_day_done.jsx:142`
+- **V2:** `blueai/shared.jsx:57-82; blueai/profile.jsx:69-84; blueai/byok.jsx:76-89; blueai/worker_day_done.jsx:129`
 - **Today:** Seven overlay builds, seven scrims, five widths, z tie at 120, no focus management.
 - **Recommended:** One Dialog and one Sheet on one scrim and the named z-scale, with role, focus in, trap, return and a busy state.
 - **Why:** Keyboard users act on content under the scrim; each dialog looks like another product.
@@ -3654,14 +3654,14 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R28 worker (effort S)
 
-- **V2:** `blueai/worker_day_done.jsx:132-151`
+- **V2:** `blueai/worker_day_done.jsx:119-138`
 - **Today:** V2 adopted the minimal popup on 2026-10-14 (one tick, title, one status line, Got it): the count is said once, no confetti, no ring, money in grey. Still open: the 44 badge is verified green while the day is pending.
 - **Recommended:** Keep it minimal; badge in pending treatment (blue tint, one tick) until verified.
 - **Why:** Colour says paid while words say not yet.
 
 #### R29 copy (effort S)
 
-- **V2:** `index.html:329; blueai/worker_day_done.jsx:169`
+- **V2:** `index.html:329; blueai/worker_day_done.jsx:153`
 - **Today:** Kebab Earnings and strip 'Earnings ↗' go to two different URLs.
 - **Recommended:** One EARNINGS_URL constant; one external glyph.
 - **Why:** The partner's money lives behind this link.
@@ -4110,6 +4110,10 @@ About 3,000 of V2’s lines never render. They are listed here and never specime
 **Status:** Meta (no parts).
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
+
+### 2026-10-14: Minimal progress card and plain consent frame in V2
+
+- V2's home progress card is minimal (day + Earnings, one thin bar, one verified line) and the consent dialog uses a plain frame (no header, divider or X); refs and sections updated.
 
 ### 2026-10-14: Mode sheet, one-line ribbon and Settings > Worker in V2
 

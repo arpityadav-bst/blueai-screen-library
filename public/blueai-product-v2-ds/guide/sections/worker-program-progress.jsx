@@ -56,15 +56,15 @@
           <G.CompareRow
             v2={<G.Live get={strip} label="WorkerDayDone.EarningsStrip" />}
             system={shell(<K.DayBar days={bar(6, 1, 0, 0)} />)}
-            changed="Green #1BA07A becomes the site's green, and pending is no longer a green outline: green now means reached on both sides (P2). The amber day-20 segment becomes a label, since amber is not in the family and the bonus itself waits on D3. The bar gains rejected and out-of-reach states, a role and a spoken value; the same component should draw the site's tile." />
+            changed="Since 2026-10-14 V2 draws one thin continuous bar (height 4, green fill for the verified share): its 20 segments and amber day-20 segment are gone, so a pending, rejected or missed day cannot show. The system keeps one segment per day. Green #1BA07A becomes the site's green, and pending is a blue outline, not a green one: green means reached on both sides (P2). A day-20 bonus, if D3 keeps one, is a label, not a colour. The bar gains rejected and out-of-reach states, a role and a spoken value; the same component should draw the site's tile." />
           <G.SpecDrawer rows={[
-            { part: 'Segment', token: '--v2-rail, --v2-radius-xs, --v2-space-05', value: 'height 6, radius 4 (V2 2), gap 2', ref: 'worker.bar.segment' },
+            { part: 'Segment', token: '--v2-rail, --v2-radius-xs, --v2-space-05', value: 'height 6, radius 4, gap 2 (V2: one continuous bar, height 4, radius 2, since 2026-10-14)', ref: 'worker.bar.track' },
             { part: 'Verified', token: '--v2-success-ink', value: 'solid (the site goal-bar green; the tick keeps --v2-success)', ref: 'worker.rule.green' },
             { part: 'Pending', token: '--v2-blue, --v2-stroke-selected', value: '1.5 inset outline on surface' },
             { part: 'Rejected', token: '--v2-danger-tint, --v2-danger-line', value: 'tint + 1px line' },
             { part: 'Out of reach', token: '--v2-line-strong', value: 'hatched' },
             { part: 'Future', token: '--v2-line', value: 'alpha-black 10%' },
-            { part: 'Day 20', token: 'bonusLabel', value: 'a label, not a colour', ref: 'worker.bar.amber' },
+            { part: 'Day 20', token: 'bonusLabel', value: 'a label, not a colour (V2 dropped its amber segment on 2026-10-14)' },
             { part: 'Legend', token: '--v2-text-12, --v2-ink-3', value: '6 verified, 1 pending (V2 has no legend since 2026-10-14)' },
           ]} />
         </G.Part>
@@ -85,12 +85,12 @@
           <G.CompareRow
             v2={<G.Live get={strip} label="WorkerDayDone.EarningsStrip" />}
             system={shell(<K.ProgramStrip worker={F.verified} />)}
-            changed="'Day 6 of 20' read as 'today is day 6' and went backwards after tonight's Day 7 (R02); now one count from the ledger, worded like the site ('12 of 20 days'). '14 to go' had no unit and was green; the green is gone and the end date is shown. The strip appeared only to returning partners; it now shows from day 0. 'Earnings ↗' pointed somewhere other than the menu's Earnings; one URL, one external icon." />
+            changed="'Day 6 of 20' read as 'today is day 6' and went backwards after tonight's Day 7 (R02); now one count from the ledger, worded like the site ('12 of 20 days'). '14 to go' had no unit and was green; V2 dropped it and its green figure on 2026-10-14 (the money option now adds ' · $6 earned' in muted grey), and the system adds the end date. The strip appeared only to returning partners; it now shows from day 0. 'Earnings ↗' pointed somewhere other than the menu's Earnings; one URL, one external icon." />
           <G.FrameState url="index.html?day=returning" label="V2: the strip above the worker card" height={830} />
           <G.SpecDrawer rows={[
             { part: 'Card', token: '--v2-radius-lg, --v2-line, --v2-space-4', value: '16, 1px line, padding 16, no shadow', ref: ['worker.strip.card', 'worker.strip.shadow'] },
             { part: 'Count', token: '--v2-text-14, --v2-ink-3 + figure --v2-ink 600', value: '6 of 20 days', ref: ['worker.strip.count', 'worker.site.count'] },
-            { part: 'Remaining', token: 'none', value: "dropped: the bar shows it ('14 to go' was green)", ref: 'worker.strip.to-go' },
+            { part: 'Remaining', token: 'none', value: "dropped: the bar shows it (V2 dropped its green '14 to go' on 2026-10-14)" },
             { part: 'Ends', token: '--v2-text-12, --v2-ink-4', value: 'Ends Nov 1', ref: ['worker.rule.const', 'worker.site.ends'] },
             { part: 'Receipt', token: '--v2-text-12, --v2-ink-3', value: 'Yesterday’s run verified.', ref: 'worker.strip.verified' },
             { part: 'Earnings', token: 'V2Kit.Link standalone (--v2-ink, underline --v2-link-underline, hover --v2-blue-ink)', value: 'one EARNINGS_URL + external icon', ref: ['worker.strip.earnings', 'worker.strip.earnings-label', 'worker.earnings.menu-url'] },

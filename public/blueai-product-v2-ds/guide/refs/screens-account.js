@@ -47,7 +47,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'screens-account.worker.settings-card', file: 'blueai/settings.jsx', line: 14, needle: '<div data-section="worker-settings"', value: 'Settings has a Worker card since 2026-10-14' },
   { id: 'screens-account.worker.settings-apps', file: 'blueai/settings.jsx', line: 17, needle: 'Apps BlueAI can run on its own. New apps always start on Always ask.</p>', value: "Worker > Apps: 'Apps BlueAI can run on its own. New apps always start on Always ask.', then the mode sheet's switch list" },
   { id: 'screens-account.worker.not-persisted', file: 'blueai/agent_permissions.jsx', line: 21, needle: 'Not persisted: every reload of this prototype starts a brand-new user on Always ask everywhere.', value: 'modes are not kept' },
-  { id: 'screens-account.worker.turn-off', file: 'blueai/agent_permissions.jsx', line: 191, needle: 'You can turn this off anytime.</p>', value: "'You can turn this off anytime.' with no place to do it" },
+  { id: 'screens-account.worker.turn-off', file: 'blueai/agent_permissions.jsx', line: 192, needle: 'You can turn this off anytime.</p>', value: "'You can turn this off anytime.' with no place to do it" },
   { id: 'screens-account.worker.mode-always', file: 'blueai/agent_permissions.jsx', line: 53, needle: "title: 'Always ask', sub: 'Asks before each job starts, then runs it to the end'", value: "'Always ask'" },
   { id: 'screens-account.worker.mode-auto', file: 'blueai/agent_permissions.jsx', line: 54, needle: "title: 'Automatic', sub: 'Starts and finishes jobs without asking'", value: "'Automatic'" },
 

@@ -54,7 +54,7 @@ function Toggle({ enabled, onToggle }) {
 }
 
 /* ─── MODAL OVERLAY ──────────────────────────────────────────── */
-function ModalOverlay({ isOpen, onClose, title, children }) {
+function ModalOverlay({ isOpen, onClose, title, children, plain }) {
   useEffect(() => {
     const h = (e) => {if (e.key === 'Escape') onClose();};
     if (isOpen) document.addEventListener('keydown', h);
@@ -71,11 +71,11 @@ function ModalOverlay({ isOpen, onClose, title, children }) {
        the BlueStacks window instead of inside the app. */
     style={{ position: 'absolute', inset: 0, zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)', padding: '16px 20px 80px' }}>
       <div style={{ position: 'relative', width: '100%', maxWidth: 382, maxHeight: '88vh', overflowY: 'auto', background: 'white', borderRadius: 12, boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
-        <div style={{ position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', background: 'white', borderBottom: '1px solid #e5e7eb' }}>
+        {!plain && <div style={{ position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', background: 'white', borderBottom: '1px solid #e5e7eb' }}>
           <h2 style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>{title}</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', padding: 4, borderRadius: 6 }}><IcoXClose size={18} /></button>
-        </div>
-        <div style={{ padding: '16px 20px 20px' }}>{children}</div>
+        </div>}
+        <div style={{ padding: plain ? '22px 22px 20px' : '16px 20px 20px' }}>{plain && <h2 style={{ fontSize: 18, fontWeight: 700, color: '#111827', lineHeight: 1.35, marginBottom: 8 }}>{title}</h2>}{children}</div>
       </div>
     </div>);
 

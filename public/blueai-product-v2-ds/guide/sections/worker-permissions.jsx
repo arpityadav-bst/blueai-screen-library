@@ -111,9 +111,9 @@
           <G.CompareRow
             v2={<V2Consent />}
             system={consent(false)}
-            changed="The strongest trust moment in V2. V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on). The system keeps its title and button word for word; its body names what a job does instead of posting videos (proposed, PM and legal, R51), and it keeps the per-app table, the note and the agreement line V2 dropped, plus one line that says where to turn it off (P4). The chrome moves to the one Dialog: focus moves in and returns, Tab stays inside, busy prevents a double agree, and the agree button goes from #1990FF (3.24:1) to action blue." />
+            changed="The strongest trust moment in V2. V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on). The system keeps its title and button word for word; its body names what a job does instead of posting videos (proposed, PM and legal, R51), and it keeps the per-app table, the note and the agreement line V2 dropped, plus one line that says where to turn it off (P4). The chrome moves to the one Dialog: focus moves in and returns, Tab stays inside, busy prevents a double agree, and the agree button goes from #1990FF (3.24:1) to action blue." />
           <G.SpecDrawer rows={[
-            { part: 'Dialog', token: '--v2-dialog-md, consent variant', value: '382, close button, no scrim dismiss', ref: 'worker.permissions.modal' },
+            { part: 'Dialog', token: '--v2-dialog-md, consent variant', value: '382, close button, no scrim dismiss (V2: a plain frame, no header, divider or X, since 2026-10-14)', ref: 'worker.permissions.modal' },
             { part: 'Title', token: '--v2-text-20, --v2-weight-semibold', value: 'Run YouTube jobs automatically?', ref: 'worker.permissions.consent-title' },
             { part: 'Body', token: '--v2-text-14, --v2-ink-2', value: 'Proposed, PM and legal (R51): BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.', ref: 'worker.permissions.consent-body' },
             { part: 'Target row', token: '--v2-blue-tint', value: 'the app being changed (system only; V2 dropped its list on 2026-10-14)' },

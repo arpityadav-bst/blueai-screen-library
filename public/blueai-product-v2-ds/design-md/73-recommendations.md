@@ -22,7 +22,7 @@
 
 #### R02 worker (effort M)
 
-- **V2:** `blueai/worker_day_done.jsx:40, 163; blueai/worker_flow.jsx:42, 168`
+- **V2:** `blueai/worker_day_done.jsx:40, 148; blueai/worker_flow.jsx:42, 168`
 - **Today:** DONE_BEFORE=6 makes tonight's popup 'Day 7 of 20' and tomorrow's strip 'Day 6 of 20'; the strip appears right after Day 1 claiming 'Yesterday’s run verified.'
 - **Recommended:** One ledger (verified, pending, missed, rejected days; target; ends Nov 1) feeding overlay, strip, toast, Activity and the site tile.
 - **Why:** The day count is the partner's pay.
@@ -43,8 +43,8 @@
 
 #### R05 worker (effort M)
 
-- **V2:** `blueai/settings.jsx:11-20, 144-159; blueai/worker_flow.jsx:67; blueai/agent_permissions.jsx:188`
-- **Today:** 'Pause, stop, or disconnect anytime' has no control; 'turn this off anytime' has one since 2026-10-14, the Worker card in Settings (one switch per app). V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on), and it still makes the promise.
+- **V2:** `blueai/settings.jsx:11-20, 144-159; blueai/worker_flow.jsx:67; blueai/agent_permissions.jsx:192`
+- **Today:** 'Pause, stop, or disconnect anytime' has no control; 'turn this off anytime' has one since 2026-10-14, the Worker card in Settings (one switch per app). V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on), and it still makes the promise.
 - **Recommended:** Settings > Worker (pause until, run window, mode per app, interest profile) and Connected apps (Disconnect).
 - **Why:** Consent that cannot be found to revoke is weak consent (P4).
 
@@ -113,7 +113,7 @@
 
 #### R15 notifications (effort M)
 
-- **V2:** `blueai/worker_day_done.jsx:188; index.html:1065, 780-787`
+- **V2:** `blueai/worker_day_done.jsx:174; index.html:1065, 780-787`
 - **Today:** 'Open BlueAI to retry and count the day.' opens a cold-started home with no Retry.
 - **Recommended:** Toast opens the persistent Today record; Retry lives on the WorkerCard and in Activity until 9 pm, the day's deadline (section 41), stated with it.
 - **Why:** This is the exact moment money is at stake.
@@ -148,8 +148,8 @@
 
 #### R51 consent (effort S)
 
-- **V2:** `blueai/agent_permissions.jsx:188`
-- **Today:** The Automatic consent says the worker will finish jobs 'including posting videos'; the worker never posts videos, and the comment it does post in the partner's name is not named. V2 adopted the minimal consent dialog on 2026-10-14 (title, one paragraph, Cancel / I agree, turn on), which dropped 'and other content' but kept 'posting videos'.
+- **V2:** `blueai/agent_permissions.jsx:191`
+- **Today:** The Automatic consent says the worker will finish jobs 'including posting videos'; the worker never posts videos, and the comment it does post in the partner's name is not named. V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on), which dropped 'and other content' but kept 'posting videos'.
 - **Recommended:** Name what a job does, from `WORKER_JOB.actions`: 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.' (section 46). Consent copy, so the PM and legal decide it; the record keeps the version shown (section 53).
 - **Why:** On Automatic the job preview never appears, so this line is the partner's only notice that comments go out under their name.
 
@@ -185,7 +185,7 @@
 
 #### R24 components (effort M)
 
-- **V2:** `blueai/shared.jsx:57-82; blueai/profile.jsx:69-84; blueai/byok.jsx:76-89; blueai/worker_day_done.jsx:142`
+- **V2:** `blueai/shared.jsx:57-82; blueai/profile.jsx:69-84; blueai/byok.jsx:76-89; blueai/worker_day_done.jsx:129`
 - **Today:** Seven overlay builds, seven scrims, five widths, z tie at 120, no focus management.
 - **Recommended:** One Dialog and one Sheet on one scrim and the named z-scale, with role, focus in, trap, return and a busy state.
 - **Why:** Keyboard users act on content under the scrim; each dialog looks like another product.
@@ -213,14 +213,14 @@
 
 #### R28 worker (effort S)
 
-- **V2:** `blueai/worker_day_done.jsx:132-151`
+- **V2:** `blueai/worker_day_done.jsx:119-138`
 - **Today:** V2 adopted the minimal popup on 2026-10-14 (one tick, title, one status line, Got it): the count is said once, no confetti, no ring, money in grey. Still open: the 44 badge is verified green while the day is pending.
 - **Recommended:** Keep it minimal; badge in pending treatment (blue tint, one tick) until verified.
 - **Why:** Colour says paid while words say not yet.
 
 #### R29 copy (effort S)
 
-- **V2:** `index.html:329; blueai/worker_day_done.jsx:169`
+- **V2:** `index.html:329; blueai/worker_day_done.jsx:153`
 - **Today:** Kebab Earnings and strip 'Earnings ↗' go to two different URLs.
 - **Recommended:** One EARNINGS_URL constant; one external glyph.
 - **Why:** The partner's money lives behind this link.

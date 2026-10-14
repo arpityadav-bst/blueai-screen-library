@@ -226,7 +226,7 @@
             { part: 'Success', token: '--v2-success / -ink / -tint / -line', value: '#16a34a / #15803d / 8% / 32%; not the site’s 10%: green text on it must pass 4.5:1', ref: ['foundations.status.success-icon', 'foundations.status.active-badge', 'foundations.status.tones-green', 'foundations.status.fb-success', 'foundations.status.onblue-green', 'foundations.status.onblue-green-ink'] },
             { part: 'Danger', token: '--v2-danger-ink / -line / -edge / -tint', value: '#c03a40 / rgba(208,69,74,0.32), the tint’s pale edge / #d0454a, the one strong red stroke: errored fields and checkboxes (4.53:1) / #fdecec', ref: ['foundations.status.final-fail', 'foundations.status.danger-banner', 'foundations.status.tones-red', 'foundations.status.job-failed', 'foundations.status.logout-red'] },
             { part: 'Attention', token: '--v2-attention-ink / -tint / -line', value: '#8a6116 / #fdf6cf / #f3e8a8', ref: ['foundations.status.final-needs', 'foundations.status.tones-amber'] },
-            { part: 'Money in green, retired', token: '--v2-ink', value: '#0b0b0d', ref: ['foundations.status.green-const', 'foundations.status.money-green'] },
+            { part: 'Money in green, retired', token: '--v2-ink', value: '#0b0b0d (V2 retired it too on 2026-10-14)', ref: 'foundations.status.green-const' },
             { part: 'The four maps', token: null, value: 'FINAL_STYLES, TONES, JOB_STATUS, FB_TONES', ref: ['foundations.status.final-styles', 'foundations.status.final-success', 'foundations.status.tones', 'foundations.status.job-status', 'foundations.status.fb-tones'] },
           ]} />
         </G.Part>
