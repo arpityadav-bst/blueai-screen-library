@@ -36,7 +36,7 @@
 
 **Sizes.** One.
 
-**States.** Open down; open up; Esc (closes, focus back to the button); outside click (closes); focus leaving (closes). In V2 today: `?start=worker&v=1`, the mode chip in the composer; `&v=2` with Automatic on, the ribbon's Change (agent_permissions.jsx:113-156).
+**States.** Open down; open up; Esc (closes, focus back to the button); outside click (closes); focus leaving (closes). In V2 today: `?start=worker`, the mode chip in the composer opens it upward, 364 wide, named "Mode for YouTube jobs", one row per mode with a check and its number shortcut; Esc returns focus; an outside click or focus leaving closes it (agent_permissions.jsx:127-188). Its shadow is darker than shadow-1 (the PM's call).
 
 **Props.** `trigger`, `placement`, `align`, `header`, `footnote`, `label`, `open` / `defaultOpen` / `onOpenChange`, `className`, `children`.
 

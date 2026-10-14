@@ -45,7 +45,7 @@
     ['Help', 'Report a problem', 'alert (ink, not red)', 'Opens the Report a problem sheet, filled in from the last run (section 65).', '"Report Issue" only closes the menu; red glyph.', ['shell.topbar.report', 'shell.topbar.warn-red']],
     ['More', 'Notifications', 'bell', 'Pushes Notifications (section 60) over the current tab.', 'Not in V2. "Chat History" sat here; runs now live in Activity and the chat is one thread from Home.', ['shell.topbar.history']],
     ['More', 'Account', 'user', 'Pushes Account (section 64).', '"Profile".', ['shell.topbar.profile']],
-    ['More', 'Earnings', 'earnings + external', 'Opens the Earnings dashboard on the onBlue site: the one Earnings URL.', 'Same label; one of two Earnings URLs.', ['shell.topbar.earnings', 'shell.topbar.earnings-url']],
+    ['More', 'Earnings', 'earnings + external', 'Opens the Earnings dashboard on the onBlue site: the one Earnings URL.', 'Same label; opens the partner dashboard, the one Earnings URL since 2026-10-14.', ['shell.topbar.earnings', 'shell.topbar.earnings-url']],
     ['More', 'Sign out', 'sign-out', 'Asks first, then signs out and pauses the worker.', '"Logout"; the confirm does not sign out.', ['shell.topbar.logout', 'shell.topbar.logout-noop']],
   ];
   function MenuTable() {

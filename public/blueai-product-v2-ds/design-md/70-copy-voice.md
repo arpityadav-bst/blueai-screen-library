@@ -21,7 +21,7 @@
   - Sign in, Sign out: account entry and exit; never Log in, Login, Logout, Log out (the site should align), logging in.
   - AI credits: the daily allowance, sentence case; never tokens, coins, free credits, claim, earn (for credits), balance (say "left today").
   - Earnings: money, opened on the site's dashboard; never income, rewards (the site should align: "Reward" on the program card and its sheet, "its own reward", "its reward is added to your earnings", `onblue/apply.html:1280, 1470, 1434, 1436`), wallet, BCX, a ↗ character (use the external icon).
-  - cash out, Cash out: taking earnings out, which happens on the site's dashboard, from $10 after the period ends (section 01); the app only points there and says the minimum with it. Never withdraw (the site should align: its sheet says "Withdraw", `onblue/apply.html:1445, 1532, 1541`), claim, redeem.
+  - cash out, Cash out: taking earnings out, which happens on the site's dashboard, from $10 with no period lock since 2026-10-14 (section 01); the app only points there and says the minimum with it. Never withdraw (the site should align: its sheet says "Withdraw", `onblue/apply.html:1445, 1532, 1541`), claim, redeem.
   - Program Terms: the agreement; never Terms of Use (unless that document changed), Terms & Conditions.
   - connected account, Disconnect: the accounts BlueAI uses; never Unlink, ID, enrolled or Not enrolled (say "in the program").
   - Try again: the system retry; never Retry. The PM's failed-day ask says 'Retry'; the screens use the RunCard's and WorkerCard's 'Try again' instead, a proposal in section 73, and the AskCard specimen (section 37) keeps 'Retry' as the V2 reference.
@@ -37,7 +37,8 @@
 - **Purpose:** the strings the PM or legal own. Design may restyle them, never rewrite them; changes go to the owner as proposals.
 - **Anatomy (string; owner; where; status):**
   - "I only run a paid job after you say yes to that specific job."; PM; `worker_flow.jsx:67` (kept live by his call, `:18`); live, conflicts with Automatic (R11).
-  - "Today’s run is done.", "No paid job today, but your run counts.", "Day 20 done." / "That’s every day for this month.", "Pending verification", "We check every run within a day. The tick doubles once it’s verified."; PM; `worker_day_done.jsx:91-98`; DRAFT until the PM approves (`:8`).
+  - "Today’s run is done." and "Day 7 of 20. Pending verification" (no full stop); PM; `worker_day_done.jsx:64-66, 94-100`; approved 2026-10-14.
+  - "No paid job today, but your run counts.", "Day 20 done." / "All 20 days done. Pending verification"; PM; `worker_day_done.jsx:67-68, 99`; DRAFT until the PM approves (`:5-6`). (The verification note "We check every run within a day…" left V2 on 2026-10-14.)
   - "Run this to begin" / "Okay"; PM; `moneymaker_home.jsx:36, 154`; live, settled after three rounds.
   - "An AI that turns your social accounts into income."; PM; `moneymaker.jsx:154`; live, decision D3.
   - "Sign in with the same account you applied with.", "Run the BlueAI worker: it finds jobs and runs them for you.", "Sign in to get started"; PM; `moneymaker.jsx:51, 55, 187`; live.
@@ -45,7 +46,7 @@
   - "By continuing, you agree to the Program Terms and acknowledge the Privacy Policy and Cookie Policy."; legal; `terms_sheet.jsx:67-69` (wording rule `:49-53`); legal.
   - "Agree and continue"; PM; `terms_sheet.jsx:71` (`:60`); live.
   - "Run YouTube jobs automatically?" / "I agree, turn on"; PM; `agent_permissions.jsx:186, 191`; live.
-  - "BlueAI will take paid YouTube jobs on its own and like, comment, follow and post from your account. Switch back anytime in Settings."; PM and legal; `agent_permissions.jsx:191-192`; live (V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on); its agreement paragraph is gone). Proposed change, sent to the owners (R51): "BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name." (the ConsentDialog body, section 46): the worker never posts videos, and the comment it does post is not named.
+  - "BlueAI will take YouTube jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime."; PM and legal; `agent_permissions.jsx:203`; live since 2026-10-14 (its agreement paragraph is gone). Proposed change, sent to the owners (R51): "BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name." (the ConsentDialog body, section 46): the worker never posts videos, and the comment it does post is not named.
   - "Always ask" / "Automatic"; PM; `worker_flow.jsx:78`; live.
 - **States:** live, DRAFT, legal.
 - **Do / Don't:** Do quote these exactly in every part marked In V2; send a proposed change to the owner with the reason. Don't fix a typo or a tone in them silently; don't move legal wording between contexts without legal.

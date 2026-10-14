@@ -47,7 +47,7 @@
 - Zero: same size as any value; the Banner above says why. V2 shrinks the figure to 38 (`?start=worker&credits=0`, then the pill).
 - Loading: label stays, figure and context become skeletons, `aria-busy`. New.
 - Replaced (own key): the figure becomes "Running on your own key" with V2's line "No BlueAI credits are consumed while this is on." (index.html:482-485; Preview "Own key: On").
-- Compact: V2's EarningsStrip (`?day=returning`).
+- Compact: none in V2 since 2026-10-14 (the EarningsStrip left with the home strip).
 
 **Props.** `StatCard { label, value (number formats as 2,000), unit, context, action, icon, loading, size = 'display' | 'compact', className }`, plus any Card prop.
 

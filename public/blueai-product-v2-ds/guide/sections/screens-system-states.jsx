@@ -25,9 +25,9 @@
     ['Screen failed', 'A screen’s data did not load; the worker itself is fine.', 'Today’s status, credits, nav', 'Try again; Report a problem', null],
     ['Update ready', 'A new version is downloaded.', 'Unchanged', 'Restart now, or nothing: it installs on the next start', null],
     ['Update required', 'This version can no longer run jobs.', 'Paused chip "Update needed"', 'Update now', null],
-    ['Not in the program', 'Signed in, but this account is not an accepted one (the gate, after the fact).', 'No status, no credits, no nav', 'Switch account (App Player signs out too); a quiet Get help (SITE_FAQ_URL) under it', ['entry-patterns.signin.gate-card', 'entry-patterns.signin.player-too']],
-    ['Program complete', 'Day 20 is verified; the period has not ended.', '"All 20 days done"', 'Earnings, after the period ends', ['entry-patterns.copy.day20', 'entry-patterns.copy.day20-sub']],
-    ['Period ended', 'The program’s period is over (Nov 1); cash out is open only when numbers().cashOutOpen is true; while it is null the line says where to look.', 'Chip Period ended (section 30’s one rule), no credits', 'Earnings', ['entry-patterns.copy.rule', 'entry-patterns.copy.cashout']],
+    ['Not in the program', 'Signed in, but this account is not an accepted one (the gate, after the fact).', 'No status, no credits, no nav', 'Switch account (App Player signs out too); a quiet Get help (SITE_FAQ_URL) under it', 'entry-patterns.signin.gate-card'],
+    ['Program complete', 'Day 20 is verified; the period has not ended.', '"All 20 days done"', 'Earnings (V2 has no period lock since 2026-10-14)', ['entry-patterns.copy.day20', 'entry-patterns.copy.day20-sub']],
+    ['Period ended', 'The program’s period is over (Nov 1); cash out is open only when numbers().cashOutOpen is true; while it is null the line says where to look. No longer matches V2: since 2026-10-14 cash out has no period lock, only the $10 minimum.', 'Chip Period ended (section 30’s one rule), no credits', 'Earnings', ['entry-patterns.copy.rule', 'entry-patterns.copy.cashout']],
     ['Period ended, under $10', 'The period is over and earnings are under the $10 minimum.', 'Chip Period ended (section 30’s one rule), no credits', 'Earnings as the quiet one', ['entry-patterns.copy.cashout']],
     ['Left the program', 'After Leave the program or Delete my data (section 64). While cashOutOpen is null the line is “You need $10 to cash out once the program ends on Nov 1. See your balance on Earnings.”', 'No status, no credits, no nav', 'Earnings; Apply again as the quiet one', null],
     ['Between programs', 'No program is running; the next one has a date.', 'No status, no credits', 'None needed; Earnings as the quiet one', null],
@@ -66,9 +66,9 @@
             { part: 'Empty states', token: 'EmptyState', value: 'dashed ghost, icon 24 ink-3, title 16/600 as the page h1, body 13 ink-3, one primary' },
             { part: 'Update banner', token: 'Banner info, --v2-z-sticky', value: 'sticky under the top bar, action Restart now' },
             { part: 'Busy', token: 'Button loading', value: 'spinner in the button, label kept, aria-busy' },
-            { part: 'Consequence', token: '--v2-text-13, --v2-ink-3', value: 'App Player will be signed out too.', ref: 'entry-patterns.signin.player-too' },
-            { part: 'Program end', token: null, value: 'ends Nov 1; cash out after the period', ref: ['entry-patterns.copy.rule', 'entry-patterns.copy.cashout'] },
-            { part: 'Earnings', token: 'EARNINGS_URL', value: 'the one Earnings URL, opens the site', ref: 'entry-patterns.copy.earnings-arrow' },
+            { part: 'Consequence', token: '--v2-text-13, --v2-ink-3', value: 'App Player will be signed out too. (system copy; V2 dropped the line on 2026-10-13)' },
+            { part: 'Program end', token: null, value: 'ends Nov 1; cash out from $10, no period lock since 2026-10-14', ref: ['entry-patterns.copy.rule', 'entry-patterns.copy.cashout'] },
+            { part: 'Earnings', token: 'EARNINGS_URL', value: 'the one Earnings URL, opens the site', ref: 'worker.earnings.menu-url' },
           ]} />
           <G.DoDont
             do={['Keep the top bar, so the partner knows the app is alive.', 'Say what the state means for today’s run or the 20 days.', 'Offer exactly one next step, as a button.']}

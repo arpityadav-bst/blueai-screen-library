@@ -4,6 +4,17 @@
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
 
+### 2026-10-14: V2 today re-synced to the PM’s 14 Oct design
+
+- Run-complete popup: an outlined green circle with one green tick, “Today’s run is done.” and “Day 7 of 20. Pending verification” (no full stop), then Got it; dialog sm 320 from v2_tokens.jsx; Day 1 shows it too; confetti on Day 20 only. The home strip, the 20-segment bar and the verification note are gone: day-by-day progress lives on the partner dashboard.
+- Modes: one app, YouTube. Always ask / Automatic is picked from the composer’s mode chip, which opens a popover (not a sheet); Automatic asks for consent first; no worker question offers Automatic (the job ask is Yes / Not now). The Automatic ribbon is archived (code kept, not rendered); the per-app switch list, the bottom sheet and the plain ModalOverlay frame are gone; Settings has no Worker card.
+- Answers: chips, and the composer stays open while a question waits (“Or type your answer…”); the Other chip and the docked answer panel are archived.
+- Sign-in: one not-enrolled case; the gate says “Let’s switch accounts” (no pill, no App Player line); option B (Continue as) is gone.
+- The PM now builds from this system’s tokens: blueai/v2_tokens.jsx (window.V2Tokens) mirrors tokens-v2-today.css.
+- Preview panel: the Returning, Change mode from, Card, Own key and Setup question rows and their params are gone. Earnings opens the partner dashboard (../experiments/onblue-vesper/apply.html?creator=in&account=one).
+- Partner dashboard: “Days run” is 20 pills (filled verified, outlined pending) with a Verified / Pending verification legend; cash out has no period lock, only the $10 minimum (“Payment minimum: $10”; disabled with “You need $10 to cash out.”).
+- Docs: refs re-pointed or removed, sections and partials that described the old V2 now say what V2 does; system parts that still assume a period lock (ProgramSummary’s cash-out lines, the period-ended states) are marked for a rewrite.
+
 ### 2026-10-14: Top bar not worker-centric, neutral credits glyph
 
 - Top bar (section 30, Appy): left, the credits as plain text, then a WorkerStatusChip only while the worker is live or needs attention (`HEADER_STATUS`: Running…, Needs you, Didn’t finish); right, New chat (IconButton, `edit`, tooltip), Help, More. Quiet states stay on Home; no brand in the signed-in bar (the title bar carries it).

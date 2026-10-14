@@ -16,7 +16,7 @@
 
 **Sizes.** Not applicable.
 
-**States.** On surface: ink 19.67, ink-2 10.39, ink-3 6.03, ink-4 4.77 (:1). ink-4 on canvas 4.60, on panel 4.69. Everywhere else ink-4 drops under 4.5:1: sunken 4.42, blue tint 4.29, selected 4.06, success tint 4.36, attention tint 4.37, danger tint 4.17, hover wash 4.32, press wash 4.08. So ink-4 sits only on surface, panel or canvas at rest; meta on anything tinted, sunken, selected, hovered or pressed is ink-3 (the menu's hint already does this, kit/overlays.css:114; the type style for it is `.v2-text-caption`, section 04). V2 today: `'Working on it…'` in #94a3b8 (ChatBubbles.ThinkingBubble, any chat run), `'App Player will be signed out too.'` in #9ca3af (the sign-in gate, `?signin=browser&player=other`).
+**States.** On surface: ink 19.67, ink-2 10.39, ink-3 6.03, ink-4 4.77 (:1). ink-4 on canvas 4.60, on panel 4.69. Everywhere else ink-4 drops under 4.5:1: sunken 4.42, blue tint 4.29, selected 4.06, success tint 4.36, attention tint 4.37, danger tint 4.17, hover wash 4.32, press wash 4.08. So ink-4 sits only on surface, panel or canvas at rest; meta on anything tinted, sunken, selected, hovered or pressed is ink-3 (the menu's hint already does this, kit/overlays.css:114; the type style for it is `.v2-text-caption`, section 04). V2 today: `'Working on it…'` in #94a3b8 (ChatBubbles.ThinkingBubble, any chat run).
 
 **Props.** Tokens only. Text styles carry their ink (section 04); override with a token, never a hex.
 

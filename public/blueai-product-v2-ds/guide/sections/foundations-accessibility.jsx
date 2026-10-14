@@ -12,7 +12,6 @@
   // V2 pairs that fail, each quoted from its line.
   const V2_PAIRS = [
     ['#94a3b8', '#ffffff', "'Working on it…'", 'foundations.ink.thinking', '--v2-ink-4', '--v2-surface'],
-    ['#9ca3af', '#ffffff', "'App Player will be signed out too.' (a consequence)", 'foundations.ink.gate-caveat', '--v2-ink-3', '--v2-surface'],
     ['#60a5fa', '#eef5ff', "'PLAN' eyebrow", ['foundations.type.eyebrow', 'foundations.a11y.plan-card-bg'], '--v2-ink-3', '--v2-surface'],
     ['#f59e0b', '#ffffff', 'amber sign-in link', 'foundations.a11y.amber-link', '--v2-ink', '--v2-surface'],
     ['#ffffff', '#1990FF', 'every primary button label', 'foundations.blue.new-chat', '--v2-on-color', '--v2-action'],
@@ -101,7 +100,7 @@
             </table>
           </div>
           <G.SpecDrawer rows={[
-            { part: 'Consent and money controls', token: '--v2-hit-min', value: '32px minimum (V2 21 to 22px)', ref: ['foundations.a11y.okay-21', 'foundations.a11y.change-21', 'foundations.a11y.info-22'] },
+            { part: 'Consent and money controls', token: '--v2-hit-min', value: '32px minimum (V2 21 to 22px)', ref: ['foundations.a11y.okay-21', 'foundations.a11y.info-22'] },
             { part: 'Default control', token: '--v2-control-md', value: '36px' },
             { part: 'Menus', token: null, value: 'aria-haspopup, aria-expanded, arrows, Esc, focus return (V2: mousedown only)', ref: 'foundations.a11y.menu-mousedown' },
             { part: 'Reduced motion', token: null, value: 'see section 07' },

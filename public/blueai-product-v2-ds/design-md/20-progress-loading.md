@@ -13,7 +13,7 @@
 2. Rail: `--v2-surface-sunken`, pill radius, 6 tall (4 inline).
 3. Fill: `--v2-blue`, width eases over `--v2-dur-3` `--v2-ease-out`.
 
-**Variants.** Determinate. Indeterminate: a 40% segment slides across (`.v2-anim-indet`; V2's own idea, product-scene.css:110-116, at 38%). Success tone for a goal (the site's program bar, onblue/apply.html:575, in `--v2-success`).
+**Variants.** Determinate. Indeterminate: a 40% segment slides across (`.v2-anim-indet`; V2's own idea, product-scene.css:110-116, at 38%). Success tone for a goal (the site's program bar, 20 pills since 2026-10-14, onblue/apply.html:582-584, in `--v2-success`).
 
 **Sizes.** 6 (cards, notices), 4 (inline).
 

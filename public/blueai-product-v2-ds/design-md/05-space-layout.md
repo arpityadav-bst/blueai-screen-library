@@ -14,7 +14,7 @@
 
 **Sizes.** As above.
 
-**States.** Not applicable. V2 today: the user bubble pads '11px 14px 8px' (chat_bubbles.jsx:30), the progress strip '12px 15px 11px' (worker_day_done.jsx:176), two settings cards 16 and 18 (settings.jsx:25, 112); reach with `?day=returning`.
+**States.** Not applicable. V2 today: the user bubble pads '11px 14px 8px' (chat_bubbles.jsx:30), two settings cards 16 and 18 (Settings tab); the progress strip's '12px 15px 11px' left with the strip on 2026-10-14.
 
 **Props.** Tokens and utilities only.
 

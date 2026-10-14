@@ -36,7 +36,7 @@
 
 **Sizes.** Not applicable.
 
-**States.** Pass (AA), large only, fails. Rules it enforces: ink-4 is meta only, and only on surface, panel or canvas at rest (it drops under 4.5:1 on sunken 4.42, every tint 4.17 to 4.37, selected 4.06, and the hover and press washes 4.32 and 4.08; section 03); placeholder is never text that must be read (2.57:1); status inks go on their own tint or white; white labels go on action (4.92:1), never on brand blue (4.47:1). Field and composer edges stay `--v2-line-strong` (1.41:1): the visible label names the field, and focus turns the edge blue with a ring, so the edge is not the only cue. This is an exception to 3:1 non-text; Switch and Checkbox edges use ink-4. V2 pairs that fail: #94a3b8 'Working on it…' 2.56:1, #9ca3af 'App Player will be signed out too.' 2.54:1, #60a5fa 'PLAN' eyebrow, #f59e0b link 2.15:1, white on #1990FF 3.24:1, white on #ef4444 3.76:1.
+**States.** Pass (AA), large only, fails. Rules it enforces: ink-4 is meta only, and only on surface, panel or canvas at rest (it drops under 4.5:1 on sunken 4.42, every tint 4.17 to 4.37, selected 4.06, and the hover and press washes 4.32 and 4.08; section 03); placeholder is never text that must be read (2.57:1); status inks go on their own tint or white; white labels go on action (4.92:1), never on brand blue (4.47:1). Field and composer edges stay `--v2-line-strong` (1.41:1): the visible label names the field, and focus turns the edge blue with a ring, so the edge is not the only cue. This is an exception to 3:1 non-text; Switch and Checkbox edges use ink-4. V2 pairs that fail: #94a3b8 'Working on it…' 2.56:1, #60a5fa 'PLAN' eyebrow, #f59e0b link 2.15:1, white on #1990FF 3.24:1, white on #ef4444 3.76:1.
 
 **Props.** Not applicable.
 
@@ -65,7 +65,7 @@
 
 **Sizes.** 24, 32, 36, 44.
 
-**States.** V2 today: the coach 'Okay' about 21px (moneymaker_home.jsx:57, `?start=worker` first run), the ribbon's 'Change' about 21px (agent_permissions.jsx:212), the info button 22px (credits_popup_parts.jsx:95, `?credits=0`).
+**States.** V2 today: the coach 'Okay' about 21px (moneymaker_home.jsx:57, `?start=worker` first run), the info button 22px (credits_popup_parts.jsx:95, `?credits=0`).
 
 **Props.** Overlay parts own their focus management (sections 25 to 27); the kit's IconButton requires `label`.
 

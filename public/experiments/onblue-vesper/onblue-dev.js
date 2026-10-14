@@ -29,6 +29,19 @@
   var dash = document.getElementById('dash');
   if (!gate && !dash) { return; }
 
+  /* A LINK CAN SET THE CREATOR SWITCHES (Abhisht's copy, 2026-10-14). The BlueAI app's Earnings
+     link opens this page with ?creator=in&account=one, so it lands on the approved dashboard with
+     one program instead of the application. Written to the same keys the bars below read, so the
+     bars and the page agree; an unknown value is ignored. */
+  try {
+    var q = new URLSearchParams(window.location.search);
+    [['creator', 'onblue:dev-creator', ['apply', 'in']],
+     ['account', 'onblue:dev-cr-account', ['empty', 'one']]].forEach(function (k) {
+      var v = q.get(k[0]);
+      if (v && k[2].indexOf(v) > -1) { window.localStorage.setItem(k[1], v); }
+    });
+  } catch (e) { /* private window: the bars fall back to their defaults */ }
+
   var css = document.createElement('style');
   css.textContent = [
     /* THE DOCK IS FIXED, THE BARS ARE NOT. Two bars each positioning itself
@@ -153,20 +166,13 @@
                { id: 'one', name: dash.getAttribute('data-one') || 'One program' }],
       apply: function (on) { if (window.onblueAccount) { window.onblueAccount(on); } }
     });
-    /* the cash-out minimum's second axis: Cash out opens only once the program
-       period has ended, so the closed and open states need both answers */
-    var period = build({
-      label: 'Period', store: 'onblue:dev-cr-period',
-      states: [{ id: 'running', name: 'Running' }, { id: 'ended', name: 'Ended' }],
-      apply: function (on) { if (window.onbluePeriod) { window.onbluePeriod(on === 'ended'); } }
-    });
-    document.body.appendChild(dock([period, account, build({
+    /* (The Period switch went with the cash-out period lock, 2026-10-14.) */
+    document.body.appendChild(dock([account, build({
       label: 'Creator', store: 'onblue:dev-creator', initial: 'apply',
       states: [{ id: 'apply', name: 'Application' },
                { id: 'in', name: 'Approved' }],
       apply: function (on) {
         account.hidden = on !== 'in';
-        period.hidden = on !== 'in';
         if (window.onblueApproved) { window.onblueApproved(on === 'in'); }
       }
     })]));

@@ -1,11 +1,12 @@
 // BlueAI: the in-app gate (ROB-21388): the app signed in, silently or through the browser, with
 // an account that isn't the accepted one. Exports: window.AccountGate = { GateCard }
 //
-// Rendered by login.jsx as a step of the sign-in modal, inside its card. Minimal on purpose
-// (Abhisht, 2026-10-07): the account, where it came from, the pill, the one way out. No Apply
-// button: the download link only goes to accepted people, so "not enrolled" always means "wrong
-// account". Switch account signs the shared session out, which signs App Player out too, and the
-// browser opens (signin_page.jsx).
+// Rendered by login.jsx as a step of the sign-in modal, inside its card. Minimal on purpose:
+// the account, what is wrong, the one way out. No Apply button: the download link only goes to
+// accepted people, so "not enrolled" always means "wrong account". Switch account signs the
+// shared session out and the browser opens (signin_page.jsx); the site still holds its own
+// session, so it shows that account first ("Continue as" / "Not you?"). The check runs after
+// every sign-in, so a second wrong pick lands here again.
 
 (function () {
   const BTN = 'transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease';
@@ -14,21 +15,38 @@
     onMouseLeave: (e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.filter = ''; e.currentTarget.style.boxShadow = '0 2px 8px rgba(25,144,255,0.3)'; }
   };
 
-  function GateCard({ account, fromPlayer, onSwitch }) {
+  /* Abhisht, 2026-10-13: one case, wherever the account came from (App Player or the browser).
+     No pill, no App Player lines. Second pass the same day ("doesn't look user friendly"): a
+     soft switch-account icon instead of the bare black initial, a warm title that names the fix,
+     one plain sentence on what went wrong and what to do, and the signed-in account as a
+     recognisable row (avatar, name, email) instead of an address buried in a sentence. Copy is
+     a draft. */
+  function GateCard({ account, onSwitch }) {
     return (
       <>
-        <span style={{ width: 56, height: 56, borderRadius: '50%', background: account.hue, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 600 }}>{account.name[0]}</span>
+        <span style={{ width: 64, height: 64, borderRadius: '50%', background: '#eaf3ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1990FF" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5" />
+            <path d="M15 5.5h6M19 3.5l2 2-2 2" /><path d="M21 11h-6M17 9l-2 2 2 2" />
+          </svg>
+        </span>
         <div>
-          <p style={{ fontSize: 13, color: '#6b7280' }}>Signed in as</p>
-          <p style={{ marginTop: 2, fontSize: 16, fontWeight: 700, color: '#111827' }}>{account.email}</p>
-          {fromPlayer && <p style={{ marginTop: 4, fontSize: 13, color: '#6b7280' }}>from App Player on this PC</p>}
+          <p style={{ fontSize: 17, fontWeight: 700, color: '#111827', lineHeight: 1.35 }}>Let’s switch accounts</p>
+          <p style={{ marginTop: 8, fontSize: 13.5, color: '#6b7280', lineHeight: 1.55, textWrap: 'balance' }}>
+            We couldn’t find your application on this account. Sign in with the account you applied with.
+          </p>
         </div>
-        <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#64748b', background: '#f1f5f9', borderRadius: 999, padding: '5px 10px' }}>Not enrolled</span>
+        <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', border: '1px solid #e5e7eb', borderRadius: 12, background: '#f8fafc', textAlign: 'left', boxSizing: 'border-box' }}>
+          <span style={{ width: 34, height: 34, borderRadius: '50%', flexShrink: 0, background: account.hue, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700 }}>{account.name[0]}</span>
+          <span style={{ minWidth: 0 }}>
+            <span style={{ display: 'block', fontSize: 14, fontWeight: 700, color: '#111827' }}>{account.name}</span>
+            <span style={{ display: 'block', fontSize: 12.5, color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{account.email}</span>
+          </span>
+        </div>
         <button type="button" onClick={onSwitch} {...lift}
           style={{ background: '#1990FF', border: 'none', borderRadius: 999, padding: '10px 24px', fontSize: 14, fontWeight: 600, color: 'white', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 2px 8px rgba(25,144,255,0.3)', transition: BTN }}>
           Switch account
         </button>
-        <p style={{ fontSize: 12.5, color: '#9ca3af' }}>App Player will be signed out too.</p>
       </>
     );
   }

@@ -211,7 +211,7 @@ The system reads these from one Worker record (section 41), never from a second 
 |---|---|---|
 | Program | 20 days, ends Nov 1, $1 per verified day, $10 day-20 bonus | `worker_day_done.jsx:38` |
 | Money rule note | $1 credited at the end of each successful day (under review) | `worker_day_done.jsx:5` |
-| Cash out | From $10, after the period ends; under $10 the balance carries over (the site's dashboard says the same: "Payment minimum: $10") | `worker_day_done.jsx:6`; `onblue/apply.html:1360, 2292-2293` |
+| Cash out | From $10, with no period lock since 2026-10-14: the site's one rule is "Payment minimum: $10"; under it, Cash out is disabled with "You need $10 to cash out." | `onblue/apply.html:1371, 2317` |
 | The site's program | At least 20 days each month to earn $30 | `onblue/apply.html:1285` |
 | AI credits | 2,000 granted every day | `index.html:730` |
 | Modes | Always ask and Automatic, per app | `blueai/worker_flow.jsx:78` |
@@ -246,7 +246,7 @@ The money model is decision D3: the app's $1 a day plus a $10 bonus, or the site
 ### P4 Every promise has a control
 
 - **Rule:** 'Pause, stop, or disconnect anytime' and 'turn it off anytime' each map to a findable control in Settings > Worker and Connected apps, reachable from the home in two taps.
-- **Why:** The promises exist in live copy (worker_flow.jsx:67, agent_permissions.jsx:188) but only one has a screen: since 2026-10-14 Settings has a Worker card that turns Automatic off (settings.jsx:11-20); pause, stop and disconnect have none (settings.jsx:144-159).
+- **Why:** The promises exist in live copy (worker_flow.jsx:67, agent_permissions.jsx:188) but none has a screen in Settings: since 2026-10-14 Automatic is turned off only from the composer's mode chip in an open chat (Settings' Worker card was removed the same day); pause, stop and disconnect have nothing (settings.jsx:132).
 - **Prevents:** Consent that cannot be withdrawn.
 
 ### P5 Quiet by default
@@ -336,7 +336,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Sizes.** Not applicable.
 
-**States.** On surface: ink 19.67, ink-2 10.39, ink-3 6.03, ink-4 4.77 (:1). ink-4 on canvas 4.60, on panel 4.69. Everywhere else ink-4 drops under 4.5:1: sunken 4.42, blue tint 4.29, selected 4.06, success tint 4.36, attention tint 4.37, danger tint 4.17, hover wash 4.32, press wash 4.08. So ink-4 sits only on surface, panel or canvas at rest; meta on anything tinted, sunken, selected, hovered or pressed is ink-3 (the menu's hint already does this, kit/overlays.css:114; the type style for it is `.v2-text-caption`, section 04). V2 today: `'Working on it…'` in #94a3b8 (ChatBubbles.ThinkingBubble, any chat run), `'App Player will be signed out too.'` in #9ca3af (the sign-in gate, `?signin=browser&player=other`).
+**States.** On surface: ink 19.67, ink-2 10.39, ink-3 6.03, ink-4 4.77 (:1). ink-4 on canvas 4.60, on panel 4.69. Everywhere else ink-4 drops under 4.5:1: sunken 4.42, blue tint 4.29, selected 4.06, success tint 4.36, attention tint 4.37, danger tint 4.17, hover wash 4.32, press wash 4.08. So ink-4 sits only on surface, panel or canvas at rest; meta on anything tinted, sunken, selected, hovered or pressed is ink-3 (the menu's hint already does this, kit/overlays.css:114; the type style for it is `.v2-text-caption`, section 04). V2 today: `'Working on it…'` in #94a3b8 (ChatBubbles.ThinkingBubble, any chat run).
 
 **Props.** Tokens only. Text styles carry their ink (section 04); override with a token, never a hex.
 
@@ -521,7 +521,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Sizes.** 40, 20, and body size inside notes.
 
-**States.** Credits balance (V2: 54/800 gradient, 38/800 at zero, index.html:527, byok.jsx:51; reach with `?credits=0`). "7 of 20 days" (V2: the home strip's "Day 6 of 20" 13.5/800 ink, worker_day_done.jsx:152, reach with `?day=returning`; the popup's 22/800 green count went with its minimal popup, 2026-10-14). "$6 earned" (V2: 600 muted grey after the day count since 2026-10-14, 13.5/800 green before, worker_day_done.jsx:152; reach with `?day=returning&card=money`).
+**States.** Credits balance (V2: 54/800 gradient, 38/800 at zero, index.html:527, byok.jsx:51; reach with `?credits=0`). "7 of 20 days" (V2: the popup's status line "Day 7 of 20. Pending verification" 13.5 ink-2, worker_day_done.jsx:130, reach with `?end=job`; the home strip left V2 on 2026-10-14). "$6 earned" (V2 shows no money in the app since 2026-10-14).
 
 **Props.** Classes only; format with `toLocaleString('en-US')`.
 
@@ -549,7 +549,7 @@ Shared means the same value as the site; adapted means the same idea tuned for a
 
 **Sizes.** As above.
 
-**States.** Not applicable. V2 today: the user bubble pads '11px 14px 8px' (chat_bubbles.jsx:30), the progress strip '12px 15px 11px' (worker_day_done.jsx:176), two settings cards 16 and 18 (settings.jsx:25, 112); reach with `?day=returning`.
+**States.** Not applicable. V2 today: the user bubble pads '11px 14px 8px' (chat_bubbles.jsx:30), two settings cards 16 and 18 (Settings tab); the progress strip's '12px 15px 11px' left with the strip on 2026-10-14.
 
 **Props.** Tokens and utilities only.
 
@@ -592,7 +592,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Why:** The product should feel like the site's quiet working screen: one button shape, hairlines instead of shadows, one veil. V2 has twenty radii in live code (buttons alone 8, 9, 10, 20, 40 and 999, two of them on the same settings screen), 154 shadow declarations from 55 recipes with 15 coloured glows, seven scrim recipes, and two dialogs tied at z-index 120. Fewer, named steps make every surface say how far it sits from the page (P5, P6).
 
-**V3 restyle (2026-10-14).** Decisions: one dialog radius, `--v2-radius-dialog` 20, for every dialog and the sheet's top edge (Appy's consent decision, kept over the brief's 14/16: the run-complete moment and the mode sheet already share it); cards stay 16. Rows keep `--v2-radius-md` 10: the brief's 6/16/999 scale covers controls, cards and pills, and 10 is the one inset step the system keeps (no 7/9/11/12/14). A bottom sheet casts upward (`--v2-shadow-2-up`) and sits on the light veil (`--v2-scrim-light`, 0.24), so the consent that opens over the mode sheet stacks to about one veil. The solid button keeps the site's three-stop cast (`--v2-shadow-btn`), the one in-flow cast: it says "this commits". Every other in-flow surface is a 1px line with no shadow.
+**V3 restyle (2026-10-14).** Decisions: one dialog radius, `--v2-radius-dialog` 20, for every dialog and the sheet's top edge (Appy's consent decision, kept over the brief's 14/16); cards stay 16. Rows keep `--v2-radius-md` 10: the brief's 6/16/999 scale covers controls, cards and pills, and 10 is the one inset step the system keeps (no 7/9/11/12/14). A bottom sheet casts upward (`--v2-shadow-2-up`) and sits on the light veil (`--v2-scrim-light`, 0.24), so a dialog that opens over a sheet stacks to about one veil. The solid button keeps the site's three-stop cast (`--v2-shadow-btn`), the one in-flow cast: it says "this commits". Every other in-flow surface is a 1px line with no shadow.
 
 ### Radius ladder (Changed from V2)
 
@@ -800,7 +800,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Sizes.** Not applicable.
 
-**States.** Pass (AA), large only, fails. Rules it enforces: ink-4 is meta only, and only on surface, panel or canvas at rest (it drops under 4.5:1 on sunken 4.42, every tint 4.17 to 4.37, selected 4.06, and the hover and press washes 4.32 and 4.08; section 03); placeholder is never text that must be read (2.57:1); status inks go on their own tint or white; white labels go on action (4.92:1), never on brand blue (4.47:1). Field and composer edges stay `--v2-line-strong` (1.41:1): the visible label names the field, and focus turns the edge blue with a ring, so the edge is not the only cue. This is an exception to 3:1 non-text; Switch and Checkbox edges use ink-4. V2 pairs that fail: #94a3b8 'Working on it…' 2.56:1, #9ca3af 'App Player will be signed out too.' 2.54:1, #60a5fa 'PLAN' eyebrow, #f59e0b link 2.15:1, white on #1990FF 3.24:1, white on #ef4444 3.76:1.
+**States.** Pass (AA), large only, fails. Rules it enforces: ink-4 is meta only, and only on surface, panel or canvas at rest (it drops under 4.5:1 on sunken 4.42, every tint 4.17 to 4.37, selected 4.06, and the hover and press washes 4.32 and 4.08; section 03); placeholder is never text that must be read (2.57:1); status inks go on their own tint or white; white labels go on action (4.92:1), never on brand blue (4.47:1). Field and composer edges stay `--v2-line-strong` (1.41:1): the visible label names the field, and focus turns the edge blue with a ring, so the edge is not the only cue. This is an exception to 3:1 non-text; Switch and Checkbox edges use ink-4. V2 pairs that fail: #94a3b8 'Working on it…' 2.56:1, #60a5fa 'PLAN' eyebrow, #f59e0b link 2.15:1, white on #1990FF 3.24:1, white on #ef4444 3.76:1.
 
 **Props.** Not applicable.
 
@@ -829,7 +829,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Sizes.** 24, 32, 36, 44.
 
-**States.** V2 today: the coach 'Okay' about 21px (moneymaker_home.jsx:57, `?start=worker` first run), the ribbon's 'Change' about 21px (agent_permissions.jsx:212), the info button 22px (credits_popup_parts.jsx:95, `?credits=0`).
+**States.** V2 today: the coach 'Okay' about 21px (moneymaker_home.jsx:57, `?start=worker` first run), the info button 22px (credits_popup_parts.jsx:95, `?credits=0`).
 
 **Props.** Overlay parts own their focus management (sections 25 to 27); the kit's IconButton requires `label`.
 
@@ -889,7 +889,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Sizes.** sm 28 (`--v2-control-sm`) for dense rows; md 36 (`--v2-control-md`) default; lg 44 (`--v2-control-lg`) for full-width sheet and dialog actions (`full`). sm grows an invisible ::after to the 32px hit floor.
 
-**States.** Rest; hover; focus-visible (2px `--v2-blue` outline, offset 2); active (translateY 1px, 2px on the solid; secondary and danger press to `--v2-surface-press`, quiet to `--v2-wash-press`); disabled (0.45, `aria-disabled`, still focusable, reason printed); loading (`aria-busy`, spinner, clicks ignored, cursor progress). In V2 today: New Chat at `?start=worker` (index.html:351); Save settings on the Settings tab (settings.jsx:138); Cancel and I agree, turn on in the Automatic consent (agent_permissions.jsx:190-191, open the mode sheet at `?start=worker&v=1` and switch YouTube on); Got it on the day-done card (worker_day_done.jsx:148, `?end=job`) and the out-of-credits card (byok.jsx:26, `?credits=0` then send); Apply disabled at 0.45 with no reason (ai_mode.jsx:190, Settings, AI Mode, Hybrid, Custom).
+**States.** Rest; hover; focus-visible (2px `--v2-blue` outline, offset 2); active (translateY 1px, 2px on the solid; secondary and danger press to `--v2-surface-press`, quiet to `--v2-wash-press`); disabled (0.45, `aria-disabled`, still focusable, reason printed); loading (`aria-busy`, spinner, clicks ignored, cursor progress). In V2 today: New Chat at `?start=worker` (index.html:351); Save settings on the Settings tab (settings.jsx:138); Cancel and I agree, turn on in the Automatic consent (agent_permissions.jsx:205-208, open the mode chip at `?start=worker` and pick Automatic); Got it on the day-done card (worker_day_done.jsx:131, `?end=job`, the system's 44px primary on #1990FF since 2026-10-14) and the out-of-credits card (byok.jsx:26, `?credits=0` then send); Apply disabled at 0.45 with no reason (ai_mode.jsx:190, Settings, AI Mode, Hybrid, Custom).
 
 **Props.** `variant` ('primary' | 'secondary' | 'quiet' | 'danger' | 'destructive', default 'secondary'), `size` ('sm' | 'md' | 'lg'), `icon`, `iconRight` (icon names, section 08), `loading`, `disabled`, `disabledReason` (string printed under it), `full`, `type` ('button'), `onClick`, `href` (renders an a), `external` (new tab, external glyph, "opens in a new tab" for screen readers), `className`, `children`.
 
@@ -955,7 +955,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Sizes.** Inherits; standalone 13.
 
-**States.** Rest; hover (blue-ink, underline in the same colour); focus-visible; external. In V2 today: Learn more at 12.5/600 #1990FF with a typed arrow (credits_popup_parts.jsx:110, the (i) on the AI Credits screen); Earnings at 11.5/700 #1990FF with a typed arrow (worker_day_done.jsx:184, the home strip at `?day=returning`); Switch account at 600 #1990FF (account_gate.jsx:58, `?signin=browser&player=other`). All 3.24:1, none underlined.
+**States.** Rest; hover (blue-ink, underline in the same colour); focus-visible; external. In V2 today: Learn more at 12.5/600 #1990FF with a typed arrow (credits_popup_parts.jsx:110, the (i) on the AI Credits screen); Switch account at 600 #1990FF (account_gate.jsx:58, `?signin=browser&player=other`). All 3.24:1, none underlined.
 
 **Props.** `href`, `external`, `tone` ('ink' | 'muted'), `standalone`, `onClick`, `children`.
 
@@ -1155,7 +1155,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Sizes.** md 32, sm 28 (with an invisible 32 target).
 
-**States.** Rest; hover (wash + ink); selected; focus-visible; disabled (0.45; say why beside it); gated (`beforeChange` is waiting: the target segment shows a dashed select-line edge, the group is `aria-busy`, the selection does not move until the answer). In V2 today: none since 2026-10-14; the composer chip at `?start=worker&v=1` opens a sheet with one switch per app (agent_permissions.jsx:98-116).
+**States.** Rest; hover (wash + ink); selected; focus-visible; disabled (0.45; say why beside it); gated (`beforeChange` is waiting: the target segment shows a dashed select-line edge, the group is `aria-busy`, the selection does not move until the answer). In V2 today: none; the composer's mode chip at `?start=worker` opens a popover with one row per mode for YouTube (agent_permissions.jsx:93-125).
 
 **Props.** `options` ([{value, label, icon, disabled}]), `value`, `onChange(value)`, `ariaLabel`, `beforeChange(value)` (return true, or a promise of true, to let the change through), `size`, `disabled`, `className`.
 
@@ -1171,7 +1171,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Status:** Chip: Changed from V2.
 
-**Why:** The worker asks and the partner answers with a tap (Yes, Not now, Just this job), says what went wrong with a tap (Wrong result), and will filter Activity with a tap. V2 draws three chip looks for that: a 1.5px blue outline with #1990FF text at 3.24:1, a dark #334155 selected reason, and a grey back pill, with a hover that lifts but never changes colour (worker_cards.jsx:58; chat_feedback.jsx:77-84; index.html:100-101). One chip with the family's chosen look keeps blue meaning "chosen" and every label legible (P2, P5, P7).
+**Why:** The worker asks and the partner answers with a tap (Yes, Not now), says what went wrong with a tap (Wrong result), and will filter Activity with a tap. V2's reply chips adopted this Chip on 2026-10-14 (worker_cards.jsx:53); it still draws two other looks: a dark #334155 selected reason and a grey back pill, with a hover that lifts but never changes colour (chat_feedback.jsx:77-84; index.html:100-101). One chip with the family's chosen look keeps blue meaning "chosen" and every label legible (P2, P5, P7).
 
 **V3 restyle (2026-10-14).** Chips rest on the 2% navy wash (`--v2-wash-tint` over the surface) with a 10% line and ink-2 labels; hover is the wash plus a 20% line and ink; selected is `--v2-select` with `--v2-select-line`. Decision: chip and pill geometry (height, padding) stays in the Chip rule, not tokens: it belongs to one part (the tokens header rule).
 
@@ -1201,7 +1201,7 @@ A new screen picks the first unless it is a settings-style list of sections that
 
 **Status:** Changed from V2.
 
-**Why:** The money depends on a day's state (pending verification, verified, not counted), so that state needs one unmistakable label on every row and card. V2 has five pill systems for it: the AI Mode status chip (12/600, ai_mode.jsx:38), the Jobs badge (radius 4 with a line, jobs.jsx:31), "Active" (10/700 uppercase, index.html:483), "Verified" (11.5/700, profile.jsx:50) and "Not enrolled" (11/600 uppercase at 0.12em, account_gate.jsx:26). One Badge replaces all five.
+**Why:** The money depends on a day's state (pending verification, verified, not counted), so that state needs one unmistakable label on every row and card. V2 has four pill systems for it: the AI Mode status chip (12/600, ai_mode.jsx:38), the Jobs badge (radius 4 with a line, jobs.jsx:31), "Active" (10/700 uppercase, index.html:483) and "Verified" (11.5/700, profile.jsx:50); the gate's "Not enrolled" pill left on 2026-10-13. One Badge replaces all four.
 
 **V3 restyle (2026-10-14).** The status pill has five tones: neutral, busy, ok (success), danger, attention. Busy (a neutral or info badge with `busy`) is work in progress, so it is blue: `--v2-select` fill, `--v2-blue-ink` label, a pulsing `--v2-blue` dot.
 
@@ -1227,7 +1227,7 @@ Plus: no mark, dot, icon, busy dot.
 **Sizes.** One: 22 tall. Width hugs the label.
 
 **States.**
-- Static: every tone. In V2: Profile (Kebab > Profile, "Verified"), the gate (`?cases=signin&case=2`, "Not enrolled"), Settings > AI Mode > Hybrid > Auto (status chip), Preview "Own key: On" then the credits pill ("Active").
+- Static: every tone. In V2: Profile (Kebab > Profile, "Verified"), Settings > AI Mode > Hybrid > Auto (status chip), Preview "Own key: On" then the credits pill ("Active").
 - Busy: the dot pulses (`.v2-anim-pulse`, `--v2-dur-pulse`) while the thing is working. In V2: the status chip while downloading (ai_mode.jsx:39).
 - Reduced motion: the dot holds still (global rule in kit/motion.css).
 
@@ -1245,7 +1245,7 @@ Plus: no mark, dot, icon, busy dot.
 
 **Status:** Changed from V2.
 
-**Why:** The partner signs in with the account they applied with, and BlueAI acts on their own YouTube account. Who is signed in, and which account a connected app is, must be plain at a glance. V2's Profile puts a 92px bat emoji on a green disc over a gradient banner where that identity goes (profile.jsx:31-34); the sign-in gate already does it right with an initial on the account's hue (account_gate.jsx:20, 51). The system keeps the gate's idea.
+**Why:** The partner signs in with the account they applied with, and BlueAI acts on their own YouTube account. Who is signed in, and which account a connected app is, must be plain at a glance. V2's Profile puts a 92px bat emoji on a green disc over a gradient banner where that identity goes (profile.jsx:31-34); the sign-in gate already does it right with an initial on the account's hue (account_gate.jsx:40). The system keeps the gate's idea.
 
 ### Avatar (Changed from V2)
 
@@ -1268,7 +1268,7 @@ Plus: no mark, dot, icon, busy dot.
 - Photo failed: falls back to the initials, no broken image. New.
 - Loading: a skeleton circle the same size. New.
 - Status: connected, needs you, signed out. New (Connected apps, section 63).
-- In V2 today: Kebab > Profile (emoji avatar); `?cases=signin&case=2` (56px initial on the gate).
+- In V2 today: Kebab > Profile (emoji avatar); `?cases=signin&case=player` (a 34px initial in the gate's account row).
 
 **Props.** `Avatar { name, id, src, size = 24 | 32 | 40 | 56 (default 32), app = 'youtube' | 'instagram' | 'telegram', status = 'success' | 'attention' | 'danger' | 'neutral', statusLabel, loading, decorative, className }`. `id` picks the hue (falls back to `name`). With `app`, `name` is ignored.
 
@@ -1370,7 +1370,7 @@ Plus: no mark, dot, icon, busy dot.
 - Zero: same size as any value; the Banner above says why. V2 shrinks the figure to 38 (`?start=worker&credits=0`, then the pill).
 - Loading: label stays, figure and context become skeletons, `aria-busy`. New.
 - Replaced (own key): the figure becomes "Running on your own key" with V2's line "No BlueAI credits are consumed while this is on." (index.html:482-485; Preview "Own key: On").
-- Compact: V2's EarningsStrip (`?day=returning`).
+- Compact: none in V2 since 2026-10-14 (the EarningsStrip left with the home strip).
 
 **Props.** `StatCard { label, value (number formats as 2,000), unit, context, action, icon, loading, size = 'display' | 'compact', className }`, plus any Card prop.
 
@@ -1397,7 +1397,7 @@ Plus: no mark, dot, icon, busy dot.
 2. Rail: `--v2-surface-sunken`, pill radius, 6 tall (4 inline).
 3. Fill: `--v2-blue`, width eases over `--v2-dur-3` `--v2-ease-out`.
 
-**Variants.** Determinate. Indeterminate: a 40% segment slides across (`.v2-anim-indet`; V2's own idea, product-scene.css:110-116, at 38%). Success tone for a goal (the site's program bar, onblue/apply.html:575, in `--v2-success`).
+**Variants.** Determinate. Indeterminate: a 40% segment slides across (`.v2-anim-indet`; V2's own idea, product-scene.css:110-116, at 38%). Success tone for a goal (the site's program bar, 20 pills since 2026-10-14, onblue/apply.html:582-584, in `--v2-success`).
 
 **Sizes.** 6 (cards, notices), 4 (inline).
 
@@ -1474,7 +1474,7 @@ Plus: no mark, dot, icon, busy dot.
 
 **Status:** Changed from V2.
 
-**Why:** Some conditions decide whether today counts: out of AI credits, offline, App Player signed out, Automatic on. The partner has to see them above what they affect, said the same way every time. V2 has five banners in two blues, two ambers and two reds: an edgeless InfoBanner (ai_mode.jsx:71-78), a centred out-of-credits block at radius 14 (index.html:508-519), a second amber for BYOK (byok_settings.jsx:109), a sign-in notice at radius 12 (login.jsx:235), and the one-line Automatic ribbon (agent_permissions.jsx:203-216). None can be dismissed, none has an offline tone.
+**Why:** Some conditions decide whether today counts: out of AI credits, offline, App Player signed out, Automatic on. The partner has to see them above what they affect, said the same way every time. V2 has five banners in two blues, two ambers and two reds: an edgeless InfoBanner (ai_mode.jsx:71-78), a centred out-of-credits block at radius 14 (index.html:508-519), a second amber for BYOK (byok_settings.jsx:109), and a sign-in notice at radius 12 (login.jsx:235); the one-line Automatic ribbon is archived since 2026-10-14 (agent_permissions.jsx:16-18). None can be dismissed, none has an offline tone.
 
 ### Banner (Changed from V2)
 
@@ -1500,7 +1500,7 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **States.**
 - Static. V2: Settings > AI Mode with Preview "Hardware: No" (Hybrid unsupported); Settings > BYOK on with no key; `?signin=browser` (the in-app "Check your browser" step: Use the account you applied with).
-- With action. V2: `?start=worker&mode=auto`, then Run (the ribbon's "Change").
+- With action. V2: none since the ribbon was archived (2026-10-14).
 - Dismissible: news only. New.
 - Live value: the out-of-credits countdown (`?start=worker&credits=0`, then the credits pill). The ticking value sits in `<strong aria-live="off">` so it is read once.
 - Action hover (blue ink, underline firms), focus-visible (2px blue outline): the Link's own states. New.
@@ -1634,7 +1634,7 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Sizes.** sm 320 (`--v2-dialog-sm`): alert, celebration, out of credits. md 382 (`--v2-dialog-md`): task, consent. Height up to the window less 20px each side.
 
-**States.** Closed (nothing mounted); opening; open; busy (the primary loads; Esc, the scrim and Close wait); closing; over a menu (the menu closes first, focus comes back to the menu button). In V2 today: ModalOverlay as Confirm delete on the Schedule tab (schedule.jsx:144); the Automatic consent at `?start=worker&v=1`, open the mode chip, pick Automatic, in ModalOverlay's plain frame since 2026-10-14 (no header, divider or X; agent_permissions.jsx:189); out of credits at `?credits=0` then send a message (byok.jsx:76).
+**States.** Closed (nothing mounted); opening; open; busy (the primary loads; Esc, the scrim and Close wait); closing; over a menu (the menu closes first, focus comes back to the menu button). In V2 today: ModalOverlay as Confirm delete on the Schedule tab (schedule.jsx:144); the Automatic consent at `?start=worker`, open the mode chip, pick Automatic, in ModalOverlay's standard frame with header and X (agent_permissions.jsx:201); out of credits at `?credits=0` then send a message (byok.jsx:76).
 
 **Props.** `open`, `onClose`, `title`, `description`, `variant`, `size` ('sm' | 'md'), `role` (override), `dismissible` (false blocks: no Close, no Esc, no scrim), `busy`, `actions` ([{label, onClick, variant 'secondary' | 'primary' | 'danger' | 'quiet', disabled}]), `footer`, `initialFocus` (ref or selector), `labelledBy` (when the title lives in the body), `scrim`, `className`, `children`. `preview` renders it open in place without focus (guide specimens only).
 
@@ -1686,7 +1686,7 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Sizes.** One: the window's width; height to content.
 
-**States.** Blocking; dismissible; entering; leaving; busy (the primary loads while the agreement is recorded); reduced motion (arrives and leaves at once). In V2 today: a bare `index.html` opens on the first-run Terms sheet; the Preview panel row Terms switches First run, Terms update, Off (index.html:1163); `?start=worker` hides it (index.html:670). Since 2026-10-14 V2 has a second, dismissible sheet: the mode sheet ('Apps BlueAI can run on its own', agent_permissions.jsx:124-157), opened by the composer chip (`?start=worker&v=1`) or the ribbon's Change; the scrim, Esc and a close button close it, focus moves to the close button and back, radius 20, a lighter scrim (rgba(15,23,42,0.24)), it slides up 0.36s with no exit, and the app list scrolls inside.
+**States.** Blocking; dismissible; entering; leaving; busy (the primary loads while the agreement is recorded); reduced motion (arrives and leaves at once). In V2 today: a bare `index.html` opens on the first-run Terms sheet; the Preview panel row Terms switches First run, Terms update, Off (index.html:1163); `?start=worker` hides it (index.html:670). V2 has no second sheet: the mode sheet it tried on 2026-10-14 was dropped the same day for a popover above the composer (section 27).
 
 **Props.** `open`, `onClose`, `title`, `description`, `blocking`, `busy`, `actions` (as Dialog), `footer`, `initialFocus`, `className`, `children`; `preview` for guide specimens.
 
@@ -1736,7 +1736,7 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **Sizes.** One.
 
-**States.** Open down; open up; Esc (closes, focus back to the button); outside click (closes); focus leaving (closes). In V2 today: `?start=worker&v=1`, the mode chip in the composer; `&v=2` with Automatic on, the ribbon's Change (agent_permissions.jsx:113-156).
+**States.** Open down; open up; Esc (closes, focus back to the button); outside click (closes); focus leaving (closes). In V2 today: `?start=worker`, the mode chip in the composer opens it upward, 364 wide, named "Mode for YouTube jobs", one row per mode with a check and its number shortcut; Esc returns focus; an outside click or focus leaving closes it (agent_permissions.jsx:127-188). Its shadow is darker than shadow-1 (the PM's call).
 
 **Props.** `trigger`, `placement`, `align`, `header`, `footnote`, `label`, `open` / `defaultOpen` / `onOpenChange`, `className`, `children`.
 
@@ -2248,13 +2248,13 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Accessibility:** A hidden "BlueAI needs your answer." leads the pending card; chips are a group labelled by the question; text on yellow is ink / ink-2 (above 9:1); consequence 13 attention-ink (5.07:1).
 - **Responsive:** Chips wrap to new lines inside 300.
 - **Consent:** An option with `consent: true` turns on Automatic for that app. The caller opens ConsentDialog (section 46) and calls back only after "I agree, turn on"; Cancel leaves the question waiting (as V2, worker_cards.jsx:39).
-- **Copy:** In V2 strings quoted exactly: the pitch (worker_flow.jsx:66-69), "Paid job available", "Watch the video and provide feedback.", "Want me to take this one?", "Yes, switch to Automatic" / "Just this job" / "Not now" (worker_flow.jsx:50, 120-121), "Today’s job didn’t finish." / "Retry to count the day." / "Retry" (worker_day_done.jsx:94, worker_flow.jsx:127), kept in the failed-day AskCard specimen as the V2 reference. The screens do not draw that ask: a failed day is the RunCard's and the WorkerCard's 'Try again' (`kit/run-card.jsx:47, 61`, `kit/worker-card.jsx:77-78`, `screens/chat.jsx:38, 151`), a proposed change to the PM's words listed in section 73 (V2 strings changed as proposals) under the glossary's one retry word (section 70). Proposed: the consequence line (R06), the stopped and expired lines (R08), Try again.
+- **Copy:** In V2 strings quoted exactly: the pitch (worker_flow.jsx:66-69), "Paid job available", "Watch the video and provide feedback.", "Want me to take this one?", "Yes" / "Not now" (worker_flow.jsx:50, 115-119; no question offers Automatic since 2026-10-14), "Today’s job didn’t finish." / "Retry to count the day." / "Retry" (worker_day_done.jsx:94, worker_flow.jsx:127), kept in the failed-day AskCard specimen as the V2 reference. The screens do not draw that ask: a failed day is the RunCard's and the WorkerCard's 'Try again' (`kit/run-card.jsx:47, 61`, `kit/worker-card.jsx:77-78`, `screens/chat.jsx:38, 151`), a proposed change to the PM's words listed in section 73 (V2 strings changed as proposals) under the glossary's one retry word (section 70). Proposed: the consequence line (R06), the stopped and expired lines (R08), Try again.
 - **Do / Don't:** Do say the consequence before the choice and settle the card once answered, keeping the chosen answer as its pill. Don't bundle a mode switch into "Yes" silently (R07, R11). Don't leave yellow on an answered question.
 
 ## 38 Composer
 
 **Status:** Changed from V2 (Composer, ComposerNotice, Stop).
-**Why:** V2 clips text past 120px (chat_product.jsx:78, 284), rests on a blue-tinted 1.5px border at 1.40:1 that reads as focus (chat_product.jsx:260), mixes "..." and "…" in placeholders (266, 278, 283), reveals zero credits only after Send (124), and stops a paid job on one click with no trace (141). The Automatic ribbon (agent_permissions.jsx:203-216) is the right pattern and is generalised.
+**Why:** V2 clips text past 120px (chat_product.jsx:78, 284), rests on a blue-tinted 1.5px border at 1.40:1 that reads as focus (chat_product.jsx:260), mixes "..." and "…" in placeholders (266, 278, 283), reveals zero credits only after Send (124), and stops a paid job on one click with no trace (141). Its Automatic ribbon was the right pattern and is generalised here; V2 archived it on 2026-10-14 (code kept, not rendered), and its box now carries the mode chip in a bottom bar.
 
 **V3 restyle (2026-10-14).** Send is the solid ink button; Stop is the ghost (the ladder's second step); Stop run in the confirm is the solid primary.
 
@@ -2275,11 +2275,11 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Anatomy:** A compact Banner: tone in the fill, the edge and the icon, words ink-2. Radius 10, 1px line in tone, padding 2 4 2 12; icon 16; text 13/1.35; the action is `V2Kit.Link` standalone (underlined ink, 32px tall, blue-ink on hover; `kit/composer.jsx:38-46`).
 - **Variants:** `info` (blue tint, blue-ink icon: Automatic on, BlueStacks needed), `attention` (yellow, attention-ink icon: the partner must answer before the run can go on), `neutral` (sunken, ink-3 icon: paused; out of AI credits until a time, section 48). The words stay ink-2 in every tone.
 - **Sizes:** Composer width.
-- **States:** Shown while the condition holds; action hover, focus. V2: `?start=worker&v=2&mode=auto` then Run shows the Automatic ribbon.
+- **States:** Shown while the condition holds; action hover, focus. V2: none since the ribbon was archived (2026-10-14).
 - **Props:** `ComposerNotice {tone, icon, text, children, action: {label, onClick}, id, className}`.
 - **Motion:** None of its own.
 - **Accessibility:** Text 13 ink-2 on every tone's fill (above 9:1); the action is the shared Link (a real button); links are never warm-coloured (ink in every tone).
-- **Copy:** "Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking." and "Change" are V2's former words; since 2026-10-14 V2 says "Automatic on YouTube" (a count once several apps are on) and Change opens its mode sheet (agent_permissions.jsx:62, 210-214). The out-of-credits line is owned by section 48 ("Out of AI credits until **5:30 am tomorrow**.", `V2Kit.OOC_COPY.until`); the locked field's placeholder is neutral ("You can’t send messages right now"), so the time is said once, in the notice. Proposed: "Today’s run needs BlueStacks App Player." / "Get BlueStacks", "The BlueAI worker is paused until tomorrow." / "Resume".
+- **Copy:** "Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking." and "Change" are V2's former words; the ribbon that last said "Automatic on YouTube" is archived since 2026-10-14 (agent_permissions.jsx:16-18). The out-of-credits line is owned by section 48 ("Out of AI credits until **5:30 am tomorrow**.", `V2Kit.OOC_COPY.until`); the locked field's placeholder is neutral ("You can’t send messages right now"), so the time is said once, in the notice. Proposed: "Today’s run needs BlueStacks App Player." / "Get BlueStacks", "The BlueAI worker is paused until tomorrow." / "Resume".
 - **Do / Don't:** Do keep one notice at a time, the most urgent. Don't announce zero credits only after Send.
 
 ### Stop (SendStop) (Changed from V2)
@@ -2357,7 +2357,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
   - Helpers on `window.V2Kit`: `numbers(record)`, `workerState(record)`, `blockedBy(record)` (null or {reason, app}), `creditsDay(record, now)` ('covered' | 'waiting' | 'stopped': with fewer credits than the run needs, whether the refill lands before the 9 pm deadline, `kit/worker-data.jsx:240-249`), `modeSummary(record)`, `nextRunText(record)`, `dayWords(row)` {result, tick, tickWord, hasRun} (the result words from the row's outcome, the tick from its status) and `dayGap(from, to)` (whole days between two 'Oct 12' dates, or null) (`kit/worker-data.jsx:169-286`); constants `WORKER_RULE` {rate 1, target 20, bonus 10, programEnd 'Nov 1', cashOutMin 10} (V2's RULE, `worker_day_done.jsx:38`, plus the cash-out minimum from its rule note, `:6`), `WORKER_APPS` (each with `actions`, every action a paid job on that app can include: youtube watch, like, comment, subscribe; instagram none yet, `kit/worker-data.jsx:37-42`), `WORKER_JOB`, `WORKER_OTHER_ACCOUNT` (the second identity the sign-in mismatch screens name), `EARNINGS_URL` (one URL; V2 has two) and `SITE_FAQ_URL` (the site's FAQ, on the same stand-in host) (exports, `kit/worker-data.jsx:288-291`). The program's words built from `numbers()` live in `kit/program.jsx:181-206`: `endedCopy(n)` ({title, body}: the period-ended words of sections 42 and 69, from `numbers()` and `cashOutOpen`; the body adds 'Your worker won’t run again until the next program.'), `minimumCopy(min)` and `RUN_COPY` {keepOpen, over, checking(pending)}.
 - **Variants:** 24 fixtures in `FIXTURE_ORDER`: new, setUp, running, waiting, donePending, verified, failed, stopped, missed, blocked, paused, offline, complete, ended, endedBelow, noCredits, rejected, automatic, nojob, declined, day20, checking (all 20 done, the last one pending, today idle), behind, revoked (verified, with `apps.youtube.history` 'revoked' and `historyOn` 'Oct 11'; Account's 'history-revoked' state reads it).
 - **Sizes:** n/a (data).
-- **States:** `numbers()` returns done (verified + pending: the count every surface prints), verified, pending, rejected, notCounted, toGo, daysLeft, reachable, outOfReach, complete, latestRejected, last, the 20 `segments` (verified | pending | rejected | missed | future), and `cashOutMin` with `cashOutOpen` (the record's, passed through, never derived from the ledger). `cashOutOpen` is the one switch for every cash-out line: 'Cash out is open' only when it is true, the below-the-minimum line in the site's words (sections 43, 54, 69) when it is false, and 'See your balance and cash out on Earnings.' while it is null. `workerState()` returns one of 15 card states, in priority order (`kit/worker-data.jsx:212-238`): setup, complete, ended, checking (all 20 done, at least one pending, today idle: the worker stops taking jobs and runs again only if a day is not counted), running, waiting, done, offline, paused, blocked, noCredits, stopped, failed, missed. scheduled when none applies. A run that is going, waiting or done today outranks offline and paused, which only stop the next run; what blocks a run (no app, no credits) outranks a way to start one, so the card never offers Try again, Run again or Run now when the run cannot start. In V2 these come from `?start=worker`, `?day=returning`, `?day=next&end=job|nojob|day20|failed`, `?mode=auto`.
+- **States:** `numbers()` returns done (verified + pending: the count every surface prints), verified, pending, rejected, notCounted, toGo, daysLeft, reachable, outOfReach, complete, latestRejected, last, the 20 `segments` (verified | pending | rejected | missed | future), and `cashOutMin` with `cashOutOpen` (the record's, passed through, never derived from the ledger). `cashOutOpen` is the one switch for every cash-out line: 'Cash out is open' only when it is true, the below-the-minimum line in the site's words (sections 43, 54, 69) when it is false, and 'See your balance and cash out on Earnings.' while it is null. `workerState()` returns one of 15 card states, in priority order (`kit/worker-data.jsx:212-238`): setup, complete, ended, checking (all 20 done, at least one pending, today idle: the worker stops taking jobs and runs again only if a day is not counted), running, waiting, done, offline, paused, blocked, noCredits, stopped, failed, missed. scheduled when none applies. A run that is going, waiting or done today outranks offline and paused, which only stop the next run; what blocks a run (no app, no credits) outranks a way to start one, so the card never offers Try again, Run again or Run now when the run cannot start. In V2 these come from `?start=worker`, `?day=next&end=job|nojob|day20|failed`, `?mode=auto`.
 - **Props:** n/a. Surfaces take `worker` (the record) and read through the helpers; the RunCard reads it through its `worker` prop (section 36).
 - **Motion:** none.
 - **Accessibility:** the record feeds the spoken values (DayBar's aria-valuetext, StatusTick names), so they always match the visible count.
@@ -2392,7 +2392,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
   - ended (proposed; the period is over before all 20 were verified): the `endedCopy(n)` words (section 69), 'This program ended on Nov 1.' + 'You finished 18 of 20 days. Your worker won’t run again until the next program. Cash out is open on Earnings.' (the verified count, then `RUN_COPY.over`), or under the minimum 'You finished 6 of 20 days. Your worker won’t run again until the next program. You need $10 to cash out. Your balance carries over to the next period.' / secondary 'Earnings' (external); no mode line. Home shows section 69's period-ended state instead of this card once the period is over; the state stays for review and other surfaces.
   - Everything not marked V2 is proposed copy.
 - **Sizes:** full width of the content column (387 in the 419 window).
-- **States:** the fifteen above (setup, scheduled, running, waiting, done, stopped, failed, missed, blocked, paused, noCredits, offline, checking, complete, ended), from `workerState(worker)` (section 41's priority order) or forced with `state`. In V2: `?start=worker` (setup, coach on), `?day=returning` (scheduled). The other states do not exist in V2.
+- **States:** the fifteen above (setup, scheduled, running, waiting, done, stopped, failed, missed, blocked, paused, noCredits, offline, checking, complete, ended), from `workerState(worker)` (section 41's priority order) or forced with `state`. In V2: `?start=worker` (setup, coach on); `?day=returning` was removed on 2026-10-14. The other states do not exist in V2.
 - **Props:** `worker`, `state`, `onRun` (setup, scheduled, missed), `onOpenToday`, `onReview`, `onRetry` (failed, stopped, offline), `onResume`, `onOpenCredits`, `onFix(reason)` (blocked: 'no-app' | 'signed-out' | 'no-bluestacks'), `coaching`, `onDismissCoach`.
 - **Motion:** none on the card; the spinner follows the global reduced-motion rule.
 - **Accessibility:** an article named 'BlueAI worker'; the first status line is role=status while running or waiting; only the Button is interactive (36, 4.92:1 primary); the tile is decorative.
@@ -2437,7 +2437,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Anatomy:** 20 segments, height 6, radius 4, gap 2. Verified solid `--v2-success-ink` (the site's goal-bar green); pending surface with a 1.5 inset `--v2-blue` outline (in progress, not reached: one of the three blue exceptions to the neutral pending tone, with the run chip's pending dot and the DayDone badge, section 03); rejected `--v2-danger-tint` with an inset 1px `--v2-danger-edge` (4.53:1, so it reads at 1px), in the slot it would have filled until the next run takes it; out of reach hatched `--v2-line-strong` (slots that can no longer be reached before the end); future `--v2-line`. Legend 12 ink-3 with ticks: '6 verified', '1 pending', '1 not counted', 'n days out of reach'. V2 since 2026-10-14: one continuous bar, height 4, radius 2, green fill for the verified share (`worker_day_done.jsx:155`), so a pending, rejected or missed day cannot show.
 - **Variants:** with or without legend; optional `bonusLabel` at the right end only if decision D3 keeps a day-20 bonus (V2 had an amber segment until 2026-10-14).
 - **Sizes:** fills its container.
-- **States:** verified, pending, rejected, out of reach, future. V2: `?day=returning` (strip), `?day=next&end=job` (overlay).
+- **States:** verified, pending, rejected, out of reach, future. V2: no bar in the app since 2026-10-14; the partner dashboard draws 20 pills, filled verified and outlined pending, under "Days run" with a legend (`onblue/apply.html:582-584, 1418-1443`).
 - **Props:** `days` (segment states) or `worker` (derived by `numbers()`), `target`, `legend`, `bonusLabel`, `label`.
 - **Motion:** none.
 - **Accessibility:** role=progressbar, aria-valuenow = verified + pending, aria-valuetext '7 of 20 days, 1 pending verification' plus ', N out of reach' when slots can no longer be reached; the legend says it in words, so colour is never the only carrier. In forced colours every state keeps a shape of its own: verified solid, pending a 2px edge, rejected a 2px edge over hatching, out of reach a grey hatch, future a 1px edge (`kit/worker.css:90-101`).
@@ -2450,7 +2450,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Anatomy:** card radius 16, 1px line, padding 16. Head: '6 of 20 days' 14 ink-3 with the figure 600 ink (the site's muted note with one bold figure), 'Ends Nov 1' 12 ink-4, and the ProgramSummary info tip (32). DayBar. Foot over a hairline, type `.v2-text-caption`: one receipt line 12 ink-3 with its tick, and 'Earnings' (`V2Kit.Link` standalone with `href: EARNINGS_URL`, external: underlined ink, blue on hover, external icon).
 - **Variants (receipt line):** day 0 'No days counted yet.'; today pending 'Today’s run is pending verification.'; yesterday verified 'Yesterday’s run verified.' (V2); yesterday rejected 'Yesterday’s run wasn’t counted.' in danger ink + 'See why' (opens Activity); skipped 'Today doesn’t count toward your 20 days.' (V2); ended 'This program ended on Nov 1. Cash out on Earnings.' (no cash sentence when `cashOutOpen` is false); today failed, only with `onRetry` (a screen with no WorkerCard to say it, V3's Jobs tab and home): 'Today’s job didn’t finish.' in danger ink + 'Retry' (quiet, sm); complete: no receipt, since the WorkerCard says it once ('All 20 days verified.', cash out after Nov 1).
 - **Sizes:** full width.
-- **States:** the variants, from the record. V2: `?day=returning` only (returning partners).
+- **States:** the variants, from the record. V2: none since 2026-10-14 (the home strip was removed; progress lives on the partner dashboard).
 - **Props:** `worker`, `onOpenActivity`, `onRetry` (given, a failed today takes the Retry receipt above; without it the WorkerCard's Try again is the home's action), `receipt` (default true; false drops the receipt line and leaves Earnings alone in the foot, for Home while the WorkerCard says today's status, section 57).
 - **Motion:** none.
 - **Accessibility:** a section named 'Your 20 days'; Earnings and the info trigger are 32 tall and announce 'opens in a new tab' / 'How your 20 days work'.
@@ -2460,7 +2460,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ### ProgramSummary
 
 - **Purpose:** the rules in five lines, before the first day ends (onboarding close, Help) and one tap away afterwards (strip info tip).
-- **Anatomy:** title 13/600 'How your 20 days work'; five lines 13 ink-2, each with its own 16 icon: calendar 'Run on 20 days before Nov 1. Keep your PC on and awake at run time, and App Player open while a job runs.' / check 'A day counts when a job is verified, or when there was no job to take. Keep the comment up until it’s verified.' / check-double 'We check every run within a day. The tick doubles once it’s verified.' (the PM's line, `worker_day_done.jsx:98`) / earnings 'Cash out on Earnings after the period ends.' / lock 'You need $10 to cash out. Your balance carries over to the next period.' (`minimumCopy`, the site's two sentences, `onblue/apply.html:2292-2293`). Proposed copy built from V2's rule comment (`worker_day_done.jsx:5-7`) except those two. `programRules(rule)` is the one place a rule is written, and `programRule(id)` one rule's text (DayDone, Run detail and Chat read 'ticks'). The $10 minimum is in both D3 options, so it is the one amount shown before D3; no rate or bonus until then.
+- **Anatomy:** title 13/600 'How your 20 days work'; five lines 13 ink-2, each with its own 16 icon: calendar 'Run on 20 days before Nov 1. Keep your PC on and awake at run time, and App Player open while a job runs.' / check 'A day counts when a job is verified, or when there was no job to take. Keep the comment up until it’s verified.' / check-double 'We check every run within a day. The tick doubles once it’s verified.' (the PM's former line, dropped from V2 on 2026-10-14) / earnings 'Cash out on Earnings after the period ends.' / lock 'You need $10 to cash out. Your balance carries over to the next period.' (`minimumCopy`). No longer matches the product: since 2026-10-14 the site has no period lock, its one rule is "Payment minimum: $10" (`onblue/apply.html:1371, 2317`), so the earnings and lock lines need a rewrite. Proposed copy built from V2's rule comment (`worker_day_done.jsx:5-7`) except those two. `programRules(rule)` is the one place a rule is written, and `programRule(id)` one rule's text (DayDone, Run detail and Chat read 'ticks'). The $10 minimum is in both D3 options, so it is the one amount shown before D3; no rate or bonus until then.
 - **Variants:** full; compact (the kit Tooltip, info kind, behind a 32px info button).
 - **Sizes:** full width; tip max 260.
 - **States:** full; compact closed, hover, focus, pinned open, Esc closes.
@@ -2474,13 +2474,13 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** Changed from V2.
 
-**Why:** V2 adopted the minimal popup on 2026-10-14, as this system recommended (R28): a 44 green tick badge, the title, one status line ('Day 7 of 20 · Pending verification'; the money option leads with '+$1 · '; Day 20 drops the day part), the verification note only the first time it shows in a session, and Got it, on a 280 panel, radius 20 (`worker_day_done.jsx:132-151`). The eyebrow, the big green count, the 20-day bar and legend, the confetti and the pulsing ring are gone; the bar lives on the home strip. Still different: V2's badge is verified green while the day is pending, so colour says paid while the words say not yet, and the panel is a div with role=dialog that never takes focus. The system keeps the DayBar above its one count line, confetti once on Day 20 only, and the note on every showing. The PM's titles are DRAFT strings and are quoted, not rewritten.
+**Why:** V2 adopted the minimal popup, as this system recommended (R28), and on 2026-10-14 drew it from this system's "V2 today" tokens (`v2_tokens.jsx`): dialog sm 320, dim scrim, radius 16, shadow-2, scale-in, a 56 badge, the title, one status line ('Day 7 of 20. Pending verification', no full stop; Day 20: 'All 20 days done. Pending verification'), and Got it (44); Day 1 shows it too, confetti plays on Day 20 only, and the verification note is gone (`worker_day_done.jsx:94-135`). Day-by-day progress moved to the partner dashboard. Still different: V2's badge is an outlined green circle with one green tick, so colour says reached while the words say not yet, and the panel (aria-modal) never takes focus. The system keeps the DayBar above its one count line and the note on every showing. 'Today’s run is done.' and the status line are approved (2026-10-14); the other titles are DRAFT strings, quoted, not rewritten.
 
 ### DayDone
 
 - **Purpose:** the end-of-run moment: today's run is in, here is where the 20 days stand, and it is pending until checked.
 - **Anatomy:** the kit Dialog, celebration variant, size sm (320), dim scrim, no close button. Badge 56 round, `--v2-blue-tint` with one tick 28 in `--v2-blue-ink` (the badge's colour; the tick inherits it instead of StatusTick's pending ink-4). One of the three blue exceptions to the neutral pending tone, with the DayBar's pending segment and the run chip's pending dot (section 03). Title 20/600 ink. Sub 13 ink-3 (Day 20 only). DayBar without legend, then one count line 13: '7 of 20 days' (figure 600 ink) and one tick 'Pending verification'. Note 13 ink-3 'We check every run within a day. The tick doubles once it’s verified.' One primary 'Got it', full width, 44.
-- **Variants (copy is the PM's, `worker_day_done.jsx:87-89`):** job 'Today’s run is done.'; nojob 'No paid job today, but your run counts.'; day20 'Day 20 done.' + 'That’s every day for this month.' + the proposed line 'Cash out on Earnings after {endsOn}, once your days are verified ($10 minimum).' (`kit/day-done.jsx:22, 57`). Failed and skipped have no moment: the run card and the worker card say those, with their action.
+- **Variants (copy is the PM's, `worker_day_done.jsx:65-70`):** job 'Today’s run is done.'; nojob 'No paid job today, but your run counts.'; day20 'Day 20 done.' + 'That’s every day for this month.' (V2's former line; V2 now: 'All 20 days done. Pending verification') + the proposed line 'Cash out on Earnings after {endsOn}, once your days are verified ($10 minimum).' (`kit/day-done.jsx:22, 57`; its period lock no longer applies since 2026-10-14). Failed and skipped have no moment: the run card and the worker card say those, with their action.
 - **Sizes:** Dialog sm, 320.
 - **States:** open (job, nojob, day20); dismissed by Got it, Esc or the scrim. In V2: `?day=next&end=job`, `?day=next&end=nojob`, `?day=next&end=day20`; the Preview panel's Day end row.
 - **Props:** `end` (job | nojob | day20), `worker` (count from `numbers()`), `open`, `onClose`, `preview` (guide only: drawn open in place, no focus).
@@ -2493,7 +2493,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** New (R07). Chat's waiting state asks paid jobs in this card (decision D17, option A, built; `screens/chat.jsx` jobCard). V2's AskCard ask (section 37) is option B, one constant away, and asks every other question.
 
-**Why:** the riskiest moment in the product is agreeing to public activity under the partner's name. V2's ask shows only 'Watch the video and provide feedback.' (`worker_flow.jsx:51, 119`); the comment it posts is never shown (`:136`); the first chip, 'Yes, switch to Automatic', bundles yes with a standing consent (`:121`); and the cost of 'Not now' (the day) is told only afterwards (`:149`).
+**Why:** the riskiest moment in the product is agreeing to public activity under the partner's name. V2's ask shows only 'Watch the video and provide feedback.' (`worker_flow.jsx:51, 119`); the comment it posts is never shown (`:136`); since 2026-10-14 the chips are 'Yes' and 'Not now' (`:119`), with Automatic only on the composer's mode chip; and the cost of 'Not now' (the day) is told only afterwards (`:149`).
 
 ### JobPreviewCard
 
@@ -2512,15 +2512,15 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** Changed from V2 (ModeRows, ConsentDialog, AutoRibbon); New (PermissionRequest).
 
-**Why:** the PM's model is right and stays: one setting per app, every app starts on Always ask, turning Automatic on is consent, asked every time (`agent_permissions.jsx:1-33`). What changes is where it lives and how it is built: V2 changes it from a bottom sheet in chat and, since 2026-10-14, from a Worker card in Settings, one switch per app (R05, D4); Instagram can be consented to before its jobs exist (R40), the dialog never takes focus, its agree button is 3.24:1, and watch history is read without asking (R18).
+**Why:** the PM's model is right and stays: one setting per app, every app starts on Always ask, turning Automatic on is consent, asked every time (`agent_permissions.jsx:1-33`). What changes is where it lives and how it is built: since 2026-10-14 V2 runs one app, YouTube, and changes the mode only from the composer's mode chip, which opens a popover (one row per mode, a check, number shortcuts 1 and 2); Settings' Worker card and the Automatic ribbon are gone (R05, D4). The dialog never takes focus, its agree button is 3.24:1, and watch history is read without asking (R18).
 
 ### ModeRows
 
 - **Purpose:** the per-app mode, with one home in Settings > Worker (section 62). The ribbon's Change opens that screen (Chat's `onChangeMode`), so the consent dialog never stacks over a float.
-- **Anatomy:** one kit ListRow per app: mark 20 ink-3, name 14/500, account as the description, kit Segmented md (32) 'Always ask' (shield-check) / 'Automatic' (zap), the icons the consent table and the worker card use (`kit/permissions.jsx` OPTIONS). Note under the rows 12 ink-3: 'Automatic starts and finishes that app’s jobs without asking. Each app has its own setting, and a new app starts on Always ask.' (V2's former menu footnote; V2's sheet now says 'New apps always start on Always ask.'). 'Mode, per app' is not carried (Mode is not a partner word).
-- **Variants:** connected (switch); coming soon ('Instagram jobs aren’t available yet.' + Badge 'Coming soon', no switch); not connected ('Not connected' + Connect). Control: `segmented` (default) or `switch`, V2's shape (one switch per app, on = Automatic). A switch alone does not say which mode off is, so in the switch shape the row's description is the mode in words, 'Always ask' or 'Automatic' (then the account), a muted state line the switch is described by (`aria-describedby`; V3 review round 1, 2026-10-14).
+- **Anatomy:** one kit ListRow per app: mark 20 ink-3, name 14/500, account as the description, kit Segmented md (32) 'Always ask' (shield-check) / 'Automatic' (zap), the icons the consent table and the worker card use (`kit/permissions.jsx` OPTIONS). Note under the rows 12 ink-3: 'Automatic starts and finishes that app’s jobs without asking. Each app has its own setting, and a new app starts on Always ask.' (V2's former menu footnote; V2's popover has no footnote, only its header 'Mode for YouTube jobs'). 'Mode, per app' is not carried (Mode is not a partner word).
+- **Variants:** connected (switch); coming soon ('Instagram jobs aren’t available yet.' + Badge 'Coming soon', no switch); not connected ('Not connected' + Connect). Control: `segmented` (default) or `switch`, the one-switch-per-app shape V2 tried on 2026-10-14 and dropped. A switch alone does not say which mode off is, so in the switch shape the row's description is the mode in words, 'Always ask' or 'Automatic' (then the account), a muted state line the switch is described by (`aria-describedby`; V3 review round 1, 2026-10-14).
 - **Sizes:** full width.
-- **States:** Always ask (default); Automatic (only after the consent: `beforeChange` opens it and commits on agree); coming soon; not connected. In V2: `?v=2&mode=auto` (ribbon, Change) or `?v=1` (chip) open the mode sheet, one switch per app (agent_permissions.jsx:98-157); Settings > Worker > Apps lists the same switches.
+- **States:** Always ask (default); Automatic (only after the consent: `beforeChange` opens it and commits on agree); coming soon; not connected. In V2: `?start=worker`, the composer's mode chip opens the popover (agent_permissions.jsx:93-188); `?mode=auto` starts on Automatic.
 - **Props:** `worker` or `apps` + `modes`, `onChange(appId, mode)`, `beforeChange(appId, mode)` (return a promise of true to commit), `onConnect(appId)`, `note` (false hides), `control` ('segmented' | 'switch').
 - **Motion:** the Segmented's own (180ms).
 - **Accessibility:** each Segmented is a radiogroup named 'YouTube paid jobs' with arrow keys; segments 32 tall; aria-busy while the consent is open.
@@ -2530,10 +2530,10 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ### ConsentDialog
 
 - **Purpose:** the consent for Automatic, per app, every time.
-- **Anatomy:** kit Dialog, consent variant, md (382): title 20/600 'Run YouTube jobs automatically?', close 32, no scrim dismiss. Body 14 ink-2, the Dialog's description (aria-describedby, so it is read with the dialog), proposed, PM and legal (R51): 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking, posting comments and subscribing to channels in your name.' The line is built from every action a job on that app can include (`WORKER_APPS[].actions`, section 41; `kit/permissions.jsx:75-79`), never a fixed list. V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on): its sentence, 'BlueAI will take paid YouTube jobs on its own and like, comment, follow and post from your account.' (`agent_permissions.jsx:191`), names posting videos, which the worker never does, and leaves out the actions it does take; on Automatic the job preview never appears, so this line is the partner's only notice of what will be done in their name. The system keeps what V2 dropped: a per-app table radius 10 (the app being changed tinted blue, Automatic in blue ink with zap, Always ask with shield-check, coming soon in words), a note 12 ink-3 'Each app has its own setting. The others stay on Always ask until you switch them.' and the agreement line 14 'By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime.' (V2's words until 2026-10-14). Added, proposed, 12 ink-3: 'Turn it off in Settings > Worker, or with Change above the chat.' Footer 44: 'Cancel' (secondary) then 'I agree, turn on' (primary). The title and buttons are V2 verbatim (`agent_permissions.jsx:186-191`); the body, table, note, agreement line and turn-off line are not.
+- **Anatomy:** kit Dialog, consent variant, md (382): title 20/600 'Run YouTube jobs automatically?', close 32, no scrim dismiss. Body 14 ink-2, the Dialog's description (aria-describedby, so it is read with the dialog), proposed, PM and legal (R51): 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking, posting comments and subscribing to channels in your name.' The line is built from every action a job on that app can include (`WORKER_APPS[].actions`, section 41; `kit/permissions.jsx:75-79`), never a fixed list. V2's dialog since 2026-10-14 is the shared ModalOverlay with header and X: the title, one sentence, Cancel / I agree, turn on. Its sentence, 'BlueAI will take YouTube jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime.' (`agent_permissions.jsx:203`), names posting videos, which the worker never does, and leaves out the actions it does take; on Automatic the job preview never appears, so this line is the partner's only notice of what will be done in their name. The system keeps what V2 dropped: a per-app table radius 10 (the app being changed tinted blue, Automatic in blue ink with zap, Always ask with shield-check, coming soon in words), a note 12 ink-3 'Each app has its own setting. The others stay on Always ask until you switch them.' and the agreement line 14 'By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime.' (V2's words until 2026-10-14). Added, proposed, 12 ink-3: 'Turn it off in Settings > Worker, or with Change above the chat.' Footer 44: 'Cancel' (secondary) then 'I agree, turn on' (primary). The title and buttons are V2 verbatim (`agent_permissions.jsx:201-208`); the body, table, note, agreement line and turn-off line are not.
 - **Variants:** one per app.
 - **Sizes:** Dialog md.
-- **States:** open; agree busy (primary loading, Esc, scrim and close held), then done (closes, the ribbon appears, the agreement time is recorded per account on the server); cancel (nothing changes, the job question keeps waiting); not saved (`error`: Banner danger 'Not saved, nothing changed. Try again.' in the body, and 'I agree, turn on' is the retry; proposed copy). V2: the Automatic chip on the daily job ask, or the onboarding choice (`?setup` default).
+- **States:** open; agree busy (primary loading, Esc, scrim and close held), then done (closes, the ribbon appears, the agreement time is recorded per account on the server); cancel (nothing changes, the job question keeps waiting); not saved (`error`: Banner danger 'Not saved, nothing changed. Try again.' in the body, and 'I agree, turn on' is the retry; proposed copy). V2: pick Automatic in the composer's mode popover (no worker question offers it since 2026-10-14).
 - **Props:** `app`, `open`, `busy`, `error`, `onAgree`, `onCancel`, `worker`, `preview` (guide only).
 - **Motion:** the Dialog's (320ms in, 240ms out, none under reduced motion).
 - **Accessibility:** aria-modal, labelled by the title and described by the consent line, focus in, trapped, returned; the agreement is the button (no checkbox), 44 tall at 4.92:1.
@@ -2543,10 +2543,10 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ### AutoRibbon
 
 - **Purpose:** while any app is Automatic, say so above the composer, with a way to change it.
-- **Anatomy:** the chat kit's ComposerNotice, info tone: zap 16, 13 blue ink 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.' (V2's words until 2026-10-14; V2 now says 'Automatic on YouTube', or a count), trailing 'Change' (32) opening Settings > Worker, the mode's one home (Chat's `onChangeMode`).
+- **Anatomy:** the chat kit's ComposerNotice, info tone: zap 16, 13 blue ink 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.' (V2's words until 2026-10-14; V2 archived its ribbon the same day), trailing 'Change' (32) opening Settings > Worker, the mode's one home (Chat's `onChangeMode`).
 - **Variants:** one.
 - **Sizes:** composer width.
-- **States:** visible while some app is Automatic; hidden otherwise (`autoNotice()` returns null). V2: `?v=2&mode=auto`.
+- **States:** visible while some app is Automatic; hidden otherwise (`autoNotice()` returns null). V2: none, the ribbon is archived (code kept, not rendered).
 - **Props:** `autoNotice(worker, onChange)` returns `{tone, icon, text, action}` for `ComposerNotice` or the Composer's `notice`.
 - **Motion:** none.
 - **Accessibility:** Change is a real button, 32px.
@@ -2801,7 +2801,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** Changed from V2.
 
-**Why:** V2's consent moments are right: the agreement is the button (`agent_permissions.jsx:178`; V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on)), Automatic is asked every time it is turned on (`agent_permissions.jsx:28`), contracts are agreed and notices acknowledged (`terms_sheet.jsx:49-53`), and every agreement is meant to be recorded server-side with the exact copy shown (`terms_sheet.jsx:23-27`). What V2 lacks is a place to see and withdraw them: only Automatic has one, Settings' Worker card since 2026-10-14 (`settings.jsx:11-20`); watch history is read without asking (`worker_flow.jsx:80`), and the consent buttons have no loading state although each one is a server write.
+**Why:** V2's consent moments are right: the agreement is the button (`agent_permissions.jsx:193`; since 2026-10-14 the standard dialog frame: the title, one sentence, Cancel / I agree, turn on), Automatic is asked every time it is turned on (`agent_permissions.jsx:29-30`), contracts are agreed and notices acknowledged (`terms_sheet.jsx:49-53`), and every agreement is meant to be recorded server-side with the exact copy shown (`terms_sheet.jsx:23-27`). What V2 lacks is a place to see and withdraw them: none has a home in Settings (Automatic is turned off only from the composer's mode chip since 2026-10-14, when Settings' Worker card was removed); watch history is read without asking (`worker_flow.jsx:80`), and the consent buttons have no loading state although each one is a server write.
 
 ### Consent rules (Changed from V2)
 
@@ -2896,21 +2896,19 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** Changed from V2.
 
-**Why:** The handoff logic is the PM's (ROB-21388, `signin_page.jsx:5-17`, `index.html:211-224`) and it is sound: the download link only reaches accepted partners, so the only failure is the app running on another account. Two stops cost a click and say nothing new: the success step asks for Continue and greets a first sign-in with "Welcome back!" (`login.jsx:270-275`), and the browser step offers two controls with one job (`login.jsx:242-247`). Two site lines need the PM and legal (below).
+**Why:** The handoff logic is the PM's (ROB-21388, `signin_page.jsx:5-17`, `index.html:210-218`) and it is sound: the download link only reaches accepted partners, so the only failure is the app running on another account. Two stops cost a click and say nothing new: the success step asks for Continue and greets a first sign-in with "Welcome back!" (`login.jsx:270-275`), and the browser step offers two controls with one job (`login.jsx:242-247`). Two site lines need the PM and legal (below).
 
 ### Sign-in cases (Changed from V2)
 
 - **Purpose:** sign the partner in with the account they applied with, stopping them only when the account is wrong.
-- **Anatomy (the five cases):**
-  1. App Player signed in with the accepted account: silent sign-in, Home. No screen.
-  2. App Player signed in with another account: silent sign-in, then the gate. The browser never opens.
-  3a. App Player signed out, the browser holds the accepted account: the site's continue page, then in the app Signing in, You're signed in (900 ms, no click), Home.
-  3b. App Player signed out, the browser holds another account: the continue page says "Not in the program" with "Not you? Continue with a different account" (V2 says "ID"); continuing anyway lands on the gate.
-  3c. App Player signed out, the browser signed out: the site's sign-in with Google's chooser, then Signing in, then Home or the gate.
+- **Anatomy (one case since 2026-10-13, the PM's):** BlueAI checks enrolment after every sign-in and stops only on an account that isn't enrolled.
+  - From App Player: silent sign-in, then the in-app gate "Let’s switch accounts". The browser opens only from Switch account.
+  - From the browser: the site shows the account it holds first ("Continue as" / "Not you? Continue with a different ID") and checks nothing; continuing with a wrong account lands on the same gate.
+  - Signed out everywhere: the site's sign-in with Google's chooser, then in the app Signing in, You're signed in (900 ms, no click), Home or the gate.
   Whatever account BlueAI ends up with, App Player ends up on it too.
-- **Variants (decision D5):** option A, Check account (recommended): interrupt only when the account is wrong. Option B, Continue as: whenever an account is already signed in, ask "Continue as Alex" first. Ship one and delete the other path.
+- **Variants (decision D5, settled):** the PM picked option A on 2026-10-13: interrupt only when the account is wrong. Option B (Continue as) and the five-case split are gone from V2; the kit's confirm step is no longer applicable.
 - **Sizes:** the in-app steps are section 68 (Dialog md on the frost gate).
-- **States:** Welcome, browser, signing, success, gate, confirm (option B), Home.
+- **States:** Welcome, browser, signing, success, gate, Home (confirm, option B, no longer applicable).
 - **Props:** `V2Screens.SignIn {step, from, account, onOpenBrowser, onCancel, onSwitch, onContinue, onDone}`.
 - **Motion:** success moves on after 900 ms (a timer, kept under reduced motion); every step change is in place, no slide.
 - **Accessibility:** each step is announced (a polite live region inside the dialog); the gate and confirm steps block (no close, no Esc) and have one way out.
@@ -2925,7 +2923,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** Changed from V2 (Home and the Chat screen reached from it).
 
-**Why:** the partner opens BlueAI to check one thing: is my worker on, did today happen, did the days count, is anything waiting for me. V2's home is the chat's empty state: 'Hi, Alex' with an emoji and "You're all set. The BlueAI worker is all it takes to start earning." above a coach that says 'Run this to begin' (`chat_product.jsx:204-213`); the progress strip shows only for a returning partner (`moneymaker_home.jsx:120`) and counts from a constant (`worker_day_done.jsx:39`); the next run time is typed into the copy. The chat itself unmounts on any other tab (`index.html:975`), taking a waiting job or a Retry with it.
+**Why:** the partner opens BlueAI to check one thing: is my worker on, did today happen, did the days count, is anything waiting for me. V2's home is the chat's empty state: 'Hi, Alex' with an emoji and "You're all set. The BlueAI worker is all it takes to start earning." above a coach that says 'Run this to begin' (`chat_product.jsx:204-213`); since 2026-10-14 that one line greets returning partners too, and the progress strip left home for the partner dashboard (`moneymaker_home.jsx:102-104`), so home says nothing about the days. The chat itself unmounts on any other tab (`index.html:975`), taking a waiting job or a Retry with it.
 
 ### Home
 
@@ -2947,10 +2945,10 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Anatomy:** ScreenHeader 'Chat' with Back (to Home) and a 32px IconButton 'New chat' (plus), moved out of V2's top bar (`index.html:350-355`). Thread (section 34) filling the height; today's run as one RunCard (section 36); a paid job as the JobPreviewCard (section 45), any other question as an AskCard (section 37); Composer (section 38) on the bottom edge with its notice slot. Home stays lit in the nav.
 - **Variants:** `CHAT_STATES`: empty, setup, setupDone, running, waiting, done, nojob, skipped, day20, failed, retrying, noCredits (Short of credits), creditsZero, automatic, request, offTopic.
   - Setup follows V2's order (`worker_flow.jsx:65-171`): 'Welcome! Let’s set up your BlueAI worker.', the pitch, confirm @alexwatches, watch history (PermissionRequest, section 46), the run time, then paid jobs per app, Always ask first and Automatic only through ConsentDialog. The run time's window option is '9 am to 8 pm' (proposed; V2 '9am–9pm', `worker_flow.jsx:73-74`), since runs start by 8 pm (section 62); the schedule ask's hint is 'Pick one for now; change the time anytime in Settings > Worker.' No on the handle answers 'Okay. I can only use the YouTube account you applied with, or a channel under it. If you meant a different channel, report a problem and we’ll help.' with a Report a problem link (the sheet, topic 'My account or sign-in', section 65). It closes with ProgramSummary plus the D7 line: option A 'Your first run starts now, and today counts as day 1 once it’s verified.' (shown until the PM picks), followed by today's RunCard running, and the record says running; or B 'Your first counted day is tomorrow, at your run time.'
-  - Waiting asks in the JobPreviewCard (section 45): the video, the channel, what will be done with the exact comment, and 'Answer by 9 pm or today won’t count.', which the run card then drops so it is said once. Answers: 'Take this job', 'Skip: today won’t count', and a quiet 'Switch YouTube to Automatic' through ConsentDialog; the answer shows as the partner's reply and the card settles (section 45's answered state). Option B, V2's words ('Paid job available', 'Watch the video and provide feedback.', 'Want me to take this one?', answers 'Yes, switch to Automatic' / 'Just this job' / 'Not now', `worker_flow.jsx:50-51, 120-121`) plus the R07 bullets in an AskCard, is `D17 = 'B'` in `screens/chat.jsx` (decision D17, section 73).
+  - Waiting asks in the JobPreviewCard (section 45): the video, the channel, what will be done with the exact comment, and 'Answer by 9 pm or today won’t count.', which the run card then drops so it is said once. Answers: 'Take this job', 'Skip: today won’t count', and a quiet 'Switch YouTube to Automatic' through ConsentDialog; the answer shows as the partner's reply and the card settles (section 45's answered state). Option B, V2's words ('Paid job available', 'Watch the video and provide feedback.', 'Want me to take this one?', answers 'Yes' / 'Not now', `worker_flow.jsx:50-51, 115-119`) plus the R07 bullets in an AskCard, is `D17 = 'B'` in `screens/chat.jsx` (decision D17, section 73).
   - Any answer that turns Automatic on opens ConsentDialog first and answers only on 'I agree, turn on'; Cancel leaves the question waiting.
 - **Sizes:** as Home. Bubbles max 300 (section 35).
-- **States:** empty (EmptyState 'Chat with BlueAI' / 'Ask about today’s run, your days, or where to change a setting.'), running (field read-only, Send becomes Stop), waiting (the ask), retrying (the second try, live), failed (Try again by 9 pm), done (run card + See run details). Stop asks first while running, retrying or waiting (Composer `costsDay`, section 38). Out of credits says each fact once: the RunCard 'Not enough credits for this job.' + `OOC_COPY.day`; the field locks only at zero (creditsZero), where the OutOfCreditsNotice above it says until when and the locked field's placeholder is neutral, 'You can’t send messages right now' (section 48); short of today's run (noCredits, 120 of 360) the field stays open with the ComposerNotice 'Not enough AI credits for today’s run. They refresh at 5:30 am.' Automatic on (ComposerNotice info: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.' + 'Change', V2's ribbon words until 2026-10-14; V2 now says 'Automatic on YouTube', `agent_permissions.jsx:62, 210-214`).
+- **States:** empty (EmptyState 'Chat with BlueAI' / 'Ask about today’s run, your days, or where to change a setting.'), running (field read-only, Send becomes Stop), waiting (the ask), retrying (the second try, live), failed (Try again by 9 pm), done (run card + See run details). Stop asks first while running, retrying or waiting (Composer `costsDay`, section 38). Out of credits says each fact once: the RunCard 'Not enough credits for this job.' + `OOC_COPY.day`; the field locks only at zero (creditsZero), where the OutOfCreditsNotice above it says until when and the locked field's placeholder is neutral, 'You can’t send messages right now' (section 48); short of today's run (noCredits, 120 of 360) the field stays open with the ComposerNotice 'Not enough AI credits for today’s run. They refresh at 5:30 am.' Automatic on (ComposerNotice info: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.' + 'Change', V2's ribbon words until 2026-10-14; V2 archived the ribbon the same day and shows the mode on the composer's chip).
 - **Typed messages (proposed copy):** a status question is answered from the record ('Did today count?': 'Today’s run is done. Day 7 of 20, pending verification. We check every run within a day.'); an action request gets 'I don’t change settings from chat, so nothing has changed. You can set the run time in Worker settings.' plus a Link 'Open Worker settings'; out of scope gets 'That’s not something I can do here. I run your daily YouTube job, answer questions about your runs and days, and point you to the setting you need.' The worker never acts silently on typed text.
 - **Props:** `worker`, `state`, `steps` (renderMessage shape), `onBack`, `onNewChat`, `onSend`, `onStop`, `onAnswer`, `onChangeMode`, `onOpenRun`, `onOpenCredits`, `onNavigate`, `compact`, `landmark`, `frame`.
 - **Motion:** the thread's own (smooth jump to latest, none under reduced motion).
@@ -3037,7 +3035,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ## 61 Settings
 
 **Status:** Changed from V2.
-**Why:** The partner opens Settings to control the worker that acts on their account. V2's Settings has no title, opens on a BlueStacks card that says "Connected to BlueStacks App Player" even when BlueStacks is not installed (settings.jsx:31, R16), then, since 2026-10-14, a Worker card whose Apps group is the mode sheet's switch list (settings.jsx:11-20), then Telegram, AI mode, own key and a Chat AI Settings card of Max Output Tokens, Max Steps and Timeout with its own Save button and a second AI Model picker (settings.jsx:120-138, R31). Beyond that switch list nothing about the worker, its accounts or the partner is there. The system puts partner topics first and developer controls last, closed.
+**Why:** The partner opens Settings to control the worker that acts on their account. V2's Settings has no title, opens on a BlueStacks card that says "Connected to BlueStacks App Player" even when BlueStacks is not installed (settings.jsx:31, R16), then Telegram (the Worker card it gained on 2026-10-14 was removed the same day), AI mode, own key and a Chat AI Settings card of Max Output Tokens, Max Steps and Timeout with its own Save button and a second AI Model picker (settings.jsx:120-138, R31). Nothing about the worker, its accounts or the partner is there. The system puts partner topics first and developer controls last, closed.
 
 ### Settings (Changed from V2)
 - **Purpose:** The Settings tab: one place to see and reach every control over the worker, the accounts it uses, what it tells you, the app it drives, your account and help. Developer controls stay out of the way.
@@ -3063,7 +3061,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ## 62 Worker settings
 
 **Status:** New.
-**Why:** BlueAI acts on the partner's account every day, so every promise made in setup needs a control the partner can find later (P4, R05). V2's pitch says "You can pause, stop, or disconnect anytime." (worker_flow.jsx:67) and its consent says "Switch back anytime in Settings." (agent_permissions.jsx:188), and since 2026-10-14 the mode can be turned off outside an open chat (Settings' Worker card, settings.jsx:11-20), but nothing can be paused, modes reset on reload (agent_permissions.jsx:21), and the run time is asked once in chat (worker_flow.jsx:73-74) and never shown again.
+**Why:** BlueAI acts on the partner's account every day, so every promise made in setup needs a control the partner can find later (P4, R05). V2's pitch says "You can pause, stop, or disconnect anytime." (worker_flow.jsx:67) and its consent says "You can turn this off anytime." (agent_permissions.jsx:203), but since 2026-10-14 the mode changes only from the composer's mode chip in an open chat (Settings' Worker card was removed), nothing can be paused, modes reset on reload (agent_permissions.jsx:21), and the run time is asked once in chat (worker_flow.jsx:73-74) and never shown again.
 
 ### WorkerSettings (New)
 - **Purpose:** Settings > Worker. Turn daily runs off for a while (and know what it costs), choose Always ask or Automatic per app, set when the run happens, and see the interest profile jobs are picked from.
@@ -3087,7 +3085,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ## 63 Connected apps
 
 **Status:** New.
-**Why:** The worker watches, likes and comments as the partner. V2 confirms the YouTube account once in chat (worker_flow.jsx:71) and never shows it again, reads watch history unasked (worker_flow.jsx:80, R18), lets Instagram be set to Automatic before its jobs exist (agent_permissions.jsx:57, R40), and its Telegram card "Unlink"s at once (settings.jsx:59). The partner needs one place that says which accounts are in use, what BlueAI does with each, and how to stop it.
+**Why:** The worker watches, likes and comments as the partner. V2 confirms the YouTube account once in chat (worker_flow.jsx:71) and never shows it again, reads watch history unasked (worker_flow.jsx:80, R18), and its Telegram card "Unlink"s at once (settings.jsx:59). The partner needs one place that says which accounts are in use, what BlueAI does with each, and how to stop it.
 
 ### ConnectedApps (New)
 - **Purpose:** List the accounts BlueAI acts on; per account, what it does there and the way to stop it, with the cost said first.
@@ -3213,7 +3211,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** Changed from V2.
 
-**Why:** The steps work, but each carries a defect that costs trust at the first contact: an indigo spinner (`login.jsx:256`) that is a second accent; "Not seeing the browser tab?" in amber at 2.15:1 next to "Try again", two controls with one handler (`login.jsx:242-247`); "Logged in" / "Welcome back!" plus a Continue click on a first sign-in (`login.jsx:270-275`); the pill "Not enrolled" (`account_gate.jsx:26`), jargon; the consequence "App Player will be signed out too." at 2.54:1 (`account_gate.jsx:31`); a 34px close with no name (`login.jsx:81`); and a white 55% veil (`login.jsx:74`) that is not the site's gate.
+**Why:** The steps work, but each carries a defect that costs trust at the first contact: an indigo spinner (`login.jsx:256`) that is a second accent; "Not seeing the browser tab?" in amber at 2.15:1 next to "Try again", two controls with one handler (`login.jsx:242-247`); "Logged in" / "Welcome back!" plus a Continue click on a first sign-in (`login.jsx:270-275`); a gate that, since 2026-10-13, says "Let’s switch accounts" and "We couldn’t find your application on this account. Sign in with the account you applied with." with the account as a row and Switch account, but no longer says that App Player follows the account (`account_gate.jsx:24-52`); a 34px close with no name (`login.jsx:81`); and a white 55% veil (`login.jsx:74`) that is not the site's gate.
 
 ### SignIn (Changed from V2)
 
@@ -3224,8 +3222,8 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
   2. signing: Spinner 32 blue; "Signing in…" (V2); "Checking that this account is in the program." (replaces "Please wait while we complete your sign-in"). Close cancels.
   3. error (after signing, when the check fails or times out): danger alert mark; "Couldn’t finish signing in"; "Check your connection and try again."; actions "Open the browser again" (secondary) and "Try again" (primary). Close cancels (`screens/sign-in.jsx:59-70`).
   4. success: check mark on success tint; "You’re signed in"; the email. No button: Home after 900 ms by itself.
-  5. gate (blocking): Avatar 56; "Signed in as" (V2), the email 16/600, "from App Player on this PC" (V2, case 2 only); Badge neutral "Not in the program" (was "Not enrolled"); "BlueAI works with the account you applied with."; the consequence "App Player will be signed out too." (V2) at 13 ink-3, right above the one primary "Switch account" (V2); under it, in the dialog footer, a muted external Link "Get help" (`SITE_FAQ_URL`, the site's FAQ) for a partner sure this is the account they applied with.
-  6. confirm (option B only, decision D5, blocking): "Continue to BlueAI" and "Signed in on App Player on this PC" (V2); the account as one pressable Card (Avatar 32, "Continue as Alex" 14/600, email 13 ink-3, chevron); "Not you? Switch account" with an underlined ink Link.
+  5. gate (blocking): Avatar 56; "Signed in as", the email 16/600; Badge neutral "Not in the program"; "BlueAI works with the account you applied with."; the consequence "App Player will be signed out too." (V2's former line, dropped 2026-10-13) at 13 ink-3, right above the one primary "Switch account" (V2); under it, in the dialog footer, a muted external Link "Get help" (`SITE_FAQ_URL`, the site's FAQ) for a partner sure this is the account they applied with.
+  6. confirm (option B only, no longer applicable: the PM dropped it on 2026-10-13): "Continue to BlueAI" and "Signed in on App Player on this PC" (V2); the account as one pressable Card (Avatar 32, "Continue as Alex" 14/600, email 13 ink-3, chevron); "Not you? Switch account" with an underlined ink Link.
 - **Sizes:** Dialog md; the gate's avatar 56, confirm's 32; marks 48.
 - **States:** the six steps; plus hover, focus and active on the account card and buttons (kit CSS); busy on Switch account while the session signs out. In V2: `?signin=browser` (handoff), `?signin=browser&player=other` (gate), `?cases=signin` (all cases).
 - **Props:** `SignIn {step: 'browser' | 'signing' | 'error' | 'success' | 'gate' | 'confirm', from: 'browser' | 'player', account, onOpenBrowser, onRetry, onCancel, onSwitch, onContinue, onDone, doneAfter = 900, compact, reduced, preview, landmark, under}`.
@@ -3238,7 +3236,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** New.
 
-**Why:** The worker runs on a schedule on the partner's PC, usually while nobody watches. When the PC is offline, the app is out of date, or the account is the wrong one, a day is at stake, and V2 designs none of these screens. After Day 20 V2's last words are "Day 20 done." and "That’s every day for this month." (`worker_day_done.jsx:93`), with nothing about cash out or what comes next, although the program has an end and a cash out (`worker_day_done.jsx:6, 38`).
+**Why:** The worker runs on a schedule on the partner's PC, usually while nobody watches. When the PC is offline, the app is out of date, or the account is the wrong one, a day is at stake, and V2 designs none of these screens. After Day 20 V2's last words are "Day 20 done." and "All 20 days done. Pending verification" (`worker_day_done.jsx:68, 99`), with nothing about cash out or what comes next, although the program has an end (`worker_day_done.jsx:35`) and a cash out (the site's $10 minimum, no period lock since 2026-10-14).
 
 ### SystemStates (New)
 
@@ -3249,7 +3247,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
   2. error (a screen failed): EmptyState error "Couldn’t load Home" / "Nothing is lost: today’s run and your days are not affected." + Try again, Report a problem.
   3. update optional: Banner info "An update is ready" / "It installs the next time BlueAI starts. Today’s run isn’t affected." + Restart now, over the normal home (WorkerCard, ProgramStrip).
   4. update required: chip Paused "Update needed". EmptyState locked, icon download, "Update BlueAI to keep running" / "This version can’t run jobs anymore, so runs are paused. Update now and today can still count. It takes about a minute." + Update now. It does not name the installed version or what the update changes: no screen shows the app version or release notes yet (an open item in section 76).
-  5. not in the program: no chip, no credits, no nav. EmptyState locked, icon user, "This account isn’t in the program" / "You’re signed in as {email}. BlueAI runs on the account you applied with." + Switch account, then "App Player will be signed out too." (V2's consequence line), and a quiet secondary "Get help" (`SITE_FAQ_URL`, the site's FAQ, external) for a partner sure this is the account they applied with.
+  5. not in the program: no chip, no credits, no nav. EmptyState locked, icon user, "This account isn’t in the program" / "You’re signed in as {email}. BlueAI runs on the account you applied with." + Switch account, then "App Player will be signed out too." (V2's former consequence line, dropped 2026-10-13), and a quiet secondary "Get help" (`SITE_FAQ_URL`, the site's FAQ, external) for a partner sure this is the account they applied with.
   6. program complete (Day 20 verified, period not over): chip "All 20 days done"; WorkerCard complete and ProgramStrip.
   7. period ended, cash out open (`cashOutOpen` true, section 41; while it is null the last sentence is "See your balance and cash out on Earnings."): chip "Period ended" (section 30's one rule), no credits. EmptyState "This program ended on Nov 1" / "You finished 18 of 20 days. Your worker won’t run again until the next program. Cash out is open on Earnings." + Earnings (the one Earnings URL, opens the site).
   8. period ended, under the minimum (`cashOutOpen` false): chip "Period ended", no credits. EmptyState "This program ended on Nov 1" / "You finished 6 of 20 days. Your worker won’t run again until the next program. You need $10 to cash out. Your balance carries over to the next period." (the last two sentences are the site's, `onblue/apply.html:2292-2293`) + Earnings as the quiet action. Never "Cash out is open" to a partner who cannot.
@@ -3289,7 +3287,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
   - Sign in, Sign out: account entry and exit; never Log in, Login, Logout, Log out (the site should align), logging in.
   - AI credits: the daily allowance, sentence case; never tokens, coins, free credits, claim, earn (for credits), balance (say "left today").
   - Earnings: money, opened on the site's dashboard; never income, rewards (the site should align: "Reward" on the program card and its sheet, "its own reward", "its reward is added to your earnings", `onblue/apply.html:1280, 1470, 1434, 1436`), wallet, BCX, a ↗ character (use the external icon).
-  - cash out, Cash out: taking earnings out, which happens on the site's dashboard, from $10 after the period ends (section 01); the app only points there and says the minimum with it. Never withdraw (the site should align: its sheet says "Withdraw", `onblue/apply.html:1445, 1532, 1541`), claim, redeem.
+  - cash out, Cash out: taking earnings out, which happens on the site's dashboard, from $10 with no period lock since 2026-10-14 (section 01); the app only points there and says the minimum with it. Never withdraw (the site should align: its sheet says "Withdraw", `onblue/apply.html:1445, 1532, 1541`), claim, redeem.
   - Program Terms: the agreement; never Terms of Use (unless that document changed), Terms & Conditions.
   - connected account, Disconnect: the accounts BlueAI uses; never Unlink, ID, enrolled or Not enrolled (say "in the program").
   - Try again: the system retry; never Retry. The PM's failed-day ask says 'Retry'; the screens use the RunCard's and WorkerCard's 'Try again' instead, a proposal in section 73, and the AskCard specimen (section 37) keeps 'Retry' as the V2 reference.
@@ -3305,7 +3303,8 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Purpose:** the strings the PM or legal own. Design may restyle them, never rewrite them; changes go to the owner as proposals.
 - **Anatomy (string; owner; where; status):**
   - "I only run a paid job after you say yes to that specific job."; PM; `worker_flow.jsx:67` (kept live by his call, `:18`); live, conflicts with Automatic (R11).
-  - "Today’s run is done.", "No paid job today, but your run counts.", "Day 20 done." / "That’s every day for this month.", "Pending verification", "We check every run within a day. The tick doubles once it’s verified."; PM; `worker_day_done.jsx:91-98`; DRAFT until the PM approves (`:8`).
+  - "Today’s run is done." and "Day 7 of 20. Pending verification" (no full stop); PM; `worker_day_done.jsx:64-66, 94-100`; approved 2026-10-14.
+  - "No paid job today, but your run counts.", "Day 20 done." / "All 20 days done. Pending verification"; PM; `worker_day_done.jsx:67-68, 99`; DRAFT until the PM approves (`:5-6`). (The verification note "We check every run within a day…" left V2 on 2026-10-14.)
   - "Run this to begin" / "Okay"; PM; `moneymaker_home.jsx:36, 154`; live, settled after three rounds.
   - "An AI that turns your social accounts into income."; PM; `moneymaker.jsx:154`; live, decision D3.
   - "Sign in with the same account you applied with.", "Run the BlueAI worker: it finds jobs and runs them for you.", "Sign in to get started"; PM; `moneymaker.jsx:51, 55, 187`; live.
@@ -3313,7 +3312,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
   - "By continuing, you agree to the Program Terms and acknowledge the Privacy Policy and Cookie Policy."; legal; `terms_sheet.jsx:67-69` (wording rule `:49-53`); legal.
   - "Agree and continue"; PM; `terms_sheet.jsx:71` (`:60`); live.
   - "Run YouTube jobs automatically?" / "I agree, turn on"; PM; `agent_permissions.jsx:186, 191`; live.
-  - "BlueAI will take paid YouTube jobs on its own and like, comment, follow and post from your account. Switch back anytime in Settings."; PM and legal; `agent_permissions.jsx:191-192`; live (V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on); its agreement paragraph is gone). Proposed change, sent to the owners (R51): "BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name." (the ConsentDialog body, section 46): the worker never posts videos, and the comment it does post is not named.
+  - "BlueAI will take YouTube jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime."; PM and legal; `agent_permissions.jsx:203`; live since 2026-10-14 (its agreement paragraph is gone). Proposed change, sent to the owners (R51): "BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name." (the ConsentDialog body, section 46): the worker never posts videos, and the comment it does post is not named.
   - "Always ask" / "Automatic"; PM; `worker_flow.jsx:78`; live.
 - **States:** live, DRAFT, legal.
 - **Do / Don't:** Do quote these exactly in every part marked In V2; send a proposed change to the owner with the reason. Don't fix a typo or a tone in them silently; don't move legal wording between contexts without legal.
@@ -3413,18 +3412,14 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 |---|---|---|---|---|
 | (bare URL) | | | BlueAI alone, signed out: welcome + first-run terms | n/a |
 | `?start` | worker, signin | | worker home, signed in as a new partner; signin is the default | yes |
-| `?v` | 1, 2 | start=worker | which control opens the mode sheet: 1 the composer chip; 2 the ribbon above the composer | yes |
-| `?setup` | off | start=worker | onboarding without the setup question | yes |
-| `?day` | next, returning | implies start=worker | next: the next day's run plays; returning: home before today's run | yes |
+| `?day` | next | implies start=worker | the next day's run plays (returning was removed 2026-10-14) | yes |
 | `?end` | job, nojob, day20, failed | implies day=next | how today's run ends: day-done card and toast | yes |
-| `?card` | days, money, plain | day=next or ?end | which day-done option draws it | yes |
 | `?mode` | auto | start=worker | YouTube on Automatic, consent skipped (the Mode row does the same) | yes |
 | `?signin` | browser | | the sign-in handoff with the browser beside | yes |
 | `?player` | out, accepted, other | other needs signin=browser | the App Player account on this PC | yes |
 | `?browser` | accepted, other, out | signin=browser | what bluestacks.ai holds | yes |
-| `?cases` | signin | | the five sign-in cases as a bar, no Preview panel | no |
-| `?case` | 1, 2, 3a, 3b, 3c | cases=signin | which case opens | no |
-| `?opt` | a, b | cases=signin | sign-in option A or B | no |
+| `?cases` | signin | | the one sign-in case (an account that isn't enrolled) as a bar, no Preview panel | no |
+| `?case` | player, browser | cases=signin | where that sign-in came from | no |
 | `?ask` | any text | waits for sign-in | auto-sends the message | no |
 | `?credits` | 0 | signed in to see it | zero credits: chip 0, banner, popup on send | no |
 | `?bs` | 1 | | BlueStacks installed too | yes |
@@ -3465,15 +3460,11 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 | Browser | Accepted account, Other account, Signed out | as App Player |
 | Chat states | Off, On | the chat tab |
 | Scheduled job | Off, Out of credits | the chat tab |
-| Change mode from | Composer chip, Ribbon | the worker chat, signed in |
 | Mode | Always ask, Automatic | the worker chat, signed in |
-| Worker | Day 1, Returning, Next day | the worker chat, signed in |
+| Worker | Day 1, Next day | the worker chat, signed in |
 | Day end | Job done, No job, Day 20, Failed | the worker chat, signed in |
-| Card | Days, Money, Plain | the worker chat, signed in |
-| Setup question | On, Off | the worker chat, signed in |
 | Hardware | Yes, No | the Settings tab |
 | AI conflict | None, Detected | the Settings tab |
-| Own key | Off, On | signed in |
 | Credits | Full, Empty | signed in, own key off |
 
 **Sizes.** Fixed bottom left, 300 wide (index.html:1106); collapses to a 38 gear.
@@ -3516,8 +3507,8 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R02 worker (effort M)
 
-- **V2:** `blueai/worker_day_done.jsx:40, 148; blueai/worker_flow.jsx:42, 168`
-- **Today:** DONE_BEFORE=6 makes tonight's popup 'Day 7 of 20' and tomorrow's strip 'Day 6 of 20'; the strip appears right after Day 1 claiming 'Yesterday’s run verified.'
+- **V2:** `blueai/worker_day_done.jsx:36, 44-49`
+- **Today:** DONE_BEFORE=6 is a constant: the popup says 'Day 7 of 20' whatever came before (since 2026-10-14 the home strip is gone and day-by-day progress lives on the partner dashboard, which keeps its own figures).
 - **Recommended:** One ledger (verified, pending, missed, rejected days; target; ends Nov 1) feeding overlay, strip, toast, Activity and the site tile.
 - **Why:** The day count is the partner's pay.
 
@@ -3537,14 +3528,14 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R05 worker (effort M)
 
-- **V2:** `blueai/settings.jsx:11-20, 144-159; blueai/worker_flow.jsx:67; blueai/agent_permissions.jsx:192`
-- **Today:** 'Pause, stop, or disconnect anytime' has no control; 'turn this off anytime' has one since 2026-10-14, the Worker card in Settings (one switch per app). V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on), and it still makes the promise.
+- **V2:** `blueai/settings.jsx:132; blueai/worker_flow.jsx:69; blueai/agent_permissions.jsx:203`
+- **Today:** 'Pause, stop, or disconnect anytime' has no control. The consent promises 'You can turn this off anytime.', and since 2026-10-14 the only way back is the composer's mode chip in an open chat: the Worker card left Settings the same day.
 - **Recommended:** Settings > Worker (pause until, run window, mode per app, interest profile) and Connected apps (Disconnect).
 - **Why:** Consent that cannot be found to revoke is weak consent (P4).
 
 #### R06 worker (effort S)
 
-- **V2:** `blueai/worker_flow.jsx:121, 149; blueai/worker_day_done.jsx:118`
+- **V2:** `blueai/worker_flow.jsx:119, 149; blueai/worker_day_done.jsx:118`
 - **Today:** 'Not now' on the job ask forfeits the day; the cost is told afterwards.
 - **Recommended:** State the cost on the option ('Skip: today won’t count') or keep the job open until 9 pm, the day's deadline (section 41), with Undo. Decision D14.
 - **Why:** Learning the cost after the click feels like a trap (P3).
@@ -3572,15 +3563,15 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R10 foundations (effort S)
 
-- **V2:** `blueai/chat_bubbles.jsx:124; blueai/account_gate.jsx:31; blueai/login.jsx:242; blueai/worker_day_done.jsx:147`
-- **Today:** Caveats ('App Player will be signed out too.', 'We check every run within a day…', 'Working on it…') at 2.15 to 2.56:1.
+- **V2:** `blueai/chat_bubbles.jsx:124; blueai/login.jsx:242`
+- **Today:** Caveats ('Working on it…', the sign-in's amber link) at 2.15 to 2.56:1 (the gate's App Player line and the day-done note left V2 on 2026-10-13 and 14).
 - **Recommended:** ink-3 for anything the partner must read, ink-4 #6e737c (4.77:1) for pure meta; no warm link colour.
 - **Why:** Unreadable caveats are not disclosure.
 
 #### R11 copy (effort S)
 
 - **V2:** `blueai/worker_flow.jsx:67 vs 76-78; blueai/worker_flow.jsx:46`
-- **Today:** 'I only run a paid job after you say yes to that specific job.' then the same onboarding offers Automatic; PLAN step 2 promises 'a quick approval'.
+- **Today:** 'I only run a paid job after you say yes to that specific job.' then Automatic (one tap away on the composer's mode chip since 2026-10-14; setup no longer offers it) takes jobs without asking; PLAN step 2 promises 'a quick approval'.
 - **Recommended:** Decision D15 for the PM (kept live by his call, worker_flow.jsx:18): a bullet that holds in both modes, for example 'You choose: I can ask before each paid job, or take them on my own. You can change this anytime in Settings.'
 - **Why:** The first promise about the partner's account is broken minutes later.
 
@@ -3642,8 +3633,8 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R51 consent (effort S)
 
-- **V2:** `blueai/agent_permissions.jsx:191`
-- **Today:** The Automatic consent says the worker will finish jobs 'including posting videos'; the worker never posts videos, and the comment it does post in the partner's name is not named. V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on), and on 2026-10-14 its body became 'BlueAI will take paid YouTube jobs on its own and like, comment, follow and post from your account.' with 'Switch back anytime in Settings.' underneath: the comment in the partner's name is now named, as recommended, and posting stays because the PM's spec lists it for Automatic jobs.
+- **V2:** `blueai/agent_permissions.jsx:203`
+- **Today:** The Automatic consent says 'BlueAI will take YouTube jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime.' (V2 since 2026-10-14): the worker never posts videos, and the comment it does post in the partner's name is not named.
 - **Recommended:** Name what a job does, from `WORKER_JOB.actions`: 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.' (section 46). Consent copy, so the PM and legal decide it; the record keeps the version shown (section 53).
 - **Why:** On Automatic the job preview never appears, so this line is the partner's only notice that comments go out under their name.
 
@@ -3714,8 +3705,8 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R29 copy (effort S)
 
-- **V2:** `index.html:329; blueai/worker_day_done.jsx:153`
-- **Today:** Kebab Earnings and strip 'Earnings ↗' go to two different URLs.
+- **V2:** `index.html:323`
+- **Today:** No longer applicable since 2026-10-14: the strip and its 'Earnings ↗' are gone, so the kebab's Earnings (the partner dashboard) is the app's one Earnings link.
 - **Recommended:** One EARNINGS_URL constant; one external glyph.
 - **Why:** The partner's money lives behind this link.
 
@@ -3756,8 +3747,8 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R35 chat (effort S)
 
-- **V2:** `blueai/chat_bubbles.jsx:15; blueai/chat_product.jsx:213`
-- **Today:** Every user bubble shows 'Jun 12, 2026, 11:03 AM'; 'Your next run is at 11 am.' whatever was chosen.
+- **V2:** `blueai/chat_bubbles.jsx:15`
+- **Today:** Every user bubble shows 'Jun 12, 2026, 11:03 AM' (the greeting's hard-coded 'Your next run is at 11 am.' left V2 on 2026-10-14).
 - **Recommended:** Real times and day separators; greeting reads the saved run window.
 - **Why:** Times decide when the worker acts on the account.
 
@@ -3791,8 +3782,8 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 
 #### R40 worker (effort S)
 
-- **V2:** `blueai/agent_permissions.jsx:55-57, 98-116`
-- **Today:** Instagram can be switched to Automatic and consented to before Instagram jobs exist.
+- **V2:** `blueai/agent_permissions.jsx:57`
+- **Today:** No longer applicable since 2026-10-14: V2 lists YouTube only, so Instagram cannot be switched to Automatic.
 - **Recommended:** Coming soon row with no switch; consent only when the app goes live and is connected.
 - **Why:** Consent to automation on an unused account is meaningless.
 
@@ -3876,9 +3867,9 @@ Choices only the PM (and legal, where named) can make. The system builds the rec
 |---|---|---|---|
 | **D1** Primary fill | Blue action #1268f0 | Ink #0b0b0d like the site's commit button | Decided B (Appy, V3 restyle 2026-10-14): the solid ink button, `--v2-solid` with the site's three-stop cast; blue is held to focus, selection, progress, links and the spark. |
 | **D2** The noun: worker or agent | worker (V2) | agent (site, apply.html:1269-1274) | One noun across site and app, one capitalisation ('BlueAI worker'); PM call. |
-| **D3** The money model | $1 per verified day + $10 day-20 bonus (worker_day_done.jsx:5-6) | $30 when the 20-day goal is met (apply.html:1285, 1471) | Pick one sentence and say it everywhere; if B, the app shows days, never partial dollars ('days' style is already the default). Rename the bonus 'day-20 bonus' if it stays. The $10 cash-out minimum is not part of the choice: it is V2's rule (worker_day_done.jsx:6) and the site's (apply.html:1360, 2292), so the app states it now (sections 01, 41, 43). Proposed strings that wait on this choice (PM and legal): the leave and delete line for a balance under the minimum ('a balance under $10 can’t be cashed out once you leave', `screens/settings.jsx` cashLine), and Home's dropped banner sentence 'Every day you run still counts.' (false under B). |
-| **D4** Where the mode changes later | Version 1 chip in the composer | Version 2 ribbon (default) | B as the in-chat shortcut plus Settings > Worker as the permanent home either way. V2 added a Worker card to Settings on 2026-10-14; both versions now open one mode sheet. |
-| **D5** Sign-in option | Check account (interrupt only on the wrong account) | Continue as (always confirm) | A for fewer stops; drop the losing code path. |
+| **D3** The money model | $1 per verified day + $10 day-20 bonus (V2's former rule; worker_day_done.jsx keeps only target 20 and Nov 1 since 2026-10-14) | $30 when the 20-day goal is met (apply.html:1285, 1471) | Pick one sentence and say it everywhere; if B, the app shows days, never partial dollars ('days' style is already the default). Rename the bonus 'day-20 bonus' if it stays. The $10 cash-out minimum is not part of the choice: it is the site's rule (apply.html:1371, 2317), with no period lock since 2026-10-14, so the app states it now (sections 01, 41, 43). Proposed strings that wait on this choice (PM and legal): the leave and delete line for a balance under the minimum ('a balance under $10 can’t be cashed out once you leave', `screens/settings.jsx` cashLine), and Home's dropped banner sentence 'Every day you run still counts.' (false under B). |
+| **D4** Where the mode changes later | Version 1 chip in the composer | Version 2 ribbon (default) | Decided A by the PM on 2026-10-14: the composer chip, in every signed-in chat, opens the mode popover; the ribbon is archived and Settings' Worker card was removed. The system still recommends Settings > Worker as the permanent home. |
+| **D5** Sign-in option | Check account (interrupt only on the wrong account) | Continue as (always confirm) | Decided A by the PM on 2026-10-13: one case, no Continue as. |
 | **D6** Credits and the paid run | Reserve the worker's run cost from the daily grant | Warn before a chat would dip into it | A: a partner should never lose a paid day to an invisible meter. Not built yet: the composer locks only at zero (section 38) and the credits chip turns low once fewer than the run's cost are left (section 47), so a chat can still spend today's run (section 76). |
 | **D7** Does Day 1 count | Setup continues into the first daily run and counts | Setup only; first counted day is tomorrow | Either, said in the onboarding close. |
 | **D8** The family mark | BlueAI gradient wordmark | Site spark + two-tone 'BlueAI' | B in the long run (already in V2's sign-in pages); A until the PM decides. |
@@ -3888,7 +3879,7 @@ Choices only the PM (and legal, where named) can make. The system builds the rec
 | **D12** Chat as a tab | Three tabs, chat from Home | Four tabs with Chat | A: chat serves the worker. |
 | **D13** Yellow for every worker question | Keep the live yellow on every ask (PM-confirmed) | Neutral asks in onboarding, yellow only for unattended job and retry asks | B so yellow keeps meaning 'needs you'. |
 | **D14** Skipping a waiting job (R06) | The cost on the option, one tap: 'Skip: today won’t count' | Keep the job open until 9 pm with Undo | A, built in the JobPreviewCard (section 45): the cost is read before the tap, and nothing waits on a toast. |
-| **D15** The setup promise (R11) | One bullet that holds in both modes ('You choose: I can ask before each paid job, or take them on my own.') | Keep 'I only run a paid job after you say yes to that specific job.' and drop Automatic from setup | A: Automatic stays a choice, and the first promise stays true. PM copy. |
+| **D15** The setup promise (R11) | One bullet that holds in both modes ('You choose: I can ask before each paid job, or take them on my own.') | Keep 'I only run a paid job after you say yes to that specific job.' and drop Automatic from setup | A: Automatic stays a choice, and the first promise stays true. PM copy. (2026-10-14: V2 dropped Automatic from setup, but the composer chip still offers it, so the bullet still breaks on Automatic.) |
 | **D16** Reading watch history (R18) | Ask first: PermissionRequest in setup, Allow or Not now, revoked in Connected apps | Read it at setup as V2 does, listed under Account with a switch to stop it | A, built (section 46): reading viewing data is its own permission. PM copy. |
 | **D17** The paid job ask (R07) | JobPreviewCard replaces V2's AskCard for paid jobs | Keep the AskCard and add the video, channel and exact comment to it | A, built: Chat's waiting state asks in the JobPreviewCard (section 45, screens/chat.jsx jobCard); B is one constant away (D17 = 'B'); the AskCard stays for every other question (section 37). |
 | **D18** Feedback on a failed job (section 39) | Offer thumbs on failed jobs too | Successes only, as V2 (`chat_product.jsx:150`) | A: a failed job is where a partner most wants to say something; Report a problem stays the route for a dispute. |
@@ -4105,8 +4096,8 @@ Not live, and why:
 - **V2 without Tailwind:** V2 loads the Tailwind CDN; this page does not (R26). Live V2 parts sit in a v2-preflight wrapper whose scoped reset mirrors Tailwind’s preflight, but V2’s few Tailwind utility classes (worker_cards.jsx) do nothing here.
 - **V2’s own style block:** V2 index.html’s keyframes and ba-* classes are copied into guide/v2-live.css so live parts animate. If V2 changes that block, re-copy it; no check compares them.
 - **Scene styles:** product-scene.css is not loaded, so the desktop, the Windows toast and the install dialog are shown as V2 URL states in a frame, not live.
-- **URL states and localStorage:** V2 reads two Preview panel rows from localStorage (`index.html:261-265`): `bai_proto_start` (land signed in on the worker, or the real sign-in cold start) and `bai_proto_version` (which control opens the mode sheet: the composer chip or the ribbon). A link that sets its own start (`start`, `day`, `end` or `signin`) or version (`v`) wins (`index.html:246-254`); a framed state without them opens on what an earlier visit stored. Open it in a private window to be sure. The consent record is only written (`agent_permissions.jsx:85`) and the mode per app lives in memory, so neither carries over.
-- **Shared V2 stores on this page:** Live parts share V2’s in-page stores: section 46’s specimens set the AgentPermissions mode, which chat’s AutoRibbon (section 38) then shows as Automatic. Use section 46’s Reset.
+- **URL states and localStorage:** V2 reads one Preview panel row from localStorage (`index.html:251-254`): `bai_proto_start` (land signed in on the worker, or the real sign-in cold start). A link that sets its own start (`start`, `day`, `end` or `signin`) wins; a framed state without one opens on what an earlier visit stored. Open it in a private window to be sure. The consent record is only written (`agent_permissions.jsx:80`) and the mode lives in memory, so neither carries over.
+- **Shared V2 stores on this page:** Live parts share V2’s in-page stores: section 46’s specimens set the AgentPermissions mode, which any live mode chip on the page then shows. Use section 46’s Reset.
 - **V2 modal markup:** The live V2 TermsSheet (section 26) renders V2’s own role=dialog aria-modal markup, so a screen reader may treat the rest of the guide as inert while it is mounted.
 - **What a ref proves:** A ref proves a piece of text is still on its V2 line. It does not prove V2 renders it, or renders it the way the guide describes.
 - **Recommendation wording:** Each recommendation’s V2 location is proved, and so is every string its “today” text quotes exactly. Paraphrases are the architect’s reading of V2 and are not machine-checked.
@@ -4165,6 +4156,17 @@ About 3,000 of V2’s lines never render. They are listed here and never specime
 **Status:** Meta (no parts).
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
+
+### 2026-10-14: V2 today re-synced to the PM’s 14 Oct design
+
+- Run-complete popup: an outlined green circle with one green tick, “Today’s run is done.” and “Day 7 of 20. Pending verification” (no full stop), then Got it; dialog sm 320 from v2_tokens.jsx; Day 1 shows it too; confetti on Day 20 only. The home strip, the 20-segment bar and the verification note are gone: day-by-day progress lives on the partner dashboard.
+- Modes: one app, YouTube. Always ask / Automatic is picked from the composer’s mode chip, which opens a popover (not a sheet); Automatic asks for consent first; no worker question offers Automatic (the job ask is Yes / Not now). The Automatic ribbon is archived (code kept, not rendered); the per-app switch list, the bottom sheet and the plain ModalOverlay frame are gone; Settings has no Worker card.
+- Answers: chips, and the composer stays open while a question waits (“Or type your answer…”); the Other chip and the docked answer panel are archived.
+- Sign-in: one not-enrolled case; the gate says “Let’s switch accounts” (no pill, no App Player line); option B (Continue as) is gone.
+- The PM now builds from this system’s tokens: blueai/v2_tokens.jsx (window.V2Tokens) mirrors tokens-v2-today.css.
+- Preview panel: the Returning, Change mode from, Card, Own key and Setup question rows and their params are gone. Earnings opens the partner dashboard (../experiments/onblue-vesper/apply.html?creator=in&account=one).
+- Partner dashboard: “Days run” is 20 pills (filled verified, outlined pending) with a Verified / Pending verification legend; cash out has no period lock, only the $10 minimum (“Payment minimum: $10”; disabled with “You need $10 to cash out.”).
+- Docs: refs re-pointed or removed, sections and partials that described the old V2 now say what V2 does; system parts that still assume a period lock (ProgramSummary’s cash-out lines, the period-ended states) are marked for a rewrite.
 
 ### 2026-10-14: Top bar not worker-centric, neutral credits glyph
 

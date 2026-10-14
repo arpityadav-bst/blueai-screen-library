@@ -2,7 +2,7 @@
 
 **Status:** Changed from V2.
 
-**Why:** The money depends on a day's state (pending verification, verified, not counted), so that state needs one unmistakable label on every row and card. V2 has five pill systems for it: the AI Mode status chip (12/600, ai_mode.jsx:38), the Jobs badge (radius 4 with a line, jobs.jsx:31), "Active" (10/700 uppercase, index.html:483), "Verified" (11.5/700, profile.jsx:50) and "Not enrolled" (11/600 uppercase at 0.12em, account_gate.jsx:26). One Badge replaces all five.
+**Why:** The money depends on a day's state (pending verification, verified, not counted), so that state needs one unmistakable label on every row and card. V2 has four pill systems for it: the AI Mode status chip (12/600, ai_mode.jsx:38), the Jobs badge (radius 4 with a line, jobs.jsx:31), "Active" (10/700 uppercase, index.html:483) and "Verified" (11.5/700, profile.jsx:50); the gate's "Not enrolled" pill left on 2026-10-13. One Badge replaces all four.
 
 **V3 restyle (2026-10-14).** The status pill has five tones: neutral, busy, ok (success), danger, attention. Busy (a neutral or info badge with `busy`) is work in progress, so it is blue: `--v2-select` fill, `--v2-blue-ink` label, a pulsing `--v2-blue` dot.
 
@@ -28,7 +28,7 @@ Plus: no mark, dot, icon, busy dot.
 **Sizes.** One: 22 tall. Width hugs the label.
 
 **States.**
-- Static: every tone. In V2: Profile (Kebab > Profile, "Verified"), the gate (`?cases=signin&case=2`, "Not enrolled"), Settings > AI Mode > Hybrid > Auto (status chip), Preview "Own key: On" then the credits pill ("Active").
+- Static: every tone. In V2: Profile (Kebab > Profile, "Verified"), Settings > AI Mode > Hybrid > Auto (status chip), Preview "Own key: On" then the credits pill ("Active").
 - Busy: the dot pulses (`.v2-anim-pulse`, `--v2-dur-pulse`) while the thing is working. In V2: the status chip while downloading (ai_mode.jsx:39).
 - Reduced motion: the dot holds still (global rule in kit/motion.css).
 

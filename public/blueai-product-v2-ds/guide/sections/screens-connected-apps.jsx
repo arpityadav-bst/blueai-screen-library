@@ -90,7 +90,7 @@
             { part: 'Title', token: 'ScreenHeader with Back', value: '"Connected apps"; an app’s detail is titled with its name', ref: 'screens-account.apps.handle' },
             { part: 'Row', token: 'ListRow nav + Avatar app 32 + Badge', value: 'name 14/500, account 13 ink-3, one Badge', ref: ['screens-account.apps.youtube', 'screens-account.settings.telegram-title'] },
             { part: 'Status words', token: 'Badge success / attention / neutral', value: 'Connected, Signed out, Not connected, Coming soon' },
-            { part: 'Instagram', token: 'ListRow static + Badge neutral', value: '"Instagram jobs aren’t available yet." No chevron', ref: 'screens-account.apps.instagram' },
+            { part: 'Instagram', token: 'ListRow static + Badge neutral', value: '"Instagram jobs aren’t available yet." No chevron' },
             { part: 'Telegram', token: 'ListRow', value: 'V2’s copy: "Connected to @BlueAIBot" / "Connect your Telegram account…"; Connect Telegram', ref: ['screens-account.settings.telegram-linked', 'screens-account.settings.telegram-desc', 'screens-account.settings.telegram-connect'] },
             { part: 'Pairing', token: 'Dialog task + Spinner 16', value: 'the code 4829 (24/600 tabular, sunken, dashed line), "Waiting for Telegram. The code works for 10 minutes."; expired and failed say "Nothing was linked."; no QR placeholder, no "I’ve paired"', ref: ['screens-account.settings.telegram-modal', 'screens-account.settings.telegram-qr', 'screens-account.settings.telegram-code', 'screens-account.settings.telegram-paired'] },
             { part: 'Disconnect', token: 'Button danger md (YouTube), secondary md (Telegram)', value: 'replaces "Unlink"; consequence 13 ink-3 above it', ref: 'screens-account.settings.telegram-unlink' },

@@ -82,7 +82,7 @@
             { part: 'Copy', token: null, value: 'Max steps, 10 to 500, 50', ref: ['display-feedback.row.copy-steps', 'display-feedback.row.copy-steps-value'] },
             { part: 'Copy', token: null, value: 'Timeout, 20 min (V2 says 1200 in seconds)', ref: ['display-feedback.row.copy-timeout', 'display-feedback.row.copy-timeout-value'] },
             { part: 'Copy', token: null, value: 'Sign out', ref: 'display-feedback.row.copy-sign-out' },
-            { part: 'Link', token: null, value: 'Earnings: https://bluestacks.ai/dashboard', ref: 'display-feedback.stat.earnings' },
+            { part: 'Link', token: null, value: 'Earnings: the partner dashboard', ref: 'worker.earnings.menu-url' },
             { part: 'Copy (proposed)', token: null, value: 'Next run, Run window, Paid jobs, Disconnect YouTube, Pause the worker' },
           ]} />
 

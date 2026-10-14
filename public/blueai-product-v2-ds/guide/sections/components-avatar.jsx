@@ -67,11 +67,11 @@
             changed="Profile puts a 92px bat emoji on a green disc over a gradient banner, where the partner's identity goes. The sign-in gate already does it right: an initial on the account's hue. The system keeps the gate's idea at four sizes, adds a photo and app marks for Connected apps, and drops the banner. V2's sign-in hue #156efe gives white initials 4.47:1, so hue 0 is action blue." />
 
           <G.SpecDrawer rows={[
-            { part: 'Shape', token: '--v2-radius-round', value: '50%', ref: ['display-feedback.avatar.gate-56', 'display-feedback.avatar.gate-34'] },
-            { part: 'Sizes', token: null, value: '24, 32, 40, 56px', ref: ['display-feedback.avatar.gate-56', 'display-feedback.avatar.gate-34', 'display-feedback.avatar.emoji-disc'] },
+            { part: 'Shape', token: '--v2-radius-round', value: '50%', ref: 'display-feedback.avatar.gate-34' },
+            { part: 'Sizes', token: null, value: '24, 32, 40, 56px', ref: ['display-feedback.avatar.gate-34', 'display-feedback.avatar.emoji-disc'] },
             { part: 'Hue 0', token: '--v2-action', value: '#1268f0 (white 4.92:1)', ref: 'display-feedback.avatar.hue-blue' },
             { part: 'Hue 1', token: '--v2-ink', value: '#0b0b0d', ref: 'display-feedback.avatar.hue-ink' },
-            { part: 'Initials', token: '--v2-on-color / --v2-weight-semibold', value: 'white, 600; 11 / 13 / 14 / 20px by size', ref: 'display-feedback.avatar.gate-56' },
+            { part: 'Initials', token: '--v2-on-color / --v2-weight-semibold', value: 'white, 600; 11 / 13 / 14 / 20px by size', ref: 'display-feedback.avatar.gate-34' },
             { part: 'App mark', token: '--v2-surface-sunken / --v2-line / --v2-ink-2', value: 'glyph 16 / 16 / 20 / 24 by size' },
             { part: 'Status ring', token: '--v2-surface', value: '2px ring, dot 28% (min 8px)' },
             { part: 'Removed', token: null, value: 'emoji on a #A3D977 disc', ref: ['display-feedback.avatar.emoji-disc', 'display-feedback.avatar.emoji'] },

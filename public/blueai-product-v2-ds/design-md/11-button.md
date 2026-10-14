@@ -16,7 +16,7 @@
 
 **Sizes.** sm 28 (`--v2-control-sm`) for dense rows; md 36 (`--v2-control-md`) default; lg 44 (`--v2-control-lg`) for full-width sheet and dialog actions (`full`). sm grows an invisible ::after to the 32px hit floor.
 
-**States.** Rest; hover; focus-visible (2px `--v2-blue` outline, offset 2); active (translateY 1px, 2px on the solid; secondary and danger press to `--v2-surface-press`, quiet to `--v2-wash-press`); disabled (0.45, `aria-disabled`, still focusable, reason printed); loading (`aria-busy`, spinner, clicks ignored, cursor progress). In V2 today: New Chat at `?start=worker` (index.html:351); Save settings on the Settings tab (settings.jsx:138); Cancel and I agree, turn on in the Automatic consent (agent_permissions.jsx:190-191, open the mode sheet at `?start=worker&v=1` and switch YouTube on); Got it on the day-done card (worker_day_done.jsx:148, `?end=job`) and the out-of-credits card (byok.jsx:26, `?credits=0` then send); Apply disabled at 0.45 with no reason (ai_mode.jsx:190, Settings, AI Mode, Hybrid, Custom).
+**States.** Rest; hover; focus-visible (2px `--v2-blue` outline, offset 2); active (translateY 1px, 2px on the solid; secondary and danger press to `--v2-surface-press`, quiet to `--v2-wash-press`); disabled (0.45, `aria-disabled`, still focusable, reason printed); loading (`aria-busy`, spinner, clicks ignored, cursor progress). In V2 today: New Chat at `?start=worker` (index.html:351); Save settings on the Settings tab (settings.jsx:138); Cancel and I agree, turn on in the Automatic consent (agent_permissions.jsx:205-208, open the mode chip at `?start=worker` and pick Automatic); Got it on the day-done card (worker_day_done.jsx:131, `?end=job`, the system's 44px primary on #1990FF since 2026-10-14) and the out-of-credits card (byok.jsx:26, `?credits=0` then send); Apply disabled at 0.45 with no reason (ai_mode.jsx:190, Settings, AI Mode, Hybrid, Custom).
 
 **Props.** `variant` ('primary' | 'secondary' | 'quiet' | 'danger' | 'destructive', default 'secondary'), `size` ('sm' | 'md' | 'lg'), `icon`, `iconRight` (icon names, section 08), `loading`, `disabled`, `disabledReason` (string printed under it), `full`, `type` ('button'), `onClick`, `href` (renders an a), `external` (new tab, external glyph, "opens in a new tab" for screen readers), `className`, `children`.
 
@@ -82,7 +82,7 @@
 
 **Sizes.** Inherits; standalone 13.
 
-**States.** Rest; hover (blue-ink, underline in the same colour); focus-visible; external. In V2 today: Learn more at 12.5/600 #1990FF with a typed arrow (credits_popup_parts.jsx:110, the (i) on the AI Credits screen); Earnings at 11.5/700 #1990FF with a typed arrow (worker_day_done.jsx:184, the home strip at `?day=returning`); Switch account at 600 #1990FF (account_gate.jsx:58, `?signin=browser&player=other`). All 3.24:1, none underlined.
+**States.** Rest; hover (blue-ink, underline in the same colour); focus-visible; external. In V2 today: Learn more at 12.5/600 #1990FF with a typed arrow (credits_popup_parts.jsx:110, the (i) on the AI Credits screen); Switch account at 600 #1990FF (account_gate.jsx:58, `?signin=browser&player=other`). All 3.24:1, none underlined.
 
 **Props.** `href`, `external`, `tone` ('ink' | 'muted'), `standalone`, `onClick`, `children`.
 

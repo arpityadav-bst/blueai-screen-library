@@ -2,7 +2,7 @@
 
 **Status:** New (R07). Chat's waiting state asks paid jobs in this card (decision D17, option A, built; `screens/chat.jsx` jobCard). V2's AskCard ask (section 37) is option B, one constant away, and asks every other question.
 
-**Why:** the riskiest moment in the product is agreeing to public activity under the partner's name. V2's ask shows only 'Watch the video and provide feedback.' (`worker_flow.jsx:51, 119`); the comment it posts is never shown (`:136`); the first chip, 'Yes, switch to Automatic', bundles yes with a standing consent (`:121`); and the cost of 'Not now' (the day) is told only afterwards (`:149`).
+**Why:** the riskiest moment in the product is agreeing to public activity under the partner's name. V2's ask shows only 'Watch the video and provide feedback.' (`worker_flow.jsx:51, 119`); the comment it posts is never shown (`:136`); since 2026-10-14 the chips are 'Yes' and 'Not now' (`:119`), with Automatic only on the composer's mode chip; and the cost of 'Not now' (the day) is told only afterwards (`:149`).
 
 ### JobPreviewCard
 

@@ -114,7 +114,7 @@
             { part: 'Dim veil', token: '--v2-scrim', value: 'rgba(11,18,32,0.48)', ref: ['foundations.scrim.modal', 'foundations.scrim.logout', 'foundations.scrim.byok', 'foundations.scrim.terms', 'foundations.scrim.day-done'] },
             { part: 'Sign-in gate', token: '--v2-scrim-frost / --v2-scrim-blur', value: 'rgba(248,249,251,0.88) / 14px', ref: ['foundations.scrim.login', 'foundations.scrim.onblue-gate'] },
             { part: 'Top bar', token: '--v2-z-header', value: '20', ref: 'foundations.z.topbar' },
-            { part: 'Dialogs and sheets', token: '--v2-z-dialog', value: '100, day done included (V2 50 day done, 60, 120, 120, 130)', ref: ['foundations.scrim.modal', 'foundations.scrim.logout', 'foundations.scrim.terms', 'foundations.scrim.byok'] },
+            { part: 'Dialogs and sheets', token: '--v2-z-dialog', value: '100, day done included (V2 60 day done, 60, 120, 120, 130)', ref: ['foundations.scrim.modal', 'foundations.scrim.logout', 'foundations.scrim.terms', 'foundations.scrim.byok'] },
             { part: 'Splash', token: '--v2-z-splash', value: '200', ref: 'foundations.z.splash' },
             { part: 'Copy shown (V2)', token: null, value: "'Logout'", ref: 'foundations.type.title-logout' },
           ]} />

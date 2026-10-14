@@ -8,13 +8,7 @@ For Abhisht. Short on purpose.
 2. **V1 is gone.** V2 is the one product, at `/blueai-product-v2`.
 3. **Your cash-out spec is in.** The $10 minimum is on the onBlue Agentic partner dashboard and in the Program Terms (marked as not legal's wording yet).
 4. **We made a design system for V2.** It sits next to V2.
-5. **Then Appy simplified a few V2 screens** (14 Oct). Please copy these files into your branch so your next update keeps them:
-   - `blueai/worker_day_done.jsx`: the run-complete popup is minimal (one tick, title, "Day 7 of 20 · Pending verification", Got it). The 20-day bar stays on Home.
-   - `blueai/agent_permissions.jsx`: the consent dialog is one paragraph and two buttons; the ribbon is one line; the mode menu is a bottom sheet with one switch per app.
-   - `blueai/settings.jsx`: a Worker section with the same app switches.
-   - `index.html`: the Preview rows "Change mode from" and "Mode".
-   - The new consent wording needs your (or legal's) OK.
-   - On the partner site, Cash out keeps its name and one line under the balance says why it is closed.
+5. **V2 now equals your 14 Oct branch.** Your version won, so nothing needs copying back; the design system is re-synced to it (changelog, 14 Oct).
 
 ## How the system was made
 

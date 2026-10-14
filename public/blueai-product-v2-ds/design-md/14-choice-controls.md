@@ -82,7 +82,7 @@
 
 **Sizes.** md 32, sm 28 (with an invisible 32 target).
 
-**States.** Rest; hover (wash + ink); selected; focus-visible; disabled (0.45; say why beside it); gated (`beforeChange` is waiting: the target segment shows a dashed select-line edge, the group is `aria-busy`, the selection does not move until the answer). In V2 today: none since 2026-10-14; the composer chip at `?start=worker&v=1` opens a sheet with one switch per app (agent_permissions.jsx:98-116).
+**States.** Rest; hover (wash + ink); selected; focus-visible; disabled (0.45; say why beside it); gated (`beforeChange` is waiting: the target segment shows a dashed select-line edge, the group is `aria-busy`, the selection does not move until the answer). In V2 today: none; the composer's mode chip at `?start=worker` opens a popover with one row per mode for YouTube (agent_permissions.jsx:93-125).
 
 **Props.** `options` ([{value, label, icon, disabled}]), `value`, `onChange(value)`, `ariaLabel`, `beforeChange(value)` (return true, or a promise of true, to let the change through), `size`, `disabled`, `className`.
 

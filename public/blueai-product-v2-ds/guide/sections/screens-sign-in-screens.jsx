@@ -61,14 +61,14 @@
     ['Success', ['entry-patterns.signin.success-title', 'entry-patterns.signin.welcome-back', 'entry-patterns.signin.continue'],
       '"Logged in", "Welcome back!" to a first-time partner, and a Continue click.',
       '"You’re signed in" and the email, then Home after 900 ms by itself (the browser already said so). No button.'],
-    ['Gate', ['entry-patterns.signin.signed-in-as', 'entry-patterns.signin.from-player', 'entry-patterns.signin.not-enrolled', 'entry-patterns.signin.switch', 'entry-patterns.signin.player-too', 'entry-patterns.signin.player-too-ink'],
-      '"Signed in as", the email, "from App Player on this PC", the pill "Not enrolled", "Switch account", then "App Player will be signed out too." at 2.54:1.',
-      'Same words and order; Badge "Not in the program" (glossary); one line on why; the consequence at 6.0:1, right above the button; a quiet "Get help" (SITE_FAQ_URL) under Switch account. Blocking, no close.'],
+    ['Gate', ['entry-patterns.signin.gate-title', 'entry-patterns.signin.gate-body', 'entry-patterns.signin.gate-card', 'entry-patterns.signin.switch'],
+      'Since 2026-10-13: a switch-account icon, "Let’s switch accounts", "We couldn’t find your application on this account. Sign in with the account you applied with.", the account as a row (avatar, name, email), then "Switch account". No pill, no App Player line.',
+      'The account; Badge "Not in the program" (glossary); one line on why; that App Player follows the account, at 6.0:1, right above the button; a quiet "Get help" (SITE_FAQ_URL) under Switch account. Blocking, no close.'],
     ['Confirm (option B)', ['entry-patterns.signin.confirm-title', 'entry-patterns.signin.confirm-sub', 'entry-patterns.signin.continue-as', 'entry-patterns.signin.not-you'],
-      '"Continue to BlueAI", "Signed in on App Player on this PC", "Continue as Alex", "Not you? Switch account" in #1990FF.',
+      'No longer reached: the PM dropped option B on 2026-10-13 (its card is still in account_gate.jsx). It read "Continue to BlueAI", "Signed in on App Player on this PC", "Continue as Alex", "Not you? Switch account".',
       'Same words; the account is one pressable Card with hover and focus; Switch account is an underlined ink link.'],
     ['Chrome', ['entry-patterns.signin.scrim', 'entry-patterns.signin.card', 'entry-patterns.signin.card-shadow', 'entry-patterns.signin.close', 'entry-patterns.signin.close-size'],
-      'White 55% veil with a 10px blur, card radius 20 with a 14% shadow, a 34px close with no name.',
+      'White 55% veil with a 10px blur (the gate step: solid #f4f6fa), card radius 20 with a 14% shadow, a 34px close with no name.',
       'The site’s gate veil (88%, blur 14), the kit Dialog md (radius 16, shadow-2), a labelled 32px Close, focus kept inside.'],
   ];
 
@@ -91,11 +91,10 @@
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--v2-space-3)' }}>
                 <V2Modal />
                 <V2Card which="gate" />
-                <V2Card which="confirm" />
               </div>
             )}
             system={<Shot><Screen step="browser" /></Shot>}
-            changed="The handoff logic is the PM’s and stays. What changes is in the steps: the indigo spinner becomes the one blue, the amber link (2.15:1) and the duplicate Try again become one action, success stops asking for a click and stops saying 'Welcome back!' to someone signing in for the first time, 'Not enrolled' becomes 'Not in the program', the consequence line becomes readable, and the veil becomes the site’s frost gate, so signing in looks the same on both sides." />
+            changed="The handoff logic is the PM’s and stays. What changes is in the steps: the indigo spinner becomes the one blue, the amber link (2.15:1) and the duplicate Try again become one action, success stops asking for a click and stops saying 'Welcome back!' to someone signing in for the first time, the gate (V2: 'Let’s switch accounts', no pill since 2026-10-13) keeps a 'Not in the program' badge and says App Player follows the account, and the veil becomes the site’s frost gate, so signing in looks the same on both sides." />
           <div className="g-table-wrap">
             <table className="g-table">
               <thead><tr><th scope="col">Step</th><th scope="col">V2 today</th><th scope="col">System</th></tr></thead>
@@ -118,10 +117,10 @@
             { part: 'Notice', token: 'Banner info', value: 'blue tint, ink text: Use the account you applied with', ref: ['entry-patterns.signin.notice-fill', 'entry-patterns.signin.notice'] },
             { part: 'Retry', token: 'Button secondary lg', value: 'one action: Open the browser again', ref: ['entry-patterns.signin.not-seeing', 'entry-patterns.signin.try-again'] },
             { part: 'Success', token: null, value: 'auto-advance 900 ms (a timer, kept under reduced motion)', ref: ['entry-patterns.signin.success-title', 'entry-patterns.signin.welcome-back'] },
-            { part: 'Gate account', token: 'Avatar 56, --v2-text-16', value: 'email 16/600 ink', ref: ['entry-patterns.signin.gate-card', 'entry-patterns.signin.signed-in-as'] },
-            { part: 'Gate badge', token: 'Badge neutral', value: 'Not in the program', ref: 'entry-patterns.signin.not-enrolled' },
-            { part: 'Consequence', token: '--v2-text-13, --v2-ink-3', value: '6.0:1, above the button', ref: 'entry-patterns.signin.player-too-ink' },
-            { part: 'Continue as', token: 'Card pressable, Avatar 32', value: 'line firms on hover, focus ring', ref: 'entry-patterns.signin.continue-as' },
+            { part: 'Gate account', token: 'Avatar 56, --v2-text-16', value: 'email 16/600 ink (V2: a row, avatar 34, name 14/700, email 12.5)', ref: ['entry-patterns.signin.gate-card', 'display-feedback.avatar.gate-34'] },
+            { part: 'Gate badge', token: 'Badge neutral', value: 'Not in the program (V2: no pill since 2026-10-13)' },
+            { part: 'Consequence', token: '--v2-text-13, --v2-ink-3', value: '6.0:1, above the button (system only: V2 dropped the line on 2026-10-13)' },
+            { part: 'Continue as', token: 'Card pressable, Avatar 32', value: 'line firms on hover, focus ring (option B, dropped by the PM)', ref: 'entry-patterns.signin.continue-as' },
           ]} />
           <G.DoDont
             do={['Keep one action per step.', 'Say the side effect (App Player signs out too) before the button.', 'Move on by itself once the account checks out.']}

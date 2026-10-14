@@ -60,8 +60,8 @@
             { label: 'Couldn’t load', node: scr({ state: 'error' }) },
             { label: 'Topic change toast', note: 'each topic change confirms in one toast', node: toast },
           ]} />
-          <G.Warn>Decision D4 recommends this screen as the permanent home of the mode either way (the ribbon above the chat
-            stays the shortcut); V2 took the first step on 2026-10-14 with its Worker card. The interest profile is V2's four topics; whether a partner can turn a topic off is a product
+          <G.Warn>Decision D4 recommends this screen as the permanent home of the mode either way (the composer's mode chip
+            stays the shortcut); V2 removed its Worker card on 2026-10-14, so today the chip is the mode's only home. The interest profile is V2's four topics; whether a partner can turn a topic off is a product
             call (proposed here).</G.Warn>
           <G.DoDont
             do={['Say what pausing costs before it happens: paused days don’t count, with the days still needed and left.',
@@ -75,7 +75,7 @@
             { part: 'Pause and start-up', token: 'ListRow + Switch', value: 'on: "Next run today at 11 am."; off: "Paused until Oct 16. Paused days don’t count toward your 20 days."', ref: 'screens-account.worker.promise' },
             { part: 'Pause dialog', token: 'Dialog task md + Select + Button danger', value: 'Select Pause until first, then the cost for the date picked (role=status), from numbers(): "Pausing until Oct 20 skips 7 days. You’d have 11 left for the 13 you need, so 20 days would be out of reach."; Keep running / Pause (danger)' },
             { part: 'Start with Windows', token: 'ListRow + Switch', value: 'on; "If it’s off, runs skip after a restart until you open BlueAI."' },
-            { part: 'Paid jobs', token: 'ModeRows (section 46), full-bleed', value: 'Always ask / Automatic per app; Instagram Coming soon', ref: ['screens-account.worker.mode-always', 'screens-account.worker.mode-auto', 'screens-account.worker.not-persisted', 'screens-account.worker.settings-apps'] },
+            { part: 'Paid jobs', token: 'ModeRows (section 46), full-bleed', value: 'Always ask / Automatic per app; Instagram Coming soon', ref: ['screens-account.worker.mode-always', 'screens-account.worker.mode-auto', 'screens-account.worker.not-persisted'] },
             { part: 'Consent', token: 'ConsentDialog', value: 'V2’s consent copy; "I agree, turn on"', ref: 'screens-account.worker.turn-off' },
             { part: 'Run time', token: 'RadioCard list', value: 'A set time / A window / Any time', ref: ['screens-account.worker.option-time', 'screens-account.worker.option-window', 'screens-account.worker.option-any'] },
             { part: 'Run window copy', token: '--v2-text-13, --v2-ink-3', value: 'adapted to the product voice: "BlueAI starts within that hour."', ref: ['screens-account.worker.schedule-time', 'screens-account.worker.schedule-window'] },

@@ -95,7 +95,7 @@
           <G.SpecDrawer rows={[
             { part: 'Credits balance', token: '--v2-text-40 / --v2-ink', value: '40 / 600, tabular', ref: ['foundations.type.balance', 'foundations.type.ooc-numeral'] },
             { part: 'Day count', token: '--v2-text-20 / --v2-ink', value: '20 / 600, tabular', ref: ['foundations.type.day-count', 'foundations.type.day-count-copy'] },
-            { part: 'Money', token: '--v2-ink', value: 'ink, weight 600 inside a note (V2: 600 muted grey)', ref: 'foundations.type.money-earned' },
+            { part: 'Money', token: '--v2-ink', value: 'ink, weight 600 inside a note (V2 shows no money in the app since 2026-10-14)' },
           ]} />
         </G.Part>
       </G.Section>

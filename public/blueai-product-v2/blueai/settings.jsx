@@ -1,24 +1,12 @@
 // BlueAI: Settings Screen
 // Matches the live product: NO page title, NO account card (Profile / Chat History /
 // Report Issue / Log Out live in the header ? and kebab menus). Cards, in order:
-// BlueStacks Instance · Worker · Telegram · Chat AI Settings.
+// BlueStacks Instance · Telegram · Chat AI Settings.
 
 const { useState } = React;
 
-/* Worker (Arpit, 2026-10-14): the permanent home of the per-app mode outside chat. Its Apps
-   group is the mode sheet's own list (agent_permissions.jsx's AppSwitchList), so a switch
-   flipped here and one flipped in chat are the same setting, and turning one on asks for consent. */
-function WorkerCard() {
-  const AppSwitchList = window.AgentPermissions.AppSwitchList;
-  return (
-    <div data-section="worker-settings" style={{ background: 'white', borderRadius: 16, padding: 16, boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.06)', marginBottom: 14 }}>
-      <h2 style={{ fontSize: 17, fontWeight: 700, color: '#111827', marginBottom: 12 }}>Worker</h2>
-      <h3 style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>Apps</h3>
-      <p style={{ fontSize: 12.5, color: '#6b7280', lineHeight: 1.5, marginTop: 3, marginBottom: 2 }}>Apps BlueAI can run on its own. New apps always start on Always ask.</p>
-      <AppSwitchList />
-    </div>
-  );
-}
+/* (The Worker card with the mode rows was removed 2026-10-14, Abhisht: not needed. The mode is
+   changed only from the chip next to the chat box, agent_permissions.jsx.) */
 
 function BluestacksCard() {
   return (
@@ -147,7 +135,6 @@ function SettingsScreen({ byok, aiModeConditions }) {
   return (
     <div style={{ paddingTop: 16, paddingBottom: 20 }}>
       <BluestacksCard />
-      <WorkerCard />
       <TelegramCard />
       <window.AiMode.AIModeCard {...aiMode} />
       {/* Bring Your Own Key, available in every geo; the canonical place to add/manage a key. */}

@@ -77,13 +77,13 @@
               <Ban tone="attention" action={{ label: 'Add a key', onClick: noop }}>No API key configured. Add one to get started.</Ban>
               <Ban tone="offline" icon="clock" title="Out of credits">{ooc}</Ban>
             </div>}
-            changed="Five banners in two blues, two ambers and two reds (edgeless at radius 10, centred at radius 14, a ribbon at radius 10, a sign-in notice at radius 12) become one Banner in five tones, left-aligned, radius 10, with a tone line. The words move to ink so every tone passes 4.5:1. An offline tone is added, and a heads-up that needs nothing from the partner (Hybrid unsupported) is info, not amber. The red out-of-credits banner becomes neutral (the offline tone with a clock): it says until when, nothing failed and nothing is asked of the partner (section 03's out-of-credits rule); attention is kept for an answer the worker needs, danger for a day that is blocked or lost (a run that didn't finish)." />
+            changed="Four banners in blue, two ambers and two reds (edgeless at radius 10, centred at radius 14, a sign-in notice at radius 12; the Automatic ribbon, a second blue, is archived since 2026-10-14) become one Banner in five tones, left-aligned, radius 10, with a tone line. The words move to ink so every tone passes 4.5:1. An offline tone is added, and a heads-up that needs nothing from the partner (Hybrid unsupported) is info, not amber. The red out-of-credits banner becomes neutral (the offline tone with a clock): it says until when, nothing failed and nothing is asked of the partner (section 03's out-of-credits rule); attention is kept for an answer the worker needs, danger for a day that is blocked or lost (a run that didn't finish)." />
 
           <G.SpecDrawer rows={[
             { part: 'Shape', token: '--v2-radius-md', value: '10px, 1px line', ref: ['display-feedback.banner.info-banner', 'display-feedback.banner.ooc', 'display-feedback.banner.login'] },
             { part: 'Padding', token: '--v2-space-3', value: '12px, gap 8', ref: ['display-feedback.banner.info-banner', 'display-feedback.banner.byok'] },
             { part: 'Type', token: '--v2-text-13 / --v2-leading-body', value: 'title 600 ink, body 400 ink-2', ref: ['display-feedback.banner.ooc-title', 'display-feedback.banner.info-banner'] },
-            { part: 'Info', token: '--v2-blue-tint / --v2-blue-tint-line / --v2-blue-ink', value: 'blue 8%, blue 24% line, icon #0d5ad6', ref: ['display-feedback.banner.login', 'display-feedback.banner.ribbon'] },
+            { part: 'Info', token: '--v2-blue-tint / --v2-blue-tint-line / --v2-blue-ink', value: 'blue 8%, blue 24% line, icon #0d5ad6', ref: 'display-feedback.banner.login' },
             { part: 'Success', token: '--v2-success-tint / --v2-success-line / --v2-success-ink', value: 'green 8%, green 32% line', ref: 'display-feedback.banner.site-payout' },
             { part: 'Attention', token: '--v2-attention-tint / --v2-attention-line / --v2-attention-ink', value: '#fdf6cf, #f3e8a8, icon #8a6116', ref: ['display-feedback.banner.byok', 'display-feedback.badge.tone-amber'] },
             { part: 'Danger', token: '--v2-danger-tint / --v2-danger-line / --v2-danger-ink', value: '#fdecec, red 32% line, icon #c03a40 (V2 drew out of credits in it; a banner that says until when is neutral now, section 03)', ref: 'display-feedback.banner.ooc' },
@@ -95,8 +95,6 @@
             { part: 'Copy', token: null, value: 'Out of credits', ref: 'display-feedback.banner.ooc-title' },
             { part: 'Copy', token: null, value: 'You’ve used all of today’s AI credits. Credits will be refreshed in 6h 42m.', ref: ['display-feedback.banner.ooc-copy', 'display-feedback.banner.ooc-refill'] },
             { part: 'Copy', token: null, value: "This PC doesn't meet the requirements for Hybrid. Cloud mode will be used.", ref: 'display-feedback.banner.hw-copy' },
-            { part: 'Copy', token: null, value: 'Automatic on YouTube (a count once several apps are on)', ref: 'display-feedback.banner.ribbon-copy' },
-            { part: 'Copy', token: null, value: 'Yesterday’s run verified.', ref: 'display-feedback.stat.verified-line' },
             { part: 'Copy (proposed)', token: null, value: 'Add a key, You’re offline, Today’s run starts when BlueAI is back online., Try again, Didn’t finish, Today doesn’t count yet. Try again before 9 pm.' },
           ]} />
 

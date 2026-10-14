@@ -2,7 +2,7 @@
 
 **Status:** Changed from V2.
 
-**Why:** Some conditions decide whether today counts: out of AI credits, offline, App Player signed out, Automatic on. The partner has to see them above what they affect, said the same way every time. V2 has five banners in two blues, two ambers and two reds: an edgeless InfoBanner (ai_mode.jsx:71-78), a centred out-of-credits block at radius 14 (index.html:508-519), a second amber for BYOK (byok_settings.jsx:109), a sign-in notice at radius 12 (login.jsx:235), and the one-line Automatic ribbon (agent_permissions.jsx:203-216). None can be dismissed, none has an offline tone.
+**Why:** Some conditions decide whether today counts: out of AI credits, offline, App Player signed out, Automatic on. The partner has to see them above what they affect, said the same way every time. V2 has five banners in two blues, two ambers and two reds: an edgeless InfoBanner (ai_mode.jsx:71-78), a centred out-of-credits block at radius 14 (index.html:508-519), a second amber for BYOK (byok_settings.jsx:109), and a sign-in notice at radius 12 (login.jsx:235); the one-line Automatic ribbon is archived since 2026-10-14 (agent_permissions.jsx:16-18). None can be dismissed, none has an offline tone.
 
 ### Banner (Changed from V2)
 
@@ -28,7 +28,7 @@ Any icon can replace the default (Automatic uses `zap`).
 
 **States.**
 - Static. V2: Settings > AI Mode with Preview "Hardware: No" (Hybrid unsupported); Settings > BYOK on with no key; `?signin=browser` (the in-app "Check your browser" step: Use the account you applied with).
-- With action. V2: `?start=worker&mode=auto`, then Run (the ribbon's "Change").
+- With action. V2: none since the ribbon was archived (2026-10-14).
 - Dismissible: news only. New.
 - Live value: the out-of-credits countdown (`?start=worker&credits=0`, then the credits pill). The ticking value sits in `<strong aria-live="off">` so it is read once.
 - Action hover (blue ink, underline firms), focus-visible (2px blue outline): the Link's own states. New.

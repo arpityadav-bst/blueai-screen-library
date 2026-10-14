@@ -139,18 +139,18 @@
             { label: 'Open up', node: <Win h={300} align="flex-end" justify="flex-start"><ModePopover open placement="up" /></Win>, note: 'From the ribbon above the composer.' },
           ]} />
           <G.CompareRow
-            v2={<Win h={300} justify="flex-start"><span className="g-muted">V2 has no popover since 2026-10-14: the composer chip and the ribbon’s Change open a bottom sheet (section 26).</span></Win>}
+            v2={<Win h={300} justify="flex-start"><G.Live get={function () { return window.AgentPermissions && window.AgentPermissions.ModeRows; }} props={{ keys: true }} label="AgentPermissions.ModeRows (the popover's rows)" /></Win>}
             system={<Win h={300} justify="flex-start"><ModePopover open placement="down" /></Win>}
-            changed={'Until 2026-10-14 V2 drew this as a menu (role menu around two radio groups, a fixed 364 wide, a #9ca3af header and footnote at 2.54:1, focus not given back on Esc); it is now a bottom sheet with one switch per app (section 26). The system keeps the popover for a few controls anchored to a button: a non-modal dialog that takes focus on open, gives it back on Esc, and closes on an outside click or when focus leaves. It fits the window (width up to 364, flips and swaps), with an eyebrow header and an ink-3 footnote (6.0:1). "' + HEADER + '" is proposed copy; the footnote keeps the words of V2\'s former menu.'} />
+            changed={'Since 2026-10-14 V2 draws this as the system popover: the composer\'s mode chip opens it above the composer, 364 wide, a non-modal dialog named by its header (\'Mode for YouTube jobs\', 12/600 ink-3 with the app mark), one row per mode with a check and a number shortcut (1, 2). Focus moves to the current row, Esc gives it back, an outside click or focus leaving closes it. Still different: V2\'s shadow is darker than shadow-1 (the PM\'s call), its header is not the eyebrow recipe, and it covers one app, so it has no footnote. The system fits the window (flips and swaps) and keeps a per-app header and an ink-3 footnote (6.0:1). "' + HEADER + '" is proposed copy; the footnote keeps the words of V2\'s former menu.'} />
           <G.SpecDrawer rows={[
             { part: 'Panel', token: '--v2-surface, --v2-line, --v2-radius-md, --v2-shadow-1', value: 'the Menu panel' },
             { part: 'Width', token: '--v2-shell-w, --v2-gutter', value: 'min(364px, window less two gutters)' },
             { part: 'Placement', token: null, value: 'down or up, start or end; fits the window' },
             { part: 'Header', token: '.v2-text-eyebrow (--v2-text-11, --v2-ink-3)', value: 'eyebrow 11/500 uppercase, the one eyebrow recipe' },
             { part: 'Footnote', token: '--v2-text-12, --v2-ink-3', value: '12px, #5f636b (6.0:1)' },
-            { part: 'Role', token: null, value: 'dialog (non-modal), named by its header; button aria-haspopup dialog (V2’s mode chip says dialog too, for its sheet)', ref: 'overlays.sheet.mode-chip' },
+            { part: 'Role', token: null, value: 'dialog (non-modal), named by its header; button aria-haspopup dialog (V2’s mode chip the same)', ref: ['overlays.sheet.mode-chip', 'worker.permissions.sheet'] },
             { part: 'Closes', token: null, value: 'Esc (focus back to the button), outside click, focus leaving' },
-            { part: 'Modes', token: null, value: 'Always ask / Automatic, per app', ref: ['overlays.popover.mode-always', 'overlays.popover.mode-auto'] },
+            { part: 'Modes', token: null, value: 'Always ask / Automatic, per app (V2: YouTube only)', ref: ['overlays.popover.mode-always', 'overlays.popover.mode-auto'] },
           ]} />
         </G.Part>
       </G.Section>

@@ -74,10 +74,10 @@
           <G.SpecDrawer rows={[
             { part: 'Shape', token: '--v2-radius-sm', value: 'radius 6 (V2: 999, 8, 10)', ref: ['actions-inputs.onblue.btn-radius', 'actions-inputs.button.new-chat', 'actions-inputs.button.settings-save', 'actions-inputs.button.day-done'] },
             { part: 'Height', token: '--v2-control-sm / -md / -lg', value: '28 / 36 / 44', ref: 'actions-inputs.button.terms' },
-            { part: 'Label', token: '--v2-text-13, --v2-weight-medium', value: '13/500 (V2: 13 to 15, 600 to 750)', ref: ['actions-inputs.onblue.btn-weight', 'actions-inputs.button.pill', 'actions-inputs.button.consent-recipe'] },
+            { part: 'Label', token: '--v2-text-13, --v2-weight-medium', value: '13/500 (V2: 13 to 15, 600 to 700)', ref: ['actions-inputs.onblue.btn-weight', 'actions-inputs.button.pill', 'actions-inputs.button.consent-recipe'] },
             { part: 'Primary fill', token: '--v2-solid, --v2-shadow-btn', value: '#0b0b0d, white 19.6:1, three-stop cast (V2 #1990FF, 3.24:1)', ref: 'actions-inputs.button.blue' },
             { part: 'Primary hover', token: '--v2-solid-hover, --v2-shadow-btn-hover', value: '#26262b, cast pulled in, 1px drop (V2: opacity 0.88, opacity 0.9, lift + brightness)', ref: ['actions-inputs.button.new-chat-hover', 'actions-inputs.button.pill-hover', 'actions-inputs.button.terms-hover'] },
-            { part: 'Glow', token: '--v2-shadow-0', value: 'none (V2: blue glows)', ref: ['actions-inputs.button.day-done-glow', 'actions-inputs.button.terms-glow'] },
+            { part: 'Glow', token: '--v2-shadow-0', value: 'none (V2: blue glows)', ref: 'actions-inputs.button.terms-glow' },
             { part: 'Secondary', token: '--v2-button-secondary-fill, -line, -hover-fill, -hover-line, --v2-surface-press', value: 'the ghost: panel, 1px 15% black, ink; hover sunken + 20% edge (look hooks, review round 2); pressed #e7eaf1', ref: ['actions-inputs.button.cancel', 'actions-inputs.onblue.ghost-hover'] },
             { part: 'Quiet', token: '--v2-ink-2, --v2-wash-hover', value: 'no box at rest, ink-2; hover wash + ink' },
             { part: 'Danger', token: '--v2-button-danger-hover-fill, -hover-line, -hover-ink (--v2-danger-tint, --v2-danger-edge, --v2-danger-ink)', value: 'a ghost that turns red on hover; only for the trigger that opens a destructive confirm (Disconnect YouTube); the commit is the destructive variant, section 52 (V2 Remove: #dc2626 outline, no confirm)', ref: 'actions-inputs.button.remove' },
@@ -154,10 +154,10 @@
             system={<K.Link href={FAQ} external standalone>{COPY.learn}</K.Link>}
             changed="Bold blue links at 3.24:1 with no underline become underlined ink (the site's rule), which frees blue for selection. One external glyph replaces a typed arrow character and a second hand-drawn SVG." />
           <G.SpecDrawer rows={[
-            { part: 'Colour', token: '--v2-ink', value: 'ink (V2 #1990FF 3.24:1, 600 to 700)', ref: ['actions-inputs.link.learn-more', 'actions-inputs.link.earnings', 'actions-inputs.link.switch-account'] },
+            { part: 'Colour', token: '--v2-ink', value: 'ink (V2 #1990FF 3.24:1, 600 to 700)', ref: ['actions-inputs.link.learn-more', 'actions-inputs.link.switch-account'] },
             { part: 'Underline', token: '--v2-stroke, --v2-link-underline', value: '1px, offset 3, 32% black, the site’s --link-underline; every ink link uses it, kit links and hand-rolled ones alike', ref: 'actions-inputs.onblue.link' },
             { part: 'Hover', token: '--v2-blue-ink', value: '#0d5ad6, underline in the same colour', ref: 'actions-inputs.onblue.link-hover' },
-            { part: 'External', token: '--v2-icon-sm', value: 'external glyph 16 (V2: a typed arrow, and an SVG)', ref: ['actions-inputs.link.learn-more-copy', 'actions-inputs.link.earnings-copy', 'actions-inputs.link.external-glyph'] },
+            { part: 'External', token: '--v2-icon-sm', value: 'external glyph 16 (V2: a typed arrow, and an SVG)', ref: ['actions-inputs.link.learn-more-copy', 'actions-inputs.link.external-glyph'] },
             { part: 'Standalone', token: '--v2-text-13, --v2-hit-min', value: '13/500, min height 32' },
             { part: 'Copy and URLs', token: null, value: 'V2 copy and URLs', ref: ['actions-inputs.link.faq-url', 'actions-inputs.link.earnings-url', 'actions-inputs.link.not-you', 'actions-inputs.link.switch-account'] },
           ]} />

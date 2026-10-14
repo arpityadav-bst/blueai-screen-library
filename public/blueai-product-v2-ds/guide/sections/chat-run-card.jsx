@@ -52,7 +52,7 @@
             { part: 'Disclosure', token: '--v2-text-13, --v2-ink-3, --v2-hit-min', value: '"7 steps done", 13/500, 32px tall, chevron turns', ref: 'chat.run.routine' },
             { part: 'Steps', token: '--v2-text-13, --v2-text-12, --v2-ink-4', value: 'check 16 ink-3, past-tense label 13, time 12 tabular', ref: 'chat.run.daily-head' },
             { part: 'Outcome', token: '--v2-ink', value: 'icon 16 in tone + one line 14 ink', ref: ['chat.run.done-line', 'chat.run.fail-copy', 'chat.run.nojob', 'chat.status.ooc-fail'] },
-            { part: 'Day line', token: '--v2-line-hair, --v2-text-13, --v2-ink-3', value: 'hairline above; StatusTick + "Day 7 of 20, pending verification"', ref: ['chat.run.pending', 'chat.run.verify-note'] },
+            { part: 'Day line', token: '--v2-line-hair, --v2-text-13, --v2-ink-3', value: 'hairline above; StatusTick + "Day 7 of 20, pending verification"', ref: 'chat.run.pending' },
             { part: 'Day line, not counted', token: '--v2-ink-3', value: '"Today doesn’t count toward your 20 days."', ref: 'chat.run.declined' },
             { part: 'Day line, verified / rejected / waiting', token: '--v2-success-ink, --v2-danger-ink, --v2-attention-ink', value: 'text in tone' },
             { part: 'Waiting edge', token: '--v2-waiting-line', value: 'border only, the AskCard edge (review round 2); the fill stays on the AskCard' },

@@ -128,7 +128,6 @@
         <Contained height={300}><G.Live get={function () { return window.MoneyMaker && window.MoneyMaker.MoneyMakerHome; }} props={{ onRun: noop }} label="MoneyMakerHome" /></Contained>
         <Contained height={260}><G.Live get={function () { return window.HomeSkeleton; }} label="HomeSkeleton (V2 loading)" /></Contained>
         <G.FrameState url="index.html?start=worker" label="V2: first open (greeting, coach on Run)" height={830} />
-        <G.FrameState url="index.html?day=returning" label="V2: returning partner, before today's run" height={830} />
       </Stack>
     );
   }
@@ -152,14 +151,14 @@
             standalone link 'Chat with BlueAI'. Nothing else: no feature list, no second Run.</p>
           <G.StateGrid wide states={homeGrid} />
           <G.CompareRow v2={<V2Home />} system={<Flow />}
-            changed="V2's home answered 'what can I do' but not 'what is my worker doing'. 'Hi, Alex' with an emoji and 'You're all set. The BlueAI worker is all it takes to start earning.' sat above the coach's 'Run this to begin'; the progress strip appeared only for a returning partner and counted from a constant; the next run time was typed into the copy. Here the greeting is only a title, the strip is always there and reads the ledger, the card says today's state with one action, and Chat is one link away instead of being the home itself. Loading draws the worker home, not V2's five-card skill list." />
+            changed="V2's home answered 'what can I do' but not 'what is my worker doing'. 'Hi, Alex' with an emoji and 'You're all set. The BlueAI worker is all it takes to start earning.' sat above the coach's 'Run this to begin'; since 2026-10-14 that one line greets returning partners too, and V2's progress strip left home for the partner dashboard. Here the greeting is only a title, the strip is always there and reads the ledger, the card says today's state with one action, and Chat is one link away instead of being the home itself. Loading draws the worker home, not V2's five-card skill list." />
           <G.SpecDrawer rows={[
-            { part: 'Greeting', token: '--v2-text-20, --v2-weight-semibold (ScreenHeader)', value: "'Hi, Alex'; 'Today' with no name; no emoji, no sub line", ref: ['screens-core.home.greeting-title', 'screens-core.home.first-line', 'screens-core.home.returning-line'] },
+            { part: 'Greeting', token: '--v2-text-20, --v2-weight-semibold (ScreenHeader)', value: "'Hi, Alex'; 'Today' with no name; no emoji, no sub line", ref: ['screens-core.home.greeting-title', 'screens-core.home.first-line'] },
             { part: 'When it shows', token: 'none', value: 'always (V2: only before a conversation starts)', ref: 'screens-core.home.greeting-gate' },
             { part: 'Column', token: '--v2-gutter, --v2-space-3, --v2-space-6', value: 'padding 16 16 24, blocks 12 apart; only the body scrolls' },
-            { part: 'ProgramStrip', token: 'numbers(record)', value: 'always, from the ledger; 7 of 20 days tonight is 7 of 20 tomorrow', ref: ['screens-core.home.strip-returning', 'screens-core.home.strip-day', 'screens-core.ledger.done-before'] },
-            { part: 'Receipt line', token: '--v2-text-12, --v2-ink-3', value: 'Yesterday’s run verified.', ref: 'screens-core.home.strip-verified' },
-            { part: 'Earnings', token: 'EARNINGS_URL', value: 'one URL for the whole product', ref: 'screens-core.home.strip-earnings' },
+            { part: 'ProgramStrip', token: 'numbers(record)', value: 'always, from the ledger; 7 of 20 days tonight is 7 of 20 tomorrow (V2: no strip on home since 2026-10-14)', ref: 'screens-core.ledger.done-before' },
+            { part: 'Receipt line', token: '--v2-text-12, --v2-ink-3', value: 'Yesterday’s run verified.' },
+            { part: 'Earnings', token: 'EARNINGS_URL', value: 'one URL for the whole product', ref: 'worker.earnings.menu-url' },
             { part: 'WorkerCard', token: 'section 42', value: "'BlueAI worker', one action", ref: ['screens-core.home.component', 'screens-core.home.card-title'] },
             { part: 'Coach mark', token: 'CoachMark (section 42)', value: 'a note under the WorkerCard: no scrim, nothing dimmed or locked' },
             { part: 'Coach memory', token: 'coachSeen', value: 'on the Worker record, never shown twice', ref: 'screens-core.home.coach-local' },
@@ -188,10 +187,10 @@
             { part: 'New chat', token: 'IconButton 32, plus', value: "label 'New chat', in the chat header (not a filled pill in the top bar)", ref: ['screens-core.chat.new-chat', 'screens-core.chat.new-chat-label'] },
             { part: 'Today’s run', token: 'RunCard (section 36)', value: 'one card per run, steps folded', ref: 'screens-core.chat.scheduled-start' },
             { part: 'Job ask', token: 'JobPreviewCard (section 45)', value: 'Take this job / Skip: today won’t count / Switch YouTube to Automatic (through ConsentDialog); decision D17 option A, built; option B (V2’s AskCard words) is D17 = B in screens/chat.jsx' },
-            { part: 'Option B (V2’s ask)', token: 'AskCard + Chip (section 37)', value: 'Paid job available / Watch the video and provide feedback. / Want me to take this one? + Yes, switch to Automatic / Just this job / Not now', ref: ['screens-core.chat.job-label', 'screens-core.chat.job-title', 'screens-core.chat.job-question', 'screens-core.chat.job-options'] },
+            { part: 'Option B (V2’s ask)', token: 'AskCard + Chip (section 37)', value: 'Paid job available / Watch the video and provide feedback. / Want me to take this one? + Yes / Not now', ref: ['screens-core.chat.job-label', 'screens-core.chat.job-title', 'screens-core.chat.job-question', 'screens-core.chat.job-options'] },
             { part: 'Skip costs', token: 'Button secondary (section 11)', value: 'on the button: Skip: today won’t count' },
-            { part: 'Automatic on', token: 'ComposerNotice info, zap', value: 'V2 since 2026-10-14: Automatic on YouTube + Change, which opens the mode sheet', ref: ['screens-core.chat.auto-ribbon', 'screens-core.chat.auto-change'] },
-            { part: 'Setup', token: 'AskCard, PermissionRequest, ConsentDialog, ProgramSummary', value: "V2's order: the pitch, confirm @alexwatches, watch history, the run time, paid jobs per app (Always ask first; Automatic only through ConsentDialog); closes with ProgramSummary and the D7 line (A: 'Your first run starts now, and today counts as day 1 once it’s verified.'; B: 'Your first counted day is tomorrow, at your run time.')", ref: 'screens-core.chat.job-options' },
+            { part: 'Automatic on', token: 'ComposerNotice info, zap', value: 'V2: none since 2026-10-14 (the ribbon is archived; the composer chip says the mode)', ref: 'worker.permissions.ribbon-gate' },
+            { part: 'Setup', token: 'AskCard, PermissionRequest, ConsentDialog, ProgramSummary', value: "V2's order: the pitch, confirm @alexwatches, watch history, the run time (no mode question since 2026-10-14); the system adds paid jobs per app (Always ask first; Automatic only through ConsentDialog); closes with ProgramSummary and the D7 line (A: 'Your first run starts now, and today counts as day 1 once it’s verified.'; B: 'Your first counted day is tomorrow, at your run time.')", ref: 'screens-core.chat.job-options' },
             { part: 'Job ask bullets', token: 'AskCard bullets', value: 'proposed (R07): the video, channel and length; what will be done, with the exact comment' },
             { part: 'Consent', token: 'ConsentDialog (section 46)', value: 'any answer that turns Automatic on opens it first; Cancel leaves the question waiting' },
             { part: 'Stop', token: 'Composer costsDay / paidJob (section 38)', value: 'asks first while running, retrying or waiting' },

@@ -1,7 +1,7 @@
 ## 38 Composer
 
 **Status:** Changed from V2 (Composer, ComposerNotice, Stop).
-**Why:** V2 clips text past 120px (chat_product.jsx:78, 284), rests on a blue-tinted 1.5px border at 1.40:1 that reads as focus (chat_product.jsx:260), mixes "..." and "…" in placeholders (266, 278, 283), reveals zero credits only after Send (124), and stops a paid job on one click with no trace (141). The Automatic ribbon (agent_permissions.jsx:203-216) is the right pattern and is generalised.
+**Why:** V2 clips text past 120px (chat_product.jsx:78, 284), rests on a blue-tinted 1.5px border at 1.40:1 that reads as focus (chat_product.jsx:260), mixes "..." and "…" in placeholders (266, 278, 283), reveals zero credits only after Send (124), and stops a paid job on one click with no trace (141). Its Automatic ribbon was the right pattern and is generalised here; V2 archived it on 2026-10-14 (code kept, not rendered), and its box now carries the mode chip in a bottom bar.
 
 **V3 restyle (2026-10-14).** Send is the solid ink button; Stop is the ghost (the ladder's second step); Stop run in the confirm is the solid primary.
 
@@ -22,11 +22,11 @@
 - **Anatomy:** A compact Banner: tone in the fill, the edge and the icon, words ink-2. Radius 10, 1px line in tone, padding 2 4 2 12; icon 16; text 13/1.35; the action is `V2Kit.Link` standalone (underlined ink, 32px tall, blue-ink on hover; `kit/composer.jsx:38-46`).
 - **Variants:** `info` (blue tint, blue-ink icon: Automatic on, BlueStacks needed), `attention` (yellow, attention-ink icon: the partner must answer before the run can go on), `neutral` (sunken, ink-3 icon: paused; out of AI credits until a time, section 48). The words stay ink-2 in every tone.
 - **Sizes:** Composer width.
-- **States:** Shown while the condition holds; action hover, focus. V2: `?start=worker&v=2&mode=auto` then Run shows the Automatic ribbon.
+- **States:** Shown while the condition holds; action hover, focus. V2: none since the ribbon was archived (2026-10-14).
 - **Props:** `ComposerNotice {tone, icon, text, children, action: {label, onClick}, id, className}`.
 - **Motion:** None of its own.
 - **Accessibility:** Text 13 ink-2 on every tone's fill (above 9:1); the action is the shared Link (a real button); links are never warm-coloured (ink in every tone).
-- **Copy:** "Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking." and "Change" are V2's former words; since 2026-10-14 V2 says "Automatic on YouTube" (a count once several apps are on) and Change opens its mode sheet (agent_permissions.jsx:62, 210-214). The out-of-credits line is owned by section 48 ("Out of AI credits until **5:30 am tomorrow**.", `V2Kit.OOC_COPY.until`); the locked field's placeholder is neutral ("You can’t send messages right now"), so the time is said once, in the notice. Proposed: "Today’s run needs BlueStacks App Player." / "Get BlueStacks", "The BlueAI worker is paused until tomorrow." / "Resume".
+- **Copy:** "Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking." and "Change" are V2's former words; the ribbon that last said "Automatic on YouTube" is archived since 2026-10-14 (agent_permissions.jsx:16-18). The out-of-credits line is owned by section 48 ("Out of AI credits until **5:30 am tomorrow**.", `V2Kit.OOC_COPY.until`); the locked field's placeholder is neutral ("You can’t send messages right now"), so the time is said once, in the notice. Proposed: "Today’s run needs BlueStacks App Player." / "Get BlueStacks", "The BlueAI worker is paused until tomorrow." / "Resume".
 - **Do / Don't:** Do keep one notice at a time, the most urgent. Don't announce zero credits only after Send.
 
 ### Stop (SendStop) (Changed from V2)

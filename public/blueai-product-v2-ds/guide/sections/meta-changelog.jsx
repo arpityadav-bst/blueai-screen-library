@@ -4,6 +4,16 @@
   const G = window.V2Guide;
 
   const ENTRIES = [
+    ['2026-10-14', 'V2 today re-synced to the PM’s 14 Oct design', [
+      'Run-complete popup: an outlined green circle with one green tick, “Today’s run is done.” and “Day 7 of 20. Pending verification” (no full stop), then Got it; dialog sm 320 from v2_tokens.jsx; Day 1 shows it too; confetti on Day 20 only. The home strip, the 20-segment bar and the verification note are gone: day-by-day progress lives on the partner dashboard.',
+      'Modes: one app, YouTube. Always ask / Automatic is picked from the composer’s mode chip, which opens a popover (not a sheet); Automatic asks for consent first; no worker question offers Automatic (the job ask is Yes / Not now). The Automatic ribbon is archived (code kept, not rendered); the per-app switch list, the bottom sheet and the plain ModalOverlay frame are gone; Settings has no Worker card.',
+      'Answers: chips, and the composer stays open while a question waits (“Or type your answer…”); the Other chip and the docked answer panel are archived.',
+      'Sign-in: one not-enrolled case; the gate says “Let’s switch accounts” (no pill, no App Player line); option B (Continue as) is gone.',
+      'The PM now builds from this system’s tokens: blueai/v2_tokens.jsx (window.V2Tokens) mirrors tokens-v2-today.css.',
+      'Preview panel: the Returning, Change mode from, Card, Own key and Setup question rows and their params are gone. Earnings opens the partner dashboard (../experiments/onblue-vesper/apply.html?creator=in&account=one).',
+      'Partner dashboard: “Days run” is 20 pills (filled verified, outlined pending) with a Verified / Pending verification legend; cash out has no period lock, only the $10 minimum (“Payment minimum: $10”; disabled with “You need $10 to cash out.”).',
+      'Docs: refs re-pointed or removed, sections and partials that described the old V2 now say what V2 does; system parts that still assume a period lock (ProgramSummary’s cash-out lines, the period-ended states) are marked for a rewrite.',
+    ]],
     ['2026-10-14', 'Review round 2 of V3, pass B: the strip offers Retry on a failed day', [
       'Kit: ProgramStrip gains onRetry. Given it, a failed today (workerState failed) is the receipt in the danger ink, ‘Today’s job didn’t finish.’, with a quiet Retry, for a screen with no WorkerCard to say it (V3’s Jobs tab and home); without it the strip is unchanged and the WorkerCard’s Try again stays the home’s action.',
       'Why: review round 2 of BlueAI Product V3, pass B (UX and state), R4: a failed day shows Retry in the strip. Section 43 updated.',

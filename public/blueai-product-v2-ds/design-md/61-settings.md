@@ -1,7 +1,7 @@
 ## 61 Settings
 
 **Status:** Changed from V2.
-**Why:** The partner opens Settings to control the worker that acts on their account. V2's Settings has no title, opens on a BlueStacks card that says "Connected to BlueStacks App Player" even when BlueStacks is not installed (settings.jsx:31, R16), then, since 2026-10-14, a Worker card whose Apps group is the mode sheet's switch list (settings.jsx:11-20), then Telegram, AI mode, own key and a Chat AI Settings card of Max Output Tokens, Max Steps and Timeout with its own Save button and a second AI Model picker (settings.jsx:120-138, R31). Beyond that switch list nothing about the worker, its accounts or the partner is there. The system puts partner topics first and developer controls last, closed.
+**Why:** The partner opens Settings to control the worker that acts on their account. V2's Settings has no title, opens on a BlueStacks card that says "Connected to BlueStacks App Player" even when BlueStacks is not installed (settings.jsx:31, R16), then Telegram (the Worker card it gained on 2026-10-14 was removed the same day), AI mode, own key and a Chat AI Settings card of Max Output Tokens, Max Steps and Timeout with its own Save button and a second AI Model picker (settings.jsx:120-138, R31). Nothing about the worker, its accounts or the partner is there. The system puts partner topics first and developer controls last, closed.
 
 ### Settings (Changed from V2)
 - **Purpose:** The Settings tab: one place to see and reach every control over the worker, the accounts it uses, what it tells you, the app it drives, your account and help. Developer controls stay out of the way.

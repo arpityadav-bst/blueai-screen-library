@@ -48,17 +48,6 @@
     );
   }
 
-  function V2Ribbon() {
-    const ap = AP();
-    if (!ap) return <div className="g-missing">AgentPermissions is not loaded on this page.</div>;
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--v2-space-2)', width: '100%', minHeight: 220, justifyContent: 'flex-end' }}>
-        <button type="button" className="g-btn" style={{ alignSelf: 'flex-start' }} onClick={function () { ap.setMode('youtube', 'auto'); }}>Turn Automatic on in V2 (no consent, like ?mode=auto)</button>
-        <G.Live get={function () { return ap.AutoRibbon; }} label="AgentPermissions.AutoRibbon" />
-      </div>
-    );
-  }
-
   function PermissionsSection() {
     const K = window.V2Kit || {};
     if (!K.ModeRows || !K.workerFixtures) return <G.Section id="permissions"><div className="g-missing">kit/permissions.jsx is not loaded.</div></G.Section>;
@@ -81,18 +70,18 @@
           <p><strong>Try it.</strong> Switch YouTube to Automatic: the consent opens; Cancel keeps Always ask.</p>
           <ModeDemo />
           <G.CompareRow
-            v2={<div style={{ minHeight: 160 }}><G.Live get={function () { return AP() && AP().AppSwitchList; }} label="AgentPermissions.AppSwitchList" /></div>}
+            v2={<div style={{ minHeight: 160 }}><G.Live get={function () { return AP() && AP().ModeRows; }} props={{ keys: true }} label="AgentPermissions.ModeRows" /></div>}
             system={<K.ModeRows worker={F.verified} onChange={noop} float />}
-            changed="Same model, same words, one row per app. Since 2026-10-14 V2 draws each row as one switch (on = Automatic; turning it on asks for consent, off applies at once) in a bottom sheet titled 'Apps BlueAI can run on its own', opened from the composer chip or the ribbon's Change, and lists the same rows in Settings > Worker > Apps, so the mode already has a home outside an open chat (R05, D4). The system names both options with the kit Segmented (arrow keys, a gate for consent, 32px segments), so a row says which mode is on without decoding a switch, and puts the rows in Settings > Worker's Paid jobs. Instagram cannot be consented to before its jobs exist (R40)." />
+            changed="Same model, same words. Since 2026-10-14 V2 runs one app, YouTube: the mode chip in the composer's bottom bar ('Always ask' or 'Automatic') opens a popover headed 'Mode for YouTube jobs', one row per mode with a one-line description, a check on the current one and its number shortcut (1, 2). Automatic goes through the consent; Always ask applies at once. Settings has no Worker card, so the chip is the mode's only home (R05, D4). The system names both options with the kit Segmented per app (arrow keys, a gate for consent, 32px segments) and puts the rows in Settings > Worker's Paid jobs. Instagram cannot be consented to before its jobs exist (R40)." />
           <G.SpecDrawer rows={[
             { part: 'Always ask', token: 'Segmented option', value: 'Always ask (default for every app)', ref: ['worker.permissions.always', 'worker.permissions.store'] },
             { part: 'Automatic', token: 'Segmented option + beforeChange', value: 'Automatic, only through the consent', ref: 'worker.permissions.auto' },
-            { part: 'Track', token: '--v2-surface-sunken, --v2-radius-md', value: 'Segmented md, 32 (section 14); V2: a 40x24 switch, on #1990FF, off #cbd5e1', ref: 'worker.permissions.switch-size' },
-            { part: 'Segment', token: '--v2-radius-sm, --v2-text-13 500', value: 'shield-check / zap icon 16 + label; selected: the select fill, a blue edge, ink. V2: one role=switch per app, named Run YouTube jobs without asking; on asks for consent, off applies at once', ref: ['worker.permissions.switch', 'worker.permissions.switch-request'] },
-            { part: 'Apps', token: 'WORKER_APPS + record status', value: 'YouTube live, Instagram coming soon', ref: ['worker.permissions.apps', 'worker.permissions.instagram'] },
-            { part: 'Note', token: '--v2-text-12, --v2-ink-3', value: "System: 'Automatic starts and finishes that app’s jobs without asking. …' (the words of V2’s former menu). V2 today, under the sheet’s title: 'New apps always start on Always ask.'", ref: 'worker.permissions.sheet-note' },
-            { part: 'Summary (card, chip)', token: 'modeSummary()', value: "'Always ask' or 'Automatic · YouTube'; V2's chip and ribbon since 2026-10-14: 'Always ask', 'Automatic on YouTube' or 'Automatic on 2 apps'", ref: 'worker.permissions.summary' },
-            { part: 'Where (V2)', token: null, value: "a bottom sheet, 'Apps BlueAI can run on its own' (section 26), from the composer chip or the ribbon's Change; the same list in Settings > Worker > Apps", ref: ['worker.permissions.sheet', 'worker.permissions.sheet-title', 'worker.permissions.chip', 'worker.permissions.list', 'worker.permissions.settings'] },
+            { part: 'Track', token: '--v2-surface-sunken, --v2-radius-md', value: 'Segmented md, 32 (section 14); V2: no track, one popover row per mode', ref: 'worker.permissions.sheet' },
+            { part: 'Segment', token: '--v2-radius-sm, --v2-text-13 500', value: 'shield-check / zap icon 16 + label; selected: the select fill, a blue edge, ink. V2: a radio group named Mode for YouTube jobs, Up/Down move, 1 and 2 pick; Automatic asks for consent, Always ask applies at once', ref: ['worker.permissions.list', 'worker.permissions.switch-request'] },
+            { part: 'Apps', token: 'WORKER_APPS + record status', value: 'YouTube live, Instagram coming soon (V2: YouTube only since 2026-10-14)', ref: 'worker.permissions.apps' },
+            { part: 'Note', token: '--v2-text-12, --v2-ink-3', value: "System: 'Automatic starts and finishes that app’s jobs without asking. …' (the words of V2’s former menu). V2 today: the popover header 'Mode for YouTube jobs', then each mode's own one-line description", ref: 'worker.permissions.sheet-note' },
+            { part: 'Summary (card, chip)', token: 'modeSummary()', value: "'Always ask' or 'Automatic · YouTube'; V2's chip: the mode's own name, 'Always ask' or 'Automatic'", ref: 'worker.permissions.chip' },
+            { part: 'Where (V2)', token: null, value: "a popover above the composer (section 27), from the mode chip in every signed-in chat; no Settings entry since 2026-10-14", ref: ['worker.permissions.sheet', 'worker.permissions.chip'] },
           ]} />
         </G.Part>
 
@@ -111,17 +100,17 @@
           <G.CompareRow
             v2={<V2Consent />}
             system={consent(false)}
-            changed="The strongest trust moment in V2. V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on). The system keeps its title and button word for word; its body names what a job does instead of posting videos (proposed, PM and legal, R51), and it keeps the per-app table, the note and the agreement line V2 dropped, plus one line that says where to turn it off (P4). The chrome moves to the one Dialog: focus moves in and returns, Tab stays inside, busy prevents a double agree, and the agree button goes from #1990FF (3.24:1) to action blue." />
+            changed="The strongest trust moment in V2. Since 2026-10-14 V2's consent is the shared ModalOverlay with its header, divider and X: the title, one sentence ('BlueAI will take YouTube jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime.'), then Cancel / I agree, turn on, 44 tall. The system keeps its title and button word for word; its body names what a job does instead of posting videos (proposed, PM and legal, R51), and it keeps the per-app table, the note and the agreement line V2 dropped, plus one line that says where to turn it off (P4). The chrome moves to the one Dialog: focus moves in and returns, Tab stays inside, busy prevents a double agree, and the agree button goes from #1990FF (3.24:1) to action blue." />
           <G.SpecDrawer rows={[
-            { part: 'Dialog', token: '--v2-dialog-md, consent variant', value: '382, close button, no scrim dismiss (V2: a plain frame, no header, divider or X, since 2026-10-14)', ref: 'worker.permissions.modal' },
+            { part: 'Dialog', token: '--v2-dialog-md, consent variant', value: '382, close button, no scrim dismiss (V2: the shared ModalOverlay, 382, header with X; the scrim and Esc close it)', ref: 'worker.permissions.modal' },
             { part: 'Title', token: '--v2-text-20, --v2-weight-semibold', value: 'Run YouTube jobs automatically?', ref: 'worker.permissions.consent-title' },
             { part: 'Body', token: '--v2-text-14, --v2-ink-2', value: 'Proposed, PM and legal (R51): BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.', ref: 'worker.permissions.consent-body' },
             { part: 'Target row', token: '--v2-blue-tint', value: 'the app being changed (system only; V2 dropped its list on 2026-10-14)' },
-            { part: 'Note', token: '--v2-text-12, --v2-ink-3', value: 'Each app has its own setting. The others stay on Always ask until you switch them. (System only; V2 dropped it on 2026-10-14; its mode sheet says New apps always start on Always ask.)' },
+            { part: 'Note', token: '--v2-text-12, --v2-ink-3', value: 'Each app has its own setting. The others stay on Always ask until you switch them. (System only; V2 dropped it on 2026-10-14.)' },
             { part: 'Agreement', token: '--v2-text-14, --v2-ink-2', value: 'By turning this on, you agree to let BlueAI do this for you on YouTube. You can turn it off anytime. (V2’s words until 2026-10-14; the system keeps them.)' },
             { part: 'Where to turn it off', token: '--v2-text-12, --v2-ink-3', value: 'Proposed: Turn it off in Settings > Worker, or with Change above the chat.' },
             { part: 'Cancel', token: 'Button secondary lg', value: 'Cancel', ref: 'worker.permissions.cancel' },
-            { part: 'Agree', token: 'Button primary lg, --v2-action', value: 'I agree, turn on', ref: ['worker.permissions.agree', 'worker.permissions.agree-fill', 'worker.permissions.accent'] },
+            { part: 'Agree', token: 'Button primary lg, --v2-action', value: 'I agree, turn on', ref: ['worker.permissions.agree', 'worker.permissions.agree-fill'] },
             { part: 'Record', token: 'server, per app', value: 'agreement time kept per account, not in localStorage', ref: 'worker.permissions.consent-record' },
           ]} />
         </G.Part>
@@ -135,14 +124,14 @@
             { label: 'Hidden', note: 'every app on Always ask', node: <span className="g-muted">Nothing renders.</span> },
           ]} />
           <G.CompareRow
-            v2={<V2Ribbon />}
+            v2={<span className="g-muted">Not rendered in V2: archived on 2026-10-14, code kept ({G.refText('worker.permissions.ribbon-gate')}).</span>}
             system={notice}
-            changed="V2's ribbon is one line since 2026-10-14: 'Automatic on YouTube' (a count once several apps are on) and Change, which opens the mode sheet. Kept as the in-chat shortcut, now drawn by the shared ComposerNotice so standing conditions (Automatic, out of credits, BlueStacks needed, paused) share one shape. Text moves from 12/600 #1763c6 on #eaf3ff to ink-2 on the info tint, with only the icon in blue ink; Change grows to a 32px target. Its permanent home is Settings > Worker (decision D4), where V2 also lists the apps now." />
+            changed="V2 archived its Automatic ribbon on 2026-10-14 (code kept, not rendered): the composer's mode chip says the mode instead. The system keeps the in-chat notice as a proposal, drawn by the shared ComposerNotice so standing conditions (Automatic, out of credits, BlueStacks needed, paused) share one shape, with only the icon in blue ink and Change as a 32px target. Its permanent home is Settings > Worker (decision D4)." />
           <G.SpecDrawer rows={[
-            { part: 'Gate', token: 'autoNotice() returns null', value: 'only while some app is Automatic', ref: 'worker.permissions.ribbon-gate' },
-            { part: 'Fill', token: '--v2-blue-tint, --v2-blue-tint-line', value: 'info tone', ref: 'worker.permissions.ribbon-fill' },
-            { part: 'Copy', token: 'text --v2-text-13, --v2-ink-2; icon --v2-blue-ink', value: "System: 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.' V2 since 2026-10-14: 'Automatic on YouTube'", ref: 'worker.permissions.ribbon-copy' },
-            { part: 'Change', token: 'ComposerNotice action, --v2-hit-min', value: 'Change (opens ModeRows; in V2, the mode sheet)', ref: 'worker.permissions.ribbon-change' },
+            { part: 'Gate', token: 'autoNotice() returns null', value: 'only while some app is Automatic' },
+            { part: 'Fill', token: '--v2-blue-tint, --v2-blue-tint-line', value: 'info tone' },
+            { part: 'Copy', token: 'text --v2-text-13, --v2-ink-2; icon --v2-blue-ink', value: "Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking." },
+            { part: 'Change', token: 'ComposerNotice action, --v2-hit-min', value: 'Change (opens ModeRows)' },
           ]} />
         </G.Part>
 

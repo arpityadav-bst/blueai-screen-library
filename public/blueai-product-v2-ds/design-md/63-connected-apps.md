@@ -1,7 +1,7 @@
 ## 63 Connected apps
 
 **Status:** New.
-**Why:** The worker watches, likes and comments as the partner. V2 confirms the YouTube account once in chat (worker_flow.jsx:71) and never shows it again, reads watch history unasked (worker_flow.jsx:80, R18), lets Instagram be set to Automatic before its jobs exist (agent_permissions.jsx:57, R40), and its Telegram card "Unlink"s at once (settings.jsx:59). The partner needs one place that says which accounts are in use, what BlueAI does with each, and how to stop it.
+**Why:** The worker watches, likes and comments as the partner. V2 confirms the YouTube account once in chat (worker_flow.jsx:71) and never shows it again, reads watch history unasked (worker_flow.jsx:80, R18), and its Telegram card "Unlink"s at once (settings.jsx:59). The partner needs one place that says which accounts are in use, what BlueAI does with each, and how to stop it.
 
 ### ConnectedApps (New)
 - **Purpose:** List the accounts BlueAI acts on; per account, what it does there and the way to stop it, with the cost said first.

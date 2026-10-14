@@ -101,14 +101,9 @@
     .ba-chip:active { transform: scale(0.96); }
     .ba-chip--below:hover:not(.ba-chip--sel) { background: #f1f5f9 !important; border-color: #cbd5e1 !important; }
     .ba-chip--inside:hover:not(.ba-chip--sel) { background: rgba(255,255,255,0.9) !important; }
-    /* Mode sheet + app switches (agent_permissions.jsx): the slide-up over a light scrim, and the
-       switch's keyboard focus ring (Settings' Worker > Apps uses the same switches). */
-    @keyframes baSheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    @keyframes baScrimIn { from { opacity: 0; } to { opacity: 1; } }
-    .ba-sheet-scrim { animation: baScrimIn 0.24s ease both; }
-    .ba-sheet { animation: baSheetUp 0.36s cubic-bezier(0.22,1,0.36,1) both; }
-    .ba-switch:focus-visible { outline: 2px solid #1990FF; outline-offset: 2px; }
-    @media (prefers-reduced-motion: reduce) { .ba-sheet-scrim, .ba-sheet { animation: none; } }
+    /* Mode rows (agent_permissions.jsx): the keyboard focus ring, in the mode popover and the
+       docked answer panel. */
+    .ba-mode-row:focus-visible { outline: 2px solid #1990FF; outline-offset: -2px; }
   </style>
 </head>
 <body>
@@ -116,6 +111,8 @@
 
 <!-- Shared components (must load first) -->
 <script type="text/babel" src="blueai/shared.jsx"></script>
+<!-- The design system's tokens, "V2 today" look, as one object for the worker parts' inline styles (exposes window.V2Tokens) -->
+<script type="text/babel" src="blueai/v2_tokens.jsx"></script>
 <!-- The Windows desktop scene: wallpaper + BlueStacks App Player window (exposes window.DesktopScene) -->
 <script type="text/babel" src="blueai/desktop_scene.jsx"></script>
 <!-- A Windows notification on that desktop (exposes window.DesktopToast) -->
@@ -153,8 +150,8 @@
      siblings at render time, so this order is for readability, not correctness. -->
 <script type="text/babel" src="blueai/chat_feedback.jsx"></script>
 <script type="text/babel" src="blueai/chat_bubbles.jsx"></script>
-<!-- BlueAI worker, end to end (ROB-21350): the Always ask / Automatic setting, its mode sheet and
-     consent dialog (exposes window.AgentPermissions); the onboarding + daily-run scripts
+<!-- BlueAI worker, end to end (ROB-21350): the Always ask / Automatic setting and its consent
+     dialog (exposes window.AgentPermissions); the onboarding + daily-run scripts
      (exposes window.WorkerFlow); and their chat cards (exposes window.WorkerCards). All three
      resolve each other at render time. -->
 <script type="text/babel" src="blueai/agent_permissions.jsx"></script>
@@ -162,6 +159,8 @@
 <script type="text/babel" src="blueai/worker_cards.jsx"></script>
 <!-- The day-done card, the worker home's earnings strip and the notification words (exposes window.WorkerDayDone) -->
 <script type="text/babel" src="blueai/worker_day_done.jsx"></script>
+<!-- Typed answers to worker questions; also holds the archived docked answer panel (exposes window.AnswerDock) -->
+<script type="text/babel" src="blueai/answer_dock.jsx"></script>
 <script type="text/babel" src="blueai/product_home.jsx"></script>
 <!-- Assembled product chat: the conversation, composer + send rules (exposes window.ProductChat) -->
 <script type="text/babel" src="blueai/chat_product.jsx"></script>
@@ -208,34 +207,30 @@ const { useState, useRef, useEffect } = React;
 // alone on the desktop, no BlueStacks, so BlueStacks is now opt-IN via ?bs=1, inverted from
 // the old "both installed" default.
 const QS = new URLSearchParams(location.search);
-// ?cases=signin (ROB-21388): the five sign-in cases as a bar across the top and NOTHING else to
-// set. No Preview panel. Each case resets the desktop to its starting point; the flow is then
-// clicked through. ?case=1|2|3a|3b|3c picks the one to open on.
+// ?cases=signin (ROB-21388): ONE case (Abhisht, 2026-10-13): BlueAI signs in with an account
+// that isn't enrolled. The bar across the top only picks where that sign-in came from, and
+// NOTHING else is set. No Preview panel. Each start resets the desktop; the flow is then
+// clicked through. ?case=player|browser picks the one to open on. The five-case split and the
+// "Continue as" option (2026-10-07) are gone.
 const CASES_MODE = QS.get('cases') === 'signin';
 const SIGNIN_CASES = [
-  { id: '1',  label: '1 App Player: accepted', note: 'App Player is signed in with the accepted account.' },
-  { id: '2',  label: '2 App Player: other',    note: 'App Player is signed in with a different account.' },
-  { id: '3a', label: '3a Browser: accepted',   note: 'App Player is signed out. The browser is signed in with the accepted account.' },
-  { id: '3b', label: '3b Browser: other',      note: 'App Player is signed out. The browser is signed in with a different account.' },
-  { id: '3c', label: '3c Browser: signed out', note: 'App Player is signed out. So is the browser.' }
+  { id: 'player',  label: 'App Player', note: 'App Player is signed in with an account that isn’t enrolled.' },
+  { id: 'browser', label: 'Browser',    note: 'The website is signed in with an account that isn’t enrolled.' }
 ];
-// Two options (Abhisht, 2026-10-07). A: interrupt only when the account is the wrong one.
-// B: whenever an account is already signed in (App Player, or the website), ask "Continue as".
-const SIGNIN_OPTS = [{ id: 'a', label: 'A: Check account' }, { id: 'b', label: 'B: Continue as' }];
 // ROB-21350 shareable BlueAI-worker setups, so a link opens straight on the case being discussed.
 // The Preview panel's "Copy link" builds one from whatever is on screen:
 //   ?start=worker   land signed in on the BlueAI worker home (no terms sheet, no sign-in)
-//   ?v=1 | ?v=2     change mode from the composer chip | the ribbon above the composer
-//   ?setup=off      onboarding without the "take it on my own?" setup question (default: on)
+//   (?v=1 | ?v=2 picked the composer chip or the ribbon; the ribbon was archived 2026-10-14, so the
+//                   composer chip is the one mode control and ?v is ignored)
 //   ?day=next       play the next day's scheduled worker run as soon as the app opens (implies start=worker)
-//   ?day=returning  a returning person on the worker home, before today's run (implies start=worker)
+//   (?day=returning, the Worker row's old Returning option, was removed 2026-10-14; old links still
+//                   land signed in on the worker home, as Day 1)
 //   ?end=job | nojob | day20 | failed   how today's run ends: the day-done card and the notification
 //                   (worker sheet row 2). Implies day=next. Default: job
-//   ?card=days | money | plain   which day-done option draws it: the days-led message (ships), the
-//                   money-led one, or no message and a longer closing line. Default: days
-//   ?mode=auto      start with Automatic on for YouTube (default: Always ask on every app). Skips
-//                   the consent dialog: the link stands in for a person who already agreed. The
-//                   Preview panel's Mode row sets the same thing.
+//   (?card was removed 2026-10-14: the days-led message is the only one)
+//   (?input=dock opened the docked answer panel; archived 2026-10-14, ignored now)
+//   ?mode=auto      start with Automatic on for YouTube (default: Always ask). Skips
+//                   the consent dialog: the link stands in for a person who already agreed.
 // ROB-21388 sign-in handoff (the browser window beside the app):
 //   ?signin=browser open straight on the sign-in handoff, no terms sheet
 //   ?player=out | accepted | other   App Player on this PC: signed out (the app opens the
@@ -245,11 +240,8 @@ const SIGNIN_OPTS = [{ id: 'a', label: 'A: Check account' }, { id: 'b', label: '
 //                   as the accepted account, as another account, or none. Default: accepted
 const LINK = {
   start: ['next', 'returning'].includes(QS.get('day')) || QS.has('end') || QS.get('start') === 'worker' ? 'worker' : (QS.get('start') === 'signin' ? 'signin' : null),
-  version: QS.get('v') === '1' ? 'chatbox' : (QS.get('v') === '2' ? 'ribbon' : null),
-  setup: QS.get('setup') === 'off' ? 'jobcard' : 'onboarding',
-  day: QS.get('day') === 'returning' ? 'returning' : (QS.get('day') === 'next' || QS.has('end') ? 'next' : 'day1'),
+  day: QS.get('day') === 'next' || QS.has('end') ? 'next' : 'day1',
   end: ['job', 'nojob', 'day20', 'failed'].includes(QS.get('end')) ? QS.get('end') : 'job',
-  card: ['money', 'plain'].includes(QS.get('card')) ? QS.get('card') : 'days',
   mode: QS.get('mode') === 'auto' ? 'auto' : 'always',
   signin: QS.get('signin') === 'browser' || CASES_MODE ? 'browser' : null,
   browser: ['other', 'out'].includes(QS.get('browser')) ? QS.get('browser') : 'accepted',
@@ -257,11 +249,10 @@ const LINK = {
 };
 // Local-testing rows remembered in THIS browser only; a link's own settings win over them.
 //   bai_proto_start    'signin' (the real cold start) | 'worker' (land signed in on the worker home)
-//   bai_proto_version  'chatbox' (Composer chip) | 'ribbon' (Ribbon)
 const PROTO = (() => {
   let saved = {};
-  try { saved = { start: localStorage.getItem('bai_proto_start'), version: localStorage.getItem('bai_proto_version') }; } catch (e) { /* private window */ }
-  return { start: LINK.start || (LINK.signin ? 'signin' : saved.start) || 'signin', version: LINK.version || saved.version || 'ribbon' };
+  try { saved = { start: localStorage.getItem('bai_proto_start') }; } catch (e) { /* private window */ }
+  return { start: LINK.start || (LINK.signin ? 'signin' : saved.start) || 'signin' };
 })();
 const remember = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* private window: this session only */ } };
 
@@ -322,11 +313,14 @@ function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenHistory, 
      called Dashboard; the glyph follows the label), drawn in the same 18px #64748b outline family
      as ClockIcon / PersonIcon / LogoutIcon, and echoing the "$" tile on the BlueAI worker card.
      Not a wallet: "Wallet" is the crypto concept the product is dropping. Sits after Profile
-     (account things together), before Logout (which stays last). Destination is the deployed
-     Vesper page as a stand-in for the real dashboard URL, which the product team owns. */
+     (account things together), before Logout (which stays last). Destination (2026-10-14): the
+     partner dashboard copy in this repo, onblue-dashboard/, the one with the 20 progress pills,
+     opened on the approved dashboard with one program. It stands in for the real dashboard URL,
+     which the product team owns. A deploy that ships only blueai-product-v2/ must ship that
+     folder too, or this link 404s. */
   const EarningsIcon = <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" /><line x1="12" y1="18" x2="12" y2="6" /></svg>;
   const ExternalIcon = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 'auto', flexShrink: 0 }}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>;
-  const DASHBOARD_URL = 'https://blueai-screen-library.vercel.app/experiments/onblue-vesper/apply.html';
+  const DASHBOARD_URL = '../experiments/onblue-vesper/apply.html?creator=in&account=one';
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', borderBottom: '1px solid #e2e8f0', background: 'white', flexShrink: 0, position: 'relative', zIndex: 20 }}>
@@ -370,6 +364,8 @@ function ProductTopBar({ credits, lowDot, isLoggedIn, onNewChat, onOpenHistory, 
           <button aria-label="More options" onClick={() => { setMenuOpen((v) => !v); setHelpOpen(false); }} style={iconBtn(menuOpen)}>
             <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="12" cy="19" r="1.5" /></svg>
           </button>
+          {/* Earnings is a plain link to the partner dashboard, where the 20-day progress lives as
+             pills (Abhisht, 2026-10-14; mock in onblue-dashboard/). */}
           {menuOpen &&
             <div style={dropdown}>
               <button style={item} onClick={() => { setMenuOpen(false); onOpenHistory && onOpenHistory(); }} onMouseEnter={(e) => hover(e, true)} onMouseLeave={(e) => hover(e, false)}>{ClockIcon}Chat History</button>
@@ -635,26 +631,21 @@ function App() {
   const [pendingMessage, setPendingMessage] = useState(null); // onboarding: message that opened the sign-in gate, auto-sent after login
   const [previewOpen, setPreviewOpen] = useState(true);    // dev preview panel collapse
   // BlueAI worker end to end (ROB-21350). workerDay: 'day1' = a new user (Run plays onboarding),
-  // 'next' = the following day's scheduled run, replayed per click via dailyRunKey. jobChoice:
-  // whether onboarding asks the setup question. permUi: which control opens the mode sheet later
-  // (composer chip or ribbon). protoStart: skip sign-in on load. jobWaiting: an unanswered job
-  // ask, which lights BlueAI's taskbar button. permModes: the per-app modes, for the Mode row.
+  // 'next' = the following day's scheduled run, replayed per click via dailyRunKey. permUi: which
+  // version of the "change it later" control. protoStart: skip sign-in on load. jobWaiting: an unanswered job ask, which lights
+  // BlueAI's taskbar button.
   const [protoStart, setProtoStart] = useState(PROTO.start);
-  const [permUi, setPermUi] = useState(PROTO.version);
-  const { modes: permModes } = window.AgentPermissions.usePermissionMode();
+  const permUi = 'chatbox';   // the composer chip is the one mode control; the ribbon is archived (agent_permissions.jsx)
+  const { modes: permModes } = window.AgentPermissions.usePermissionMode();   // YouTube's mode, for the Preview panel's Mode row
   const [workerDay, setWorkerDay] = useState(LINK.day);
   const [dailyRunKey, setDailyRunKey] = useState(0);
-  const [jobChoice, setJobChoice] = useState(LINK.setup);
   const [dayEnd, setDayEnd] = useState(LINK.end);        // how today's run ends (worker_day_done.jsx)
-  const [cardStyle, setCardStyle] = useState(LINK.card); // which day-done option draws it: money | days | plain
   const [toast, setToast] = useState(null);              // the Windows notification a scheduled run raises when its day is done
   const [linkCopied, setLinkCopied] = useState(false);
   const linkDayPlayed = useRef(false);   // ?day=next plays its run once, after the first boot
   // A shared link's worker setup lives in module-level stores outside React; apply it once.
   useEffect(() => {
-    window.WorkerFlow.setChoicePoint(LINK.setup);
     window.WorkerDayDone.setEnd(LINK.end);
-    window.WorkerDayDone.setStyle(LINK.card);
     if (LINK.day !== 'day1') window.WorkerFlow.setOnboarded(true);
     if (LINK.mode === 'auto') window.AgentPermissions.setMode('youtube', 'auto');
   }, []);
@@ -678,33 +669,26 @@ function App() {
   const [playerAcct, setPlayerAcct] = useState(LINK.player);           // 'out' | 'accepted' | 'other'
   const [browserResult, setBrowserResult] = useState(null);
   const openBrowser = () => { setBrowserResult(null); setBrowserKey((k) => k + 1); setBrowserOpen(true); };
-  const [caseId, setCaseId] = useState(SIGNIN_CASES.some((c) => c.id === QS.get('case')) ? QS.get('case') : '1');
-  /* Every case is a cold start (Abhisht, 2026-10-07: "BlueAI should always start with the
-     launching/splash screen"). What happens after the splash depends only on the shared session:
-     App Player signed in = BlueAI signs in silently (home, or the check for another account);
-     signed out = BlueAI's sign-in page, and the person clicks Sign in. */
-  const playerRef = useRef(playerAcct); playerRef.current = playerAcct;
-  const loggedRef = useRef(false); loggedRef.current = isLoggedIn;
-  const [opt, setOpt] = useState(QS.get('opt') === 'b' ? 'b' : 'a');
-  const optRef = useRef(opt); optRef.current = opt;
-  const pickOpt = (v) => { setOpt(v); optRef.current = v; playCase(caseId); };
+  const [caseId, setCaseId] = useState(SIGNIN_CASES.some((c) => c.id === QS.get('case')) ? QS.get('case') : 'player');
+  /* Every start is a cold start (Abhisht, 2026-10-07: "BlueAI should always start with the
+     launching/splash screen"). App Player: it holds the not-enrolled account, so BlueAI signs in
+     silently with it and the check fires right after the splash. Browser: App Player is signed
+     out, so BlueAI's sign-in page shows; the person clicks Sign in and the website hands back the
+     not-enrolled account it holds. Either way the same message follows. */
   const playCase = (id) => {
     setCaseId(id);
     setBrowserOpen(false); setBrowserResult(null); setShowLoginModal(false); setTermsMode('off');
     setCreditsOpen(false); setHistoryOpen(false); setProfileOpen(false); setLogoutOpen(false); setActiveTab('chat'); setSeed(null);
-    setSessionMode('moneymaker'); setOnbPhase('welcome'); setLoginFlow('moneymaker');
-    const player = id === '1' ? 'accepted' : (id === '2' ? 'other' : 'out');
-    setPlayerAcct(player); playerRef.current = player;
-    setBrowserSession(id === '3b' ? 'other' : (id === '3c' ? 'out' : 'accepted'));
-    setIsLoggedIn(id === '1' && optRef.current === 'a');   // option B confirms App Player's account first
+    setSessionMode('moneymaker'); setOnbPhase('welcome');
+    const player = id === 'player' ? 'other' : 'out';
+    setPlayerAcct(player);
+    setBrowserSession('other');   // the website holds the same not-enrolled account
+    setIsLoggedIn(false);
+    // App Player: the silent sign-in and the check happen during the splash, so the message is
+    // already there, under it, when it fades. Opening it after the fade let BlueAI's sign-in
+    // screen show for half a second (Abhisht, 2026-10-13).
+    setLoginFlow(player === 'other' ? 'gate' : 'moneymaker'); setShowLoginModal(player === 'other');
     setWinOpen(true); setBooting(true); setHomeReady(false); setSessionKey((k) => k + 1);
-  };
-  // After the splash: App Player on another account means a silent sign-in with it, then the check.
-  // Option B: any App Player account gets "Continue as" first.
-  const afterBoot = () => {
-    if (loggedRef.current || playerRef.current === 'out') return;
-    if (optRef.current === 'b') { setLoginFlow('confirm'); setShowLoginModal(true); return; }
-    if (playerRef.current === 'other') { setLoginFlow('gate'); setShowLoginModal(true); }
   };
   useEffect(() => { if (CASES_MODE) playCase(caseId); }, []);
   // The browser's "You're signed in" page stays up just long enough to read, then the window goes.
@@ -744,8 +728,7 @@ function App() {
   const handleBootDone = () => {
     setBooting(false); setTimeout(() => setHomeReady(true), 850);
     if (LINK.day === 'next' && !linkDayPlayed.current) { linkDayPlayed.current = true; setDailyRunKey((k) => k + 1); }
-    if (CASES_MODE) afterBoot();
-    else if (LINK.signin === 'browser' && !isLoggedIn) { setLoginFlow(LINK.player === 'other' ? 'gate' : 'moneymaker'); setShowLoginModal(true); }   // ROB-21388 link: the handoff, or the gate when App Player is on another account
+    if (!CASES_MODE && LINK.signin === 'browser' && !isLoggedIn) { setLoginFlow(LINK.player === 'other' ? 'gate' : 'moneymaker'); setShowLoginModal(true); }   // ROB-21388 link: the handoff, or the gate when App Player is on another account
   };
   /* Preview panel "Copy link" (ROB-21350): today's setup as a ?query link (see LINK above). It is
      built on this page's own address, so it opens on localhost here and on the real host once the
@@ -761,11 +744,8 @@ function App() {
     }
     if (isLoggedIn && sessionMode === 'moneymaker' && playerAcct === 'out') {
       p.set('start', 'worker');
-      p.set('v', permUi === 'chatbox' ? '1' : '2');
-      if (jobChoice === 'jobcard') p.set('setup', 'off');
       if (workerDay !== 'day1') p.set('day', workerDay);
       if (workerDay === 'next' && dayEnd !== 'job') p.set('end', dayEnd);
-      if (cardStyle !== 'days') p.set('card', cardStyle);
       if (window.AgentPermissions.getMode('youtube') === 'auto') p.set('mode', 'auto');
     }
     const url = location.origin + location.pathname + (p.toString() ? '?' + p.toString() : '');
@@ -1002,17 +982,16 @@ function App() {
         onSuccess={handleLoginSuccess}
         onOpenBrowser={openBrowser}
         browserResult={browserResult}
-        onSwitchAccount={() => { setPlayerAcct('out'); if (browserResult) setBrowserSession('out'); openBrowser(); }} />
+        onSwitchAccount={() => { setPlayerAcct('out'); setBrowserSession('other'); openBrowser(); }} />{/* the website still holds the account that just failed */}
 
       <LogoutModal
         isOpen={logoutOpen}
         onCancel={() => setLogoutOpen(false)}
         onConfirm={() => { setLogoutOpen(false); setProfileOpen(false); setActiveTab('chat'); }} />
 
-      {/* The mode sheet, and the "Run jobs automatically?" confirm that opens over it. One
-         instance of each here, inside .ba-app, so both are scoped to the product window whichever
-         control opened them (the composer chip, the ribbon's Change, Settings, the job ask). */}
-      <window.AgentPermissions.ModeSheet />
+      {/* The "Run YouTube jobs automatically?" confirm. One instance here, inside .ba-app, so it is
+         scoped to the product window. The one control that asks for it is the composer chip's mode
+         popover. */}
       <window.AgentPermissions.AutoConfirm />
 
       {/* Out-of-credits popup on message-send: prime geo → Prime upsell (image 1); non-prime geo → BYOK (image 2). */}
@@ -1048,7 +1027,7 @@ function App() {
         sideWindow={browserOpen && winPresent ? (
           /* ROB-21388: the browser the app's Sign in opened. Keyed on its setup, so a Preview row
              change restarts it on the matching first page. */
-          <window.SignInPage.SignInBrowser key={browserKey + '-' + browserSession + '-' + opt} start={browserSession} always={CASES_MODE && opt === 'b'}
+          <window.SignInPage.SignInBrowser key={browserKey + '-' + browserSession} start={browserSession}
             onContinue={handleBrowserContinue} onClose={() => setBrowserOpen(false)} />
         ) : null}
         aiInstalled={baiInstalled} aiOpen={winPresent} aiAttention={jobWaiting}
@@ -1069,11 +1048,7 @@ function App() {
         <>
           <style>{'.pscene { top: 56px; }'}</style>
           <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 300, height: 56, display: 'flex', alignItems: 'center', gap: 8, padding: '0 18px', background: 'rgba(17,21,36,0.94)', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
-            {SIGNIN_OPTS.map((o) => (
-              <button key={o.id} onClick={() => pickOpt(o.id)}
-                style={{ height: 32, padding: '0 14px', borderRadius: 8, border: '1px solid ' + (o.id === opt ? '#c3cade' : '#2a3048'), background: o.id === opt ? '#c3cade' : 'transparent', color: o.id === opt ? '#111524' : '#8790a8', fontSize: 12.5, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}>{o.label}</button>
-            ))}
-            <span style={{ width: 1, height: 24, background: '#2a3048', margin: '0 6px' }} />
+            <span style={{ fontSize: 12.5, fontWeight: 700, color: '#c3cade', marginRight: 4, whiteSpace: 'nowrap' }}>Not-enrolled account, signed in from</span>
             {SIGNIN_CASES.map((c) => (
               <button key={c.id} onClick={() => playCase(c.id)}
                 style={{ height: 32, padding: '0 14px', borderRadius: 999, border: '1px solid ' + (c.id === caseId ? '#1a6fc4' : '#2a3048'), background: c.id === caseId ? '#1a6fc4' : 'transparent', color: c.id === caseId ? '#fff' : '#8790a8', fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}>{c.label}</button>
@@ -1186,19 +1161,16 @@ function App() {
                replays the script from the top. */
             if (isChat) rows.push(<PreviewRow key="schedooc" label="Scheduled job" opts={[['Off', false], ['Out of credits', true]]} val={scheduledOoc}
               set={(v) => { setScheduledOoc(v); if (v) setZeroCredits(true); setSessionKey((k) => k + 1); }} />);
-            /* BlueAI worker end to end (ROB-21350). Change mode from: the control that opens the
-               mode sheet, the two shapes going to the seniors (the composer chip, or a ribbon
-               above the composer once the worker runs on Automatic). Mode: YouTube's mode, set
-               directly with no consent dialog, exactly like ?mode=auto. Worker: Day 1 resets to a
-               brand-new user (Run plays onboarding, mode back to Always ask); Next day plays the
-               following day's scheduled run in its own chat, again on every click. Setup question:
-               whether onboarding asks "take paid jobs on my own, or check with me first?". */
+            /* BlueAI worker end to end (ROB-21350). Worker: Day 1 resets to a brand-new user (Run
+               plays onboarding, mode back to Always ask); Next day plays the following day's
+               scheduled run in its own chat, again on every click. Removed 2026-10-14 to clean the
+               panel up: Change mode from (the ribbon is archived; the composer chip stays), Setup
+               question, Card (Days is the one), and Answers (chips it is; Other and Docked archived). */
             if (isChat && sessionMode === 'moneymaker' && isLoggedIn) {
-              rows.push(<PreviewRow key="permui" label="Change mode from" opts={[['Composer chip', 'chatbox'], ['Ribbon', 'ribbon']]} val={permUi}
-                set={(v) => { setPermUi(v); remember('bai_proto_version', v); }} />);
+              /* Mode: YouTube's mode set directly, no consent dialog, exactly like ?mode=auto. */
               rows.push(<PreviewRow key="permmode" label="Mode" opts={[['Always ask', 'always'], ['Automatic', 'auto']]} val={permModes.youtube}
                 set={(v) => window.AgentPermissions.setMode('youtube', v)} />);
-              rows.push(<PreviewRow key="workerday" label="Worker" opts={[['Day 1', 'day1'], ['Returning', 'returning'], ['Next day', 'next']]} val={workerDay}
+              rows.push(<PreviewRow key="workerday" label="Worker" opts={[['Day 1', 'day1'], ['Next day', 'next']]} val={workerDay}
                 set={(v) => {
                   setWorkerDay(v); setSeed(null); setToast(null);
                   if (v === 'day1') { window.WorkerFlow.setOnboarded(false); window.AgentPermissions.reset(); }
@@ -1212,27 +1184,14 @@ function App() {
                   setDayEnd(v); window.WorkerDayDone.setEnd(v); setToast(null); setSeed(null);
                   setWorkerDay('next'); window.WorkerFlow.setOnboarded(true); setDailyRunKey((k) => k + 1); setSessionKey((k) => k + 1);
                 }} />);
-              /* Card (Abhisht, 2026-10-12): the three options for the moment. Money leads with the
-                 dollar; Days shows the count and no money; Plain is no card, only a longer closing
-                 line. Replays whatever is on screen so the change shows at once. */
-              rows.push(<PreviewRow key="cardstyle" label="Card" opts={window.WorkerDayDone.STYLES} val={cardStyle}
-                set={(v) => {
-                  setCardStyle(v); window.WorkerDayDone.setStyle(v); setToast(null); setSeed(null);
-                  if (workerDay === 'next') setDailyRunKey((k) => k + 1);
-                  setSessionKey((k) => k + 1);
-                }} />);
-              rows.push(<PreviewRow key="jobchoice" label="Setup question" opts={[['On', 'onboarding'], ['Off', 'jobcard']]} val={jobChoice}
-                set={(v) => { setJobChoice(v); window.WorkerFlow.setChoicePoint(v); }} />);
             }
             if (activeTab === 'settings') {
               rows.push(<PreviewRow key="aihw" label="Hardware" opts={[['Yes', true], ['No', false]]} val={aiHwSupported} set={setAiHwSupported} />);
               rows.push(<PreviewRow key="aiconflict" label="AI conflict" opts={[['None', false], ['Detected', true]]} val={aiConflict} set={setAiConflict} />);
             }
             if (isLoggedIn) {
-              // Geo and Membership rows removed 2026-09-09: with one member type and one geo they
-              // selected states the screens no longer distinguish. Own key stays, because BYOK still
-              // lives in Settings and still changes what the credits screen reports.
-              rows.push(<PreviewRow key="key" label="Own key" opts={[['Off', false], ['On', true]]} val={byokActive} set={(v) => { setKeyAdded(v); setByokOn(v); setKeyInfo(v ? DEFAULT_KEY : null); }} />);
+              // Geo and Membership rows removed 2026-09-09; the Own key row removed 2026-10-14 (Abhisht).
+              // An own key can still be added in Settings, which hides this row while it is on.
               if (!byokActive) rows.push(<PreviewRow key="credits" label="Credits" opts={[['Full', false], ['Empty', true]]} val={zeroCredits} set={setZeroCredits} />);
             }
             return rows.map((row, i) => (

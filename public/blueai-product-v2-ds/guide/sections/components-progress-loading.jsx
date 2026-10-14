@@ -59,7 +59,7 @@
             { part: 'Copy', token: null, value: 'Checking…', ref: 'display-feedback.progress.ai-copy' },
             { part: 'Copy', token: null, value: 'Download failed', ref: 'display-feedback.progress.failed-copy' },
             { part: 'Copy', token: null, value: 'Paused', ref: 'display-feedback.progress.paused-copy' },
-            { part: 'Program progress', token: null, value: 'not a ProgressBar: the site’s "Run BlueAI this month, 12 of 20 days" bar is the DayBar (section 43), which keeps a pending day out of green until it is verified', ref: ['display-feedback.progress.site-label', 'display-feedback.progress.site-count'] },
+            { part: 'Program progress', token: null, value: 'not a ProgressBar: the site’s "Days run" pills (12 of 20 days) are the DayBar (section 43), which keeps a pending day out of green until it is verified', ref: ['display-feedback.progress.site-label', 'display-feedback.progress.site-count'] },
           ]} />
         </G.Part>
 

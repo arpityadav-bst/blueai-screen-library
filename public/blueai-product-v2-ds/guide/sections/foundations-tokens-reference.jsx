@@ -120,7 +120,8 @@
           )}
           <G.SpecDrawer rows={[
             { part: 'Source', token: null, value: 'tokens.css: one :root block, prefix --v2-, light theme only' },
-            { part: 'Local constants it replaces', token: null, value: 'ACCENT, INK, MUTED, FAINT', ref: ['foundations.tokens.ai-mode-accent', 'foundations.tokens.perm-accent', 'foundations.ink.ai-mode-faint', 'foundations.ink.dd-constants'] },
+            { part: 'Local constants it replaces', token: null, value: 'ACCENT, INK, MUTED, FAINT', ref: ['foundations.tokens.ai-mode-accent', 'foundations.ink.ai-mode-faint'] },
+            { part: 'V2Tokens (the PM)', token: null, value: 'since 2026-10-14 the PM builds from this system: blueai/v2_tokens.jsx mirrors the "V2 today" tokens as one JS object, read by the worker files', ref: 'foundations.tokens.v2-tokens' },
           ]} />
         </G.Part>
       </G.Section>

@@ -2,7 +2,7 @@
 
 **Status:** Changed from V2.
 
-**Why:** The partner signs in with the account they applied with, and BlueAI acts on their own YouTube account. Who is signed in, and which account a connected app is, must be plain at a glance. V2's Profile puts a 92px bat emoji on a green disc over a gradient banner where that identity goes (profile.jsx:31-34); the sign-in gate already does it right with an initial on the account's hue (account_gate.jsx:20, 51). The system keeps the gate's idea.
+**Why:** The partner signs in with the account they applied with, and BlueAI acts on their own YouTube account. Who is signed in, and which account a connected app is, must be plain at a glance. V2's Profile puts a 92px bat emoji on a green disc over a gradient banner where that identity goes (profile.jsx:31-34); the sign-in gate already does it right with an initial on the account's hue (account_gate.jsx:40). The system keeps the gate's idea.
 
 ### Avatar (Changed from V2)
 
@@ -25,7 +25,7 @@
 - Photo failed: falls back to the initials, no broken image. New.
 - Loading: a skeleton circle the same size. New.
 - Status: connected, needs you, signed out. New (Connected apps, section 63).
-- In V2 today: Kebab > Profile (emoji avatar); `?cases=signin&case=2` (56px initial on the gate).
+- In V2 today: Kebab > Profile (emoji avatar); `?cases=signin&case=player` (a 34px initial in the gate's account row).
 
 **Props.** `Avatar { name, id, src, size = 24 | 32 | 40 | 56 (default 32), app = 'youtube' | 'instagram' | 'telegram', status = 'success' | 'attention' | 'danger' | 'neutral', statusLabel, loading, decorative, className }`. `id` picks the hue (falls back to `name`). With `app`, `name` is ignored.
 

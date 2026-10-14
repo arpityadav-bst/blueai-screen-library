@@ -7,7 +7,7 @@
   const row = 'v2-hstack v2-wrap v2-gap-2';
   /* V2 copy, quoted (refs below). */
   const JOB = { title: 'Paid job available', lead: 'Watch the video and provide feedback.', question: 'Want me to take this one?' };
-  const REPLIES = ['Yes, switch to Automatic', 'Just this job', 'Not now'];
+  const REPLIES = ['Yes', 'Not now'];
   const PROMPT = 'What went wrong?';
   const REASONS = ["Didn't complete the task", 'Wrong result', 'Took too long', "Didn't understand me", 'Other'];
   /* Proposed copy: Activity filters (section 58). */
@@ -96,12 +96,12 @@
           <G.CompareRow
             v2={<G.Live get={function () { return (window.WorkerCards || window.ChatFeedback) && V2Chips; }} label="WorkerCards.AskBubble and ChatFeedback.FeedbackThumbs" />}
             system={<div className="v2-stack v2-gap-5">{replies}<Reasons /></div>}
-            changed="Three chip looks (a 1.5px blue outline with #1990FF text at 3.24:1, a dark #334155 selected reason, a grey back pill) become one: a 1px neutral pill whose hover is a wash, not a lift, and whose selected state is the family's blue 12% fill and an ink label with a check. Toggles now say they are pressed." />
+            changed="V2's reply chips adopted this Chip on 2026-10-14 ('V2 today' look: 28 tall, 1px #d1d5db, 13/600 ink, a wash on hover). The other looks (a dark #334155 selected reason, a grey back pill) still become one: a 1px neutral pill whose hover is a wash, not a lift, and whose selected state is the family's blue 12% fill and an ink label with a check. Toggles now say they are pressed." />
           <G.SpecDrawer rows={[
-            { part: 'Shape', token: '--v2-radius-pill, --v2-line, --v2-wash-tint', value: '28 tall (--v2-control-sm, invisible 32 target), pill, padding 0 12, 1px 10% black on the 2% wash (V2: 1.5px #c7dcf5; 1px #e2e8f0 + shadow)', ref: ['actions-inputs.chip.reply', 'actions-inputs.chip.reason-idle', 'actions-inputs.chip.reason-shape', 'actions-inputs.chip.back'] },
-            { part: 'Label', token: '--v2-text-13, --v2-weight-medium, --v2-ink', value: '13/500 ink (V2: 12.5/700 #1990FF at 3.24:1; 12/500 #475569)', ref: ['actions-inputs.chip.reply', 'actions-inputs.chip.reason-shape'] },
-            { part: 'Hover', token: '--v2-wash-hover, --v2-line-hover', value: 'wash + 20% edge (V2: lifts 1px, no colour change)', ref: 'actions-inputs.chip.reply-hover' },
-            { part: 'Press', token: '--v2-wash-press', value: 'deeper wash (V2: scale 0.96)', ref: 'actions-inputs.chip.reply-press' },
+            { part: 'Shape', token: '--v2-radius-pill, --v2-line, --v2-wash-tint', value: '28 tall (--v2-control-sm, invisible 32 target), pill, padding 0 12, 1px 10% black on the 2% wash (V2: reply 1px #d1d5db; reason 1px #e2e8f0 + shadow)', ref: ['actions-inputs.chip.reply', 'actions-inputs.chip.reason-idle', 'actions-inputs.chip.reason-shape', 'actions-inputs.chip.back'] },
+            { part: 'Label', token: '--v2-text-13, --v2-weight-medium, --v2-ink', value: '13/500 ink (V2: reply 13/600 ink; reason 12/500 #475569)', ref: ['actions-inputs.chip.reply', 'actions-inputs.chip.reason-shape'] },
+            { part: 'Hover', token: '--v2-wash-hover, --v2-line-hover', value: 'wash + 20% edge (V2 reply chip the same; feedback pills lift 1px)', ref: 'actions-inputs.chip.reply-hover' },
+            { part: 'Press', token: '--v2-wash-press', value: 'deeper wash (V2 feedback pills: scale 0.96)', ref: 'actions-inputs.chip.reply-press' },
             { part: 'Selected', token: '--v2-select, --v2-select-line, --v2-ink', value: 'blue 12% fill, 50% edge, ink label plus a check (V2: #334155 fill, white)', ref: ['actions-inputs.chip.reason-selected', 'actions-inputs.onblue.choice-on'] },
             { part: 'Focus', token: '--v2-focus-outline', value: '2px #156efe, offset 2 (V2: none)' },
             { part: 'Disabled', token: '--v2-opacity-disabled', value: 'aria-disabled, stays focusable, 0.45; the reason is printed under it (caption) and tied with aria-describedby' },

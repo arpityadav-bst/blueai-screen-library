@@ -25,7 +25,7 @@
 ### P4 Every promise has a control
 
 - **Rule:** 'Pause, stop, or disconnect anytime' and 'turn it off anytime' each map to a findable control in Settings > Worker and Connected apps, reachable from the home in two taps.
-- **Why:** The promises exist in live copy (worker_flow.jsx:67, agent_permissions.jsx:188) but only one has a screen: since 2026-10-14 Settings has a Worker card that turns Automatic off (settings.jsx:11-20); pause, stop and disconnect have none (settings.jsx:144-159).
+- **Why:** The promises exist in live copy (worker_flow.jsx:67, agent_permissions.jsx:188) but none has a screen in Settings: since 2026-10-14 Automatic is turned off only from the composer's mode chip in an open chat (Settings' Worker card was removed the same day); pause, stop and disconnect have nothing (settings.jsx:132).
 - **Prevents:** Consent that cannot be withdrawn.
 
 ### P5 Quiet by default

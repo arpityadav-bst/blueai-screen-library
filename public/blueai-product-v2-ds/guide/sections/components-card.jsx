@@ -45,14 +45,14 @@
           <G.CompareRow
             v2={<G.Live label="BluestacksCard (settings.jsx)" get={function () { return window.BluestacksCard || null; }} />}
             system={<Card><Content t="BlueStacks" b="Connected to BlueStacks App Player. To switch, open BlueAI from another instance." /></Card>}
-            changed="V2's in-flow cards carry seven shadow strengths on top of their lines (settings 8%, profile 6%, credits 4%, the EarningsStrip a 24px cast) and a different line colour on each. The system card is the line alone, radius 16, padding 16, and only a card that goes somewhere answers hover, by firming its line (the site's rule for surfaces)." />
+            changed="V2's in-flow cards carry seven shadow strengths on top of their lines (settings 8%, profile 6%, credits 4%; the EarningsStrip's 24px cast left with the strip on 2026-10-14) and a different line colour on each. The system card is the line alone, radius 16, padding 16, and only a card that goes somewhere answers hover, by firming its line (the site's rule for surfaces)." />
 
           <G.SpecDrawer rows={[
             { part: 'Fill', token: '--v2-surface', value: '#ffffff', ref: ['display-feedback.card.credits', 'display-feedback.card.settings'] },
             { part: 'Line', token: '--v2-line', value: 'black 10%', ref: ['display-feedback.card.credits', 'display-feedback.card.settings', 'display-feedback.card.profile'] },
             { part: 'Radius', token: '--v2-radius-lg', value: '16px', ref: ['display-feedback.card.settings', 'display-feedback.card.site-radius'] },
-            { part: 'Padding', token: '--v2-space-4', value: '16px (sm 12, none)', ref: ['display-feedback.card.settings', 'display-feedback.card.strip'] },
-            { part: 'Shadow', token: '--v2-shadow-0', value: 'none', ref: ['display-feedback.card.settings', 'display-feedback.card.profile', 'display-feedback.card.credits', 'display-feedback.card.strip'] },
+            { part: 'Padding', token: '--v2-space-4', value: '16px (sm 12, none)', ref: 'display-feedback.card.settings' },
+            { part: 'Shadow', token: '--v2-shadow-0', value: 'none', ref: ['display-feedback.card.settings', 'display-feedback.card.profile', 'display-feedback.card.credits'] },
             { part: 'Hover (pressable)', token: '--v2-line-hover', value: 'black 20% line' },
             { part: 'Pressed', token: '--v2-wash-press', value: 'black 7% wash over the surface' },
             { part: 'Focus', token: '--v2-focus-outline', value: '2px blue, offset 2' },
@@ -77,26 +77,24 @@
 
           <G.CompareRow
             v2={<div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--v2-space-3)' }}>
-              <G.Live label="WorkerDayDone.EarningsStrip" get={function () { return window.WorkerDayDone && window.WorkerDayDone.EarningsStrip; }} />
               <G.FrameState url="index.html?start=worker" label="AI Credits screen: open the credits pill in the top bar" height={830} />
             </div>}
             system={<div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--v2-space-3)', width: '100%' }}>
               <Stat label="Your 20 days" size="compact" value="Day 7" unit="of 20" context={ctx} action={earnings} />
               <Stat label="AI credits left today" value={2000} context="Refills to 2,000 every day." />
             </div>}
-            changed="The credits figure is 54/800 in the brand gradient (38 when zero) inside 28px padding, and the strip said '13 to go' in green until V2 dropped it on 2026-10-14. The system figure is ink, 40/600 tabular (20 compact), the same size at zero, one mini-title label per card (the site's .mini-title), and money and counts stay in ink: green means reached, a figure is not a state." />
+            changed="The credits figure is 54/800 in the brand gradient (38 when zero) inside 28px padding, and V2's progress strip left the app on 2026-10-14. The system figure is ink, 40/600 tabular (20 compact), the same size at zero, one mini-title label per card (the site's .mini-title), and money and counts stay in ink: green means reached, a figure is not a state." />
 
           <G.SpecDrawer rows={[
             { part: 'Label', token: '.v2-text-mini-title (--v2-text-13, --v2-weight-semibold, --v2-ink)', value: '13 / 600, sentence case, 0.02em (the site’s .mini-title, onblue.css:1935-1942)', ref: 'display-feedback.stat.site-label' },
             { part: 'Figure', token: '--v2-text-40 / --v2-weight-semibold / --v2-ink', value: '40px / 600, -0.03em, tabular', ref: ['display-feedback.stat.figure', 'display-feedback.stat.gradient'] },
-            { part: 'Figure (compact)', token: '--v2-text-20', value: '20px / 600, -0.02em', ref: 'display-feedback.stat.day-of' },
+            { part: 'Figure (compact)', token: '--v2-text-20', value: '20px / 600, -0.02em' },
             { part: 'Unit', token: '--v2-text-14 / --v2-ink-3', value: '14px / 500' },
-            { part: 'Context', token: '--v2-text-13 / --v2-ink-3', value: '13px; figures in it bold ink', ref: ['display-feedback.stat.site-note', 'display-feedback.stat.green'] },
-            { part: 'Padding', token: '--v2-space-4', value: '16px (it is a Card)', ref: ['display-feedback.stat.padding', 'display-feedback.card.strip'] },
+            { part: 'Context', token: '--v2-text-13 / --v2-ink-3', value: '13px; figures in it bold ink', ref: 'display-feedback.stat.site-note' },
+            { part: 'Padding', token: '--v2-space-4', value: '16px (it is a Card)', ref: 'display-feedback.stat.padding' },
             { part: 'Copy', token: null, value: 'Running on your own key', ref: 'display-feedback.stat.own-key' },
             { part: 'Copy', token: null, value: 'No BlueAI credits are consumed while this is on.', ref: 'display-feedback.stat.own-key-copy' },
-            { part: 'Copy', token: null, value: 'Yesterday’s run verified.', ref: 'display-feedback.stat.verified-line' },
-            { part: 'Link', token: null, value: 'Earnings: https://bluestacks.ai/dashboard', ref: 'display-feedback.stat.earnings' },
+            { part: 'Link', token: null, value: 'Earnings: the partner dashboard', ref: 'worker.earnings.menu-url' },
             { part: 'Copy (proposed)', token: null, value: 'AI credits left today, Refills to 2,000 every day., Your 20 days' },
           ]} />
 

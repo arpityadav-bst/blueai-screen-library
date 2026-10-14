@@ -28,7 +28,7 @@
   const DayDoneOverlay = (p) => React.createElement(window.WorkerDayDone.DayDoneOverlay, p);   // the centre "run complete" moment over the whole window
 
   /* ───────── Merged chat screen: ProductHome (empty) → task-progress + feedback (active) ───────── */
-  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, sessionMode = 'default', onNeedLogin, showStates, bsInstalled = true, onBsInstalled, scheduledOoc = false, dailyRunKey = 0, onJobWaiting, permUi = 'ribbon', onDayDone }) {
+  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, sessionMode = 'default', onNeedLogin, showStates, bsInstalled = true, onBsInstalled, scheduledOoc = false, dailyRunKey = 0, onJobWaiting, permUi = 'chatbox', onDayDone }) {
     const C = window.ChatCompare;
     const [convo, setConvo] = useState([]);
     const [visible, setVisible] = useState(0);
@@ -85,6 +85,13 @@
     const awaitingIdx = convo.slice(0, visible).findIndex((s, i) => s.role === 'ask' && !answers['k' + i]);
     const awaiting = awaitingIdx !== -1;
     const running = visible < convo.length || awaiting;
+    /* A worker question is answered with its chips, or by typing: the composer stays open while it
+       waits (Abhisht, 2026-10-14). A typed answer is read by WorkerFlow.interpret(). The docked
+       answer panel (answer_dock.jsx's Dock) is archived: it rendered in the composer's place. */
+    const askStep = awaiting ? convo[awaitingIdx] : null;
+    const typeOk = !!askStep;
+    const answerAsk = (i, step, a, typed) => { setAnswers((p) => ({ ...p, ['k' + i]: a })); push(WF().next(step, a, typed)); };
+    const typeAnswer = (text) => { setDraft(''); window.AnswerDock.answerTyped(askStep, text, (a, typed) => answerAsk(awaitingIdx, askStep, a, typed), push); };
 
     /* An unanswered job ask lights up BlueAI's taskbar button, the way Windows flags an app that
        needs you (Abhisht, 2026-10-05). 4s is the prototype's stand-in for "nobody answered". */
@@ -172,9 +179,9 @@
         onDone={() => { onBsInstalled && onBsInstalled(step.app, step.text); push(makeResumeSteps(step.text, step.app)); }} />;
       if (step.role === 'plan') return <PlanCard key={i} />;
       if (step.role === 'daydone' || step.card === 'daydone') return <DayDoneCard key={i} step={step} answer={answers['k' + i]}
-        onAnswer={(a) => { setAnswers((p) => ({ ...p, ['k' + i]: a })); push(WF().next(step, a)); }} />;
+        onAnswer={(a) => answerAsk(i, step, a)} />;
       if (step.role === 'ask') return <AskBubble key={i} step={step} answer={answers['k' + i]}
-        onAnswer={(a) => { setAnswers((p) => ({ ...p, ['k' + i]: a })); push(WF().next(step, a)); }} />;
+        onAnswer={(a) => answerAsk(i, step, a)} />;
       if (step.role === 'thinking') return i === visible - 1 ? <ThinkingBubble key={i} /> : null;
       return <FinalBubble key={i} msg={step} feedback={feedbackFor(i, step)} />;
     };
@@ -182,13 +189,14 @@
     /* ROB-21350 Version 1: the Mode chip sits in the composer's bottom bar in every signed-in chat
        (product level), with Send moving down beside it. Version 2 keeps the one-row composer. */
     const modeChip = permUi === 'chatbox' && !isOnboarding;
+    const busy = running && !(typeOk && draft.trim());   // a typed answer turns Stop back into Send
     const sendBtn = (
-      <button onClick={() => (running ? stop() : run())} disabled={!running && !draft.trim()}
-        aria-label={running ? 'Stop task' : 'Send message'} title={running ? 'Stop' : 'Send'}
-        style={{ width: modeChip ? 32 : 34, height: modeChip ? 32 : 34, borderRadius: '50%', background: running ? '#eef1f6' : (draft.trim() ? '#1990FF' : '#9ec9f5'), border: running ? '1px solid #d6dce5' : 'none', cursor: (running || draft.trim()) ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.15s ease' }}
-        onMouseEnter={(e) => { if (running || draft.trim()) e.currentTarget.style.opacity = '0.85'; }}
+      <button onClick={() => (!busy && typeOk ? typeAnswer(draft.trim()) : busy ? stop() : run())} disabled={!busy && !draft.trim()}
+        aria-label={busy ? 'Stop task' : (typeOk ? 'Send answer' : 'Send message')} title={busy ? 'Stop' : 'Send'}
+        style={{ width: modeChip ? 32 : 34, height: modeChip ? 32 : 34, borderRadius: '50%', background: busy ? '#eef1f6' : (draft.trim() ? '#1990FF' : '#9ec9f5'), border: busy ? '1px solid #d6dce5' : 'none', cursor: (busy || draft.trim()) ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.15s ease' }}
+        onMouseEnter={(e) => { if (busy || draft.trim()) e.currentTarget.style.opacity = '0.85'; }}
         onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}>
-        {running
+        {busy
           ? <svg width="13" height="13" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="3" fill="#64748b" /></svg>
           : <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z" /></svg>}
       </button>);
@@ -210,7 +218,7 @@
                        "skill" -> "worker" 2026-09-09: the Skills tab is hidden now and this is the
                        one worker in the product, so "skill" framing no longer matches anything
                        else the product says. */
-                    ? (WF().isOnboarded() ? 'Welcome back. Your next run is at 11 am.' : "You're all set. The BlueAI worker is all it takes to start earning.")   // returning person: the time onboarding set (draft copy, sheet row 24)
+                    ? "You're all set. The BlueAI worker is all it takes to start earning."   // one line for first-time and returning people (Abhisht, 2026-10-14)
                     : isOnboarding
                     ? 'Just send your message whenever you are ready and see me do your work for you!'
                     : 'Your AI worker for BlueStacks. Pick a task below or just type what you need.'} />}
@@ -255,31 +263,19 @@
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'white', animation: 'ba-pulse 1.3s infinite' }} />
               Send a message to watch BlueAI work
             </div>}
-          {/* ROB-21350 Version 2: the Automatic ribbon, only once the worker has started in this chat. */}
-          {permUi === 'ribbon' && workerStarted && <window.AgentPermissions.AutoRibbon />}
-          <div style={{ display: 'flex', flexDirection: modeChip ? 'column' : 'row', alignItems: modeChip ? 'stretch' : 'center', gap: modeChip ? 2 : 8, border: '1.5px solid ' + (isOnboarding ? '#60a5fa' : (composerFocused ? '#1990FF' : '#c7dcf5')), borderRadius: isOnboarding ? 18 : 14, background: 'white', padding: modeChip ? '8px 8px 6px 10px' : '8px 10px', boxShadow: composerFocused ? '0 0 0 3px rgba(25,144,255,0.12)' : (isOnboarding && !started ? '0 0 0 4px rgba(25,144,255,0.12)' : '0 1px 4px rgba(0,0,0,0.04)'), transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}>
-            <textarea ref={taRef} value={draft} disabled={running || scheduledOoc} rows={1}
+          {/* (The Automatic ribbon, ROB-21350 Version 2, is archived 2026-10-14: AgentPermissions.AutoRibbon,
+             rendered here when permUi === 'ribbon' && workerStarted, if it ever comes back.) */}
+          <div style={{ position: 'relative', display: 'flex', flexDirection: modeChip ? 'column' : 'row', alignItems: modeChip ? 'stretch' : 'center', gap: modeChip ? 2 : 8, border: '1.5px solid ' + (isOnboarding ? '#60a5fa' : (composerFocused ? '#1990FF' : '#c7dcf5')), borderRadius: isOnboarding ? 18 : 14, background: 'white', padding: modeChip ? '8px 8px 6px 10px' : '8px 10px', boxShadow: composerFocused ? '0 0 0 3px rgba(25,144,255,0.12)' : (isOnboarding && !started ? '0 0 0 4px rgba(25,144,255,0.12)' : '0 1px 4px rgba(0,0,0,0.04)'), transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}>
+            <textarea ref={taRef} value={draft} disabled={(running && !typeOk) || scheduledOoc} rows={1}
               onChange={(e) => setDraft(e.target.value)}
               onFocus={() => setComposerFocused(true)}
               onBlur={() => setComposerFocused(false)}
-              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(); } }}
-              placeholder={running ? (awaiting ? 'Please respond using the buttons above...' : 'BlueAI is working…')
-                /* Ordered AFTER the running check on purpose: while the scheduled run is still
-                   playing, "BlueAI is working…" is the honest label, and it only flips to the
-                   credits line at the moment the run actually dies.
-
-                   The field is DISABLED here, reversing the earlier call to keep it typeable
-                   (designer's spec, 2026-09-09). It is coherent because the two zero-balance
-                   moments live in different chats: this is the scheduled run's own chat, where
-                   nobody was typing and there is nothing to buy, so an input that accepts text
-                   would only invite a message the product cannot act on. Typing in the MAIN chat
-                   still routes to the out-of-credits popup through run()'s zeroCredits guard,
-                   which is where that dismiss-only card belongs. */
+              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!typeOk) run(); else if (draft.trim()) typeAnswer(draft.trim()); } }}
+              placeholder={running ? (awaiting ? 'Or type your answer…' : 'BlueAI is working…')
+                /* After the running check on purpose: "BlueAI is working…" is honest until the run dies.
+                   Disabled in the scheduled run's own chat (designer, 2026-09-09): nothing to type there. */
                 : scheduledOoc ? 'BlueAI is out of credits until tomorrow...'
-                /* MoneyMaker home is one card + a lot of air, the placeholder points back up at
-                   it so the composer reads as connected to the screen, not an orphan input.
-                   Copy renamed 2026-09-09 (MoneyMaker -> "BlueAI worker"); sessionMode value
-                   stays 'moneymaker' internally, this is a display-string-only change. */
+                /* the worker home's placeholder points back up at its one card */
                 : (sessionMode === 'moneymaker' && !started ? 'Ask anything, or run the BlueAI worker above' : 'Type your message...')}
               style={{ flex: modeChip ? 'none' : 1, resize: 'none', background: 'transparent', border: 'none', outline: 'none', fontSize: 13.5, color: '#1f2937', padding: '4px 6px', lineHeight: 1.5, fontFamily: 'inherit', maxHeight: 120, overflowY: 'hidden' }} />
             {modeChip

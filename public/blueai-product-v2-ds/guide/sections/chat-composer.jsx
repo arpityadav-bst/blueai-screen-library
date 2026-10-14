@@ -1,7 +1,7 @@
 /* Section 38: Composer (chat slice). Composer, ComposerNotice, Stop (SendStop). */
 (function () {
   const G = window.V2Guide;
-  const { useState, useEffect } = React;
+  const { useState } = React;
   const noop = function () {};
   const LONG = 'Please skip any job that asks me to comment on a video about politics.\nAlso keep my runs before noon.\nAnd if a job needs Instagram, ask me first.\nOne more line.\nAnd another.\nSeventh line now scrolls inside the field.\nEighth line.';
   const AUTO_TEXT = 'Automatic is on for YouTube. BlueAI takes paid YouTube jobs without asking.';
@@ -19,19 +19,6 @@
   function OocComposer() {
     const K = window.V2Kit || {};
     return <K.Composer disabledReason="You can’t send messages right now" notice={<OocNotice />} />;
-  }
-
-  /* V2's AutoRibbon renders only while some app is on Automatic. This wrapper turns Automatic on
-     for YouTube while it is on screen and puts the previous mode back when it leaves. */
-  function V2Ribbon() {
-    const AP = window.AgentPermissions;
-    useEffect(function () {
-      if (!AP) return undefined;
-      const before = AP.getMode('youtube');
-      AP.setMode('youtube', 'auto');
-      return function () { AP.setMode('youtube', before); };
-    }, []);
-    return <G.Live get={function () { return AP && AP.AutoRibbon; }} label="AgentPermissions.AutoRibbon" />;
   }
 
   function Playable() {
@@ -68,7 +55,7 @@
           <G.CompareRow
             v2={<G.FrameState url="index.html?start=worker" label="V2 worker home with its composer" height={830} />}
             system={shell(<K.Composer onSend={noop} />)}
-            changed="V2 clips text past 120px (overflow hidden), draws a blue-tinted 1.5px rest border at 1.40:1 that reads as focus, mixes '...' and '…', and reveals zero credits only after Send. The system field grows to six lines and then scrolls, rests on the shared field line with the shared focus ring, says what is happening in its placeholder with the … only for work in progress, and shows standing conditions in the notice slot before the partner types." />
+            changed="V2 clips text past 120px (overflow hidden), draws a blue-tinted 1.5px rest border at 1.40:1 that reads as focus, mixes '...' and '…', and reveals zero credits only after Send. The system field grows to six lines and then scrolls, rests on the shared field line with the shared focus ring, says what is happening in its placeholder with the … only for work in progress, and shows standing conditions in the notice slot before the partner types. Since 2026-10-14 V2's box also carries the mode chip in a bottom bar, with Send beside it (section 46)." />
           <G.SpecDrawer rows={[
             { part: 'Block', token: '--v2-space-1, --v2-gutter, --v2-space-3', value: 'padding 4 16 12', ref: 'chat.composer.padding' },
             { part: 'Box', token: '--v2-radius-md, --v2-line-strong, --v2-surface', value: 'radius 10, 1px rgba(0,0,0,0.15), white', ref: ['chat.composer.radius', 'chat.composer.border'] },
@@ -77,7 +64,7 @@
             { part: 'Field', token: '--v2-text-14, --v2-leading-body, --v2-ink', value: '14/1.5 ink, placeholder ink-4 (4.77:1)', ref: 'chat.composer.textarea' },
             { part: 'Growth', token: null, value: '1 to 6 lines, then overflow-y auto', ref: ['chat.composer.autosize', 'chat.composer.clip'] },
             { part: 'Keys', token: null, value: 'Enter sends, Shift+Enter new line', ref: 'chat.composer.enter' },
-            { part: 'Placeholders', token: null, value: '"Type your message" / the disabled reason, neutral ("You can’t send messages right now"); while busy the status sits in a line above the field (.v2-composer-status 12 ink-3: "BlueAI is working…" / "Answer with the buttons above."), never the placeholder (V2 puts it there)', ref: ['chat.composer.placeholder-idle', 'chat.composer.placeholder-busy', 'chat.composer.placeholder-ooc'] },
+            { part: 'Placeholders', token: null, value: '"Type your message" / the disabled reason, neutral ("You can’t send messages right now"); while busy the status sits in a line above the field (.v2-composer-status 12 ink-3: "BlueAI is working…" / "Answer with the buttons above."), never the placeholder (V2 puts it there: "BlueAI is working…", or "Or type your answer…" while a question waits, since V2 keeps the box open for a typed answer)', ref: ['chat.composer.placeholder-idle', 'chat.composer.placeholder-busy', 'chat.composer.placeholder-ooc'] },
             { part: 'Read-only', token: '--v2-surface-sunken, --v2-line', value: 'sunken fill, 10% edge (TextField read-only); running or awaiting: read-only (still focusable), Stop shown' },
           ]} />
         </G.Part>
@@ -94,17 +81,17 @@
             { label: 'Action focus', node: shell(<K.ComposerNotice tone="info" icon="zap" text={AUTO_TEXT} action={{ label: 'Change', onClick: noop }} actionClassName="is-focus" />) },
           ]} />
           <G.CompareRow
-            v2={<V2Ribbon />}
+            v2={<span className="g-muted">Not rendered in V2: the Automatic ribbon was archived on 2026-10-14, code kept ({G.refText('worker.permissions.ribbon-gate')}).</span>}
             system={shell(<K.ComposerNotice tone="info" icon="zap" text={AUTO_TEXT} action={{ label: 'Change', onClick: noop }} />)}
-            changed="The Automatic ribbon pattern, generalised so zero credits, a missing BlueStacks and a pause show before the partner types, not after Send. V2's ribbon is one line since 2026-10-14 ('Automatic on YouTube', a count once several apps are on); its text goes from 12/600 #1763c6 to 13px ink-2 with the zap in blue ink, the 21px 'Change' (which opens V2's mode sheet) becomes a 32px underlined ink link, and the zap from 13 to 16." />
+            changed="The Automatic ribbon pattern, generalised so zero credits, a missing BlueStacks and a pause show before the partner types, not after Send. V2 archived its ribbon on 2026-10-14 (the composer's mode chip says the mode now); the system keeps the notice: 13px ink-2 with a 16 zap in blue ink, and Change as a 32px underlined ink link." />
           <G.SpecDrawer rows={[
-            { part: 'Shape', token: '--v2-radius-md', value: 'radius 10, 1px line in tone', ref: 'chat.composer.ribbon-fill' },
+            { part: 'Shape', token: '--v2-radius-md', value: 'radius 10, 1px line in tone' },
             { part: 'Info', token: '--v2-blue-tint, --v2-blue-tint-line, --v2-blue-ink, --v2-ink-2', value: 'tint, tint line, icon #0d5ad6, words ink-2' },
             { part: 'Attention', token: '--v2-attention-tint, --v2-attention-line, --v2-attention-ink', value: '#fdf6cf, #f3e8a8, #8a6116: an answer the run waits on' },
             { part: 'Neutral', token: '--v2-surface-sunken, --v2-line, --v2-ink-2', value: 'sunken, line, ink-2; icon ink-3: paused, and out of AI credits until a time (clock)' },
-            { part: 'Icon', token: '--v2-icon-sm', value: '16 (was 13)', ref: 'chat.composer.ribbon-icon' },
-            { part: 'Text', token: '--v2-text-13, --v2-leading-snug', value: '13/1.35 (was 12)', ref: 'chat.composer.ribbon-text' },
-            { part: 'Action', token: '--v2-hit-min, --v2-ink', value: 'underlined ink link, 32px tall, blue-ink on hover', ref: 'chat.composer.ribbon-change' },
+            { part: 'Icon', token: '--v2-icon-sm', value: '16' },
+            { part: 'Text', token: '--v2-text-13, --v2-leading-snug', value: '13/1.35' },
+            { part: 'Action', token: '--v2-hit-min, --v2-ink', value: 'underlined ink link, 32px tall, blue-ink on hover' },
             { part: 'Out of AI credits', token: null, value: 'shown before typing, not after Send; V2Kit.OutOfCreditsNotice (section 48), never a second wording', ref: 'chat.composer.ooc-guard' },
           ]} />
         </G.Part>

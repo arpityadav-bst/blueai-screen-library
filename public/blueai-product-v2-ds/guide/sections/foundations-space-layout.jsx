@@ -93,7 +93,7 @@
             changed="59% of V2's 927 spacing values sit off the 4px grid and card padding alone has eight recipes ('11px 14px 8px', '12px 15px 11px', 16, 18 on the same settings screen). Every bubble pads 12 by 16 on two scale steps (the bubble spec, section 35), every card 16, every screen gutter 16." />
           <G.SpecDrawer rows={[
             { part: 'Bubble padding', token: '--v2-space-3 / --v2-space-4', value: '12 16 (kit/chat.css, section 35)', ref: 'foundations.space.bubble-padding' },
-            { part: 'Card padding', token: '--v2-space-4', value: '16', ref: ['foundations.space.strip-padding', 'foundations.space.card-18', 'foundations.space.card-16'] },
+            { part: 'Card padding', token: '--v2-space-4', value: '16', ref: ['foundations.space.card-18', 'foundations.space.card-16'] },
             { part: 'Screen gutter', token: '--v2-gutter', value: '16', ref: 'foundations.space.chat-gutter' },
             { part: 'Layout utilities', token: null, value: '.v2-stack, .v2-hstack, .v2-gap-*, .v2-screen, .v2-screen-body' },
           ]} />

@@ -11,6 +11,9 @@ function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep, onOpenBr
   // Reset state when modal reopens. initialStep lets a caller skip straight past the 'default'
   // step (MoneyMaker's welcome page already IS that screen, full-page, see moneymaker.jsx).
   useEffect(() => {if (isOpen) setStep(initialStep || 'default');}, [isOpen, initialStep]);
+  // Once the account check has shown, the app is signed in: no sign-in screen behind the cards.
+  const [solid, setSolid] = useState(false);
+  useEffect(() => {if (step === 'gate') setSolid(true);else if (!isOpen) setSolid(false);}, [step, isOpen]);
 
   // Opening directly at 'browser' skips the click that normally starts handleSignIn, so start
   // the browser step here instead: open the desktop's browser window when the parent drives one,
@@ -71,7 +74,7 @@ function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep, onOpenBr
 
 
   return (
-    <div style={{ position: 'absolute', inset: 0, zIndex: 100, display: 'flex', flexDirection: 'column', background: 'rgba(255,255,255,0.55)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>
+    <div style={{ position: 'absolute', inset: 0, zIndex: 100, display: 'flex', flexDirection: 'column', background: solid || step === 'gate' ? '#f4f6fa' : 'rgba(255,255,255,0.55)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}>
       <style>{`@keyframes loginSpin{to{transform:rotate(360deg)}} @keyframes cfGlow{0%,100%{opacity:.55}50%{opacity:.85}}`}</style>
 
       {/* Close: on every step, as in the live app (ai-worker LoginModal.tsx renders it always),
@@ -280,7 +283,7 @@ function LoginModal({ isOpen, onClose, onSuccess, variant, initialStep, onOpenBr
         {/* ── GATE (ROB-21388): signed in, but not with the accepted account. From App Player's
              session at launch (gateAccount), or from a browser sign-in that picked the wrong one. ── */}
         {step === 'gate' && card(
-          <window.AccountGate.GateCard account={browserResult || gateAccount} fromPlayer={!browserResult}
+          <window.AccountGate.GateCard account={browserResult || gateAccount}
             onSwitch={() => { setStep('browser'); if (onSwitchAccount) onSwitchAccount(); }} />
         )}
         {/* ── CONFIRM (option B): App Player's account, confirmed before BlueAI uses it ── */}

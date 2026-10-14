@@ -2,7 +2,7 @@
 
 **Status:** Chip: Changed from V2.
 
-**Why:** The worker asks and the partner answers with a tap (Yes, Not now, Just this job), says what went wrong with a tap (Wrong result), and will filter Activity with a tap. V2 draws three chip looks for that: a 1.5px blue outline with #1990FF text at 3.24:1, a dark #334155 selected reason, and a grey back pill, with a hover that lifts but never changes colour (worker_cards.jsx:58; chat_feedback.jsx:77-84; index.html:100-101). One chip with the family's chosen look keeps blue meaning "chosen" and every label legible (P2, P5, P7).
+**Why:** The worker asks and the partner answers with a tap (Yes, Not now), says what went wrong with a tap (Wrong result), and will filter Activity with a tap. V2's reply chips adopted this Chip on 2026-10-14 (worker_cards.jsx:53); it still draws two other looks: a dark #334155 selected reason and a grey back pill, with a hover that lifts but never changes colour (chat_feedback.jsx:77-84; index.html:100-101). One chip with the family's chosen look keeps blue meaning "chosen" and every label legible (P2, P5, P7).
 
 **V3 restyle (2026-10-14).** Chips rest on the 2% navy wash (`--v2-wash-tint` over the surface) with a 10% line and ink-2 labels; hover is the wash plus a 20% line and ink; selected is `--v2-select` with `--v2-select-line`. Decision: chip and pill geometry (height, padding) stays in the Chip rule, not tokens: it belongs to one part (the tokens header rule).
 

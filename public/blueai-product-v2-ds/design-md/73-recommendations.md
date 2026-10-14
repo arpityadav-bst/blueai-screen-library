@@ -22,8 +22,8 @@
 
 #### R02 worker (effort M)
 
-- **V2:** `blueai/worker_day_done.jsx:40, 148; blueai/worker_flow.jsx:42, 168`
-- **Today:** DONE_BEFORE=6 makes tonight's popup 'Day 7 of 20' and tomorrow's strip 'Day 6 of 20'; the strip appears right after Day 1 claiming 'Yesterday’s run verified.'
+- **V2:** `blueai/worker_day_done.jsx:36, 44-49`
+- **Today:** DONE_BEFORE=6 is a constant: the popup says 'Day 7 of 20' whatever came before (since 2026-10-14 the home strip is gone and day-by-day progress lives on the partner dashboard, which keeps its own figures).
 - **Recommended:** One ledger (verified, pending, missed, rejected days; target; ends Nov 1) feeding overlay, strip, toast, Activity and the site tile.
 - **Why:** The day count is the partner's pay.
 
@@ -43,14 +43,14 @@
 
 #### R05 worker (effort M)
 
-- **V2:** `blueai/settings.jsx:11-20, 144-159; blueai/worker_flow.jsx:67; blueai/agent_permissions.jsx:192`
-- **Today:** 'Pause, stop, or disconnect anytime' has no control; 'turn this off anytime' has one since 2026-10-14, the Worker card in Settings (one switch per app). V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on), and it still makes the promise.
+- **V2:** `blueai/settings.jsx:132; blueai/worker_flow.jsx:69; blueai/agent_permissions.jsx:203`
+- **Today:** 'Pause, stop, or disconnect anytime' has no control. The consent promises 'You can turn this off anytime.', and since 2026-10-14 the only way back is the composer's mode chip in an open chat: the Worker card left Settings the same day.
 - **Recommended:** Settings > Worker (pause until, run window, mode per app, interest profile) and Connected apps (Disconnect).
 - **Why:** Consent that cannot be found to revoke is weak consent (P4).
 
 #### R06 worker (effort S)
 
-- **V2:** `blueai/worker_flow.jsx:121, 149; blueai/worker_day_done.jsx:118`
+- **V2:** `blueai/worker_flow.jsx:119, 149; blueai/worker_day_done.jsx:118`
 - **Today:** 'Not now' on the job ask forfeits the day; the cost is told afterwards.
 - **Recommended:** State the cost on the option ('Skip: today won’t count') or keep the job open until 9 pm, the day's deadline (section 41), with Undo. Decision D14.
 - **Why:** Learning the cost after the click feels like a trap (P3).
@@ -78,15 +78,15 @@
 
 #### R10 foundations (effort S)
 
-- **V2:** `blueai/chat_bubbles.jsx:124; blueai/account_gate.jsx:31; blueai/login.jsx:242; blueai/worker_day_done.jsx:147`
-- **Today:** Caveats ('App Player will be signed out too.', 'We check every run within a day…', 'Working on it…') at 2.15 to 2.56:1.
+- **V2:** `blueai/chat_bubbles.jsx:124; blueai/login.jsx:242`
+- **Today:** Caveats ('Working on it…', the sign-in's amber link) at 2.15 to 2.56:1 (the gate's App Player line and the day-done note left V2 on 2026-10-13 and 14).
 - **Recommended:** ink-3 for anything the partner must read, ink-4 #6e737c (4.77:1) for pure meta; no warm link colour.
 - **Why:** Unreadable caveats are not disclosure.
 
 #### R11 copy (effort S)
 
 - **V2:** `blueai/worker_flow.jsx:67 vs 76-78; blueai/worker_flow.jsx:46`
-- **Today:** 'I only run a paid job after you say yes to that specific job.' then the same onboarding offers Automatic; PLAN step 2 promises 'a quick approval'.
+- **Today:** 'I only run a paid job after you say yes to that specific job.' then Automatic (one tap away on the composer's mode chip since 2026-10-14; setup no longer offers it) takes jobs without asking; PLAN step 2 promises 'a quick approval'.
 - **Recommended:** Decision D15 for the PM (kept live by his call, worker_flow.jsx:18): a bullet that holds in both modes, for example 'You choose: I can ask before each paid job, or take them on my own. You can change this anytime in Settings.'
 - **Why:** The first promise about the partner's account is broken minutes later.
 
@@ -148,8 +148,8 @@
 
 #### R51 consent (effort S)
 
-- **V2:** `blueai/agent_permissions.jsx:191`
-- **Today:** The Automatic consent says the worker will finish jobs 'including posting videos'; the worker never posts videos, and the comment it does post in the partner's name is not named. V2 adopted the minimal consent dialog on 2026-10-14 (a plain frame with no header, divider or X: title, one sentence, a lighter second line, Cancel / I agree, turn on), and on 2026-10-14 its body became 'BlueAI will take paid YouTube jobs on its own and like, comment, follow and post from your account.' with 'Switch back anytime in Settings.' underneath: the comment in the partner's name is now named, as recommended, and posting stays because the PM's spec lists it for Automatic jobs.
+- **V2:** `blueai/agent_permissions.jsx:203`
+- **Today:** The Automatic consent says 'BlueAI will take YouTube jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime.' (V2 since 2026-10-14): the worker never posts videos, and the comment it does post in the partner's name is not named.
 - **Recommended:** Name what a job does, from `WORKER_JOB.actions`: 'BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name.' (section 46). Consent copy, so the PM and legal decide it; the record keeps the version shown (section 53).
 - **Why:** On Automatic the job preview never appears, so this line is the partner's only notice that comments go out under their name.
 
@@ -220,8 +220,8 @@
 
 #### R29 copy (effort S)
 
-- **V2:** `index.html:329; blueai/worker_day_done.jsx:153`
-- **Today:** Kebab Earnings and strip 'Earnings ↗' go to two different URLs.
+- **V2:** `index.html:323`
+- **Today:** No longer applicable since 2026-10-14: the strip and its 'Earnings ↗' are gone, so the kebab's Earnings (the partner dashboard) is the app's one Earnings link.
 - **Recommended:** One EARNINGS_URL constant; one external glyph.
 - **Why:** The partner's money lives behind this link.
 
@@ -262,8 +262,8 @@
 
 #### R35 chat (effort S)
 
-- **V2:** `blueai/chat_bubbles.jsx:15; blueai/chat_product.jsx:213`
-- **Today:** Every user bubble shows 'Jun 12, 2026, 11:03 AM'; 'Your next run is at 11 am.' whatever was chosen.
+- **V2:** `blueai/chat_bubbles.jsx:15`
+- **Today:** Every user bubble shows 'Jun 12, 2026, 11:03 AM' (the greeting's hard-coded 'Your next run is at 11 am.' left V2 on 2026-10-14).
 - **Recommended:** Real times and day separators; greeting reads the saved run window.
 - **Why:** Times decide when the worker acts on the account.
 
@@ -297,8 +297,8 @@
 
 #### R40 worker (effort S)
 
-- **V2:** `blueai/agent_permissions.jsx:55-57, 98-116`
-- **Today:** Instagram can be switched to Automatic and consented to before Instagram jobs exist.
+- **V2:** `blueai/agent_permissions.jsx:57`
+- **Today:** No longer applicable since 2026-10-14: V2 lists YouTube only, so Instagram cannot be switched to Automatic.
 - **Recommended:** Coming soon row with no switch; consent only when the app goes live and is connected.
 - **Why:** Consent to automation on an unused account is meaningless.
 
@@ -382,9 +382,9 @@ Choices only the PM (and legal, where named) can make. The system builds the rec
 |---|---|---|---|
 | **D1** Primary fill | Blue action #1268f0 | Ink #0b0b0d like the site's commit button | Decided B (Appy, V3 restyle 2026-10-14): the solid ink button, `--v2-solid` with the site's three-stop cast; blue is held to focus, selection, progress, links and the spark. |
 | **D2** The noun: worker or agent | worker (V2) | agent (site, apply.html:1269-1274) | One noun across site and app, one capitalisation ('BlueAI worker'); PM call. |
-| **D3** The money model | $1 per verified day + $10 day-20 bonus (worker_day_done.jsx:5-6) | $30 when the 20-day goal is met (apply.html:1285, 1471) | Pick one sentence and say it everywhere; if B, the app shows days, never partial dollars ('days' style is already the default). Rename the bonus 'day-20 bonus' if it stays. The $10 cash-out minimum is not part of the choice: it is V2's rule (worker_day_done.jsx:6) and the site's (apply.html:1360, 2292), so the app states it now (sections 01, 41, 43). Proposed strings that wait on this choice (PM and legal): the leave and delete line for a balance under the minimum ('a balance under $10 can’t be cashed out once you leave', `screens/settings.jsx` cashLine), and Home's dropped banner sentence 'Every day you run still counts.' (false under B). |
-| **D4** Where the mode changes later | Version 1 chip in the composer | Version 2 ribbon (default) | B as the in-chat shortcut plus Settings > Worker as the permanent home either way. V2 added a Worker card to Settings on 2026-10-14; both versions now open one mode sheet. |
-| **D5** Sign-in option | Check account (interrupt only on the wrong account) | Continue as (always confirm) | A for fewer stops; drop the losing code path. |
+| **D3** The money model | $1 per verified day + $10 day-20 bonus (V2's former rule; worker_day_done.jsx keeps only target 20 and Nov 1 since 2026-10-14) | $30 when the 20-day goal is met (apply.html:1285, 1471) | Pick one sentence and say it everywhere; if B, the app shows days, never partial dollars ('days' style is already the default). Rename the bonus 'day-20 bonus' if it stays. The $10 cash-out minimum is not part of the choice: it is the site's rule (apply.html:1371, 2317), with no period lock since 2026-10-14, so the app states it now (sections 01, 41, 43). Proposed strings that wait on this choice (PM and legal): the leave and delete line for a balance under the minimum ('a balance under $10 can’t be cashed out once you leave', `screens/settings.jsx` cashLine), and Home's dropped banner sentence 'Every day you run still counts.' (false under B). |
+| **D4** Where the mode changes later | Version 1 chip in the composer | Version 2 ribbon (default) | Decided A by the PM on 2026-10-14: the composer chip, in every signed-in chat, opens the mode popover; the ribbon is archived and Settings' Worker card was removed. The system still recommends Settings > Worker as the permanent home. |
+| **D5** Sign-in option | Check account (interrupt only on the wrong account) | Continue as (always confirm) | Decided A by the PM on 2026-10-13: one case, no Continue as. |
 | **D6** Credits and the paid run | Reserve the worker's run cost from the daily grant | Warn before a chat would dip into it | A: a partner should never lose a paid day to an invisible meter. Not built yet: the composer locks only at zero (section 38) and the credits chip turns low once fewer than the run's cost are left (section 47), so a chat can still spend today's run (section 76). |
 | **D7** Does Day 1 count | Setup continues into the first daily run and counts | Setup only; first counted day is tomorrow | Either, said in the onboarding close. |
 | **D8** The family mark | BlueAI gradient wordmark | Site spark + two-tone 'BlueAI' | B in the long run (already in V2's sign-in pages); A until the PM decides. |
@@ -394,7 +394,7 @@ Choices only the PM (and legal, where named) can make. The system builds the rec
 | **D12** Chat as a tab | Three tabs, chat from Home | Four tabs with Chat | A: chat serves the worker. |
 | **D13** Yellow for every worker question | Keep the live yellow on every ask (PM-confirmed) | Neutral asks in onboarding, yellow only for unattended job and retry asks | B so yellow keeps meaning 'needs you'. |
 | **D14** Skipping a waiting job (R06) | The cost on the option, one tap: 'Skip: today won’t count' | Keep the job open until 9 pm with Undo | A, built in the JobPreviewCard (section 45): the cost is read before the tap, and nothing waits on a toast. |
-| **D15** The setup promise (R11) | One bullet that holds in both modes ('You choose: I can ask before each paid job, or take them on my own.') | Keep 'I only run a paid job after you say yes to that specific job.' and drop Automatic from setup | A: Automatic stays a choice, and the first promise stays true. PM copy. |
+| **D15** The setup promise (R11) | One bullet that holds in both modes ('You choose: I can ask before each paid job, or take them on my own.') | Keep 'I only run a paid job after you say yes to that specific job.' and drop Automatic from setup | A: Automatic stays a choice, and the first promise stays true. PM copy. (2026-10-14: V2 dropped Automatic from setup, but the composer chip still offers it, so the bullet still breaks on Automatic.) |
 | **D16** Reading watch history (R18) | Ask first: PermissionRequest in setup, Allow or Not now, revoked in Connected apps | Read it at setup as V2 does, listed under Account with a switch to stop it | A, built (section 46): reading viewing data is its own permission. PM copy. |
 | **D17** The paid job ask (R07) | JobPreviewCard replaces V2's AskCard for paid jobs | Keep the AskCard and add the video, channel and exact comment to it | A, built: Chat's waiting state asks in the JobPreviewCard (section 45, screens/chat.jsx jobCard); B is one constant away (D17 = 'B'); the AskCard stays for every other question (section 37). |
 | **D18** Feedback on a failed job (section 39) | Offer thumbs on failed jobs too | Successes only, as V2 (`chat_product.jsx:150`) | A: a failed job is where a partner most wants to say something; Report a problem stays the route for a dispute. |

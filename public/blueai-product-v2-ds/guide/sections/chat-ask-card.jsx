@@ -13,7 +13,7 @@
   };
   const JOB = {
     title: 'Paid job available', lead: 'Watch the video and provide feedback.', question: 'Want me to take this one?',
-    options: [{ id: 'always', label: 'Yes, switch to Automatic', consent: true }, { id: 'once', label: 'Just this job' }, { id: 'deny', label: 'Not now', consequence: 'today won’t count toward your 20 days.' }],
+    options: [{ id: 'once', label: 'Yes' }, { id: 'deny', label: 'Not now', consequence: 'today won’t count toward your 20 days.' }],
   };
   const FAILED = { title: 'Today’s job didn’t finish.', lead: 'Retry to count the day.', options: [{ id: 'retry', label: 'Retry' }, { id: 'later', label: 'Not now' }] };
 
@@ -49,7 +49,7 @@
           <G.CompareRow
             v2={<G.Live get={V2} props={{ step: { lead: 'Want to set this up?', options: [{ id: 'yes', label: 'Yes' }, { id: 'no', label: 'Not now' }] }, answer: null, onAnswer: noop }} label="WorkerCards.AskBubble" />}
             system={<K.AskCard step={{ lead: 'Want to set this up?', options: [{ id: 'yes', label: 'Yes' }, { id: 'no', label: 'Not now' }] }} onAnswer={noop} />}
-            changed="Keeps V2's one-shape-for-every-question idea and its copy. The chips become the shared Chip (one look, a visible hover, 3.24:1 blue text gone); bullet markers come back (the Tailwind preflight hid them); text moves to ink on the yellow; the card settles to white once answered so yellow keeps meaning 'needs you' (decision D13); a consequence line shows before the choice." />
+            changed="Keeps V2's one-shape-for-every-question idea and its copy. Since 2026-10-14 V2's chips are the shared Chip ('V2 today' look) and the composer stays open while a question waits ('Or type your answer…'). Still to change: bullet markers come back (the Tailwind preflight hid them); text moves to ink on the yellow; the card settles to white once answered so yellow keeps meaning 'needs you' (decision D13); a consequence line shows before the choice." />
           <G.SpecDrawer rows={[
             { part: 'Fill and line (pending)', token: '--v2-waiting-fill, --v2-waiting-line', value: 'the attention tint, 1px attention ink', ref: 'chat.ask.input-colours' },
             { part: 'Fill and line (settled)', token: '--v2-surface, --v2-line', value: 'white, 1px line' },
@@ -59,8 +59,8 @@
             { part: 'Bullets', token: '--v2-space-5, --v2-ink-3', value: 'disc markers on, indent 20, marker ink-3', ref: ['chat.ask.bullets', 'chat.ask.plan-list'] },
             { part: 'Chips', token: 'Chip (section 15)', value: 'shared Chip, gap 8; consent option shows zap', ref: ['chat.ask.chip', 'chat.ask.chip-size'] },
             { part: 'Consequence', token: '--v2-text-13, --v2-attention-ink', value: '"Not now: today won’t count toward your 20 days."', ref: 'chat.ask.job-deny' },
-            { part: 'Hint, settled line', token: '--v2-text-13, --v2-ink-3', value: '13 #5f636b (was 11.5 #9ca3af, 2.54:1)', ref: 'chat.ask.hint' },
-            { part: 'Consent', token: null, value: 'option.consent opens ConsentDialog (section 46) before answering', ref: 'chat.ask.consent' },
+            { part: 'Hint, settled line', token: '--v2-text-13, --v2-ink-3', value: '13 #5f636b (V2: 12 #6b7280)', ref: 'chat.ask.hint' },
+            { part: 'Consent', token: null, value: 'option.consent opens ConsentDialog (section 46) before answering (V2: no question offers Automatic since 2026-10-14)' },
             { part: 'Answered', token: null, value: 'chips go, the label echoes as a user bubble', ref: 'chat.ask.echo' },
             { part: 'Stopped', token: null, value: 'chips go, one line says the run stopped', ref: 'chat.ask.stopped' },
             { part: 'Copy', token: null, value: 'V2 copy, quoted', ref: ['chat.ask.pitch-lead', 'chat.ask.pitch-bullets', 'chat.ask.pitch-question', 'chat.ask.pitch-options', 'chat.ask.job-label', 'chat.run.job-title', 'chat.ask.job-question', 'chat.ask.job-options', 'chat.ask.failed-title', 'chat.ask.retry-options'] },

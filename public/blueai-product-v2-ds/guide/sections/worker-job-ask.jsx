@@ -1,31 +1,22 @@
 /* Section 45: the job preview (New, proposal R07). Owner: worker slice. */
 (function () {
   const G = window.V2Guide;
-  const { useState, useEffect } = React;
+  const { useState } = React;
   const noop = function () {};
 
-  // V2's daily job ask as the live AskBubble draws it, built from V2's own step (worker_flow.jsx:117-121).
+  // V2's daily job ask as the live AskBubble draws it, built from V2's own step (worker_flow.jsx:115-119).
   const V2_STEP = {
     id: 'job', title: 'Paid job available', lead: 'Watch the video and provide feedback.', question: 'Want me to take this one?',
-    options: [{ id: 'always', label: 'Yes, switch to Automatic', consent: true }, { id: 'once', label: 'Just this job' }, { id: 'deny', label: 'Not now' }],
+    options: [{ id: 'once', label: 'Yes' }, { id: 'deny', label: 'Not now' }],
   };
 
-  /* V2's first chip asks for Automatic through V2's own consent (AgentPermissions.AutoConfirm), which
-     only section 46 mounts, so it is mounted here beside the bubble and the tap does what it does in V2.
-     Leaving the section puts YouTube's mode back, which also drops a consent left open. */
+  // Since 2026-10-14 no V2 question offers Automatic, so the bubble needs no consent beside it.
   function V2Ask() {
-    const AP = window.AgentPermissions;
     const [answer, setAnswer] = useState(null);
-    useEffect(function () {
-      if (!AP) return undefined;
-      const before = AP.getMode('youtube');
-      return function () { AP.setMode('youtube', before); };
-    }, []);
     return (
       <div style={{ position: 'relative', overflow: 'hidden', width: '100%', maxWidth: 'var(--v2-shell-w)', minHeight: 560, padding: 'var(--v2-space-3)', background: 'var(--v2-canvas)' }}>
         <G.Live get={function () { return window.WorkerCards && window.WorkerCards.AskBubble; }} props={{ step: V2_STEP, answer: answer, onAnswer: setAnswer }} label="WorkerCards.AskBubble" />
         {answer ? <button type="button" className="g-btn" onClick={function () { setAnswer(null); }}>Ask again</button> : null}
-        <G.Live get={function () { return AP && AP.AutoConfirm; }} label="AgentPermissions.AutoConfirm" />
       </div>
     );
   }
@@ -59,8 +50,8 @@
           <G.Warn>
             Why the product needs it: the riskiest moment in the product is agreeing to a public comment under your
             name, and today the ask shows only '{V2_STEP.lead}' ({G.refText('worker.flow.job-title')}). The comment is
-            posted but never shown ({G.refText('worker.flow.comment')}). The first chip, 'Yes, switch to Automatic', bundles
-            yes with a standing consent ({G.refText('worker.flow.ask-options')}), and the cost of 'Not now' (the day) is told
+            posted but never shown ({G.refText('worker.flow.comment')}). Since 2026-10-14 the chips are 'Yes' and 'Not now'
+            ({G.refText('worker.flow.ask-options')}), with Automatic only on the composer's mode chip, and the cost of 'Not now' (the day) is told
             only afterwards ({G.refText('worker.flow.skip-after')}). This card is a proposal (R07); the PM's job-ask copy
             stays in V2's AskCard (section 37) until he decides.
           </G.Warn>
@@ -85,7 +76,7 @@
             v2Label="V2 today: the ask it would replace"
             v2={<V2Ask />}
             system={<K.JobPreviewCard onTake={noop} onSkip={noop} onStopAsking={noop} />}
-            changed="Not a restyle: a proposal. The partner sees the job before agreeing to it, the cost of skipping sits on the skip button, and saying yes once no longer switches on Automatic: 'Switch YouTube to Automatic' is its own quiet action and goes through the consent." />
+            changed="Not a restyle: a proposal. The partner sees the job before agreeing to it, the cost of skipping sits on the skip button, and 'Switch YouTube to Automatic' is its own quiet action through the consent. V2 dropped its 'Yes, switch to Automatic' chip on 2026-10-14 and now offers Automatic only from the composer's mode chip (the PM's call), so this quiet action waits on that decision." />
           <G.FrameState url="index.html?day=next&end=job" label="V2: the next day's run asks about the job (Always ask)" height={830} />
           <G.SpecDrawer rows={[
             { part: 'Card', token: '--v2-bubble-max, --v2-radius-lg, --v2-line', value: 'max 300, 16, 1px line (attention line while waiting)' },
@@ -97,7 +88,7 @@
             { part: 'Deadline', token: '--v2-text-13, clock --v2-attention-ink', value: 'Answer by 9 pm or today won’t count.' },
             { part: 'Take', token: 'Button primary md, full', value: 'Take this job', ref: 'worker.flow.ask-question' },
             { part: 'Skip', token: 'Button secondary md, full', value: 'Skip: today won’t count', ref: 'worker.flow.skip-after' },
-            { part: 'Automatic', token: 'Button quiet md, full, zap', value: 'Switch YouTube to Automatic (opens the consent)', ref: 'worker.flow.ask-options' },
+            { part: 'Automatic', token: 'Button quiet md, full, zap', value: 'Switch YouTube to Automatic (opens the consent; V2 asks Yes / Not now only)', ref: 'worker.flow.ask-options' },
             { part: 'Receipt', token: 'StatusTick + quiet Button (shield-check)', value: 'StatusTick from verify (pending by default, null in Run detail) + quiet "Switch back to Always ask", only when ranOn is auto' },
           ]} />
           <G.DoDont

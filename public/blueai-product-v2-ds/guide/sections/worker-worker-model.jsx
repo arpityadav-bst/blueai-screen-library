@@ -91,9 +91,8 @@
         <G.Part name="Worker record and fixtures" status="new" role="One record per partner that every worker surface reads. Counts are derived from the ledger, never stored, so they cannot disagree.">
           <G.Warn>
             Why the product needs it: V2 keeps the worker in a component's local state, module globals and
-            constants. The day count is a constant ({G.refText('worker.rule.done-before')}), so tonight's
-            popup says Day 7 of 20 and tomorrow's strip says Day 6 of 20 ({G.refText('worker.strip.before-run')});
-            the next run time is hard-coded ({G.refText('worker.flow.next-run')}); the mode per app resets on
+            constants. The day count is a constant ({G.refText('worker.rule.done-before')}), so the popup says
+            Day 7 of 20 whatever happened before; the mode per app resets on
             reload ({G.refText('worker.permissions.store')}); and opening another tab unmounts the run (R01).
           </G.Warn>
           <p><strong>Anatomy.</strong> Plain data, no methods. Helpers on <code className="g-code">window.V2Kit</code>:
@@ -117,15 +116,15 @@
             pending forever (R19). Slots that can no longer be reached before the program ends show as out of reach.
           </G.Note>
           <G.SpecDrawer rows={[
-            { part: 'Program rule', token: 'WORKER_RULE', value: "rate 1, target 20, bonus 10, ends 'Nov 1', cashOutMin 10 (copied, money waits on D3; the $10 cash-out minimum holds under both options)", ref: ['worker.rule.const', 'worker.rule.money-draft', 'worker.rule.cash-out'] },
+            { part: 'Program rule', token: 'WORKER_RULE', value: "rate 1, target 20, bonus 10, ends 'Nov 1', cashOutMin 10 (money waits on D3; V2 keeps only target 20 and Nov 1 since 2026-10-14; the $10 cash-out minimum holds under both options)", ref: ['worker.rule.const', 'worker.rule.cash-out'] },
             { part: 'What counts', token: 'numbers()', value: 'verified job, or a completed run with no job', ref: 'worker.rule.successful-day' },
             { part: 'Days before today', token: 'ledger', value: 'derived from rows, not a constant', ref: 'worker.rule.done-before' },
-            { part: 'Strip count', token: 'numbers().done', value: 'same figure tonight and tomorrow', ref: 'worker.strip.before-run' },
+            { part: 'Strip count', token: 'numbers().done', value: 'same figure tonight and tomorrow' },
             { part: 'Scheduled run', token: 'today.status', value: "'scheduled' on the record", ref: 'worker.flow.last-run' },
             { part: 'Set up', token: 'setUp', value: 'on the record', ref: 'worker.flow.onboarded' },
             { part: 'Mode per app', token: 'apps.<id>.mode', value: "'always' | 'auto', kept per account", ref: 'worker.permissions.store' },
-            { part: 'Next run', token: 'runWindow', value: 'nextRunText(record)', ref: 'worker.flow.next-run' },
-            { part: 'Earnings', token: 'EARNINGS_URL', value: 'one URL (the menu one until the product team names the dashboard)', ref: ['worker.earnings.menu-url', 'worker.strip.earnings'] },
+            { part: 'Next run', token: 'runWindow', value: 'nextRunText(record)' },
+            { part: 'Earnings', token: 'EARNINGS_URL', value: 'one URL: the partner dashboard, as V2’s menu Earnings', ref: 'worker.earnings.menu-url' },
             { part: 'Identity', token: 'account', value: 'Alex Morgan, @alexwatches (neutral fixture, R39)' },
           ]} />
           <G.DoDont

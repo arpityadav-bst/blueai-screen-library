@@ -137,9 +137,9 @@
             { part: 'Titles, figures', token: '--v2-ink', value: '#0b0b0d (19.67:1)', ref: ['foundations.ink.title', 'foundations.ink.onblue-ink'] },
             { part: 'Body', token: '--v2-ink-2', value: '#3c4049 (10.39:1)', ref: 'foundations.ink.onblue-lede' },
             { part: 'Muted body', token: '--v2-ink-3', value: '#5f636b (6.03:1)', ref: ['foundations.ink.muted', 'foundations.ink.onblue-muted'] },
-            { part: 'Meta', token: '--v2-ink-4', value: '#6e737c (4.77:1)', ref: ['foundations.ink.thinking', 'foundations.ink.gate-caveat', 'foundations.ink.ai-mode-faint', 'foundations.ink.dd-constants', 'foundations.ink.onblue-dim'] },
+            { part: 'Meta', token: '--v2-ink-4', value: '#6e737c (4.77:1)', ref: ['foundations.ink.thinking', 'foundations.ink.ai-mode-faint', 'foundations.ink.onblue-dim'] },
             { part: 'Placeholder', token: '--v2-ink-placeholder', value: '#9ca2ad (2.57:1, decorative only)', ref: 'foundations.ink.onblue-placeholder' },
-            { part: 'Copy shown', token: null, value: "'Working on it…', 'App Player will be signed out too.'", ref: ['foundations.ink.thinking-copy', 'foundations.ink.gate-caveat'] },
+            { part: 'Copy shown', token: null, value: "'Working on it…'", ref: 'foundations.ink.thinking-copy' },
           ]} />
         </G.Part>
 
@@ -227,7 +227,7 @@
             { part: 'Success', token: '--v2-success / -ink / -tint / -line', value: '#16a34a / #15803d / 8% / 32%; not the site’s 10%: green text on it must pass 4.5:1', ref: ['foundations.status.success-icon', 'foundations.status.active-badge', 'foundations.status.tones-green', 'foundations.status.fb-success', 'foundations.status.onblue-green', 'foundations.status.onblue-green-ink'] },
             { part: 'Danger', token: '--v2-danger-ink / -line / -edge / -tint', value: '#c03a40 / rgba(208,69,74,0.32), the tint’s pale edge / #d0454a, the one strong red stroke: errored fields and checkboxes (4.53:1) / #fdecec', ref: ['foundations.status.final-fail', 'foundations.status.danger-banner', 'foundations.status.tones-red', 'foundations.status.job-failed', 'foundations.status.logout-red'] },
             { part: 'Attention', token: '--v2-attention-ink / -tint / -line', value: '#8a6116 / #fdf6cf / the ink at 32%', ref: ['foundations.status.final-needs', 'foundations.status.tones-amber'] },
-            { part: 'Money in green, retired', token: '--v2-ink', value: '#0b0b0d (V2 retired it too on 2026-10-14)', ref: 'foundations.status.green-const' },
+            { part: 'Money in green, retired', token: '--v2-ink', value: '#0b0b0d (V2 shows no money in the app since 2026-10-14)' },
             { part: 'The four maps', token: null, value: 'FINAL_STYLES, TONES, JOB_STATUS, FB_TONES', ref: ['foundations.status.final-styles', 'foundations.status.final-success', 'foundations.status.tones', 'foundations.status.job-status', 'foundations.status.fb-tones'] },
           ]} />
         </G.Part>

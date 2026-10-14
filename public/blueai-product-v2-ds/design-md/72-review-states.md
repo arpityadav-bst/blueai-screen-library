@@ -16,18 +16,14 @@
 |---|---|---|---|---|
 | (bare URL) | | | BlueAI alone, signed out: welcome + first-run terms | n/a |
 | `?start` | worker, signin | | worker home, signed in as a new partner; signin is the default | yes |
-| `?v` | 1, 2 | start=worker | which control opens the mode sheet: 1 the composer chip; 2 the ribbon above the composer | yes |
-| `?setup` | off | start=worker | onboarding without the setup question | yes |
-| `?day` | next, returning | implies start=worker | next: the next day's run plays; returning: home before today's run | yes |
+| `?day` | next | implies start=worker | the next day's run plays (returning was removed 2026-10-14) | yes |
 | `?end` | job, nojob, day20, failed | implies day=next | how today's run ends: day-done card and toast | yes |
-| `?card` | days, money, plain | day=next or ?end | which day-done option draws it | yes |
 | `?mode` | auto | start=worker | YouTube on Automatic, consent skipped (the Mode row does the same) | yes |
 | `?signin` | browser | | the sign-in handoff with the browser beside | yes |
 | `?player` | out, accepted, other | other needs signin=browser | the App Player account on this PC | yes |
 | `?browser` | accepted, other, out | signin=browser | what bluestacks.ai holds | yes |
-| `?cases` | signin | | the five sign-in cases as a bar, no Preview panel | no |
-| `?case` | 1, 2, 3a, 3b, 3c | cases=signin | which case opens | no |
-| `?opt` | a, b | cases=signin | sign-in option A or B | no |
+| `?cases` | signin | | the one sign-in case (an account that isn't enrolled) as a bar, no Preview panel | no |
+| `?case` | player, browser | cases=signin | where that sign-in came from | no |
 | `?ask` | any text | waits for sign-in | auto-sends the message | no |
 | `?credits` | 0 | signed in to see it | zero credits: chip 0, banner, popup on send | no |
 | `?bs` | 1 | | BlueStacks installed too | yes |
@@ -68,15 +64,11 @@ Worker params ride on Copy link only from the signed-in worker home (index.html:
 | Browser | Accepted account, Other account, Signed out | as App Player |
 | Chat states | Off, On | the chat tab |
 | Scheduled job | Off, Out of credits | the chat tab |
-| Change mode from | Composer chip, Ribbon | the worker chat, signed in |
 | Mode | Always ask, Automatic | the worker chat, signed in |
-| Worker | Day 1, Returning, Next day | the worker chat, signed in |
+| Worker | Day 1, Next day | the worker chat, signed in |
 | Day end | Job done, No job, Day 20, Failed | the worker chat, signed in |
-| Card | Days, Money, Plain | the worker chat, signed in |
-| Setup question | On, Off | the worker chat, signed in |
 | Hardware | Yes, No | the Settings tab |
 | AI conflict | None, Detected | the Settings tab |
-| Own key | Off, On | signed in |
 | Credits | Full, Empty | signed in, own key off |
 
 **Sizes.** Fixed bottom left, 300 wide (index.html:1106); collapses to a 38 gear.
