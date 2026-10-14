@@ -84,7 +84,7 @@
      and a reason line under the mode line says why and when the next run is (WorkerFlow.runLock).
      With no credits it is disabled too, the reason the live countdown to the refill. A skipped or
      failed day offers Run again; the strip's Retry answers a failed day (R4). */
-  function MoneyMakerHome({ onRun, zeroCredits, onRetry }) {
+  function MoneyMakerHome({ onRun, zeroCredits, onRetry, modeInBar }) {
     // A returning person (the worker already set up): no coach spotlight, and the earnings strip
     // above the card says where they are this month (sheet row 2, 2026-10-12).
     const back = window.WorkerFlow.isOnboarded();
@@ -114,10 +114,12 @@
               {/* Renamed 2026-09-09 (designer directive: MoneyMaker -> "BlueAI worker"). */}
               <p className="v2-text-title-sm">BlueAI worker</p>
               <p className="v2-text-caption v3-wk-desc">Finds jobs that fit you and runs them on your account.</p>
-              <p className="v3-wk-mode">
+              {/* Said ONCE (Appy, 2026-10-14): when the composer's Mode chip is showing below, the card
+                 leaves the mode to it; with the ribbon version nothing else shows it on Home. */}
+              {!modeInBar && <p className="v3-wk-mode">
                 <Icon name={auto.length ? 'zap' : 'shield-check'} /><span className="v3-wk-mode-text">{AP.summary(auto)}</span>
                 <button type="button" onClick={AP.openSheet} aria-haspopup="dialog" className="v2-button v2-button--quiet v2-button--sm v3-wk-mode-change">Change</button>
-              </p>
+              </p>}
               {reason && <p id={reasonId} className="v2-text-caption v3-wk-reason">{reason}</p>}
             </div>
             <button type="button" onClick={run} aria-disabled={reason ? 'true' : undefined} aria-describedby={reason ? reasonId : undefined} className="v2-button v2-button--primary">

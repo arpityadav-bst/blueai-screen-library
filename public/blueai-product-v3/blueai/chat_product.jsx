@@ -135,7 +135,7 @@
                     {isOnboarding
                       ? null // pre-login chat (onboarding or moneymaker) = greeting + composer only
                       : sessionMode === 'moneymaker'
-                      ? (loading ? <window.WorkerHomeSkeleton /> : <window.MoneyMaker.MoneyMakerHome onRun={(p, cat) => run(p, cat)} zeroCredits={zeroCredits} onRetry={onRetryToday} />)
+                      ? (loading ? <window.WorkerHomeSkeleton /> : <window.MoneyMaker.MoneyMakerHome onRun={(p, cat) => run(p, cat)} zeroCredits={zeroCredits} onRetry={onRetryToday} modeInBar={permUi === 'chatbox'} />)
                       : (loading
                           ? <window.HomeSkeleton />
                           : <ProductHome onRun={(p, cat) => run(p, cat)} onOpenHistory={() => window.__openChatHistory && window.__openChatHistory()} />)}
