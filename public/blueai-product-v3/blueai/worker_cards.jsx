@@ -1,7 +1,7 @@
 /* BlueAI: the BlueAI worker's chat cards (ROB-21350). Data and scripts live in worker_flow.jsx.
 
-   PlanCard   the live PLAN card: light-blue, label, summary, numbered plan, suggested-skill chip.
-   AskBubble  a worker question: the live app's yellow "needs your input" bubble (optional bold
+   PlanCard   the live PLAN card: label, summary, numbered plan, suggested-skill chip.
+   AskBubble  a worker question: the live app's "needs your input" bubble (optional bold
               title), then quick-reply chips under it. Onboarding's questions AND the daily
               paid-job ask use it, so every question reads as one, and the job ask is as light as
               the rest (Abhisht, 2026-10-05). An option flagged `consent` turns
@@ -12,23 +12,22 @@
 (function () {
   const AP = () => window.AgentPermissions;
   const WF = () => window.WorkerFlow;
-  const FAINT = '#9ca3af';
-  /* Exact live colours: ai-worker frontend/src/components/chat/Message.tsx:20, the AwaitInput
-     bubble ("bg-[#fdf6cf] border border-[#f3e8a8] text-[#8a6116]"), which this prototype already
-     mirrors as chat_bubbles.jsx FINAL_STYLES.needsInput. */
-  const INPUT = { bg: '#fdf6cf', border: '#f3e8a8', text: '#8a6116' };
+  /* V3 (phase 3): both cards speak the chat's one bubble language (chat.css). The live app's
+     AwaitInput yellow (ai-worker Message.tsx:20) becomes the Target attention tokens: a white
+     bubble whose edge turns, with the waiting-on-you mark, the same as FinalBubble's needsInput. */
+  const ToneIcon = (p) => React.createElement(window.ChatBubbles.ToneIcon, p);
 
   function PlanCard() {
     const P = WF().PLAN;
     return (
-      <div className="ba-msg-in" style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 10 }}>
-        <div style={{ maxWidth: 330, background: 'linear-gradient(135deg,#eef5ff,#e2edff)', border: '1px solid #d6e6fb', borderRadius: 16, padding: '11px 14px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
-          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', color: '#60a5fa' }}>PLAN</p>
-          <p style={{ fontSize: 13, color: '#1e3a8a', lineHeight: 1.5, marginTop: 4 }}>{P.summary}</p>
-          <ol style={{ margin: '8px 0 0', paddingLeft: 18, fontSize: 12.5, color: '#1d4ed8', lineHeight: 1.6 }}>
+      <div className="ba-msg-in v3-msg">
+        <div className="v3-bubble">
+          <p className="v3-eyebrow">PLAN</p>
+          <p style={{ marginTop: 'var(--v2-space-1)' }}>{P.summary}</p>
+          <ol className="v3-bubble-list">
             {P.steps.map((s) => <li key={s}>{s}</li>)}
           </ol>
-          <span style={{ display: 'inline-block', marginTop: 9, fontSize: 11, fontWeight: 600, color: '#1e40af', background: '#dbeafe', borderRadius: 999, padding: '3px 9px' }}>Suggested skill: {P.skill}</span>
+          <span className="v3-count" style={{ marginTop: 'var(--v2-space-2)' }}>Suggested skill: {P.skill}</span>
         </div>
       </div>);
   }
@@ -41,25 +40,27 @@
       onAnswer(o.id);
     };
     return (
-      <div className="ba-msg-in" style={{ marginBottom: 12 }}>
-        <div style={{ maxWidth: 310, background: INPUT.bg, border: '1px solid ' + INPUT.border, borderRadius: 16, padding: '11px 14px', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
-          {step.title && <p style={{ fontSize: 13.5, fontWeight: 800, color: INPUT.text, lineHeight: 1.4, marginBottom: 2 }}>{step.title}</p>}
-          {step.lead && <p style={{ fontSize: 13.5, color: INPUT.text, lineHeight: 1.5 }}>{step.lead}</p>}
-          {step.bullets &&
-            <ul style={{ margin: '7px 0 0', paddingLeft: 18, fontSize: 13, color: INPUT.text, lineHeight: 1.55 }}>
-              {step.bullets.map((b) => <li key={b}>{b}</li>)}
-            </ul>}
-          {step.question && <p style={{ fontSize: 13.5, color: INPUT.text, lineHeight: 1.5, marginTop: 7 }}>{step.question}</p>}
+      <div className="ba-msg-in v3-msg">
+        <div className="v3-bubble v3-bubble--input v3-toned">
+          <ToneIcon tone="input" />
+          <div className="v3-toned-body">
+            {step.title && <p className="v3-bubble-title">{step.title}</p>}
+            {step.lead && <p>{step.lead}</p>}
+            {step.bullets &&
+              <ul className="v3-bubble-list">
+                {step.bullets.map((b) => <li key={b}>{b}</li>)}
+              </ul>}
+            {step.question && <p className="v3-bubble-q">{step.question}</p>}
+          </div>
         </div>
         {pending && <>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginTop: 8 }}>
+          <div className="v3-pills" style={{ marginTop: 'var(--v2-space-2)' }}>
             {step.options.map((o) =>
-              <button key={o.id} className="ba-chip" onClick={() => choose(o)}
-                style={{ border: '1.5px solid #c7dcf5', background: 'white', color: '#1990FF', borderRadius: 999, padding: '6px 13px', fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+              <button key={o.id} className="v3-pill" onClick={() => choose(o)}>
                 {o.label}
               </button>)}
           </div>
-          {step.hint && <p style={{ fontSize: 11.5, color: FAINT, lineHeight: 1.45, marginTop: 7 }}>{step.hint}</p>}
+          {step.hint && <p className="v3-ask-hint">{step.hint}</p>}
         </>}
       </div>);
   }

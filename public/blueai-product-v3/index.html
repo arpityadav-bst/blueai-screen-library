@@ -31,6 +31,9 @@
   <!-- V3, Phase 2: the entry screens (welcome, sign-in modal, account gate, terms sheet) in the
        onBlue site's language on those tokens: solid dark button, step discs, dot grid, links. -->
   <link rel="stylesheet" href="entry.css" />
+  <!-- V3, Phase 3: the chat screen (bubbles, progress notes, composer, feedback, home rows, history)
+       in the same language: one bubble on the surface with a 1px line, pills, quiet buttons. -->
+  <link rel="stylesheet" href="chat.css" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -58,8 +61,8 @@
     }
     button, input, textarea, select { font-family: inherit; }
     /* Shared form-field focus treatment (blue border + soft ring), consistent across Settings + modals. */
-    .ba-field { transition: border-color 0.15s ease, box-shadow 0.15s ease; }
-    .ba-field:focus { border-color: #1990FF !important; box-shadow: 0 0 0 3px rgba(25,144,255,0.12); }
+    .ba-field { transition: border-color var(--v2-dur-2) var(--v2-ease-standard), box-shadow var(--v2-dur-2) var(--v2-ease-standard); }
+    .ba-field:focus { border-color: var(--v2-blue) !important; box-shadow: var(--v2-focus-ring); }
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: #e2e8f0; }
     ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18); border-radius: 4px; }
@@ -91,21 +94,12 @@
     @keyframes baMsgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes baThanksIn { from { opacity: 0; transform: translateX(-3px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes baExpand { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-    .ba-msg-in { animation: baMsgIn 0.22s ease; }
-    .ba-chips-in { animation: baMsgIn 0.22s ease; }
-    .ba-thanks-in { animation: baThanksIn 0.2s ease; }
-    .ba-fb-btn { transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease, opacity 0.2s ease; }
-    .ba-fb-btn:hover { transform: translateY(-1px); }
-    .ba-fb-btn:active { transform: scale(0.92); }
-    .ba-fb-btn--below:hover { background: #f1f5f9 !important; border-color: #cbd5e1 !important; }
-    .ba-fb-btn--below.ba-fb-btn--sel:hover { background: #cbd5e1 !important; }
-    .ba-fb-btn--inside:hover { background: rgba(255,255,255,0.9) !important; }
-    .ba-fb-btn--inside.ba-fb-btn--sel:hover { background: rgba(255,255,255,1) !important; }
-    .ba-chip { transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.12s ease; }
-    .ba-chip:hover { transform: translateY(-1px); }
-    .ba-chip:active { transform: scale(0.96); }
-    .ba-chip--below:hover:not(.ba-chip--sel) { background: #f1f5f9 !important; border-color: #cbd5e1 !important; }
-    .ba-chip--inside:hover:not(.ba-chip--sel) { background: rgba(255,255,255,0.9) !important; }
+    /* V3 phase 3: Target durations + the site's ease-out. The feedback buttons and chips moved to
+       chat.css (.v3-fb-btn, .v3-pill). */
+    .ba-msg-in { animation: baMsgIn var(--v2-dur-3) var(--v2-ease-out); }
+    .ba-chips-in { animation: baMsgIn var(--v2-dur-3) var(--v2-ease-out); }
+    .ba-thanks-in { animation: baThanksIn var(--v2-dur-2) var(--v2-ease-out); }
+    @media (prefers-reduced-motion: reduce) { .ba-msg-in, .ba-chips-in, .ba-thanks-in { animation: none; } }
     /* Mode sheet + app switches (agent_permissions.jsx): the slide-up over a light scrim, and the
        switch's keyboard focus ring (Settings' Worker > Apps uses the same switches). */
     @keyframes baSheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }

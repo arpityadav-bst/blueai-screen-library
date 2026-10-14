@@ -1,6 +1,8 @@
 /* BlueAI: Product chat screen: the conversation, the composer, and the send rules.
-   Home = the canonical NEW variant (window.ChatCompare.NewHome + IntroCard). Conversation =
+   Home = the greeting (ProductHomeScreen.IntroCard) over the category home. Conversation =
    the task-progress + feedback engine ported from "ChatView Feedback.html".
+   V3 (phase 3): the composer and send button are drawn by chat.css (lined field, blue focus
+   ring, send on the solid-ink step of the button ladder, Stop on the ghost step).
 
    Bubbles, the step scripts, the feedback control and the category home were split into
    chat_bubbles.jsx / chat_feedback.jsx / product_home.jsx (2026-08-10) when this file hit 648
@@ -18,6 +20,7 @@
   const ThinkingBubble = (p) => React.createElement(B().ThinkingBubble, p);
   const ChatStatesPreview = (p) => React.createElement(B().ChatStatesPreview, p);
   const ProductHome = (p) => React.createElement(window.ProductHomeScreen.ProductHome, p);
+  const IntroCard = (p) => React.createElement(window.ProductHomeScreen.IntroCard, p);
   const makeTaskSteps = (t) => B().makeTaskSteps(t);
   const makeResumeSteps = (t, app) => B().makeResumeSteps(t, app);
   const makeScheduledOocSteps = () => B().makeScheduledOocSteps();
@@ -29,7 +32,6 @@
 
   /* ───────── Merged chat screen: ProductHome (empty) → task-progress + feedback (active) ───────── */
   function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, sessionMode = 'default', onNeedLogin, showStates, bsInstalled = true, onBsInstalled, scheduledOoc = false, dailyRunKey = 0, onJobWaiting, permUi = 'ribbon', onDayDone }) {
-    const C = window.ChatCompare;
     const [convo, setConvo] = useState([]);
     const [visible, setVisible] = useState(0);
     const [draft, setDraft] = useState('');
@@ -37,7 +39,6 @@
     const [reasons, setReasons] = useState({});
     const [answers, setAnswers] = useState({});   // worker question / job card answers, keyed like votes: 'k' + step index
     const [seenDone, setSeenDone] = useState(-1);  // index of the day-done step whose centre overlay was dismissed
-    const [composerFocused, setComposerFocused] = useState(false);
     const scrollRef = useRef(null);
     const taRef = useRef(null);
     const timers = useRef([]);
@@ -185,24 +186,22 @@
     const sendBtn = (
       <button onClick={() => (running ? stop() : run())} disabled={!running && !draft.trim()}
         aria-label={running ? 'Stop task' : 'Send message'} title={running ? 'Stop' : 'Send'}
-        style={{ width: modeChip ? 32 : 34, height: modeChip ? 32 : 34, borderRadius: '50%', background: running ? '#eef1f6' : (draft.trim() ? '#1990FF' : '#9ec9f5'), border: running ? '1px solid #d6dce5' : 'none', cursor: (running || draft.trim()) ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.15s ease' }}
-        onMouseEnter={(e) => { if (running || draft.trim()) e.currentTarget.style.opacity = '0.85'; }}
-        onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}>
+        className={'v3-btn-solid v3-send' + (running ? ' v3-send--stop' : '')}>
         {running
-          ? <svg width="13" height="13" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="3" fill="#64748b" /></svg>
-          : <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z" /></svg>}
+          ? <svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor" /></svg>
+          : <svg className="v3-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5" /><polyline points="5 12 12 5 19 12" /></svg>}
       </button>);
 
     return (
       <>
         <div style={{ flex: 1, overflow: 'hidden' }}>
-          <div ref={scrollRef} style={{ height: '100%', overflowY: 'auto', scrollbarWidth: 'thin', padding: '16px' }}>
+          <div ref={scrollRef} style={{ height: '100%', overflowY: 'auto', scrollbarWidth: 'thin', padding: 'var(--v2-space-4)' }}>
             {showStates ? <ChatStatesPreview /> : <>
               {/* Greeting shows on the pre-conversation view, it clears once a task is sent (both
                  onboarding + default). Onboarding chat pads the greeting down to match the design;
                  the picker welcome lives one level up (App), so no welcome renders here. */}
               {!started &&
-                <C.IntroCard onboarding={isOnboarding}
+                <IntroCard onboarding={isOnboarding}
                   title={sessionMode === 'moneymaker' && !isOnboarding ? 'Hi, Alex 👋' : undefined}
                   sub={sessionMode === 'moneymaker' && !isOnboarding
                     /* Value statement, not instruction, the coach tooltip under the card already
@@ -215,7 +214,7 @@
                     ? 'Just send your message whenever you are ready and see me do your work for you!'
                     : 'Your AI worker for BlueStacks. Pick a task below or just type what you need.'} />}
               {!started
-                ? <div style={{ marginTop: 4 }}>
+                ? <div style={{ marginTop: 'var(--v2-space-1)' }}>
                     {isOnboarding
                       ? null // pre-login chat (onboarding or moneymaker) = greeting + composer only
                       : sessionMode === 'moneymaker'
@@ -247,21 +246,23 @@
         </div>
 
         {/* Composer: hidden while the "Chat states" dev preview is on (nothing to type/send) */}
-        {!showStates && <div style={{ flexShrink: 0, position: 'relative', padding: '4px 16px 10px' }}>
+        {!showStates && <div className="v3-composer-wrap">
           {/* Onboarding nudge: a pulsing "Send a message to watch BlueAI work" pill sits just
-             above the composer until a message is attempted (matches the design's OnboardingChat). */}
+             above the composer until a message is attempted (matches the design's OnboardingChat).
+             It floats, so it is the one thing here with a shadow; the blue dot is the live mark. */}
           {isOnboarding && !started &&
-            <div style={{ position: 'absolute', bottom: 'calc(100% + 2px)', left: 16, display: 'inline-flex', alignItems: 'center', gap: 7, background: '#1990FF', color: 'white', borderRadius: 10, padding: '7px 12px', fontSize: 12, fontWeight: 600, boxShadow: '0 4px 14px rgba(25,144,255,0.3)', whiteSpace: 'nowrap' }}>
-              <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'white', animation: 'ba-pulse 1.3s infinite' }} />
+            <div className="v3-nudge">
+              <span className="v3-nudge-dot" aria-hidden="true" />
               Send a message to watch BlueAI work
             </div>}
           {/* ROB-21350 Version 2: the Automatic ribbon, only once the worker has started in this chat. */}
           {permUi === 'ribbon' && workerStarted && <window.AgentPermissions.AutoRibbon />}
-          <div style={{ display: 'flex', flexDirection: modeChip ? 'column' : 'row', alignItems: modeChip ? 'stretch' : 'center', gap: modeChip ? 2 : 8, border: '1.5px solid ' + (isOnboarding ? '#60a5fa' : (composerFocused ? '#1990FF' : '#c7dcf5')), borderRadius: isOnboarding ? 18 : 14, background: 'white', padding: modeChip ? '8px 8px 6px 10px' : '8px 10px', boxShadow: composerFocused ? '0 0 0 3px rgba(25,144,255,0.12)' : (isOnboarding && !started ? '0 0 0 4px rgba(25,144,255,0.12)' : '0 1px 4px rgba(0,0,0,0.04)'), transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}>
-            <textarea ref={taRef} value={draft} disabled={running || scheduledOoc} rows={1}
+          {/* Focus shows as the blue edge + ring (:focus-within). The onboarding "type here"
+             moment (is-emph) borrows the same look until the first message is attempted. */}
+          <div className={'v3-composer' + (modeChip ? ' v3-composer--stack' : '') + (isOnboarding && !started ? ' is-emph' : '')}>
+            <textarea ref={taRef} className="v3-composer-input" value={draft} disabled={running || scheduledOoc} rows={1}
+              aria-label="Message BlueAI"
               onChange={(e) => setDraft(e.target.value)}
-              onFocus={() => setComposerFocused(true)}
-              onBlur={() => setComposerFocused(false)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(); } }}
               placeholder={running ? (awaiting ? 'Please respond using the buttons above...' : 'BlueAI is working…')
                 /* Ordered AFTER the running check on purpose: while the scheduled run is still
@@ -281,9 +282,9 @@
                    Copy renamed 2026-09-09 (MoneyMaker -> "BlueAI worker"); sessionMode value
                    stays 'moneymaker' internally, this is a display-string-only change. */
                 : (sessionMode === 'moneymaker' && !started ? 'Ask anything, or run the BlueAI worker above' : 'Type your message...')}
-              style={{ flex: modeChip ? 'none' : 1, resize: 'none', background: 'transparent', border: 'none', outline: 'none', fontSize: 13.5, color: '#1f2937', padding: '4px 6px', lineHeight: 1.5, fontFamily: 'inherit', maxHeight: 120, overflowY: 'hidden' }} />
+              />
             {modeChip
-              ? <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}><window.AgentPermissions.ModeChip />{sendBtn}</div>
+              ? <div className="v3-composer-bar"><window.AgentPermissions.ModeChip />{sendBtn}</div>
               : sendBtn}
           </div>
         </div>}

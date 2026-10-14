@@ -2,127 +2,125 @@
    Split out of chat_product.jsx (2026-08-10) for the 300-line rule. One bubble per message
    state (user · status · warning · needs-BlueStacks lives in needs_bluestacks.jsx · final
    success/fail/needs-input · thinking), plus the two step scripts ChatScreen plays.
+
+   V3 (phase 3): one bubble language, styled in chat.css. Every message sits on the surface with a
+   1px line; the user's own is the quiet sunken surface. Tone rides on one icon in the tone's ink,
+   and the edge turns only when the run stopped (failed, or waiting on you). Status and thinking
+   are progress notes, not bubbles.
    Exposes window.ChatBubbles. */
 (function () {
-  const { useState, useRef, useEffect } = React;
+  const { useState } = React;
 
   /* FinalBubble renders the feedback control, which now lives in chat_feedback.jsx. Forwarded
-     lazily so the JSX below is untouched and the reference resolves at RENDER time, this file
-     does not care whether it or chat_feedback.jsx was parsed first. */
+     lazily so the reference resolves at RENDER time, this file does not care whether it or
+     chat_feedback.jsx was parsed first. */
   const FeedbackThumbs = (props) => React.createElement(window.ChatFeedback.FeedbackThumbs, props);
 
   /* ───────── Helpers ───────── */
   function fmtStamp() { return 'Jun 12, 2026, 11:03 AM'; }
 
-  function richText(text, linkColor) {
+  function richText(text) {
     const urlRe = /(https?:\/\/[^\s]+)/g;
     return text.split('\n').map((line, li) =>
-      <p key={li} style={{ margin: li === 0 ? 0 : '8px 0 0', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+      <p key={li}>
         {line.split(urlRe).map((part, pi) => urlRe.test(part)
-          ? <a key={pi} href="#" onClick={(e) => e.preventDefault()} style={{ color: linkColor, textDecoration: 'underline', wordBreak: 'break-all' }}>{part}</a>
+          ? <a key={pi} href="#" onClick={(e) => e.preventDefault()} className="v3-link v3-link--ink" style={{ wordBreak: 'break-all' }}>{part}</a>
           : <span key={pi}>{part}</span>)}
       </p>);
   }
-  /* ───────── Bubbles (from ChatView Feedback) ───────── */
+
+  /* One 16px tone mark per toned bubble: done (green tick), heads-up and waiting-on-you (the
+     attention ink), failed (the danger ink). 24 viewBox, currentColor, round caps. */
+  const TONE_PATHS = {
+    success: <><circle cx="12" cy="12" r="9" /><polyline points="8 12.5 11 15.5 16 9.5" /></>,
+    warning: <><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></>,
+    input: <><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.4" /><line x1="12" y1="17" x2="12.01" y2="17" /></>,
+    fail: <><circle cx="12" cy="12" r="9" /><line x1="12" y1="8" x2="12" y2="12.5" /><line x1="12" y1="16" x2="12.01" y2="16" /></>
+  };
+  const TONE_INK = { success: 'v3-tone-success', warning: 'v3-tone-attention', input: 'v3-tone-attention', fail: 'v3-tone-danger' };
+  function ToneIcon({ tone }) {
+    return (
+      <svg className={'v3-toned-icon v3-ico ' + TONE_INK[tone]} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{TONE_PATHS[tone]}</svg>);
+  }
+
+  /* ───────── Bubbles ───────── */
   function UserBubble({ content }) {
     return (
-      <div className="ba-msg-in" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
-        <div style={{ maxWidth: 290, background: 'linear-gradient(135deg,#5158ee,#7b4cff)', borderRadius: 16, padding: '11px 14px 8px', boxShadow: '0 4px 14px rgba(99,102,241,0.30)' }}>
-          <p style={{ fontSize: 13.5, lineHeight: 1.45, color: 'white', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{content}</p>
-          <p style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.75)', marginTop: 6 }}>{fmtStamp()}</p>
+      <div className="ba-msg-in v3-msg v3-msg--user">
+        <div className="v3-bubble v3-bubble--user">
+          <p>{content}</p>
+          <p className="v3-bubble-stamp">{fmtStamp()}</p>
         </div>
       </div>);
   }
 
+  // A progress line: a note in the run's margin, not a bubble.
   function StatusBubble({ content }) {
-    return (
-      <div className="ba-msg-in" style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 10 }}>
-        <div style={{ maxWidth: 290, background: '#f1f5f9', border: '1px solid #e8edf3', borderRadius: 16, padding: '10px 13px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
-          <p style={{ fontSize: 13, lineHeight: 1.45, color: '#475569' }}>{content}</p>
-        </div>
-      </div>);
+    return <p className="ba-msg-in v3-note-line">{content}</p>;
   }
 
   /* Warning = a heads-up shown mid-task that does NOT block progress (distinct from the
-     amber "human input required" final state, which halts until the user answers). Styled
-     like a status bubble (task keeps going) but orange-tinted with a caution icon. */
-  function WarningIcon({ size = 14, color = 'currentColor' }) {
-    return (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}>
-        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-        <line x1="12" y1="9" x2="12" y2="13" />
-        <line x1="12" y1="17" x2="12.01" y2="17" />
-      </svg>);
-  }
-
-  /* Two additive changes, both from the designer's out-of-credits spec (2026-09-09).
+     "human input required" final state, which halts until the user answers). A plain bubble
+     with the attention mark: the task keeps going, so the edge stays neutral.
 
      `title` is optional: the credits warning wants a bold lead ("Out of credits") over its body,
      while the older mid-task warning is one sentence and wants no heading.
 
      `content` accepts an ARRAY as well as a string. This copy is written as short declaratives,
-     and one per line reads as a list rather than a paragraph wrapping wherever the 290px cap
+     and one per line reads as a list rather than a paragraph wrapping wherever the bubble cap
      falls. An array rather than splitting a string on full stops, so the break points are the
-     author's decision and stay visible in the source instead of depending on a regex getting
-     punctuation right. String callers are unaffected. */
+     author's decision and stay visible in the source. String callers are unaffected. */
   function WarningBubble({ title, content }) {
     const body = Array.isArray(content) ? content : [content];
     return (
-      <div className="ba-msg-in" style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 10 }}>
-        <div style={{ maxWidth: 290, display: 'flex', alignItems: 'flex-start', gap: 8, background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: 16, padding: '10px 13px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
-          <WarningIcon size={15} color="#c2410c" />
-          <div style={{ minWidth: 0 }}>
-            {title && <p style={{ fontSize: 13, fontWeight: 800, color: '#7c2d12', lineHeight: 1.3, marginBottom: 2 }}>{title}</p>}
-            <p style={{ fontSize: 13, lineHeight: 1.45, color: '#9a3412' }}>
-              {body.map((line, k) => <span key={k} style={{ display: 'block' }}>{line}</span>)}
-            </p>
+      <div className="ba-msg-in v3-msg">
+        <div className="v3-bubble v3-toned">
+          <ToneIcon tone="warning" />
+          <div className="v3-toned-body">
+            {title && <p className="v3-bubble-title">{title}</p>}
+            <p className="v3-bubble-lines">{body.map((line, k) => <span key={k}>{line}</span>)}</p>
           </div>
         </div>
       </div>);
   }
 
-  /* NOTE: this is the LIVE product's "human input required" state (PM-confirmed name/colour,
-     do not change), not a generic warning. See WarningBubble below for the actual Warning tone. */
-  const FINAL_STYLES = {
-    success:    { bg: '#d9fbe4', border: '#d9fbe4', text: '#1f2937', stamp: '#4ade80', link: '#1f2937' },
-    fail:       { bg: '#fdecec', border: '#f8d7d7', text: '#991b1b', stamp: '#e8a0a0', link: '#991b1b' },
-    needsInput: { bg: '#fdf6cf', border: '#f3e8a8', text: '#8a6116', stamp: '#c09a3e', link: '#8a6116' }
+  /* The final message of a run. needsInput is the LIVE product's "human input required" state
+     (PM-confirmed name); V3 draws it with the Target attention tokens on the one bubble language
+     rather than the live yellow fill. */
+  const FINAL = {
+    success:    { icon: 'success', edge: '' },
+    fail:       { icon: 'fail', edge: ' v3-bubble--fail' },
+    needsInput: { icon: 'input', edge: ' v3-bubble--input' }
   };
 
   function FinalBubble({ msg, feedback }) {
-    const S = FINAL_STYLES[msg.tone];
+    const S = FINAL[msg.tone];
     const fbPlacement = feedback && feedback.placement;
-    const toneKey = msg.tone === 'fail' ? 'fail' : 'success';
+    const fb = (placement) =>
+      <FeedbackThumbs placement={placement}
+        withLabel={feedback.withLabel} vote={feedback.vote} onVote={feedback.onVote}
+        reason={feedback.reason} onReason={feedback.onReason} />;
     return (
-      <div className="ba-msg-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginBottom: 12 }}>
-        <div style={{ maxWidth: 310, background: S.bg, border: '1px solid ' + S.border, borderRadius: 16, padding: '12px 14px 10px', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
-          <div style={{ fontSize: 13.5, lineHeight: 1.5, color: S.text }}>{richText(msg.content, S.link)}</div>
-          {fbPlacement === 'stamp' &&
-            <FeedbackThumbs tone={toneKey} placement="stamp"
-              withLabel={feedback.withLabel} vote={feedback.vote} onVote={feedback.onVote}
-              reason={feedback.reason} onReason={feedback.onReason} />}
-          {fbPlacement === 'inside' &&
-            <FeedbackThumbs tone={toneKey} placement="inside"
-              withLabel={feedback.withLabel} vote={feedback.vote} onVote={feedback.onVote}
-              reason={feedback.reason} onReason={feedback.onReason} />}
+      <div className="ba-msg-in v3-msg">
+        <div className={'v3-bubble' + S.edge}>
+          <div className="v3-toned">
+            <ToneIcon tone={S.icon} />
+            <div className="v3-toned-body v3-rich">{richText(msg.content)}</div>
+          </div>
+          {fbPlacement === 'stamp' && fb('stamp')}
+          {fbPlacement === 'inside' && fb('inside')}
         </div>
-        {fbPlacement === 'below' &&
-          <FeedbackThumbs tone={toneKey} placement="below"
-            withLabel={feedback.withLabel} vote={feedback.vote} onVote={feedback.onVote}
-            reason={feedback.reason} onReason={feedback.onReason} />}
+        {fbPlacement === 'below' && fb('below')}
       </div>);
   }
 
+  // Working: three progress dots (the blue is progress) and a muted note.
   function ThinkingBubble() {
     return (
-      <div className="ba-msg-in" style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 10 }}>
-        <div style={{ background: '#f1f5f9', border: '1px solid #e8edf3', borderRadius: 16, padding: '12px 16px 9px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
-          <div style={{ display: 'flex', gap: 5, marginBottom: 7 }}>
-            {[0, 1, 2].map((i) =>
-              <span key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: '#818cf8', display: 'inline-block', animation: 'ba-pulse 1.2s ease-in-out infinite', animationDelay: (i * 0.18) + 's' }}></span>)}
-          </div>
-          <p style={{ fontSize: 12, color: '#94a3b8' }}>Working on it…</p>
-        </div>
+      <div className="ba-msg-in v3-working" role="status">
+        <span className="v3-working-dots" aria-hidden="true"><span /><span /><span /></span>
+        <span className="v3-working-text">Working on it…</span>
       </div>);
   }
 
@@ -168,8 +166,8 @@
      A scheduled run happens in its OWN chat with no user message, that's why this script opens on
      a status line instead of a 'user' bubble, unlike makeTaskSteps/makeResumeSteps.
 
-     Reuses the EXISTING bubble roles: 'warning' -> the amber WarningBubble, 'final'+tone:'fail' ->
-     the red FinalBubble. The PM's mock showed these two states plus a placeholder change; it was a
+     Reuses the EXISTING bubble roles: 'warning' -> WarningBubble, 'final'+tone:'fail' -> the
+     failed FinalBubble. The PM's mock showed these two states plus a placeholder change; it was a
      COPY spec, not new UI, so nothing new is drawn here, only the strings are new.
 
      The warning lands BEFORE the failure on purpose: the run is what noticed the balance hit zero,
@@ -202,10 +200,10 @@
       { key: 'fail', user: 'Collect bonus coins in Disney Solitaire game', kind: 'final', tone: 'fail', content: 'I wasn’t able to complete “Collect bonus coins in Disney Solitaire game”. The app closed unexpectedly partway through. You can try again or rephrase the request.' }
     ];
     return (
-      <div style={{ marginTop: 4 }}>
-        <p style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.08em', color: '#94a3b8', marginBottom: 10 }}>CHAT STATES PREVIEW</p>
+      <div style={{ marginTop: 'var(--v2-space-1)' }}>
+        <p className="v3-eyebrow" style={{ marginBottom: 'var(--v2-space-3)' }}>CHAT STATES PREVIEW</p>
         {examples.map((ex) => (
-          <div key={ex.key} style={{ marginBottom: 16 }}>
+          <div key={ex.key} style={{ marginBottom: 'var(--v2-space-4)' }}>
             <UserBubble content={ex.user} />
             {ex.kind === 'warning'
               ? <WarningBubble content={ex.content} />
@@ -219,7 +217,7 @@
   }
 
   window.ChatBubbles = {
-    UserBubble, StatusBubble, WarningBubble, FinalBubble, ThinkingBubble,
+    UserBubble, StatusBubble, WarningBubble, FinalBubble, ThinkingBubble, ToneIcon,
     ChatStatesPreview, makeTaskSteps, makeResumeSteps, makeScheduledOocSteps
   };
 })();

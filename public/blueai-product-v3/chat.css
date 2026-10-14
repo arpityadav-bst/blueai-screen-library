@@ -1,0 +1,244 @@
+/* BlueAI Product V3: the chat screen (home, conversation, composer, feedback, history), drawn in
+   the onBlue Agentic site's language on the Target tokens (--v2-*). Phase 3.
+   One bubble language: every message sits on the surface with a 1px line and no shadow; the user's
+   own message is the quiet sunken surface. Tone (done, heads-up, waiting on you, failed) is carried
+   by one 16px icon in the tone's ink, and the edge turns only when the run has stopped (failed, or
+   waiting on an answer). Progress lines are notes, not bubbles. Blue is held to focus, selection,
+   progress and link hover. Only things that float (the onboarding nudge) cast a shadow. */
+
+/* Site value the Target set lacks (brief section 11, gap `--v2-wash-tint`): the 2% navy chip fill. */
+:root {
+  --v3-wash-tint: rgba(18, 32, 64, 0.02);
+}
+
+/* ---- Message rows ----------------------------------------------------------------------------- */
+.v3-msg { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: var(--v2-space-3); }
+.v3-msg--user { align-items: flex-end; }
+.v3-bubble {
+  max-width: var(--v2-bubble-max); min-width: 0;
+  padding: var(--v2-space-3) var(--v2-space-4);
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg);
+  color: var(--v2-ink); font-size: var(--v2-text-14); line-height: var(--v2-leading-body);
+  letter-spacing: var(--v2-tracking-label); overflow-wrap: break-word;
+}
+.v3-bubble p { margin: 0; white-space: pre-wrap; word-break: break-word; }
+.v3-rich p + p { margin-top: var(--v2-space-2); }
+.v3-bubble .v3-bubble-q { margin-top: var(--v2-space-15); }
+.v3-bubble--user { background: var(--v2-surface-sunken); border-color: var(--v2-line-hair); }
+/* The run stopped: it failed, or it is waiting on you. Only then does the edge take the tone. */
+.v3-bubble--fail { border-color: var(--v2-danger-line); }
+.v3-bubble--input { border-color: var(--v2-attention-line); }
+.v3-bubble-stamp { margin-top: var(--v2-space-1); color: var(--v2-ink-4); font-size: var(--v2-text-11); letter-spacing: 0; }
+.v3-bubble .v3-bubble-title { margin: 0 0 var(--v2-space-05); color: var(--v2-ink); font-weight: var(--v2-weight-semibold); }
+.v3-bubble-list { margin: var(--v2-space-15) 0 0; padding-left: var(--v2-space-5); color: var(--v2-ink-2); font-size: var(--v2-text-13); }
+/* Tailwind's preflight strips list markers; the plan is a numbered list, the bullets a list. */
+ol.v3-bubble-list { list-style: decimal; }
+ul.v3-bubble-list { list-style: disc; }
+.v3-bubble-list li + li { margin-top: var(--v2-space-05); }
+.v3-bubble-lines span { display: block; }
+.v3-ask-hint { max-width: var(--v2-bubble-max); margin: var(--v2-space-15) 0 0; color: var(--v2-ink-4); font-size: var(--v2-text-12); line-height: var(--v2-leading-body); }
+
+/* Toned bubble: icon, then the text column. The icon centres on the first 21px line. */
+.v3-toned { display: flex; align-items: flex-start; gap: var(--v2-space-2); }
+.v3-toned-icon {
+  flex: none; width: var(--v2-icon-sm); height: var(--v2-icon-sm);
+  margin-top: calc((var(--v2-text-14) * var(--v2-leading-body) - var(--v2-icon-sm)) / 2);
+}
+.v3-toned-body { min-width: 0; flex: 1; }
+.v3-tone-success { color: var(--v2-success); }
+.v3-tone-attention { color: var(--v2-attention-ink); }
+.v3-tone-danger { color: var(--v2-danger-ink); }
+
+/* ---- Progress notes (status lines + the working indicator) ------------------------------------ */
+.v3-note-line {
+  display: flex; align-items: flex-start; gap: var(--v2-space-2); max-width: var(--v2-bubble-max);
+  margin: 0 0 var(--v2-space-2); padding: 0 var(--v2-space-1);
+  color: var(--v2-ink-3); font-size: var(--v2-text-13); line-height: var(--v2-leading-body); letter-spacing: var(--v2-tracking-label);
+}
+.v3-note-line::before {
+  content: ''; flex: none; width: var(--v2-space-1); height: var(--v2-space-1); border-radius: var(--v2-radius-round);
+  margin-top: calc((var(--v2-text-13) * var(--v2-leading-body) - var(--v2-space-1)) / 2); background: var(--v2-ink-4);
+}
+.v3-working { display: flex; align-items: center; gap: var(--v2-space-2); margin: 0 0 var(--v2-space-2); padding: 0 var(--v2-space-1); }
+.v3-working-dots { display: inline-flex; gap: var(--v2-space-1); }
+.v3-working-dots span {
+  width: var(--v2-space-15); height: var(--v2-space-15); border-radius: var(--v2-radius-round); background: var(--v2-blue);
+  animation: ba-v3-pulse var(--v2-dur-pulse) var(--v2-ease-standard) infinite;
+}
+.v3-working-dots span:nth-child(2) { animation-delay: 180ms; }
+.v3-working-dots span:nth-child(3) { animation-delay: 360ms; }
+.v3-working-text { color: var(--v2-ink-4); font-size: var(--v2-text-12); }
+
+.v3-eyebrow {
+  margin: 0; color: var(--v2-ink-4); font-size: var(--v2-text-11); font-weight: var(--v2-weight-medium);
+  letter-spacing: var(--v2-tracking-eyebrow); text-transform: uppercase; line-height: var(--v2-leading-snug);
+}
+.v3-count {
+  display: inline-flex; align-items: center; flex: none; height: var(--v2-badge-h); padding: 0 var(--v2-space-2);
+  border-radius: var(--v2-radius-pill); background: var(--v2-surface-sunken);
+  color: var(--v2-ink-3); font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium); white-space: nowrap;
+}
+
+/* ---- Pills: the site's chip (brief section 5), Target's 999 radius ---------------------------- */
+.v3-pills { display: flex; flex-wrap: wrap; gap: var(--v2-space-15); }
+.v3-pill {
+  display: inline-flex; align-items: center; min-height: var(--v2-hit-min); padding: var(--v2-space-15) var(--v2-space-3);
+  border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-pill); background: var(--v3-wash-tint);
+  color: var(--v2-ink-2); font: inherit; font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium);
+  letter-spacing: var(--v2-tracking-label); line-height: var(--v2-leading-tight); text-align: left; cursor: pointer;
+  transition: background var(--v2-dur-1) var(--v2-ease-standard), border-color var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v3-pill:hover { background: var(--v2-wash-hover); border-color: var(--v2-line-hover); color: var(--v2-ink); }
+.v3-pill:active { background: var(--v2-wash-press); }
+.v3-pill.is-selected { background: var(--v2-select); border-color: var(--v2-select-line); color: var(--v2-ink); }
+.v3-pill:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+
+/* ---- Feedback: quiet icon buttons, selection in the select blue ------------------------------ */
+.v3-fb-btn {
+  display: grid; place-items: center; flex: none; width: var(--v2-control-sm); height: var(--v2-control-sm); padding: 0;
+  border: var(--v2-stroke) solid transparent; border-radius: var(--v2-radius-sm); background: none;
+  color: var(--v2-ink-4); cursor: pointer;
+  transition: background var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard), opacity var(--v2-dur-2) var(--v2-ease-standard);
+}
+.v3-fb-btn:hover { background: var(--v2-wash-hover); color: var(--v2-ink); }
+.v3-fb-btn.is-selected { background: var(--v2-select); border-color: var(--v2-select-line); color: var(--v2-ink); }
+.v3-fb-btn.is-dim { opacity: 0.55; }
+.v3-fb-btn:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+.v3-fb-label { color: var(--v2-ink-4); font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium); }
+.v3-fb-field {
+  flex: 1; min-width: 0; height: var(--v2-control-md); padding: var(--v2-space-15) var(--v2-space-3);
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-sm);
+  color: var(--v2-ink); font-size: var(--v2-text-13); line-height: var(--v2-leading-body);
+  outline: none; resize: none; overflow-y: hidden; scrollbar-width: thin;
+}
+.v3-fb-field::placeholder { color: var(--v2-ink-placeholder); }
+.v3-fb-field:hover:not(:focus):not(:disabled) { border-color: var(--v2-line-hover); }
+.v3-fb-field:disabled { opacity: 0.65; }
+
+/* ---- Composer: a lined field with a visible focus ring; send follows the button ladder -------- */
+.v3-composer-wrap { flex-shrink: 0; position: relative; padding: var(--v2-space-1) var(--v2-space-4) var(--v2-space-3); }
+.v3-composer {
+  display: flex; align-items: center; gap: var(--v2-space-2);
+  padding: var(--v2-space-2) var(--v2-space-2) var(--v2-space-2) var(--v2-space-3);
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line-strong); border-radius: var(--v2-radius-lg);
+  transition: border-color var(--v2-dur-2) var(--v2-ease-standard), box-shadow var(--v2-dur-2) var(--v2-ease-standard);
+}
+.v3-composer:hover { border-color: var(--v2-line-hover); }
+/* Focus, and the onboarding "type here" moment, read the same: the blue edge and the soft ring. */
+.v3-composer:focus-within, .v3-composer.is-emph { border-color: var(--v2-blue); box-shadow: var(--v2-focus-ring); }
+.v3-composer--stack { flex-direction: column; align-items: stretch; gap: var(--v2-space-05); padding-bottom: var(--v2-space-15); }
+.v3-composer-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--v2-space-2); }
+.v3-composer-input {
+  flex: 1; min-width: 0; max-height: 120px; padding: var(--v2-space-1) var(--v2-space-05);
+  background: transparent; border: 0; outline: none; resize: none; overflow-y: hidden;
+  color: var(--v2-ink); font-size: var(--v2-text-14); line-height: var(--v2-leading-body); letter-spacing: var(--v2-tracking-label);
+}
+.v3-composer--stack .v3-composer-input { flex: none; }
+.v3-composer-input::placeholder { color: var(--v2-ink-placeholder); }
+.v3-send { width: var(--v2-hit-min); height: var(--v2-hit-min); padding: 0; flex: none; }
+.v3-send:disabled, .v3-send:disabled:hover {
+  opacity: var(--v2-opacity-disabled); box-shadow: none; transform: none; cursor: default;
+  background: var(--v2-ink); border-color: var(--v2-ink);
+}
+/* Running: the same seat becomes Stop, a ghost button (the ladder's second step). */
+.v3-send--stop { background: var(--v2-surface-panel); border-color: var(--v2-line-strong); color: var(--v2-ink); box-shadow: none; }
+.v3-send--stop:hover { background: var(--v2-surface-sunken); border-color: var(--v2-line-hover); box-shadow: none; }
+.v3-send.v3-send--sent:disabled { opacity: 1; background: var(--v2-success); border-color: var(--v2-success); }
+.v3-ico { stroke-width: var(--v2-icon-stroke); }
+
+/* The onboarding nudge floats above the composer, so it is the one thing here that casts. */
+.v3-nudge {
+  position: absolute; bottom: calc(100% + var(--v2-space-05)); left: var(--v2-space-4); z-index: var(--v2-z-raised);
+  display: inline-flex; align-items: center; gap: var(--v2-space-2); padding: var(--v2-space-15) var(--v2-space-3);
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-pill);
+  box-shadow: var(--v2-shadow-1); white-space: nowrap;
+  color: var(--v2-ink-2); font-size: var(--v2-text-12); font-weight: var(--v2-weight-medium);
+}
+.v3-nudge-dot {
+  width: var(--v2-space-15); height: var(--v2-space-15); border-radius: var(--v2-radius-round); background: var(--v2-blue);
+  animation: ba-v3-pulse var(--v2-dur-pulse) var(--v2-ease-standard) infinite;
+}
+
+/* ---- Home: greeting, category rows, prompt rows ---------------------------------------------- */
+.v3-intro { display: flex; flex-direction: column; gap: var(--v2-space-15); padding: var(--v2-space-5) 0 var(--v2-space-4); }
+.v3-intro--onboarding { padding: var(--v2-space-8) 0 var(--v2-space-2); }
+.v3-intro-title {
+  margin: 0; color: var(--v2-ink); font-size: var(--v2-text-24); font-weight: var(--v2-weight-semibold);
+  line-height: var(--v2-leading-tight); letter-spacing: var(--v2-tracking-title); text-wrap: balance;
+}
+.v3-intro-sub { margin: 0; color: var(--v2-ink-3); font-size: var(--v2-text-14); line-height: var(--v2-leading-body); text-wrap: pretty; }
+.v3-intro--onboarding .v3-intro-sub { font-size: var(--v2-text-16); }
+
+.v3-rows { display: flex; flex-direction: column; gap: var(--v2-space-2); }
+.v3-row {
+  display: flex; align-items: center; gap: var(--v2-space-3); width: 100%; padding: var(--v2-space-3);
+  background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-md);
+  color: var(--v2-ink); font: inherit; text-align: left; cursor: pointer;
+  transition: background var(--v2-dur-1) var(--v2-ease-standard), border-color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v3-row:hover { background: var(--v2-surface-panel); border-color: var(--v2-line-hover); }
+.v3-row:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+.v3-row--prompt { justify-content: space-between; padding: var(--v2-space-3) var(--v2-space-4); font-size: var(--v2-text-14); line-height: var(--v2-leading-snug); }
+.v3-row--prompt > span { text-wrap: pretty; }
+.v3-row-tile {
+  flex: none; display: grid; place-items: center; width: var(--v2-control-md); height: var(--v2-control-md);
+  border-radius: var(--v2-radius-sm); background: var(--v2-surface-sunken); color: var(--v2-ink-2);
+}
+.v3-row-tile--lg { width: var(--v2-mark-lg); height: var(--v2-mark-lg); }
+.v3-row-main { flex: 1; min-width: 0; }
+.v3-row-title { display: block; margin: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold); line-height: var(--v2-leading-tight); letter-spacing: var(--v2-tracking-label); }
+.v3-row-desc { display: block; margin: var(--v2-space-05) 0 0; color: var(--v2-ink-3); font-size: var(--v2-text-12); line-height: var(--v2-leading-snug); }
+.v3-row-end { display: flex; align-items: center; gap: var(--v2-space-1); flex: none; color: var(--v2-ink-4); font-size: var(--v2-text-12); }
+.v3-cat-head { display: flex; align-items: center; gap: var(--v2-space-3); margin: var(--v2-space-3) 0 var(--v2-space-4); }
+.v3-cat-title {
+  margin: 0; color: var(--v2-ink); font-size: var(--v2-text-20); font-weight: var(--v2-weight-semibold);
+  line-height: var(--v2-leading-tight); letter-spacing: var(--v2-tracking-title);
+}
+
+/* Quiet button (the ladder's third step): no fill, muted, ink and a wash on hover. */
+.v3-quiet {
+  display: inline-flex; align-items: center; gap: var(--v2-space-1); height: var(--v2-control-sm); padding: 0 var(--v2-space-2);
+  border: 0; border-radius: var(--v2-radius-sm); background: none; cursor: pointer; white-space: nowrap;
+  color: var(--v2-ink-3); font: inherit; font-size: var(--v2-text-13); font-weight: var(--v2-weight-medium);
+  transition: background var(--v2-dur-1) var(--v2-ease-standard), color var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v3-quiet:hover { background: var(--v2-wash-hover); color: var(--v2-ink); }
+.v3-quiet:focus-visible { outline: var(--v2-focus-outline); outline-offset: var(--v2-focus-offset); }
+.v3-quiet--back { margin-left: calc(-1 * var(--v2-space-2)); }
+/* Link-flavoured: the site's link hover, text and underline turn blue. */
+.v3-quiet--link { display: flex; margin: var(--v2-space-4) auto var(--v2-space-1); }
+.v3-quiet--link:hover { background: none; color: var(--v2-blue-ink); }
+.v3-quiet--link:hover span { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---- Chat history ------------------------------------------------------------------------------ */
+.v3-hist { flex: 1; overflow-y: auto; display: flex; flex-direction: column; background: var(--v2-canvas); }
+.v3-screen-title {
+  margin: 0; padding: var(--v2-space-4) var(--v2-space-4) var(--v2-space-3);
+  color: var(--v2-ink); font-size: var(--v2-text-24); font-weight: var(--v2-weight-semibold);
+  line-height: var(--v2-leading-tight); letter-spacing: var(--v2-tracking-title);
+}
+.v3-hist-list { display: flex; flex-direction: column; gap: var(--v2-space-2); padding: 0 var(--v2-space-4) var(--v2-space-5); }
+.v3-hist-item { background: var(--v2-surface); border: var(--v2-stroke) solid var(--v2-line); border-radius: var(--v2-radius-lg); overflow: hidden; }
+.v3-hist-head {
+  display: flex; align-items: center; gap: var(--v2-space-3); width: 100%; padding: var(--v2-space-3) var(--v2-space-4);
+  background: none; border: 0; font: inherit; text-align: left; cursor: pointer;
+  transition: background var(--v2-dur-1) var(--v2-ease-standard);
+}
+.v3-hist-head:hover { background: var(--v2-surface-panel); }
+.v3-hist-head:focus-visible { outline: var(--v2-focus-outline); outline-offset: calc(-1 * var(--v2-focus-offset)); }
+.v3-hist-title {
+  margin: 0; color: var(--v2-ink); font-size: var(--v2-text-14); font-weight: var(--v2-weight-semibold);
+  line-height: var(--v2-leading-snug); letter-spacing: var(--v2-tracking-label);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.v3-hist-meta { margin: var(--v2-space-05) 0 0; color: var(--v2-ink-4); font-size: var(--v2-text-12); }
+.v3-hist-chev { flex: none; color: var(--v2-ink-4); transition: transform var(--v2-dur-2) var(--v2-ease-out); }
+.v3-hist-head[aria-expanded="true"] .v3-hist-chev { transform: rotate(180deg); }
+.v3-hist-body {
+  max-height: 360px; overflow-y: auto; scrollbar-width: thin;
+  padding: var(--v2-space-4) var(--v2-space-4) var(--v2-space-2); border-top: var(--v2-stroke) solid var(--v2-line-hair);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v3-working-dots span, .v3-nudge-dot { animation: none; }
+}

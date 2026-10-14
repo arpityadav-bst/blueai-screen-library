@@ -1,4 +1,4 @@
-// BlueAI: Chat History (in-app screen; accordion of past sessions).
+// BlueAI: Chat History (in-app screen; accordion of past sessions). V3 styles live in chat.css.
 // Matches the live product: the app header + bottom nav stay, there is NO overlay,
 // NO close "X", and NO composer, the screen replaces the whole chat area.
 // Each row is an accordion: tap to expand the FULL past conversation inline. The
@@ -72,13 +72,15 @@
     return msgs;
   }
 
+  // Same bubble language as the live chat (chat.css): the user's message on the sunken surface,
+  // the agent's on the white surface with a 1px line.
   function HistMsg({ m }) {
     const isUser = m.r === 'user';
     return (
-      <div style={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start', marginBottom: 10 }}>
-        <div style={{ maxWidth: 280, background: isUser ? 'linear-gradient(135deg,#5158ee,#7b4cff)' : '#f1f5f9', border: isUser ? 'none' : '1px solid #e8edf3', borderRadius: 16, padding: '10px 13px 8px' }}>
-          <p style={{ fontSize: 13.5, lineHeight: 1.45, color: isUser ? 'white' : '#475569', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{m.c}</p>
-          <p style={{ fontSize: 10.5, color: isUser ? 'rgba(255,255,255,0.75)' : '#94a3b8', marginTop: 5 }}>{m.t}</p>
+      <div className={'v3-msg' + (isUser ? ' v3-msg--user' : '')}>
+        <div className={'v3-bubble' + (isUser ? ' v3-bubble--user' : '')}>
+          <p>{m.c}</p>
+          <p className="v3-bubble-stamp">{m.t}</p>
         </div>
       </div>
     );
@@ -87,26 +89,24 @@
   function ChatHistoryScreen() {
     const [openId, setOpenId] = useState(null);
     return (
-      <div className="tab-anim" style={{ flex: 1, overflowY: 'auto', background: '#f8fafc', display: 'flex', flexDirection: 'column' }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800, color: '#111827', letterSpacing: '-0.4px', padding: '14px 16px 10px' }}>Chat History</h1>
-        <div style={{ padding: '0 16px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div className="tab-anim v3-hist">
+        <h1 className="v3-screen-title">Chat History</h1>
+        <div className="v3-hist-list">
           {HISTORY_ITEMS.map((it) => {
             const isOpen = openId === it.id;
             return (
-              <div key={it.id} style={{ background: 'white', border: '1px solid #e8edf3', borderRadius: 14, boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
-                <button onClick={() => setOpenId(isOpen ? null : it.id)}
-                  style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', padding: '14px 15px' }}>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 15, fontWeight: 600, color: '#1e293b', lineHeight: 1.3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.title}</p>
-                    <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 4 }}>{it.n} messages · {it.when}</p>
-                  </div>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
-                    style={{ flexShrink: 0, transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }}>
+              <div key={it.id} className="v3-hist-item">
+                <button className="v3-hist-head" aria-expanded={isOpen} onClick={() => setOpenId(isOpen ? null : it.id)}>
+                  <span style={{ flex: 1, minWidth: 0 }}>
+                    <span className="v3-hist-title" style={{ display: 'block' }}>{it.title}</span>
+                    <span className="v3-hist-meta" style={{ display: 'block' }}>{it.n} messages · {it.when}</span>
+                  </span>
+                  <svg className="v3-hist-chev v3-ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <polyline points="6 9 12 15 18 9" />
                   </svg>
                 </button>
                 {isOpen &&
-                  <div className="ba-msg-in" style={{ borderTop: '1px solid #eef2f6', padding: '14px 15px 10px', maxHeight: 360, overflowY: 'auto', scrollbarWidth: 'thin' }}>
+                  <div className="ba-msg-in v3-hist-body">
                     {buildConvo(it).map((m, i) => <HistMsg key={i} m={m} />)}
                   </div>}
               </div>

@@ -2,26 +2,26 @@
    Split out of chat_product.jsx (2026-08-10), which was 648 lines against the workspace's
    300-line rule. Ported verbatim from "ChatView Feedback.html"; PM's config (placement
    "below", icons only, success only) is chosen by the CALLER, not here.
+
+   V3 (phase 3): every bubble now sits on the white surface, so the control no longer needs a
+   per-tone palette. One look for every placement (chat.css): quiet icon buttons, the site's pills
+   for the reasons, and the select blue for whatever is chosen.
    Exposes window.ChatFeedback. */
 (function () {
   const { useState, useRef, useEffect } = React;
 
   /* ───────── Icons ───────── */
-  function ThumbIcon({ dir, size = 16, color = 'currentColor', filled = false }) {
+  function ThumbIcon({ dir, size = 16, filled = false }) {
     const up = "M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3";
     const down = "M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zM17 2h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3";
     return (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? color : 'none'} stroke={color}
-        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }}>
+      <svg className="v3-ico" width={size} height={size} viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor"
+        strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }} aria-hidden="true">
         <path d={dir === 'up' ? up : down} />
       </svg>);
   }
 
   /* ───────── Feedback control ───────── */
-  const FB_TONES = {
-    success: { divider: 'rgba(22,101,52,0.16)', label: '#3f9b63', idleIn: '#5cab7c', selIn: '#1f7a36' },
-    fail:    { divider: 'rgba(190,18,60,0.14)', label: '#d4838f', idleIn: '#d4838f', selIn: '#b35560' }
-  };
   const FB_REASONS = ["Didn't complete the task", "Wrong result", "Took too long", "Didn't understand me", "Other"];
 
   function revealInScroller(el, pad = 12) {
@@ -46,8 +46,7 @@
     setTimeout(() => { if (Math.abs(p.scrollTop - to) > 2) p.scrollTop = to; }, dur + 80);
   }
 
-  function ReasonChips({ variant, reason, onPick, onOtherSubmit, labelColor }) {
-    const insideV = variant === 'inside';
+  function ReasonChips({ reason, onPick, onOtherSubmit }) {
     const [otherText, setOtherText] = useState('');
     const [submitted, setSubmitted] = useState(false);
     const isOther = reason === 'Other';
@@ -68,53 +67,47 @@
     };
 
     return (
-      <div ref={rootRef} className="ba-chips-in" style={{ marginTop: insideV ? 8 : 9 }}>
-        <p style={{ fontSize: 11.5, fontWeight: 600, color: labelColor, marginBottom: 6 }}>What went wrong?</p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+      <div ref={rootRef} className="ba-chips-in" style={{ marginTop: 'var(--v2-space-2)' }}>
+        <p className="v3-fb-label" style={{ color: 'var(--v2-ink-3)', marginBottom: 'var(--v2-space-15)' }}>What went wrong?</p>
+        <div className="v3-pills">
           {FB_REASONS.map((r) => {
             const sel = reason === r;
-            const base = sel
-              ? { background: '#334155', border: '1px solid #334155', color: 'white' }
-              : insideV
-                ? { background: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.6)', color: '#374151' }
-                : { background: 'white', border: '1px solid #e2e8f0', color: '#475569', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' };
             return (
               <button key={r} onClick={() => { if (r === 'Other' || !sel) { setSubmitted(false); } onPick(sel ? null : r); }}
-                className={'ba-chip ' + (insideV ? 'ba-chip--inside' : 'ba-chip--below') + (sel ? ' ba-chip--sel' : '')}
-                style={{ ...base, borderRadius: 999, padding: '6px 11px', fontSize: 12, fontWeight: 500, cursor: 'pointer', lineHeight: 1 }}>
+                className={'v3-pill' + (sel ? ' is-selected' : '')} aria-pressed={sel}>
                 {r}
               </button>);
           })}
         </div>
         {isOther &&
-          <div className="ba-chips-in" style={{ display: 'flex', alignItems: 'flex-end', gap: 6, marginTop: 7 }}>
-            <textarea value={otherText} autoFocus rows={1}
+          <div className="ba-chips-in" style={{ display: 'flex', alignItems: 'flex-end', gap: 'var(--v2-space-15)', marginTop: 'var(--v2-space-2)' }}>
+            <textarea className="ba-field v3-fb-field" value={otherText} autoFocus rows={1}
               placeholder="Provide additional feedback"
               disabled={submitted}
               onChange={(e) => {
                 setOtherText(e.target.value); setSubmitted(false);
-                const el = e.target; const maxH = 48;
+                const el = e.target; const maxH = 64;
                 el.style.height = 'auto';
                 el.style.height = Math.min(el.scrollHeight, maxH) + 'px';
                 el.style.overflowY = el.scrollHeight > maxH ? 'auto' : 'hidden';
               }}
-              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); } }}
-              style={{ flex: 1, minWidth: 0, fontSize: 12, lineHeight: '17px', color: '#1f2937', background: insideV ? 'rgba(255,255,255,0.75)' : 'white', border: '1px solid ' + (insideV ? 'rgba(255,255,255,0.75)' : '#e2e8f0'), borderRadius: 10, padding: '7px 10px', outline: 'none', opacity: submitted ? 0.65 : 1, resize: 'none', overflowY: 'hidden', height: 31, scrollbarWidth: 'thin' }} />
+              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); } }} />
+            {/* Submit is this row's one committing action: the solid ink button. Sent = the green
+                tick, green meaning "reached". */}
             <button onClick={submit} disabled={submitted} aria-label="Submit feedback"
-              style={{ width: 30, height: 30, borderRadius: '50%', border: 'none', background: submitted ? '#16a34a' : '#334155', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: submitted ? 'default' : 'pointer', flexShrink: 0, transition: 'background 0.15s ease' }}>
+              className={'v3-btn-solid v3-send' + (submitted ? ' v3-send--sent' : '')} style={{ height: 'var(--v2-control-md)', width: 'var(--v2-control-md)' }}>
               {submitted
-                ? <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-                : <svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z" /></svg>}
+                ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
+                : <svg className="v3-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5" /><polyline points="5 12 12 5 19 12" /></svg>}
             </button>
           </div>}
       </div>);
   }
 
-  function FeedbackThumbs({ tone, placement, withLabel, vote, onVote, reason, onReason }) {
+  function FeedbackThumbs({ placement, withLabel, vote, onVote, reason, onReason }) {
     const [thanks, setThanks] = useState(false);
     const [chipsHidden, setChipsHidden] = useState(false);
     const tRef = useRef(null);
-    const T = FB_TONES[tone] || FB_TONES.success;
 
     const cast = (dir) => {
       const next = vote === dir ? null : dir;
@@ -140,63 +133,38 @@
     const showChips = vote === 'down' && !chipsHidden;
     useEffect(() => () => { if (tRef.current) clearTimeout(tRef.current); }, []);
 
-    const inside = placement === 'inside';
-
-    if (placement === 'stamp') {
-      const sBtn = (dir) => {
-        const selected = vote === dir;
-        return (
-          <button key={dir} onClick={() => cast(dir)} aria-label={dir === 'up' ? 'Good result' : 'Bad result'}
-            className={'ba-fb-btn ba-fb-btn--inside' + (selected ? ' ba-fb-btn--sel' : '')}
-            style={{ width: 26, height: 26, borderRadius: '50%', border: 'none', background: selected ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0, flexShrink: 0, opacity: vote && !selected ? 0.55 : 1 }}>
-            <ThumbIcon dir={dir} size={13} color={selected ? T.selIn : T.idleIn} filled={selected} />
-          </button>);
-      };
-      return (
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginTop: 8, minHeight: 26 }}>
-            <span className={thanks ? 'ba-thanks-in' : undefined} style={{ fontSize: 11.5, fontWeight: 600, color: T.label }}>
-              {thanks ? 'Thanks for the feedback' : (vote ? '' : (withLabel ? 'Did I get this right?' : ''))}
-            </span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>{sBtn('up')}{sBtn('down')}</div>
-          </div>
-          {showChips && <ReasonChips variant="inside" reason={reason} onPick={pickReason} onOtherSubmit={otherSubmitted} labelColor={T.label} />}
-        </div>);
-    }
-
     const btn = (dir) => {
       const selected = vote === dir;
-      const base = inside
-        ? { width: 30, height: 30, borderRadius: '50%', border: 'none', background: selected ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.55)' }
-        : { width: 32, height: 32, borderRadius: '50%', border: '1px solid ' + (selected ? '#94a3b8' : '#e2e8f0'), background: selected ? '#e2e8f0' : 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' };
-      const icoColor = selected ? (inside ? T.selIn : '#334155') : (inside ? T.idleIn : '#64748b');
       return (
-        <button key={dir} onClick={() => cast(dir)} aria-label={dir === 'up' ? 'Good result' : 'Bad result'}
-          className={'ba-fb-btn ' + (inside ? 'ba-fb-btn--inside' : 'ba-fb-btn--below') + (selected ? ' ba-fb-btn--sel' : '')}
-          style={{ ...base, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0, flexShrink: 0, opacity: vote && !selected ? 0.55 : 1 }}>
-          <ThumbIcon dir={dir} size={15} color={icoColor} filled={selected} />
+        <button key={dir} onClick={() => cast(dir)} aria-label={dir === 'up' ? 'Good result' : 'Bad result'} aria-pressed={selected}
+          className={'v3-fb-btn' + (selected ? ' is-selected' : '') + (vote && !selected ? ' is-dim' : '')}>
+          <ThumbIcon dir={dir} size={16} filled={selected} />
         </button>);
     };
-
     const labelText = thanks ? 'Thanks for the feedback' : (vote ? '' : (withLabel ? 'Did I get this right?' : ''));
+    const label = <span className={'v3-fb-label' + (thanks ? ' ba-thanks-in' : '')}>{labelText}</span>;
+    const chips = showChips && <ReasonChips reason={reason} onPick={pickReason} onOtherSubmit={otherSubmitted} />;
 
-    if (inside) {
+    // Inside the bubble (stamp / inside): label left, thumbs right, under a hairline.
+    if (placement === 'stamp' || placement === 'inside') {
       return (
-        <div style={{ marginTop: 10, paddingTop: 9, borderTop: '1px solid ' + T.divider }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, minHeight: 30 }}>
-            <span className={thanks ? 'ba-thanks-in' : undefined} style={{ fontSize: 12, fontWeight: 600, color: T.label }}>{labelText}</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>{btn('up')}{btn('down')}</div>
+        <div style={placement === 'inside'
+          ? { marginTop: 'var(--v2-space-3)', paddingTop: 'var(--v2-space-2)', borderTop: 'var(--v2-stroke) solid var(--v2-line-hair)' }
+          : { marginTop: 'var(--v2-space-2)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--v2-space-3)', minHeight: 'var(--v2-control-sm)' }}>
+            {label}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--v2-space-1)' }}>{btn('up')}{btn('down')}</div>
           </div>
-          {showChips && <ReasonChips variant="inside" reason={reason} onPick={pickReason} onOtherSubmit={otherSubmitted} labelColor={T.label} />}
+          {chips}
         </div>);
     }
     return (
-      <div style={{ marginTop: 7, marginLeft: 2 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ marginTop: 'var(--v2-space-1)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--v2-space-1)' }}>
           {btn('up')}{btn('down')}
-          <span className={thanks ? 'ba-thanks-in' : undefined} style={{ fontSize: 12, fontWeight: 600, color: '#94a3b8' }}>{labelText}</span>
+          <span style={{ marginLeft: 'var(--v2-space-1)' }}>{label}</span>
         </div>
-        {showChips && <ReasonChips variant="below" reason={reason} onPick={pickReason} onOtherSubmit={otherSubmitted} labelColor="#94a3b8" />}
+        {chips}
       </div>);
   }
 

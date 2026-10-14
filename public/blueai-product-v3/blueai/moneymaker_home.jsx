@@ -70,7 +70,7 @@
   const PROMPT = 'Run the BlueAI worker to find and complete my first paid job.';
 
   /* Renders in ChatScreen's !started home slot in place of ProductHome, when sessionMode is
-     'moneymaker'. The greeting above it is IntroCard (chat_compare.jsx) with its title/sub
+     'moneymaker'. The greeting above it is IntroCard (product_home.jsx) with its title/sub
      overridden by the caller, this component is the card plus a one-time coach spotlight.
 
      Card anatomy is skills.jsx's row (tile · name+description · compact action pill), because the
