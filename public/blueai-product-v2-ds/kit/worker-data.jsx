@@ -24,7 +24,7 @@
    The program's words built from numbers() (endedCopy, minimumCopy, RUN_COPY) are in kit/program.jsx. */
 (function () {
   // V2 RULE verbatim (worker_day_done.jsx:38) plus the $10 cash-out minimum (its rule note, :6, and
-  // the site's dashboard, onblue/apply.html:2292). Money terms wait on decision D3; the UI shows days.
+  // the site's dashboard, onblue/apply.html:1371, 2317). Money terms wait on decision D3; the UI shows days.
   const WORKER_RULE = { rate: 1, target: 20, bonus: 10, programEnd: 'Nov 1', cashOutMin: 10 };
   // The deadline every 'by 9 pm' line states: an ask, a retry, a late start (24-hour clock).
   const DAY_DEADLINE_HOUR = 21;
@@ -103,10 +103,10 @@
       blocked: null,
       online: true,
       credits: { left: 1640, grant: 2000, refillAt: REFILL_AT, runCost: 360 },
-      // The site's answer to "can this partner cash out": its balance (which carries over between
-      // periods, onblue/apply.html:2269-2295) is at least $10 and the period has ended. true | false,
-      // or null until the site sends it, so no fixture sets it. The app never works it out from its
-      // own day count (the site pays by its own rule, D3): every cash-out line reads this one field.
+      // The site's answer to "is the balance at least $10 right now" (its one cash-out rule, "Payment
+      // minimum: $10", onblue/apply.html:1371, 2317; no tie to the program's end since 2026-10-14).
+      // true | false, or null until the site sends it, so no fixture sets it. The app never works it
+      // out from its own day count (the site pays by its own rule, D3): every cash-out line reads it.
       cashOutOpen: null,
       today: today(),
       ledger: days(6, 'verified'),
@@ -165,7 +165,7 @@
        toGo, reachable, outOfReach (slots no longer reachable), complete (all verified)
        latestRejected: the most recent row is rejected (its slot shows red until the next run fills it)
        segments: target entries, verified | pending | rejected | missed | future
-       cashOutMin (WORKER_RULE), cashOutOpen: the record's answer from the site (true | false | null) */
+       cashOutMin (WORKER_RULE), cashOutOpen: the site's answer to "balance at least $10 now" (true | false | null) */
   function numbers(w) {
     const rec = w || workerFixtures.verified;
     const target = (rec.program && rec.program.target) || WORKER_RULE.target;

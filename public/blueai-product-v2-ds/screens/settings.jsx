@@ -47,14 +47,14 @@
   // Proposed copy, one owner per confirm (section 52). Each body says what changes, what is kept
   // and, where there is one, the way back. A disconnect is the partner's choice, so it is not
   // called a pause: the runs simply cannot start without the account (section 63).
-  // Cash out after leaving follows the site's cashOutOpen (section 41): open; under the $10 minimum it
-  // cannot be cashed out once the partner leaves (PM and legal to confirm, D3); null (every fixture
-  // today): the fixed rule, the minimum and when cash out opens, never a claim about the balance.
-  function cashLine(endsOn, n) {
+  // Cash out after leaving follows the site's cashOutOpen (section 41, balance at least $10): open;
+  // under the $10 minimum it cannot be cashed out once the partner leaves (PM and legal to confirm,
+  // D3); null (every fixture today): the $10 rule only, never a claim about the balance.
+  function cashLine(n) {
     const min = '$' + ((n && n.cashOutMin) || 10);
     if (n && n.cashOutOpen === false) return 'Your verified days stay on Earnings, but a balance under ' + min + ' can’t be cashed out once you leave.';
     if (n && n.cashOutOpen === true) return 'Verified days stay on Earnings, and cash out is open there.';
-    return 'You need ' + min + ' to cash out once the program ends on ' + (endsOn || 'its last day') + '. Check your balance on Earnings before you leave.';
+    return 'You need ' + min + ' to cash out. Check your balance on Earnings before you leave.';
   }
   const CONFIRM_COPY = {
     signOut: function (email) {
@@ -67,11 +67,11 @@
     },
     leave: function (handle, endsOn, n) {
       return { title: 'Leave the program?', confirm: 'Leave the program', failed: 'Couldn’t leave the program',
-        body: 'Your worker stops for good and BlueAI disconnects ' + handle + '. ' + cashLine(endsOn, n) + ' To come back, apply again on the site.' };
+        body: 'Your worker stops for good and BlueAI disconnects ' + handle + '. ' + cashLine(n) + ' To come back, apply again on the site.' };
     },
     deleteData: function (n) {
       return { title: 'Delete your data?', confirm: 'Delete my data', failed: 'Couldn’t delete your data',
-        body: 'BlueAI deletes your run history, interest profile and agreement records, disconnects your accounts and takes you out of the program. ' + cashLine(n && n.endsOn, n) + ' This can’t be undone.' };
+        body: 'BlueAI deletes your run history, interest profile and agreement records, disconnects your accounts and takes you out of the program. ' + cashLine(n) + ' This can’t be undone.' };
     },
   };
 

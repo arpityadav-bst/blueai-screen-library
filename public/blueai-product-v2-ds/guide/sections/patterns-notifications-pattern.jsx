@@ -25,8 +25,8 @@
     ['Day verified', 'Yesterday’s run is verified.', 'never', 'no (inbox only)', 'no', 'inbox only', null],
     ['Day not counted', 'Oct 12 wasn’t counted. See why.', 'never', 'yes', 'no', 'always on', null],
     ['Program ending', '3 days left in this program.', 'the program’s end', 'yes', 'no', 'always on', null],
-    ['Cash out open (only when numbers().cashOutOpen is true, after the period)', 'Cash out is open on Earnings.', 'never', 'yes', 'no', 'always on', null],
-    ['Cash out, under $10', 'This program has ended. You need $10 to cash out. Your balance carries over to the next period.', 'never', 'no (inbox only)', 'no', 'inbox only', null],
+    ['Cash out open (when the balance reaches $10: numbers().cashOutOpen turns true)', 'Cash out is open on Earnings.', 'never', 'yes', 'no', 'always on', null],
+    ['Cash out, under $10 (the program has ended)', 'This program has ended. You need $10 to cash out.', 'never', 'no (inbox only)', 'no', 'inbox only', null],
     ['Terms updated', 'We’ve updated the Program Terms.', 'never (the sheet asks on next open)', 'no', 'no', 'inbox only', null],
   ];
 

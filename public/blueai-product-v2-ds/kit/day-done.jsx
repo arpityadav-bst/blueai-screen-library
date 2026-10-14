@@ -13,14 +13,14 @@
    reached), and so does the confetti: blue and neutral only, once, never under reduced motion.
    The title and sub are the PM's DRAFT strings, quoted (worker_day_done.jsx:93); the sub's
    'every day for this month' goes to the PM as a proposal ('That's all 20 days.', section 73).
-   One proposed next-step line: cash out after the period, with the $10 minimum, the one amount
-   that holds under both options of decision D3 (section 01). */
+   One proposed next-step line: cash out on Earnings from $10, the site's one cash-out rule and the
+   one amount that holds under both options of decision D3 (section 01). */
 (function () {
   const K = () => window.V2Kit || {};
 
   const COPY = { title: 'Day 20 done.', sub: 'That’s every day for this month.' };
   // Proposed: what comes after the last day, so the moment does not end on 'every day'.
-  const NEXT = function (endsOn) { return 'Cash out on Earnings after ' + endsOn + ', once your days are verified ($10 minimum).'; };
+  const NEXT = function (min) { return 'Cash out on Earnings from $' + min + '.'; };
   const PENDING = 'Pending verification';
   const VERIFY_NOTE = 'We check every run within a day. The tick doubles once it’s verified.';
 
@@ -53,7 +53,7 @@
         <span className="v2-daydone-badge" aria-hidden="true">{T ? <T status="pending" size={28} /> : null}</span>
         <h2 className="v2-daydone-title v2-text-title-dialog" id={titleId}>{COPY.title}</h2>
         <p className="v2-daydone-sub v2-text-body-sm">{COPY.sub}</p>
-        <p className="v2-daydone-sub v2-text-body-sm">{NEXT(n.endsOn)}</p>
+        <p className="v2-daydone-sub v2-text-body-sm">{NEXT(n.cashOutMin)}</p>
         <div className="v2-daydone-progress">
           {Bar ? <Bar days={n.segments} target={n.target} legend={false} /> : null}
           <div className="v2-daydone-count">

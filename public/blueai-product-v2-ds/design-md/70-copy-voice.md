@@ -15,13 +15,13 @@
   - job, paid job: one paid unit of work; never task (for paid work), campaign (the site should align: "completes campaigns and tasks", `onblue/apply.html:1849`), gig, opportunity.
   - run, today's run: the daily session; never routine, session, scheduled task.
   - day, your 20 days: the program unit; never program days, qualifying day.
-  - program, period, your 20 days: the program is what the partner joins and what ends on a date ("This program ended on Nov 1"); the period is the program's dates, used with cash out ("after the period"); "your 20 days" is the count; never say the 20 days end.
+  - program, period, your 20 days: the program is what the partner joins and what ends on a date ("This program ended on Nov 1"); the period is the program's dates; cash out is never tied to it; "your 20 days" is the count; never say the 20 days end.
   - pending verification, verified: one tick, two ticks; never confirmed, approved, validated.
   - Always ask, Automatic: the mode per app (the PM's names); never Mode (as a label), auto mode, autopilot, Just this job (as a mode).
   - Sign in, Sign out: account entry and exit; never Log in, Login, Logout, Log out (the site should align), logging in.
   - AI credits: the daily allowance, sentence case; never tokens, coins, free credits, claim, earn (for credits), balance (say "left today").
   - Earnings: money, opened on the site's dashboard; never income, rewards (the site should align: "Reward" on the program card and its sheet, "its own reward", "its reward is added to your earnings", `onblue/apply.html:1280, 1470, 1434, 1436`), wallet, BCX, a ↗ character (use the external icon).
-  - cash out, Cash out: taking earnings out, which happens on the site's dashboard, from $10 with no period lock since 2026-10-14 (section 01); the app only points there and says the minimum with it. Never withdraw (the site should align: its sheet says "Withdraw", `onblue/apply.html:1445, 1532, 1541`), claim, redeem.
+  - cash out, Cash out: taking earnings out, which happens on the site's dashboard, any time the balance is at least $10 (section 01); the app only points there and says the minimum with it. Never withdraw (the site should align: its sheet says "Withdraw", `onblue/apply.html:1445, 1532, 1541`), claim, redeem.
   - Program Terms: the agreement; never Terms of Use (unless that document changed), Terms & Conditions.
   - connected account, Disconnect: the accounts BlueAI uses; never Unlink, ID, enrolled or Not enrolled (say "in the program").
   - Try again: the system retry; never Retry. The PM's failed-day ask says 'Retry'; the screens use the RunCard's and WorkerCard's 'Try again' instead, a proposal in section 73, and the AskCard specimen (section 37) keeps 'Retry' as the V2 reference.

@@ -52,8 +52,8 @@
     ["`blocked`", "alert, danger", "'Today’s run can’t start' / the reason and 'Fix it by 9 pm.'", "`home` (the card's one fix). At 9 pm it turns into its result, as missed does."],
     ["`nocredits`", "credits, attention", "'Out of AI credits for today’s run' / 'They refresh at 5:30 am, so today won’t count.'", "`credits`."],
     ["`ending`", "calendar, neutral", "'3 days left in this program' / '17 of 20 days done. It ends Nov 1.'", "`activity`."],
-    ["`cashout`", "earnings, success", "'Cash out is open' / 'Your 20 days ended on Nov 1. Cash out on Earnings.'", "`earnings` (external: `EARNINGS_URL`, opens the site in the browser, the row carries the external glyph)."],
-    ["`ended`", "calendar, neutral", "'This program has ended' / 'You need $10 to cash out. Your balance carries over to the next period.' (the site's words, `onblue/apply.html:2292-2293`)", "`earnings` (external)."],
+    ["`cashout`", "earnings, success", "'Cash out is open' / 'Your balance is $10 or more. Cash out on Earnings.'", "`earnings` (external: `EARNINGS_URL`, opens the site in the browser, the row carries the external glyph)."],
+    ["`ended`", "calendar, neutral", "'This program has ended' / 'You need $10 to cash out.' (the site's words, `onblue/apply.html:2317`)", "`earnings` (external)."],
     ["`terms`", "info, neutral", "'Terms of Use and Privacy Policy updated' / 'Review them and accept the updated terms to keep your worker running.' (names from the row's docs, the same data the TermsSheet shows)", "`terms` (the TermsSheet, `update` mode, section 53)."],
   ];
   function ticks(s) { return s.split('`').map(function (t, i) { return i % 2 ? <code key={i} className="g-code">{t}</code> : t; }); }

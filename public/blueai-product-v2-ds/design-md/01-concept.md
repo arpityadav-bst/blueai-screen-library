@@ -38,10 +38,10 @@ The system reads these from one Worker record (section 41), never from a second 
 |---|---|---|
 | Program | 20 days, ends Nov 1, $1 per verified day, $10 day-20 bonus | `worker_day_done.jsx:38` |
 | Money rule note | $1 credited at the end of each successful day (under review) | `worker_day_done.jsx:5` |
-| Cash out | From $10, with no period lock since 2026-10-14: the site's one rule is "Payment minimum: $10"; under it, Cash out is disabled with "You need $10 to cash out." | `onblue/apply.html:1371, 2317` |
+| Cash out | Any time the balance is at least $10, not tied to the program's end: the site's one rule is "Payment minimum: $10"; under it, Cash out is disabled with "You need $10 to cash out." | `onblue/apply.html:1371, 2317` |
 | The site's program | At least 20 days each month to earn $30 | `onblue/apply.html:1285` |
 | AI credits | 2,000 granted every day | `index.html:730` |
 | Modes | Always ask and Automatic, per app | `blueai/worker_flow.jsx:78` |
 | Ticks | Pending verification, then verified | `blueai/worker_day_done.jsx:97` |
 
-The money model is decision D3: the app's $1 a day plus a $10 bonus, or the site's $30 for 20 days. Until the PM picks one, the system shows days, not dollars (section 73). The $10 cash-out minimum holds under both, so it is stated wherever cash out is: a line that says cash out is open is shown only when the site says this partner can cash out (`cashOutOpen` true, section 41); its under-the-minimum answer (false) gets the site's own words, and while it has not answered (null) the line only says where to look: 'See your balance and cash out on Earnings.'
+The money model is decision D3: the app's $1 a day plus a $10 bonus, or the site's $30 for 20 days. Until the PM picks one, the system shows days, not dollars (section 73). The $10 cash-out minimum holds under both, so it is stated wherever cash out is: a line that says cash out is open is shown only when the site says the balance is at least $10 (`cashOutOpen` true, section 41); its under-the-minimum answer (false) gets the site's own words ("You need $10 to cash out."), and while it has not answered (null) the line only says where to look: 'See your balance and cash out on Earnings.'

@@ -14,7 +14,7 @@
     "  blocked:   null | { reason: 'no-app' | 'signed-out' | 'no-bluestacks', app }",
     '  online:    true | false',
     "  credits:   { left, grant: 2000, refillAt: '5:30 am', runCost }",
-    "  cashOutOpen: true | false | null            the site’s answer; null until it sends one",
+    "  cashOutOpen: true | false | null            the site’s answer: balance at least $10 now; null until it sends one",
     "  today:     { date, status: scheduled | running | waiting | done | stopped | failed | missed | none,",
     "               nextRunAt, startedAt, step, stepsDone, ask: { job, since, expires },",
     "               outcome, error, retryBy, missedAt, checkedAt, ranOn }",

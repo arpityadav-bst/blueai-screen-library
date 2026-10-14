@@ -35,8 +35,8 @@
       ['blocked-no-bluestacks', 'blocked:no-bluestacks', 'Can’t run: no BlueStacks', 'Get BlueStacks acts in place'],
     ],
     complete: [
-      ['ended', 'ended', 'Period ended', 'section 69’s state, not a card; cash out open'],
-      ['endedBelow', 'endedBelow', 'Period ended, under $10', 'section 69’s state: the minimum and the carry-over'],
+      ['ended', 'ended', 'Period ended', 'section 69’s state, not a card; $10 or more'],
+      ['endedBelow', 'endedBelow', 'Period ended, under $10', 'section 69’s state: You need $10 to cash out.'],
     ],
   };
   function homeStates(S) {

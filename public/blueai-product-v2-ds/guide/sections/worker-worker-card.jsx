@@ -34,9 +34,9 @@
     ['offline', 'offline', 'Offline', 'what happens to today'],
     ['offline', 'offline', 'Offline, reconnecting', 'busy: Try again loads in place while it reconnects (section 51)', true],
     ['complete', 'complete', 'Program complete', 'Earnings opens the site'],
-    ['ended', 'ended', 'Period ended', 'the 20 days ran out first; cash out is open'],
+    ['ended', 'ended', 'Period ended', 'the 20 days ran out first; cash out follows the $10 rule'],
     ['checking', 'checking', 'All 20 done, one checking', 'the worker stops taking jobs; runs again only if a day is not counted'],
-    ['ended', 'endedBelow', 'Period ended, under $10', 'the minimum and the carry-over'],
+    ['ended', 'endedBelow', 'Period ended, under $10', 'You need $10 to cash out.'],
     ['done', 'automatic', 'Automatic', 'the mode line names the app'],
   ];
   function fixture(F, key) {
@@ -94,7 +94,7 @@
             { part: 'Stopped', token: 'today.status stopped', value: 'You stopped today’s run. / Today doesn’t count yet. Run again by 9 pm.' },
             { part: 'Didn’t start', token: 'today.status missed, --v2-attention-ink', value: 'Your PC was off or asleep at 11 am, so today’s run didn’t start. / Run now by 9 pm to count today.' },
             { part: 'Can’t run', token: 'blockedBy(record), --v2-danger-ink', value: 'Today’s run can’t start: + reason + its fix by 9 pm; action onFix(reason): Connect YouTube, Open App Player, Get BlueStacks' },
-            { part: 'Period ended', token: 'endedCopy(n), numbers().cashOutOpen', value: 'This program ended on Nov 1. + verified days + cash out open, the $10 minimum and the carry-over, or where to look (null); Earnings. Home shows section 69’s state instead' },
+            { part: 'Period ended', token: 'endedCopy(n), numbers().cashOutOpen', value: 'This program ended on Nov 1. + verified days + cash out open ($10 or more), You need $10 to cash out. (under it), or where to look (null); Earnings. Cash out follows the $10 rule only, not the end. Home shows section 69’s state instead' },
             { part: 'Waiting, paused, credits, offline, complete', token: 'status family', value: 'Proposed copy, each with its consequence for today' },
           ]} />
           <G.DoDont

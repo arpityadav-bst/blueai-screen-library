@@ -24,8 +24,8 @@
   - Day verified: inbox only, so no switch.
   - Day not counted: "Oct 12 wasn’t counted. See why."; always on (a lost day).
   - Program ending: "3 days left in this program."; always on.
-  - Cash out open, only when the period has ended and the site says so (`cashOutOpen` true, section 41): "Cash out is open on Earnings."; always on.
-  - Cash out, under $10 (the period has ended, the minimum not reached): the inbox row says "This program has ended. You need $10 to cash out. Your balance carries over to the next period." (the last two sentences are the site's, `onblue/apply.html:2292-2293`); inbox only, no Windows notification. Never tell a partner under the minimum that cash out is open.
+  - Cash out open, when the balance reaches $10 (`cashOutOpen` turns true, section 41), not tied to the program's end: "Cash out is open on Earnings."; always on.
+  - Cash out, under $10 (the program has ended, the minimum not reached): the inbox row says "This program has ended. You need $10 to cash out." (the last sentence is the site's, `onblue/apply.html:2317`); inbox only, no Windows notification. Never tell a partner under the minimum that cash out is open.
   - Terms updated: inbox only; the terms sheet asks on the next open.
   Titles not marked V2 are proposed copy. The two switches only silence the Windows notification; every event still lands in the inbox. Events marked always on cost or pay the partner, so no switch hides them. Each event has its inbox kind, glyph, tone and target in section 60's kind table. An event that expires at 9 pm turns its inbox row into its result then (section 60).
 - **Telegram:** not a notification channel. A linked Telegram (section 63) carries the partner's commands to BlueAI; it does not carry these events, and nothing here waits on it. Whether it should carry the day-losing events (job waiting, run didn't start, run can't start) to a partner away from the PC is a product call (section 76).

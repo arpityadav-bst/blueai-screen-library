@@ -13,12 +13,13 @@
      state  offline | error | update-optional | update-required | not-in-program | complete |
             period-ended | period-under | between-programs | left-program (SYSTEM_STATES)
      screen the screen that failed to load, for error ('Home' by default).
-     Cash out follows the site's one rule (onblue/apply.html:2277-2296): it opens only when the
-     period has ended AND the balance is at least $10; under it, the balance carries over, in the
-     site's words. With a worker, period-ended follows the site's numbers().cashOutOpen (null: where to look).
-     The period-ended words are one set, V2Kit.endedCopy (section 41): the verified count, since
-     cash out depends on it, and a last day still being checked said so.
-     Home shows this state, not a card, once the period is over.
+     Cash out follows the site's one rule (onblue/apply.html:1371, 2317): any time the balance is
+     at least $10; under it, "You need $10 to cash out." It is not tied to the program's end.
+     period-ended is the program ended with the balance at $10 or more, period-under the program
+     ended with it under $10. With a worker, the site's numbers().cashOutOpen picks (null: where to look).
+     The program-ended words are one set, V2Kit.endedCopy (section 41): the verified count, since
+     the balance depends on it, and a last day still being checked said so.
+     Home shows this state, not a card, once the program is over.
      not-in-program  Switch account, and a quiet Get help (the site's FAQ) for a partner who
             believes this is the account they applied with, or has lost access to it.
      left-program  after Leave the program or Delete my data (Account, section 64): the worker
@@ -38,8 +39,8 @@
     ['update-required', 'Update required'],
     ['not-in-program', 'Not in the program'],
     ['complete', 'Program complete'],
-    ['period-ended', 'Period ended, cash out open'],
-    ['period-under', 'Period ended, under $10'],
+    ['period-ended', 'Program ended, $10 or more'],
+    ['period-under', 'Program ended, under $10'],
     ['between-programs', 'Between programs'],
     ['left-program', 'Left the program'],
   ];
@@ -143,7 +144,7 @@
           ),
         };
       case 'period-ended':
-      case 'period-under': { // under the minimum: the site's words, apply.html:2292-2293
+      case 'period-under': { // under the minimum: the site's words, apply.html:2317
         const open = state === 'period-ended';
         const base = k.numbers ? k.numbers(w || fixture(open ? 'ended' : 'endedBelow')) : { verified: open ? 18 : 6, pending: 0, target: 20, endsOn: 'Nov 1', cashOutMin: 10 };
         const cash = w ? base.cashOutOpen : open; // a worker: the site's answer; a specimen: its variant
@@ -160,7 +161,7 @@
         const n = k.numbers ? k.numbers(w || fixture('verified')) : { cashOutOpen: null, endsOn: 'Nov 1', cashOutMin: 10 };
         const cash = n.cashOutOpen === true ? 'Your verified days stay on Earnings, and cash out is open there.'
           : n.cashOutOpen === false ? 'Your balance is under $' + n.cashOutMin + ', so it can’t be cashed out.'
-            : 'You need $' + n.cashOutMin + ' to cash out once the program ends on ' + n.endsOn + '. See your balance on Earnings.';
+            : 'You need $' + n.cashOutMin + ' to cash out. See your balance on Earnings.';
         return {
           center: true,
           node: empty({
@@ -183,7 +184,7 @@
     }
   }
 
-  // Cash out is open only when the site says so (cashOutOpen); false is its under-the-minimum answer.
+  // Cash out is open only when the site says the balance is at least $10 (cashOutOpen); false is under it.
   function resolve(state, w) {
     const k = K();
     if (state !== 'period-ended' || !w || !k.numbers) return state;

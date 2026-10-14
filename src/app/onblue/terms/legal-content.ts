@@ -122,7 +122,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
       },
       {
         "t": "p",
-        "x": "Your balance can be cashed out once the current program period has ended, with a minimum of $10 per cash-out. The minimum applies to every cash-out, not only the first. A balance under $10 stays in your account and counts toward the next period's cash-out; it does not lapse."
+        "x": "Your balance can be cashed out any time it reaches $10. The minimum applies to every cash-out, not only the first. A balance under $10 stays in your account; it does not lapse."
       },
       {
         "t": "h",

@@ -12,8 +12,8 @@
      checking (all 20 done, one still being checked) and complete say the worker stops taking jobs.
      onFix(reason) is the blocked state's one fixing action ('no-app' Connect YouTube, 'signed-out'
      Open App Player, 'no-bluestacks' Get BlueStacks). ended uses endedCopy, the words section 69's
-     period-ended state shows; Home itself shows that state, not this card, once the period is over,
-     so ended is for review and for surfaces other than Home.
+     program-ended state shows (cash out follows the $10 rule only); Home itself shows that state,
+     not this card, once the program is over, so ended is for review and for surfaces other than Home.
    CoachMark {title, onOkay, okayClassName}
      The first-run pointer under the card, a non-blocking note: nothing is dimmed or locked, so
      nothing has to be made inert. PM copy 'Run this to begin' / 'Okay' kept. Dismissal is
@@ -110,7 +110,7 @@
       case 'checking':
         return { lines: [{ text: 'All ' + n.target + ' days done.' }, { text: P.RUN_COPY.checking(n.pending), tick: 'pending', meta: true }], action: earnings, noMode: true };
       case 'complete':
-        return { lines: [{ text: 'All ' + n.target + ' days verified.' }, { text: P.RUN_COPY.over + ' Cash out on Earnings after ' + n.endsOn + '.', meta: true }], action: earnings, noMode: true };
+        return { lines: [{ text: 'All ' + n.target + ' days verified.' }, { text: P.RUN_COPY.over + ' Cash out on Earnings.', meta: true }], action: earnings, noMode: true };
       case 'ended': {
         const e = P.endedCopy(n);
         return { lines: [{ text: e.title + '.' }, { text: e.body, meta: true }], action: earnings, noMode: true };

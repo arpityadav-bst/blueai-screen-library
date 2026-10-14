@@ -13,7 +13,7 @@
      one receipt line, Earnings (one URL). The site's progress tile with the pending state it lacks.
      receipt false (default true) drops the receipt line and keeps Earnings alone in the foot, for a
      screen where the WorkerCard already says today's status (Home). A complete program has no
-     receipt: the WorkerCard says it once ('All 20 days verified.', cash out after the end date).
+     receipt: the WorkerCard says it once ('All 20 days verified.', cash out on Earnings).
      The receipt names the real day of the last ledger row against today.date ('Yesterday’s run
      verified.', 'The Oct 10 run is still being checked.'), never a day picked from its status.
    ProgramSummary {rule, compact, title, triggerClassName, open}  the five program rules, in full or
@@ -25,8 +25,8 @@
    The program's words, from numbers() (proposed copy unless marked):
      RUN_COPY         keepOpen (while a run is on the PC), over (after the program), checking(n)
                       (all 20 done, n still being checked)
-     minimumCopy(min) the site's two cash-out minimum sentences (apply.html:2292-2293)
-     endedCopy(n)     {title, body}: the period-ended words (sections 42 and 69)
+     minimumCopy(min) the site's cash-out minimum sentence ('You need $10 to cash out.')
+     endedCopy(n)     {title, body}: the program-ended words (sections 42 and 69)
    The strip's Earnings link is V2Kit.Link {href: EARNINGS_URL, external, standalone}. */
 (function () {
   const K = () => window.V2Kit || {};
@@ -96,7 +96,7 @@
     if (n.complete) return null;
     if (retry && K().workerState(w) === 'failed') return { status: 'notcounted', text: 'Today’s job didn’t finish.', danger: true, retry: true };
     if (!last) return { status: 'notcounted', text: 'No days counted yet.' };
-    if (K().workerState(w) === 'ended') return { status: 'notcounted', text: endedCopy(n).title + '.' + (n.cashOutOpen === false ? '' : ' Cash out on Earnings.') };
+    if (K().workerState(w) === 'ended') return { status: 'notcounted', text: endedCopy(n).title + '.' + (n.cashOutOpen === false ? ' ' + minimumCopy(n.cashOutMin) : ' Cash out on Earnings.') };
     const gap = K().dayGap(last.date, (w.today || {}).date);
     const run = gap === 0 ? 'Today’s run' : gap === 1 ? 'Yesterday’s run' : 'The ' + last.date + ' run';
     if (last.status === 'rejected') return { status: 'rejected', text: run + ' wasn’t counted.', danger: true };
@@ -140,8 +140,7 @@
     );
   }
 
-  // Proposed copy built from V2's rule note (worker_day_done.jsx:5-7), except 'ticks' (the PM's) and
-  // 'minimum' (the site's). No rate or bonus until D3; the $10 cash-out minimum is in both options
+  // Proposed copy built from V2's rule note (worker_day_done.jsx:5-7), except 'ticks' (the PM's). No rate or bonus until D3; the $10 cash-out minimum is in both options
   // (section 43). The PC and the comment lines say before a day is lost what the missed card and a
   // rejected day say after.
   function rules(rule) {
@@ -150,8 +149,7 @@
       { id: 'days', icon: 'calendar', text: 'Run on ' + r.target + ' days before ' + r.programEnd + '. Keep your PC on and awake at run time, and App Player open while a job runs.' },
       { id: 'counts', icon: 'check', text: 'A day counts when a job is verified, or when there was no job to take. Keep the comment up until it’s verified.' },
       { id: 'ticks', icon: 'check-double', text: 'We check every run within a day. The tick doubles once it’s verified.' },
-      { id: 'cashout', icon: 'earnings', text: 'Cash out on Earnings after the period ends.' },
-      { id: 'minimum', icon: 'lock', text: minimumCopy(r.cashOutMin) },
+      { id: 'cashout', icon: 'earnings', text: 'Cash out on Earnings from $' + r.cashOutMin + '.' },
     ];
   }
   function programRule(id, rule) {
@@ -189,13 +187,13 @@
     },
   };
   function minimumCopy(min) {
-    return 'You need $' + (min || K().WORKER_RULE.cashOutMin) + ' to cash out. Your balance carries over to the next period.';
+    return 'You need $' + (min || K().WORKER_RULE.cashOutMin) + ' to cash out.';
   }
-  /* The period-ended words, one set (section 69; Home shows them once the period is over).
+  /* The program-ended words, one set (section 69; Home shows them once the program is over).
      n: numbers(record). The verified count, that the worker has stopped, then one cash-out sentence
-     from the site's answer: open, under the minimum in the site's words, and while cashOutOpen is
-     null (today, every period) only where to look, so the app never tells a partner cash out is
-     open, or that it is not, from its own count. */
+     from the site's $10 answer: open, under the minimum in the site's words, and while cashOutOpen
+     is null (every fixture today) only where to look, so the app never tells a partner cash out is
+     open, or that it is not, from its own count. Cash out is not tied to the program's end. */
   function endedCopy(n) {
     const checking = !n.pending ? '' : n.pending === 1 ? ' One more day is still being checked and counts once it’s verified.'
       : ' ' + n.pending + ' more days are still being checked and count once they’re verified.';

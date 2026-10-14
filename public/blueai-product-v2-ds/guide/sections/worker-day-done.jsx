@@ -62,7 +62,7 @@
             { part: 'Badge', token: '--v2-blue-tint, --v2-blue-ink', value: '56 round, one tick 28 in --v2-blue-ink inherited from the badge (a blue exception to the neutral pending tone), no ring. V2: outlined, a 2px green ring and one green tick', ref: 'worker.daydone.badge' },
             { part: 'Title', token: '--v2-text-20, --v2-weight-semibold', value: 'Today’s run is done.', ref: 'worker.copy.job' },
             { part: 'Title, no job', token: 'same', value: 'No paid job today, but your run counts.', ref: 'worker.copy.nojob' },
-            { part: 'Title, Day 20', token: 'same + two subs 13 ink-3', value: 'Day 20 done. / That’s every day for this month. / Cash out on Earnings after Nov 1, once your days are verified ($10 minimum). (the last line proposed; its period lock no longer applies, see 2026-10-14). V2 line: All 20 days done. Pending verification', ref: ['worker.copy.day20', 'worker.copy.day20-sub'] },
+            { part: 'Title, Day 20', token: 'same + two subs 13 ink-3', value: 'Day 20 done. / That’s every day for this month. / Cash out on Earnings from $10. (the last line proposed). V2 line: All 20 days done. Pending verification', ref: ['worker.copy.day20', 'worker.copy.day20-sub'] },
             { part: 'Count', token: '--v2-text-13, figure --v2-ink 600', value: "'7 of 20 days', said once, under the DayBar", ref: 'worker.daydone.pending-line' },
             { part: 'Status', token: 'StatusTick pending', value: 'one tick, Pending verification', ref: 'worker.copy.pending' },
             { part: 'Note', token: '--v2-text-13, --v2-ink-3', value: 'We check every run within a day. The tick doubles once it’s verified. (System only: V2 dropped the note on 2026-10-14.)' },

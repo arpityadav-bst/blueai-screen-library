@@ -12,7 +12,8 @@
       'The PM now builds from this system’s tokens: blueai/v2_tokens.jsx (window.V2Tokens) mirrors tokens-v2-today.css.',
       'Preview panel: the Returning, Change mode from, Card, Own key and Setup question rows and their params are gone. Earnings opens the partner dashboard (../experiments/onblue-vesper/apply.html?creator=in&account=one).',
       'Partner dashboard: “Days run” is 20 pills (filled verified, outlined pending) with a Verified / Pending verification legend; cash out has no period lock, only the $10 minimum (“Payment minimum: $10”; disabled with “You need $10 to cash out.”).',
-      'Docs: refs re-pointed or removed, sections and partials that described the old V2 now say what V2 does; system parts that still assume a period lock (ProgramSummary’s cash-out lines, the period-ended states) are marked for a rewrite.',
+      'Docs: refs re-pointed or removed, sections and partials that described the old V2 now say what V2 does.',
+      'Cash out follows the site: from $10 any time; the system no longer ties it to the program’s end.',
     ]],
     ['2026-10-14', 'Review round 2 of V3, pass B: the strip offers Retry on a failed day', [
       'Kit: ProgramStrip gains onRetry. Given it, a failed today (workerState failed) is the receipt in the danger ink, ‘Today’s job didn’t finish.’, with a quiet Retry, for a screen with no WorkerCard to say it (V3’s Jobs tab and home); without it the strip is unchanged and the WorkerCard’s Try again stays the home’s action.',

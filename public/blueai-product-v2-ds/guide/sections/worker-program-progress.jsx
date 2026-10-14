@@ -97,17 +97,16 @@
           ]} />
         </G.Part>
 
-        <G.Part name="ProgramSummary" status="new" role="The program's rules in five lines, said before the first day ends and one tap away afterwards.">
+        <G.Part name="ProgramSummary" status="new" role="The program's rules in four lines, said before the first day ends and one tap away afterwards.">
           <G.Note>
             Why the product needs it: the rules live in a code comment ({G.refText('worker.rule.successful-day')}) and in a
             constant nobody shows ({G.refText('worker.rule.const')}); the onboarding close says nothing about them
             ({G.refText('worker.flow.close')}), so partners meet the rules first inside a celebration (R12). Wording waits
             on decision D3: no amount appears until the money model is chosen.
           </G.Note>
-          <p><strong>Anatomy.</strong> Title 13/600 ink, then five lines 13 ink-2 each with a 16 icon: run on 20 days before
-            Nov 1; what makes a day count; checked within a day, one tick then two; cash out on Earnings after the end;
-            You need $10 to cash out; a smaller balance carries over to the next period. No longer matches the product:
-            since 2026-10-14 the site has no period lock, only the $10 minimum (the cash-out lines need a rewrite).
+          <p><strong>Anatomy.</strong> Title 13/600 ink, then four lines 13 ink-2 each with a 16 icon: run on 20 days before
+            Nov 1; what makes a day count; checked within a day, one tick then two; cash out on Earnings from $10. Cash out follows the site's one rule: any time the balance is
+            at least $10, not tied to the program's end.
             Full in the onboarding close and Help; compact as the strip's info tip (32px trigger).</p>
           <G.StateGrid wide states={[
             { label: 'Full', node: shell(<K.ProgramSummary />) },
@@ -118,8 +117,8 @@
             { part: 'Target and end', token: 'WORKER_RULE', value: 'Run on 20 days before Nov 1.', ref: ['worker.rule.const', 'worker.site.what-counts'] },
             { part: 'What counts', token: 'none', value: 'A day counts when a job is verified, or when there was no job to take.', ref: 'worker.rule.successful-day' },
             { part: 'Verification', token: 'none', value: 'We check every run within a day. One tick while pending, two once verified.' },
-            { part: 'Cash out', token: 'none', value: 'Cash out on Earnings after the period ends. (V2 since 2026-10-14: no period lock, only the $10 minimum.)', ref: 'worker.rule.cash-out' },
-            { part: 'Minimum', token: 'WORKER_RULE.cashOutMin', value: 'You need $10 to cash out; a smaller balance carries over to the next period.', ref: ['worker.rule.cash-out', 'display-feedback.stat.site-note'] },
+            { part: 'Cash out', token: 'none', value: 'Cash out on Earnings from $10.', ref: 'worker.rule.cash-out' },
+            { part: 'Minimum', token: 'WORKER_RULE.cashOutMin', value: 'You need $10 to cash out.', ref: ['worker.rule.cash-out', 'display-feedback.stat.site-note'] },
           ]} />
           <G.DoDont
             do={['Show the rules in the onboarding close, before the first day ends.', 'Put Ends Nov 1 beside the count on the ProgramStrip; the day-done moment shows the count only.']}

@@ -78,8 +78,8 @@
     { id: 'k-blocked', kind: 'blocked', title: 'Today’s run can’t start', body: 'YouTube isn’t connected. Fix it by 9 pm.', time: '11:00 am', unread: true, target: 'home' },
     { id: 'k-nocredits', kind: 'nocredits', title: 'Out of AI credits for today’s run', body: 'They refresh at 5:30 am, so today won’t count.', time: '2:40 pm', unread: true, target: 'credits' },
     { id: 'k-ending', kind: 'ending', title: '3 days left in this program', body: '17 of 20 days done. It ends Nov 1.', time: 'Oct 29', target: 'activity' },
-    { id: 'k-cashout', kind: 'cashout', title: 'Cash out is open', body: 'Your 20 days ended on Nov 1. Cash out on Earnings.', time: 'Nov 2', unread: true, target: 'earnings' },
-    { id: 'k-ended', kind: 'ended', title: 'This program has ended', body: 'You need $10 to cash out. Your balance carries over to the next period.', time: 'Nov 2', unread: true, target: 'earnings' },
+    { id: 'k-cashout', kind: 'cashout', title: 'Cash out is open', body: 'Your balance is $10 or more. Cash out on Earnings.', time: 'Nov 2', unread: true, target: 'earnings' },
+    { id: 'k-ended', kind: 'ended', title: 'This program has ended', body: 'You need $10 to cash out.', time: 'Nov 2', unread: true, target: 'earnings' },
     { id: 'k-terms', kind: 'terms', title: TERMS_DOCS.join(' and ') + ' updated', body: 'Review them and accept the updated terms to keep your worker running.', time: 'Oct 14', unread: true, target: 'terms', docs: TERMS_DOCS },
   ];
 
