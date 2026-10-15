@@ -211,7 +211,7 @@ The system reads these from one Worker record (section 41), never from a second 
 |---|---|---|
 | Program | 20 days, ends Nov 1, $1 per verified day, $10 day-20 bonus | `worker_day_done.jsx:38` |
 | Money rule note | $1 credited at the end of each successful day (under review) | `worker_day_done.jsx:5` |
-| Cash out | Any time the balance is at least $10, not tied to the program's end: the site's one rule is "Payment minimum: $10"; under it, Cash out is disabled with "You need $10 to cash out." | `onblue/apply.html:1371, 2317` |
+| Cash out | Any time the balance is at least $10, not tied to the program's end: the site's one rule is "Cash-out minimum: $10"; under it, Cash out is disabled with "You need $10 to cash out." | `onblue/apply.html:1371, 2317` |
 | The site's program | At least 20 days each month to earn $30 | `onblue/apply.html:1285` |
 | AI credits | 2,000 granted every day | `index.html:730` |
 | Modes | Always ask and Automatic, per app | `blueai/worker_flow.jsx:78` |
@@ -2460,7 +2460,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 ### ProgramSummary
 
 - **Purpose:** the rules in four lines, before the first day ends (onboarding close, Help) and one tap away afterwards (strip info tip).
-- **Anatomy:** title 13/600 'How your 20 days work'; four lines 13 ink-2, each with its own 16 icon: calendar 'Run on 20 days before Nov 1. Keep your PC on and awake at run time, and App Player open while a job runs.' / check 'A day counts when a job is verified, or when there was no job to take. Keep the comment up until it’s verified.' / check-double 'We check every run within a day. The tick doubles once it’s verified.' (the PM's former line, dropped from V2 on 2026-10-14) / earnings 'Cash out on Earnings from $10.'. Cash out follows the site's one rule, "Payment minimum: $10" (`onblue/apply.html:1371, 2317`): any time, not tied to the program's end. Proposed copy built from V2's rule comment (`worker_day_done.jsx:5-7`) (the minimum is the site's). `programRules(rule)` is the one place a rule is written, and `programRule(id)` one rule's text (DayDone, Run detail and Chat read 'ticks'). The $10 minimum is in both D3 options, so it is the one amount shown before D3; no rate or bonus until then.
+- **Anatomy:** title 13/600 'How your 20 days work'; four lines 13 ink-2, each with its own 16 icon: calendar 'Run on 20 days before Nov 1. Keep your PC on and awake at run time, and App Player open while a job runs.' / check 'A day counts when a job is verified, or when there was no job to take. Keep the comment up until it’s verified.' / check-double 'We check every run within a day. The tick doubles once it’s verified.' (the PM's former line, dropped from V2 on 2026-10-14) / earnings 'Cash out on Earnings from $10.'. Cash out follows the site's one rule, "Cash-out minimum: $10" (`onblue/apply.html:1371, 2317`): any time, not tied to the program's end. Proposed copy built from V2's rule comment (`worker_day_done.jsx:5-7`) (the minimum is the site's). `programRules(rule)` is the one place a rule is written, and `programRule(id)` one rule's text (DayDone, Run detail and Chat read 'ticks'). The $10 minimum is in both D3 options, so it is the one amount shown before D3; no rate or bonus until then.
 - **Variants:** full; compact (the kit Tooltip, info kind, behind a 32px info button).
 - **Sizes:** full width; tip max 260.
 - **States:** full; compact closed, hover, focus, pinned open, Esc closes.
@@ -4156,6 +4156,12 @@ About 3,000 of V2’s lines never render. They are listed here and never specime
 **Status:** Meta (no parts).
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
+
+### 2026-10-15: Pending days outlined, and the cash-out line
+
+- Partner dashboard and V2’s progress bar: a day whose run is done but still pending verification is a green outline; verified days are filled green. A light green fill and a yellow fill were tried; the yellow is archived in the code, unused.
+- V2’s progress bar: “13 to go” is dropped to give the segments room; thin 4px dashes, as first built.
+- Partner dashboard: the line under the balance reads “Cash-out minimum: $10” (was “Payment minimum”).
 
 ### 2026-10-14: V2 today re-synced to the PM’s 14 Oct design
 

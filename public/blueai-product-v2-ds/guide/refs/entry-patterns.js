@@ -184,7 +184,7 @@
     r('copy.coach-owner', 'blueai/moneymaker_home.jsx', 36, 'on the single instruction "Run this to begin"', 'coach copy settled by the PM'),
     r('copy.coach', 'blueai/moneymaker_home.jsx', 154, 'title="Run this to begin"', 'coach mark title'),
     r('copy.rule', 'blueai/worker_day_done.jsx', 35, 'const RULE = { target: 20, programEnd: \'Nov 1\' };', 'the program rule: target 20, ends Nov 1'),
-    r('copy.cashout', 'onblue/apply.html', 1371, 'Payment minimum: <b>$10</b>', 'cash out from $10, no period lock'),
+    r('copy.cashout', 'onblue/apply.html', 1371, 'Cash-out minimum: <b>$10</b>', 'cash out from $10, no period lock'),
 
     // onBlue family (the site the partner comes from)
     r('family.gate-scrim', 'onblue/onblue.css', 411, '--gate-scrim: rgba(248, 249, 251, 0.88);', 'site gate veil, light theme'),

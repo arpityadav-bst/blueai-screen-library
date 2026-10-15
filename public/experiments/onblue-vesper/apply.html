@@ -406,7 +406,7 @@ body { min-height: 100vh; }
    now", so it keeps the money scale the programme card gives its reward */
 .bal-top .earn-figure { font-size: clamp(26px, 2.4vw, 32px); }
 /* THE CASH-OUT MINIMUM (PM spec, 2026-10-12; period lock dropped 2026-10-14).
-   "Payment minimum: $10" sits under the balance it qualifies, in Earned till
+   "Cash-out minimum: $10" sits under the balance it qualifies, in Earned till
    date's own muted note style, always. THE BUTTON KEEPS ITS NAME (Arpit,
    2026-10-14): "Cash out" always shows, quiet and disabled under $10, and its
    hover title says why. */
@@ -573,15 +573,15 @@ body { min-height: 100vh; }
 /* GREEN, WHICH IS THE ONE PLACE IT BELONGS HERE. It means a state that has been
    reached, on the Open chip and on progress toward a goal; the balance keeps its
    ink, because money is a figure rather than a state. */
-/* THE BAR IS TWENTY PILLS, ONE PER DAY (Abhisht, 2026-10-14; colours 2026-10-15). Same
-   colours as the BlueAI app's bar (V2 day_progress_bar.jsx: success / successLine): a
-   verified day is dark green, a day whose run is done but still pending verification is
-   light green, a day still to run is grey. The legend names the two greens. The app says
-   "Day 12 of 20. Pending verification" the moment a run ends. */
+/* THE BAR IS TWENTY PILLS, ONE PER DAY (Abhisht, 2026-10-14; 2026-10-15). A verified day is
+   GREEN; a day whose run is done but still pending verification is a green OUTLINE (picked
+   by Abhisht and Arpit over a light green fill and a yellow fill; the yellow is ARCHIVED as
+   .is-yellow, unused); a day still to run is grey. V2's bar (day_progress_bar.jsx) matches.
+   The app says "Day 12 of 20. Pending verification" the moment a run ends. */
 .pills { display: flex; gap: 3px; }
 .pill { flex: 1 1 0; min-width: 0; height: 7px; border-radius: 999px; background: var(--wash-4); }
 .pill.is-done { background: var(--green); }
-.pill.is-pending { background: #bbf7d0; }
+.pill.is-pending { background: transparent; box-shadow: inset 0 0 0 1.5px var(--green); } .is-yellow .pill.is-pending { background: #fbbf24; box-shadow: none; }
 .pill-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; color: var(--muted); font-size: 12px; letter-spacing: -0.01em; }
 .pill-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .pill-legend .pill { flex: none; width: 16px; }
@@ -1368,7 +1368,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
                card read as two different kinds of thing. -->
           <span class="mini-title">Balance</span>
           <span class="earn-figure" data-fig="balance">$0</span>
-          <span class="dash-note bal-min" id="cash-status" data-cash-status>Payment minimum: <b>$10</b></span>
+          <span class="dash-note bal-min" id="cash-status" data-cash-status>Cash-out minimum: <b>$10</b></span>
         </div>
         <!-- quiet, not the page's solid CTA: cashing out is a frequent,
              low-drama action, and the black button on this page belongs to the
@@ -2308,7 +2308,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      from the PM spec of 2026-10-12 (Cash out opening only once the program period
      ended) is dropped, because the program has not moved to $1 a day, the model
      that lock was written for. Cash out is open whenever the balance is at least
-     $10, and the line under the balance is always "Payment minimum: $10". */
+     $10, and the line under the balance is always "Cash-out minimum: $10". */
   var CASH_MIN = 10;
 
   function money(n) { return '$' + n; }
@@ -2342,7 +2342,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     var status = dash.querySelector('[data-cash-status]');
     btn.disabled = !!why;
     btn.title = why;
-    status.innerHTML = '<span>Payment minimum: <b>' + money(CASH_MIN) + '</b></span>';   // one flex item, so the row's gap doesn't split the label from the figure
+    status.innerHTML = '<span>Cash-out minimum: <b>' + money(CASH_MIN) + '</b></span>';   // one flex item, so the row's gap doesn't split the label from the figure
 
     var ledger = dash.querySelector('[data-ledger]');
     var none = dash.querySelector('[data-ledger-empty]');

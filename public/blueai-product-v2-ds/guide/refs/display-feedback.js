@@ -53,7 +53,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'display-feedback.stat.own-key', file: 'index.html', line: 479, needle: 'Running on your own key', value: 'Running on your own key' },
   { id: 'display-feedback.stat.own-key-copy', file: 'index.html', line: 482, needle: 'No BlueAI credits are consumed while this is on.', value: 'No BlueAI credits are consumed while this is on.' },
   { id: 'display-feedback.stat.site-label', file: 'onblue/apply.html', line: 1369, needle: '<span class="mini-title">Balance</span>', value: "site: one 'mini-title' label per figure" },
-  { id: 'display-feedback.stat.site-note', file: 'onblue/apply.html', line: 1371, needle: 'Payment minimum: <b>$10</b>', value: 'site: context line with the figure in bold ink' },
+  { id: 'display-feedback.stat.site-note', file: 'onblue/apply.html', line: 1371, needle: 'Cash-out minimum: <b>$10</b>', value: 'site: context line with the figure in bold ink' },
 
   /* Progress, spinner, skeleton */
   { id: 'display-feedback.progress.ai-rail', file: 'ai_mode.jsx', line: 140, needle: "height: 6, borderRadius: 999, background: '#dceafd'", value: 'AI Mode rail: 6px, #dceafd' },

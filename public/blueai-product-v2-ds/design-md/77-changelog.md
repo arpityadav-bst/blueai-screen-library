@@ -4,6 +4,12 @@
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
 
+### 2026-10-15: Pending days outlined, and the cash-out line
+
+- Partner dashboard and V2’s progress bar: a day whose run is done but still pending verification is a green outline; verified days are filled green. A light green fill and a yellow fill were tried; the yellow is archived in the code, unused.
+- V2’s progress bar: “13 to go” is dropped to give the segments room; thin 4px dashes, as first built.
+- Partner dashboard: the line under the balance reads “Cash-out minimum: $10” (was “Payment minimum”).
+
 ### 2026-10-14: V2 today re-synced to the PM’s 14 Oct design
 
 - Run-complete popup: an outlined green circle with one green tick, “Today’s run is done.” and “Day 7 of 20. Pending verification” (no full stop), then Got it; dialog sm 320 from v2_tokens.jsx; Day 1 shows it too; confetti on Day 20 only. The home strip, the 20-segment bar and the verification note are gone: day-by-day progress lives on the partner dashboard.

@@ -1,7 +1,7 @@
 /* Refs owned by the worker slice (sections 41 to 46). Format: guide/refs/README.md. */
 window.V2Refs = (window.V2Refs || []).concat([
   // The program rule and the module globals the Worker record replaces
-  { id: 'worker.rule.cash-out', file: 'onblue/apply.html', line: 1371, needle: 'Payment minimum: <b>$10</b>', value: 'cash out from $10, no period lock (since 2026-10-14)' },
+  { id: 'worker.rule.cash-out', file: 'onblue/apply.html', line: 1371, needle: 'Cash-out minimum: <b>$10</b>', value: 'cash out from $10, no period lock (since 2026-10-14)' },
   { id: 'worker.rule.successful-day', file: 'worker_day_done.jsx', line: 5, needle: 'a verified job, or a completed run on a day with no job available', value: 'what makes a day count' },
   { id: 'worker.rule.const', file: 'worker_day_done.jsx', line: 35, needle: 'const RULE = { target: 20, programEnd: \'Nov 1\' };', value: 'target 20, ends Nov 1' },
   { id: 'worker.rule.done-before', file: 'worker_day_done.jsx', line: 36, needle: 'const DONE_BEFORE = 6;', value: 'days already verified, a constant' },

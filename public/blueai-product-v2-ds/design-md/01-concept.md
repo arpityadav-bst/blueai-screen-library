@@ -38,7 +38,7 @@ The system reads these from one Worker record (section 41), never from a second 
 |---|---|---|
 | Program | 20 days, ends Nov 1, $1 per verified day, $10 day-20 bonus | `worker_day_done.jsx:38` |
 | Money rule note | $1 credited at the end of each successful day (under review) | `worker_day_done.jsx:5` |
-| Cash out | Any time the balance is at least $10, not tied to the program's end: the site's one rule is "Payment minimum: $10"; under it, Cash out is disabled with "You need $10 to cash out." | `onblue/apply.html:1371, 2317` |
+| Cash out | Any time the balance is at least $10, not tied to the program's end: the site's one rule is "Cash-out minimum: $10"; under it, Cash out is disabled with "You need $10 to cash out." | `onblue/apply.html:1371, 2317` |
 | The site's program | At least 20 days each month to earn $30 | `onblue/apply.html:1285` |
 | AI credits | 2,000 granted every day | `index.html:730` |
 | Modes | Always ask and Automatic, per app | `blueai/worker_flow.jsx:78` |
