@@ -573,15 +573,15 @@ body { min-height: 100vh; }
 /* GREEN, WHICH IS THE ONE PLACE IT BELONGS HERE. It means a state that has been
    reached, on the Open chip and on progress toward a goal; the balance keeps its
    ink, because money is a figure rather than a state. */
-/* THE BAR IS TWENTY PILLS, ONE PER DAY (Abhisht, 2026-10-14). A day whose run has
-   finished is OUTLINED until the run is verified, then FILLED; empty pills are days
-   still to run. One green for both, so the fill, not the colour, says which, and
-   the legend under the pills names the two. The BlueAI app says the same thing the
-   moment a run ends ("Day 12 of 20. Pending verification"). */
+/* THE BAR IS TWENTY PILLS, ONE PER DAY (Abhisht, 2026-10-14; colours 2026-10-15). Same
+   colours as the BlueAI app's bar (V2 day_progress_bar.jsx: success / successLine): a
+   verified day is dark green, a day whose run is done but still pending verification is
+   light green, a day still to run is grey. The legend names the two greens. The app says
+   "Day 12 of 20. Pending verification" the moment a run ends. */
 .pills { display: flex; gap: 3px; }
 .pill { flex: 1 1 0; min-width: 0; height: 7px; border-radius: 999px; background: var(--wash-4); }
-.pill.is-done { background: var(--green-ink); }
-.pill.is-pending { background: transparent; box-shadow: inset 0 0 0 1.5px var(--green-ink); }
+.pill.is-done { background: var(--green); }
+.pill.is-pending { background: #bbf7d0; }
 .pill-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; color: var(--muted); font-size: 12px; letter-spacing: -0.01em; }
 .pill-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .pill-legend .pill { flex: none; width: 16px; }
