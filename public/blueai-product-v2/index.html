@@ -641,7 +641,7 @@ function App() {
   const [workerDay, setWorkerDay] = useState(LINK.day);
   const [dailyRunKey, setDailyRunKey] = useState(0);
   const [dayEnd, setDayEnd] = useState(LINK.end);        // how today's run ends (worker_day_done.jsx)
-  const [toast, setToast] = useState(null);              // the Windows notification a scheduled run raises when its day is done
+  const [toast, setToast] = useState(null); const [barOpt, setBarOpt] = useState({ icon: window.WorkerDayProgress.getIcon(), day20: window.WorkerDayProgress.getDay20() });              // the Windows notification a scheduled run raises when its day is done
   const [linkCopied, setLinkCopied] = useState(false);
   const linkDayPlayed = useRef(false);   // ?day=next plays its run once, after the first boot
   // A shared link's worker setup lives in module-level stores outside React; apply it once.
@@ -746,7 +746,7 @@ function App() {
     if (isLoggedIn && sessionMode === 'moneymaker' && playerAcct === 'out') {
       p.set('start', 'worker');
       if (workerDay !== 'day1') p.set('day', workerDay);
-      if (workerDay === 'next' && dayEnd !== 'job') p.set('end', dayEnd);
+      if (workerDay === 'next' && dayEnd !== 'job') p.set('end', dayEnd); if (workerDay === 'next' && dayEnd === 'day20' && barOpt.day20 === 'verified') p.set('verify', 'done'); if (barOpt.icon !== 'gift') p.set('icon', barOpt.icon);
       if (window.AgentPermissions.getMode('youtube') === 'auto') p.set('mode', 'auto');
     }
     const url = location.origin + location.pathname + (p.toString() ? '?' + p.toString() : '');
@@ -957,7 +957,7 @@ function App() {
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', width: '420px' }}>
           <ProductChatScreen sessionKey={sessionKey} seed={seed} loading={!homeReady} zeroCredits={zeroCredits && !byokActive} onNoCredits={() => setOocOpen(true)} isOnboarding={!isLoggedIn} sessionMode={sessionMode} onNeedLogin={(text) => { setLoginFlow('onboarding'); setPendingMessage(text); setShowLoginModal(true); }} showStates={showChatStates}
             scheduledOoc={scheduledOoc && !byokActive}
-            dailyRunKey={dailyRunKey} onJobWaiting={setJobWaiting} permUi={CASES_MODE ? 'none' : permUi} onDayDone={(end) => setToast({ end, key: Date.now() })}
+            dailyRunKey={dailyRunKey} onJobWaiting={setJobWaiting} permUi={CASES_MODE ? 'none' : permUi} onDayDone={(end) => setToast({ end, key: Date.now() })} workerDay={workerDay}
             bsInstalled={bsInstalled} onBsInstalled={completeBluestacksInstall} />
         </div>
       ) : (
@@ -1169,7 +1169,7 @@ function App() {
                question, Card (Days is the one), and Answers (chips it is; Other and Docked archived). */
             if (isChat && sessionMode === 'moneymaker' && isLoggedIn) {
               /* Mode: YouTube's mode set directly, no consent dialog, exactly like ?mode=auto. */
-              rows.push(<PreviewRow key="permmode" label="Mode" opts={[['Always ask', 'always'], ['Automatic', 'auto']]} val={permModes.youtube}
+              rows.push(<PreviewRow key="permmode" label="Mode" opts={[['Always ask', 'always'], ['Auto', 'auto']]} val={permModes.youtube}
                 set={(v) => window.AgentPermissions.setMode('youtube', v)} />);
               rows.push(<PreviewRow key="workerday" label="Worker" opts={[['Day 1', 'day1'], ['Next day', 'next']]} val={workerDay}
                 set={(v) => {
@@ -1184,7 +1184,7 @@ function App() {
                 set={(v) => {
                   setDayEnd(v); window.WorkerDayDone.setEnd(v); setToast(null); setSeed(null);
                   setWorkerDay('next'); window.WorkerFlow.setOnboarded(true); setDailyRunKey((k) => k + 1); setSessionKey((k) => k + 1);
-                }} />);
+                }} />); if (workerDay === 'next' && dayEnd === 'day20') rows.push(<PreviewRow key="day20" label="Verification" opts={window.WorkerDayProgress.DAY20} val={barOpt.day20} set={(v) => { window.WorkerDayProgress.setDay20(v); setBarOpt((o) => ({ ...o, day20: v })); }} />); rows.push(<PreviewRow key="awardicon" label="Award icon" opts={window.WorkerDayProgress.ICONS} val={barOpt.icon} set={(v) => { window.WorkerDayProgress.setIcon(v); setBarOpt((o) => ({ ...o, icon: v })); }} />);   /* local trial 2026-10-15: the bar's Day 20 once verified, and its mark (day_progress_bar.jsx) */
             }
             if (activeTab === 'settings') {
               rows.push(<PreviewRow key="aihw" label="Hardware" opts={[['Yes', true], ['No', false]]} val={aiHwSupported} set={setAiHwSupported} />);

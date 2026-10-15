@@ -2437,7 +2437,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 - **Anatomy:** 20 segments, height 6, radius 4, gap 2. Verified solid `--v2-success-ink` (the site's goal-bar green); pending surface with a 1.5 inset `--v2-blue` outline (in progress, not reached: one of the three blue exceptions to the neutral pending tone, with the run chip's pending dot and the DayDone badge, section 03); rejected `--v2-danger-tint` with an inset 1px `--v2-danger-edge` (4.53:1, so it reads at 1px), in the slot it would have filled until the next run takes it; out of reach hatched `--v2-line-strong` (slots that can no longer be reached before the end); future `--v2-line`. Legend 12 ink-3 with ticks: '6 verified', '1 pending', '1 not counted', 'n days out of reach'. V2 since 2026-10-14: one continuous bar, height 4, radius 2, green fill for the verified share (`worker_day_done.jsx:155`), so a pending, rejected or missed day cannot show.
 - **Variants:** with or without legend; optional `bonusLabel` at the right end only if decision D3 keeps a day-20 bonus (V2 had an amber segment until 2026-10-14).
 - **Sizes:** fills its container.
-- **States:** verified, pending, rejected, out of reach, future. V2: no bar in the app since 2026-10-14; the partner dashboard draws 20 pills, filled verified and outlined pending, under "Days run" with a legend (`onblue/apply.html:582-584, 1418-1443`).
+- **States:** verified, pending, rejected, out of reach, future. V2 (2026-10-15): a slim bar above the chat box, always there in a worker chat, Day 1 included (`blueai/day_progress_bar.jsx`): an award mark, 'Day 7 of 20', 20 dashes 4px high (verified filled green; today a green outline once its run counts, grey before; the rest grey) and a chevron that opens a card over the messages: 'Monthly award', the count, the dashes, a legend and 'Run BlueAI on at least 20 days this month to qualify.' Day 20 once verified: 'All 20 days verified', 'You qualified for this month’s award. It goes to your balance when the month ends.' (DRAFT) and confetti when the card opens. The mark is quiet gold through the month, glints once when the day’s run counts and shines in full at Day 20. The partner dashboard draws 20 pills, filled verified and outlined pending, under "Days run" with a legend (`onblue/apply.html:582-584, 1418-1443`).
 - **Props:** `days` (segment states) or `worker` (derived by `numbers()`), `target`, `legend`, `bonusLabel`, `label`.
 - **Motion:** none.
 - **Accessibility:** role=progressbar, aria-valuenow = verified + pending, aria-valuetext '7 of 20 days, 1 pending verification' plus ', N out of reach' when slots can no longer be reached; the legend says it in words, so colour is never the only carrier. In forced colours every state keeps a shape of its own: verified solid, pending a 2px edge, rejected a 2px edge over hatching, out of reach a grey hatch, future a 1px edge (`kit/worker.css:90-101`).
@@ -2474,7 +2474,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** Changed from V2.
 
-**Why:** V2 adopted the minimal popup, as this system recommended (R28), and on 2026-10-14 drew it from this system's "V2 today" tokens (`v2_tokens.jsx`): dialog sm 320, dim scrim, radius 16, shadow-2, scale-in, a 56 badge, the title, one status line ('Day 7 of 20. Pending verification', no full stop; Day 20: 'All 20 days done. Pending verification'), and Got it (44); Day 1 shows it too, confetti plays on Day 20 only, and the verification note is gone (`worker_day_done.jsx:94-135`). Day-by-day progress moved to the partner dashboard. Still different: V2's badge is an outlined green circle with one green tick, so colour says reached while the words say not yet, and the panel (aria-modal) never takes focus. The system keeps the DayBar above its one count line and the note on every showing. 'Today’s run is done.' and the status line are approved (2026-10-14); the other titles are DRAFT strings, quoted, not rewritten.
+**Why:** V2 adopted the minimal popup, as this system recommended (R28), and on 2026-10-14 drew it from this system's "V2 today" tokens (`v2_tokens.jsx`): dialog sm 320, dim scrim, radius 16, shadow-2, scale-in, a 56 badge, the title, one status line ('Day 7 of 20. Pending verification', no full stop; Day 20: 'All 20 days done. Pending verification'), and Got it (44); Day 1 shows it too, confetti plays on Day 20 only, and the verification note is gone (`worker_day_done.jsx:94-135`). Day-by-day progress moved to the partner dashboard. Still different: V2's badge is an outlined green circle with one green tick, so colour says reached while the words say not yet, and the panel (aria-modal) never takes focus. Since 2026-10-15 V2 also differs here: confetti on every counted day, small (12 pieces) and big on Day 20 (24, past the popup's edges), in blue, the BlueAI cyan and violet and neutral, where this system celebrates Day 20 only; and a primary 'Run once more' above a secondary Got it: on Auto it counts down 15s and takes the next job itself, on Always ask the job is asked first, and an extra job closes with 'One more job done.' (DRAFT). The system keeps the DayBar above its one count line and the note on every showing. 'Today’s run is done.' and the status line are approved (2026-10-14); the other titles are DRAFT strings, quoted, not rewritten.
 
 ### DayDone
 
@@ -2512,7 +2512,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
 
 **Status:** Changed from V2 (ModeRows, ConsentDialog, AutoRibbon); New (PermissionRequest).
 
-**Why:** the PM's model is right and stays: one setting per app, every app starts on Always ask, turning Automatic on is consent, asked every time (`agent_permissions.jsx:1-33`). What changes is where it lives and how it is built: since 2026-10-14 V2 runs one app, YouTube, and changes the mode only from the composer's mode chip, which opens a popover (one row per mode, a check, number shortcuts 1 and 2); Settings' Worker card and the Automatic ribbon are gone (R05, D4). The dialog never takes focus, its agree button is 3.24:1, and watch history is read without asking (R18).
+**Why:** the PM's model is right and stays: one setting per app, every app starts on Always ask, turning Automatic on is consent, asked every time (`agent_permissions.jsx:1-33`). What changes is where it lives and how it is built: since 2026-10-14 V2 runs one app, YouTube, and changes the mode only from the composer's mode chip, which opens a popover (one row per mode, a check, number shortcuts 1 and 2); Settings' Worker card and the Automatic ribbon are gone (R05, D4). The dialog never takes focus, its agree button is 3.24:1, and watch history is read without asking (R18). Since 2026-10-15 V2 labels the mode “Auto” (the PM’s call); this system’s parts and pages still say Automatic until they are renamed.
 
 ### ModeRows
 
@@ -3283,7 +3283,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
   - day, your 20 days: the program unit; never program days, qualifying day.
   - program, period, your 20 days: the program is what the partner joins and what ends on a date ("This program ended on Nov 1"); the period is the program's dates; cash out is never tied to it; "your 20 days" is the count; never say the 20 days end.
   - pending verification, verified: one tick, two ticks; never confirmed, approved, validated.
-  - Always ask, Automatic: the mode per app (the PM's names); never Mode (as a label), auto mode, autopilot, Just this job (as a mode).
+  - Always ask, Auto: the mode per app (the PM's names; “Auto” was “Automatic” until 2026-10-15); never Mode (as a label), auto mode, autopilot, Just this job (as a mode).
   - Sign in, Sign out: account entry and exit; never Log in, Login, Logout, Log out (the site should align), logging in.
   - AI credits: the daily allowance, sentence case; never tokens, coins, free credits, claim, earn (for credits), balance (say "left today").
   - Earnings: money, opened on the site's dashboard; never income, rewards (the site should align: "Reward" on the program card and its sheet, "its own reward", "its reward is added to your earnings", `onblue/apply.html:1280, 1470, 1434, 1436`), wallet, BCX, a ↗ character (use the external icon).
@@ -3313,7 +3313,7 @@ V2: every page load and every window reopen shows it. The real app calls `onDone
   - "Agree and continue"; PM; `terms_sheet.jsx:71` (`:60`); live.
   - "Run YouTube jobs automatically?" / "I agree, turn on"; PM; `agent_permissions.jsx:186, 191`; live.
   - "BlueAI will take YouTube jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime."; PM and legal; `agent_permissions.jsx:203`; live since 2026-10-14 (its agreement paragraph is gone). Proposed change, sent to the owners (R51): "BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name." (the ConsentDialog body, section 46): the worker never posts videos, and the comment it does post is not named.
-  - "Always ask" / "Automatic"; PM; `worker_flow.jsx:78`; live.
+  - "Always ask" / "Auto" (was "Automatic" until 2026-10-15); PM; `worker_flow.jsx:78`; live.
 - **States:** live, DRAFT, legal.
 - **Do / Don't:** Do quote these exactly in every part marked In V2; send a proposed change to the owner with the reason. Don't fix a typo or a tone in them silently; don't move legal wording between contexts without legal.
 
@@ -4156,6 +4156,13 @@ About 3,000 of V2’s lines never render. They are listed here and never specime
 **Status:** Meta (no parts).
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
+
+### 2026-10-15: The progress bar always there, Run once more, and Auto
+
+- V2’s progress bar is always there in a worker chat, Day 1 included: today’s day, with today’s dash grey until its run counts, then a green outline. The chevron replaced the X and opens a card over the messages (“Monthly award”, the count, a legend and the rule); Day 20 has a verified state (Preview: Verification) with confetti when the card opens.
+- V2’s award mark: gold, quiet through the month, one glint when the day’s run counts, full shine at Day 20; Gift, Coin or Medal from the Preview panel’s Award icon row.
+- V2’s run-complete popup: “Run once more” (primary) above Got it; on Auto it counts down 15s and takes the next job itself, on Always ask the job is asked first; an extra job closes with “One more job done.”. Confetti on every counted day: small, and big on Day 20.
+- V2’s mode “Automatic” is now “Auto” (composer chip, mode menu, Preview); this system’s parts and pages still say Automatic.
 
 ### 2026-10-15: Pending days outlined, and the cash-out line
 

@@ -29,7 +29,7 @@
   const DayProgressBar = (p) => React.createElement(window.WorkerDayProgress.DayProgressBar, p);   // the 20-day bar on the chat box, after Got it
 
   /* ───────── Merged chat screen: ProductHome (empty) → task-progress + feedback (active) ───────── */
-  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, sessionMode = 'default', onNeedLogin, showStates, bsInstalled = true, onBsInstalled, scheduledOoc = false, dailyRunKey = 0, onJobWaiting, permUi = 'chatbox', onDayDone }) {
+  function ChatScreen({ sessionKey, seed, loading, zeroCredits, onNoCredits, isOnboarding, sessionMode = 'default', onNeedLogin, showStates, bsInstalled = true, onBsInstalled, scheduledOoc = false, dailyRunKey = 0, onJobWaiting, permUi = 'chatbox', onDayDone, workerDay = 'next' }) {
     const C = window.ChatCompare;
     const [convo, setConvo] = useState([]);
     const [visible, setVisible] = useState(0);
@@ -78,7 +78,7 @@
 
     useEffect(() => { const el = scrollRef.current; if (el) el.scrollTop = el.scrollHeight; }, [visible, convo]);
     // The 20-day bar takes room above the composer after Got it: keep the thread's end in view.
-    useEffect(() => { const el = scrollRef.current; if (el && seenDone >= 0) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }); }, [seenDone]);
+    useEffect(() => { const el = scrollRef.current; if (el && seenDone >= 0) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }); }, [seenDone]); useEffect(() => { const el = scrollRef.current; if (!el || !window.ResizeObserver) return; let h = el.clientHeight; const ro = new ResizeObserver(() => { if (el.clientHeight < h && el.scrollHeight - el.scrollTop - h < 48) el.scrollTop = el.scrollHeight; h = el.clientHeight; }); ro.observe(el); return () => ro.disconnect(); }, []);   // and while the bar opens upward
     useEffect(() => { const ta = taRef.current; if (!ta) return; ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 120) + 'px'; }, [draft]);
     useEffect(() => () => { timers.current.forEach(clearTimeout); }, []);
 
@@ -101,7 +101,7 @@
        needs you (Abhisht, 2026-10-05). 4s is the prototype's stand-in for "nobody answered". */
     const jobWaiting = awaiting && (convo[awaitingIdx].id === 'job' || convo[awaitingIdx].id === 'retry');
     const workerStarted = convo.slice(0, visible).some((s) => s.worker);
-    const doneIdx = convo.slice(0, visible).findIndex((s) => s.role === 'daydone');   // today's run has closed: the centre moment shows until dismissed
+    const doneIdx = convo.slice(0, visible).findIndex((s) => s.role === 'daydone'); const lastDone = convo.slice(0, visible).map((s) => s.role).lastIndexOf('daydone');   // today's run has closed: the centre moment shows until dismissed; lastDone, the newest close, as a "Run once more" job gets its own popup
     useEffect(() => {
       if (!onJobWaiting) return;
       if (!jobWaiting) { onJobWaiting(false); return; }
@@ -269,7 +269,7 @@
             </div>}
           {/* (The Automatic ribbon, ROB-21350 Version 2, is archived 2026-10-14: AgentPermissions.AutoRibbon,
              rendered here when permUi === 'ribbon' && workerStarted, if it ever comes back.) */}
-          {doneIdx >= 0 && seenDone >= doneIdx && barShut !== doneIdx && <DayProgressBar step={convo[doneIdx]} onClose={() => setBarShut(doneIdx)} />}
+          {sessionMode === 'moneymaker' && !isOnboarding && <DayProgressBar key={sessionKey} day1={workerDay === 'day1'} step={doneIdx >= 0 && seenDone >= doneIdx ? convo[doneIdx] : null} />}   {/* always there in a worker chat (Abhisht, 2026-10-15); today's run counts once Got it closes its popup */}
           <div style={{ position: 'relative', display: 'flex', flexDirection: modeChip ? 'column' : 'row', alignItems: modeChip ? 'stretch' : 'center', gap: modeChip ? 2 : 8, border: '1.5px solid ' + (isOnboarding ? '#60a5fa' : (composerFocused ? '#1990FF' : '#c7dcf5')), borderRadius: isOnboarding ? 18 : 14, background: 'white', padding: modeChip ? '8px 8px 6px 10px' : '8px 10px', boxShadow: composerFocused ? '0 0 0 3px rgba(25,144,255,0.12)' : (isOnboarding && !started ? '0 0 0 4px rgba(25,144,255,0.12)' : '0 1px 4px rgba(0,0,0,0.04)'), transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}>
             <textarea ref={taRef} value={draft} disabled={(running && !typeOk) || scheduledOoc} rows={1}
               onChange={(e) => setDraft(e.target.value)}
@@ -288,7 +288,7 @@
               : sendBtn}
           </div>
         </div>}
-        {doneIdx > seenDone && <DayDoneOverlay step={convo[doneIdx]} onClose={() => setSeenDone(doneIdx)} />}
+        {lastDone > seenDone && <DayDoneOverlay step={convo[lastDone]} onClose={() => setSeenDone(lastDone)} onRunAgain={() => { setSeenDone(lastDone); push(WF().makeExtraRun(convo[lastDone])); }} />}
       </>);
   }
 

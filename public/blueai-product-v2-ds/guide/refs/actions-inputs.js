@@ -104,7 +104,7 @@
     r('radio-card.run-window-options', 'worker_flow.jsx', 76, "{ id: 'any', label: 'Leave it to me' }", "'11 am', '9am–9pm', 'Leave it to me'"),
     /* Segmented */
     r('segmented.always', 'agent_permissions.jsx', 55, '{ id: \'always\', key: \'1\', title: \'Always ask\', sub: \'Asks before each job starts, then runs it to the end\'', '\'Always ask\', \'Asks before each job starts, then runs it to the end\''),
-    r('segmented.auto', 'agent_permissions.jsx', 56, '{ id: \'auto\', key: \'2\', title: \'Automatic\', sub: \'Starts and finishes jobs without asking\'', '\'Automatic\', \'Starts and finishes jobs without asking\''),
+    r('segmented.auto', 'agent_permissions.jsx', 56, '{ id: \'auto\', key: \'2\', title: \'Auto\', sub: \'Starts and finishes jobs without asking\'', '\'Auto\', \'Starts and finishes jobs without asking\''),
     r('segmented.youtube', 'agent_permissions.jsx', 57, "{ id: 'youtube', name: 'YouTube', Icon: IcoYouTube }", "'YouTube'"),
     r('segmented.consent-title', 'agent_permissions.jsx', 201, "'Run ' + a.name + ' jobs automatically?'", "'Run YouTube jobs automatically?'"),
     r('segmented.consent-copy', 'agent_permissions.jsx', 203, 'BlueAI will take {a.name} jobs and finish them on your account without asking first, including posting videos.', 'the consent sentence'),

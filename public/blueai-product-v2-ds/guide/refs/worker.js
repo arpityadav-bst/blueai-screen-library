@@ -30,7 +30,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'worker.daydone.badge', file: 'worker_day_done.jsx', line: 128, needle: 'border: \'2px solid \' + t.success', value: 'badge 56, an outlined circle (2px green ring on white), one green tick' },
   { id: 'worker.daydone.pending-line', file: 'worker_day_done.jsx', line: 100, needle: '\'Day \' + n.day + \' of \' + n.target + \'. Pending verification\'', value: 'one status line: \'Day 7 of 20. Pending verification\'' },
   { id: 'worker.daydone.got-it', file: 'worker_day_done.jsx', line: 131, needle: 'background: t.action, border: t.stroke + \'px solid \' + t.action, borderRadius: t.radiusSm', value: 'Got it: 44 tall, action #1990FF, radius 8' },
-  { id: 'worker.daydone.confetti', file: 'worker_day_done.jsx', line: 127, needle: "{e === 'day20' && <Confetti />}", value: 'confetti on Day 20 only, 12 bits in blue and neutral' },
+  { id: 'worker.daydone.confetti', file: 'worker_day_done.jsx', line: 127, needle: "{e === 'day20' && <Confetti />}", value: 'confetti every counted day: small; Day 20 big (blue and neutral)' },
   { id: 'worker.daydone.got-it-label', file: 'worker_day_done.jsx', line: 132, needle: '>Got it</button>', value: 'Got it' },
 
   // The home strip
@@ -76,7 +76,7 @@ window.V2Refs = (window.V2Refs || []).concat([
 
   // Always ask and Automatic
   { id: 'worker.permissions.always', file: 'agent_permissions.jsx', line: 55, needle: '{ id: \'always\', key: \'1\', title: \'Always ask\', sub: \'Asks before each job starts, then runs it to the end\'', value: 'Always ask' },
-  { id: 'worker.permissions.auto', file: 'agent_permissions.jsx', line: 56, needle: '{ id: \'auto\', key: \'2\', title: \'Automatic\', sub: \'Starts and finishes jobs without asking\'', value: 'Automatic' },
+  { id: 'worker.permissions.auto', file: 'agent_permissions.jsx', line: 56, needle: '{ id: \'auto\', key: \'2\', title: \'Auto\', sub: \'Starts and finishes jobs without asking\'', value: 'Auto' },
   { id: 'worker.permissions.apps', file: 'agent_permissions.jsx', line: 57, needle: 'const APPS = [', value: 'YouTube only (since 2026-10-14)' },
   { id: 'worker.permissions.consent-record', file: 'agent_permissions.jsx', line: 80, needle: "localStorage.setItem('blueai_auto_consent_' + app", value: 'agreement time kept locally' },
   { id: 'worker.permissions.list', file: 'agent_permissions.jsx', line: 107, needle: '<div role="radiogroup" aria-label={HEADER} onKeyDown={arrow}>', value: 'ModeRows: a radio group, one row per mode' },

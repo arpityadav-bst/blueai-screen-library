@@ -47,7 +47,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'screens-account.worker.not-persisted', file: 'blueai/agent_permissions.jsx', line: 21, needle: 'Not persisted: every reload', value: 'modes are not kept' },
   { id: 'screens-account.worker.turn-off', file: 'blueai/agent_permissions.jsx', line: 203, needle: 'You can turn this off anytime.', value: '\'You can turn this off anytime.\' (the composer chip is the one place)' },
   { id: 'screens-account.worker.mode-always', file: 'blueai/agent_permissions.jsx', line: 55, needle: "title: 'Always ask', sub: 'Asks before each job starts, then runs it to the end'", value: "'Always ask'" },
-  { id: 'screens-account.worker.mode-auto', file: 'blueai/agent_permissions.jsx', line: 56, needle: "title: 'Automatic', sub: 'Starts and finishes jobs without asking'", value: "'Automatic'" },
+  { id: 'screens-account.worker.mode-auto', file: 'blueai/agent_permissions.jsx', line: 56, needle: "title: 'Auto', sub: 'Starts and finishes jobs without asking'", value: "'Auto'" },
 
   // Connected apps (63)
   { id: 'screens-account.apps.handle', file: 'blueai/worker_flow.jsx', line: 73, needle: 'Looks like you’re signed in as @bluestacksfan, is that right?', value: 'the YouTube account, confirmed once in chat' },

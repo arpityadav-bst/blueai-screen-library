@@ -85,7 +85,7 @@
     declined: 'Today doesn’t count toward your program days.'
   };
   function DayDoneCard({ step, answer, onAnswer }) {
-    const B = window.ChatBubbles;
+    const B = window.ChatBubbles; if (step.extra) return null;   // a "Run once more" job leaves only its closing line
     if (step.end === 'failed') return React.createElement(window.WorkerCards.AskBubble, { step: failedAsk(step), answer, onAnswer });
     if (LINES[step.end]) return React.createElement(B.StatusBubble, { content: LINES[step.end] });
     return null;
@@ -99,13 +99,13 @@
     ? 'All 20 days done. Pending verification'
     : 'Day ' + n.day + ' of ' + n.target + '. Pending verification');
 
-  /* Confetti, Day 20 only (DS 44): 12 fixed bits in blue and neutral, never green or yellow while
-     the day is pending, once, about 900ms. */
-  const BITS = [[-96, -36, 'blue', 0], [-64, -64, 'ink4', 40], [-30, -52, 'action', 80], [8, -70, 'action', 20], [40, -58, 'ink4', 60], [76, -62, 'blue', 100],
-    [104, -28, 'action', 30], [-112, 12, 'ink4', 120], [118, 16, 'blue', 90], [-56, 44, 'action', 150], [60, 40, 'blue', 170], [-10, 64, 'ink4', 110]];
-  const Confetti = () => {
+  /* Confetti (DS 44: fixed pieces in blue and neutral, never green or yellow while the day is
+     pending, once). EVERY counted day now gets a SMALL burst from the badge and Day 20 a BIG one
+     that flies past the popup's edges (Abhisht, 2026-10-15: "I'm not able to see the confetti"; the
+     old 12 6px bits that shrank as they flew read as specks). PopBurst draws it, below RunAgain. */
+  const Confetti = ({ small }) => {
     const t = T();
-    return <>{BITS.map((b, i) => <span key={i} aria-hidden="true" style={{ position: 'absolute', left: '50%', top: 48, width: 6, height: 6, borderRadius: 2, background: t[b[2]], '--tx': b[0] + 'px', '--ty': b[1] + 'px', animation: 'ba-cfetti 900ms ease-out ' + b[3] + 'ms both', pointerEvents: 'none' }} />)}</>;
+    return <PopBurst t={t} small={!!small} />;
   };
 
   /* The centre moment, MINIMAL (Arpit's structure, 2026-10-14; Abhisht adopted it the same day):
@@ -113,23 +113,23 @@
      the design system's celebration dialog (sm 320, dim scrim, 1px line, radius lg, shadow-2,
      scale-in). Badge (Abhisht, 2026-10-14): an OUTLINED circle, not a filled one, a 2px green ring
      on white with ONE green tick inside, since the run is pending, not yet verified. */
-  function DayDoneOverlay({ step, onClose }) {
+  function DayDoneOverlay({ step, onClose, onRunAgain }) {
     if (!step || step.end === 'failed' || step.end === 'declined') return null;
     const t = T();
-    const e = step.end, c = COPY[e];
+    const e = step.end, c = step.extra ? { title: EXTRA_TITLE } : COPY[e];
     // Day 1 (the onboarding run) is the first day: nothing verified before it.
-    const n = step.day1 ? { ...numbers(e), verified: 0, pending: 1, day: 1 } : numbers(e);
+    const n = step.day1 ? { ...numbers(e), verified: 0, pending: 1, day: 1 } : numbers(e); const more = onRunAgain && (e === 'job' || e === 'day20') ? onRunAgain : null;
     return (
       <div style={{ position: 'absolute', inset: 0, zIndex: t.zDialog, background: t.scrim, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, animation: 'baMsgIn ' + t.dur3 + 'ms ' + t.easeStandard + ' both' }} onClick={onClose}>
         <style>{'@keyframes ddScaleIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: none; } }'}</style>
         <div role="dialog" aria-modal="true" aria-label={c.title} onClick={(ev) => ev.stopPropagation()}
-          style={{ position: 'relative', width: '100%', maxWidth: t.dialogSm, background: t.surface, border: t.stroke + 'px solid ' + t.line, borderRadius: t.radiusLg, padding: '24px 20px 20px', textAlign: 'center', boxShadow: t.shadow2, animation: 'ddScaleIn ' + t.dur4 + 'ms ' + t.easeOut + ' both', overflow: 'hidden' }}>
-          {e === 'day20' && <Confetti />}
+          style={{ position: 'relative', width: '100%', maxWidth: t.dialogSm, background: t.surface, border: t.stroke + 'px solid ' + t.line, borderRadius: t.radiusLg, padding: '24px 20px 20px', textAlign: 'center', boxShadow: t.shadow2, animation: 'ddScaleIn ' + t.dur4 + 'ms ' + t.easeOut + ' both', overflow: 'visible' }}>
+          {!step.extra && <>{e === 'day20' && <Confetti />}{e !== 'day20' && <Confetti small />}</>}
           <span aria-hidden="true" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box', width: t.markXl, height: t.markXl, margin: '0 auto', borderRadius: t.radiusRound, background: t.surface, border: '2px solid ' + t.success, animation: 'ddScaleIn ' + t.durCelebrate + 'ms ' + t.easeOut + ' both' }}><Tick size={26} /></span>
           <p style={{ fontSize: t.text20, fontWeight: t.wSemibold, color: t.ink, lineHeight: t.leadingTight, letterSpacing: t.trackingTitle, marginTop: 14 }}>{c.title}</p>
           <p style={{ fontSize: t.text14, color: t.ink2, lineHeight: t.leadingBody, marginTop: 6 }}>{statusLine(e, n)}</p>
-          <button onClick={onClose} style={{ display: 'block', width: '100%', height: t.controlLg, marginTop: 18, background: t.action, border: t.stroke + 'px solid ' + t.action, borderRadius: t.radiusSm, fontSize: t.text13, fontWeight: t.wMedium, color: t.onColor, cursor: 'pointer', fontFamily: 'inherit', transition: 'background ' + t.dur1 + 'ms ' + t.easeStandard }}
-            onMouseEnter={(ev) => { ev.currentTarget.style.background = t.actionHover; }} onMouseLeave={(ev) => { ev.currentTarget.style.background = t.action; }}>Got it</button>
+          {more && <RunAgain onRun={more} />}<button onClick={onClose} style={{ display: 'block', width: '100%', height: t.controlLg, marginTop: 18, background: t.action, border: t.stroke + 'px solid ' + t.action, borderRadius: t.radiusSm, fontSize: t.text13, fontWeight: t.wMedium, color: t.onColor, cursor: 'pointer', fontFamily: 'inherit', transition: 'background ' + t.dur1 + 'ms ' + t.easeStandard, ...(more ? { marginTop: 8, background: t.surface, border: t.stroke + 'px solid ' + t.lineStrong, color: t.ink } : {}) }}
+            onMouseEnter={(ev) => { ev.currentTarget.style.background = more ? t.washHover : t.actionHover; }} onMouseLeave={(ev) => { ev.currentTarget.style.background = more ? t.surface : t.action; }}>Got it</button>
         </div>
       </div>);
   }
@@ -145,6 +145,64 @@
       day20:  { title: 'Day 20 done.', body: 'All 20 days done, pending verification.' },
       failed: { title: 'Today’s job didn’t finish.', body: 'Open BlueAI to retry and count the day.' }
     }[e] || null;
+  }
+
+  /* RUN ONCE MORE (Abhisht, 2026-10-15; LOCAL TRIAL). A scheduled run often ends with nobody at the
+     PC, and the board can still hold jobs: a post job is taken once a day, engagement jobs can be
+     taken again. So the popup offers the next one. On Auto it counts down from 15s and runs by
+     itself (the fill drains as it does); on Always ask it waits for the click, and the job is
+     still asked before it starts. Got it, now the secondary button, closes the popup and stops
+     there. Shown after a job (job, Day 20, Day 1), not after no job. The day is already counted,
+     so a "Run once more" job closes with its own title and the same status line. DRAFT strings. */
+  const AGAIN_S = 15;
+  const EXTRA_TITLE = 'One more job done.';
+  function RunAgain({ onRun }) {
+    const t = T();
+    const auto = window.AgentPermissions.getMode('youtube') === 'auto';
+    const [left, setLeft] = React.useState(AGAIN_S);
+    React.useEffect(() => {
+      if (!auto) return undefined;
+      if (left <= 0) { onRun(); return undefined; }
+      const id = setTimeout(() => setLeft((s) => s - 1), 1000);
+      return () => clearTimeout(id);
+    }, [left, auto]);
+    return (<>
+      <style>{'@keyframes raDrain { from { transform: scaleX(1); } to { transform: scaleX(0); } }'}</style>
+      <button onClick={onRun} style={{ position: 'relative', overflow: 'hidden', display: 'block', width: '100%', height: t.controlLg, marginTop: 18, background: t.action, border: t.stroke + 'px solid ' + t.action, borderRadius: t.radiusSm, fontSize: t.text13, fontWeight: t.wMedium, color: t.onColor, cursor: 'pointer', fontFamily: 'inherit', transition: 'background ' + t.dur1 + 'ms ' + t.easeStandard }}
+        onMouseEnter={(ev) => { ev.currentTarget.style.background = t.actionHover; }} onMouseLeave={(ev) => { ev.currentTarget.style.background = t.action; }}>
+        {auto && <span aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.24)', transformOrigin: 'right', animation: 'raDrain ' + AGAIN_S + 's linear both' }} />}
+        <span style={{ position: 'relative', fontVariantNumeric: 'tabular-nums' }}>{'Run once more' + (auto ? ' · ' + left + 's' : '')}</span>
+      </button></>);
+  }
+
+  /* The popup's confetti (see Confetti above). Pieces pop out of the badge fast, hold, then drift
+     down as they fade. Blue, the BlueAI gradient's cyan and violet, and neutral: the day is still
+     pending, so no green or gold. Small: 12 pieces, about 1.1s. Big (Day 20): 24, wider, 1.5s. */
+  const POP = ['#1990FF', '#0EA4C5', '#7B4CFF', '#94a3b8'];
+  const POP_SHAPE = { s: [8, 3.5, 1], q: [6, 6, 1.5], d: [6, 6, 3] };   // strip, square, dot: w, h, radius
+  //                 x     y  colour shape delay spin
+  const POP_SMALL = [[-128, -30, 0, 's', 0, 200], [-96, -62, 1, 'q', 40, -160], [-58, -80, 2, 'd', 80, 0], [-22, -58, 3, 's', 20, 260],
+    [20, -76, 0, 'q', 60, -220], [56, -60, 2, 's', 100, 180], [94, -74, 1, 'd', 30, 0], [130, -34, 0, 'q', 120, -200],
+    [-140, 14, 2, 'd', 140, 0], [-84, 30, 0, 's', 70, -180], [88, 26, 3, 's', 150, 220], [142, 12, 1, 'q', 110, -240]];
+  const POP_BIG = [[-180, -60, 0, 's', 0, 220], [-160, -118, 1, 'q', 30, -160], [-128, -150, 2, 'd', 60, 0], [-98, -96, 3, 's', 20, 300],
+    [-66, -142, 0, 'q', 90, -240], [-34, -112, 1, 's', 40, 180], [0, -162, 2, 'd', 110, 0], [34, -118, 0, 's', 50, -280],
+    [68, -146, 3, 'q', 10, 200], [100, -100, 1, 's', 80, -200], [132, -140, 2, 'd', 120, 0], [162, -108, 0, 'q', 70, 260],
+    [184, -54, 1, 's', 140, -180], [-186, 8, 2, 'q', 160, 240], [-150, 44, 0, 'd', 100, 0], [-110, 74, 1, 's', 180, -220],
+    [-60, 58, 3, 'q', 130, 160], [60, 62, 0, 's', 150, -260], [112, 74, 2, 'd', 170, 0], [156, 38, 1, 'q', 90, 200],
+    [186, 4, 0, 's', 190, -160], [-140, -20, 3, 's', 200, 180], [142, -24, 2, 'q', 210, -200], [0, 84, 1, 's', 220, 240]];
+  const POP_CSS = '@keyframes ddBit { 0% { opacity: 0; transform: translate(0, 0) rotate(0deg) scale(0.4); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }'
+    + ' 8% { opacity: 1; } 38% { opacity: 1; transform: translate(var(--tx), var(--ty)) rotate(var(--r)) scale(1); animation-timing-function: ease-in; }'
+    + ' 100% { opacity: 0; transform: translate(var(--tx), calc(var(--ty) + 34px)) rotate(calc(var(--r) * 1.6)) scale(0.85); } }'
+    + ' @media (prefers-reduced-motion: reduce) { .dd-bit { display: none; } }';
+  function PopBurst({ small }) {
+    const bits = small ? POP_SMALL : POP_BIG;
+    const dur = small ? 1100 : 1500;
+    return (
+      <span aria-hidden="true" style={{ position: 'absolute', left: '50%', top: 52, width: 0, height: 0, pointerEvents: 'none' }}>
+        <style>{POP_CSS}</style>
+        {bits.map(([x, y, c, sh, d, r], i) => { const [w, h, rad] = POP_SHAPE[sh];
+          return <span key={i} className="dd-bit" style={{ position: 'absolute', left: -w / 2, top: -h / 2, width: w, height: h, borderRadius: rad, background: POP[c], '--tx': x + 'px', '--ty': y + 'px', '--r': r + 'deg', animation: 'ddBit ' + dur + 'ms linear ' + (160 + d) + 'ms both' }} />; })}
+      </span>);
   }
 
   window.WorkerDayDone = { DayDoneOverlay, DayDoneCard, ENDS, getEnd, setEnd, numbers, doneLine, toastFor, failedAsk };

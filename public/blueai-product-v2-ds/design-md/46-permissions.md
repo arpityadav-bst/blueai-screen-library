@@ -2,7 +2,7 @@
 
 **Status:** Changed from V2 (ModeRows, ConsentDialog, AutoRibbon); New (PermissionRequest).
 
-**Why:** the PM's model is right and stays: one setting per app, every app starts on Always ask, turning Automatic on is consent, asked every time (`agent_permissions.jsx:1-33`). What changes is where it lives and how it is built: since 2026-10-14 V2 runs one app, YouTube, and changes the mode only from the composer's mode chip, which opens a popover (one row per mode, a check, number shortcuts 1 and 2); Settings' Worker card and the Automatic ribbon are gone (R05, D4). The dialog never takes focus, its agree button is 3.24:1, and watch history is read without asking (R18).
+**Why:** the PM's model is right and stays: one setting per app, every app starts on Always ask, turning Automatic on is consent, asked every time (`agent_permissions.jsx:1-33`). What changes is where it lives and how it is built: since 2026-10-14 V2 runs one app, YouTube, and changes the mode only from the composer's mode chip, which opens a popover (one row per mode, a check, number shortcuts 1 and 2); Settings' Worker card and the Automatic ribbon are gone (R05, D4). The dialog never takes focus, its agree button is 3.24:1, and watch history is read without asking (R18). Since 2026-10-15 V2 labels the mode “Auto” (the PM’s call); this system’s parts and pages still say Automatic until they are renamed.
 
 ### ModeRows
 

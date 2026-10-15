@@ -4,6 +4,13 @@
 
 **Why:** Dated, newest first, so anyone building from the system can see what changed since they last looked. Add an entry for every change to tokens, a kit part’s API or a screen, here and in guide/sections/meta-changelog.jsx.
 
+### 2026-10-15: The progress bar always there, Run once more, and Auto
+
+- V2’s progress bar is always there in a worker chat, Day 1 included: today’s day, with today’s dash grey until its run counts, then a green outline. The chevron replaced the X and opens a card over the messages (“Monthly award”, the count, a legend and the rule); Day 20 has a verified state (Preview: Verification) with confetti when the card opens.
+- V2’s award mark: gold, quiet through the month, one glint when the day’s run counts, full shine at Day 20; Gift, Coin or Medal from the Preview panel’s Award icon row.
+- V2’s run-complete popup: “Run once more” (primary) above Got it; on Auto it counts down 15s and takes the next job itself, on Always ask the job is asked first; an extra job closes with “One more job done.”. Confetti on every counted day: small, and big on Day 20.
+- V2’s mode “Automatic” is now “Auto” (composer chip, mode menu, Preview); this system’s parts and pages still say Automatic.
+
 ### 2026-10-15: Pending days outlined, and the cash-out line
 
 - Partner dashboard and V2’s progress bar: a day whose run is done but still pending verification is a green outline; verified days are filled green. A light green fill and a yellow fill were tried; the yellow is archived in the code, unused.

@@ -39,7 +39,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   {"id":"compose.r25.at","file":"index.html","line":281,"needle":"useEffect(() => {","value":"R25 cited at index.html:280"},
   {"id":"compose.r26.at","file":"index.html","line":24,"needle":"<script src=\"https://cdn.tailwindcss.com\"></script>","value":"R26 cited at index.html:24"},
   {"id":"compose.r27.at","file":"index.html","line":63,"needle":"@keyframes ba-wiggle { 0%,100% { transform: rotate(0deg); } 20% { tran","value":"R27 cited at index.html:63"},
-  {"id":"compose.r28.at","file":"blueai/worker_day_done.jsx","line":116,"needle":"function DayDoneOverlay({ step, onClose }) {","value":"R28 cited at blueai/worker_day_done.jsx:119"},
+  {"id":"compose.r28.at","file":"blueai/worker_day_done.jsx","line":116,"needle":"function DayDoneOverlay({ step, onClose, onRunAgain }) {","value":"R28 cited at blueai/worker_day_done.jsx:119"},
   {"id":"compose.r29.at","file":"index.html","line":324,"needle":"const DASHBOARD_URL = '../experiments/onblue-vesper/apply.html?creator=in&account=one';","value":"R29 cited at index.html:323"},
   {"id":"compose.r30.at","file":"blueai/byok_settings.jsx","line":54,"needle":"const save = () => { onSave({ provider: picked, model: PROVIDERS[picke","value":"R30 cited at blueai/byok_settings.jsx:54"},
   {"id":"compose.r31.at","file":"blueai/settings.jsx","line":108,"needle":"{fieldRow('AI Model', null,","value":"R31 cited at blueai/settings.jsx:105"},

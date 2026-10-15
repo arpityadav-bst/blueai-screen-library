@@ -95,7 +95,7 @@
      (the real daily run); otherwise someone pressed Run on the worker card after onboarding. */
   function makeDailyRun({ scheduled, text } = {}) {
     const auto = AP().getMode('youtube') === 'auto';
-    lastRunScheduled = !!scheduled;
+    lastRunScheduled = !!scheduled; extraRun = false; moreTaken = 0;
     const head = scheduled
       ? [{ ...say('Scheduled run started.', 600), worker: true }, say('Starting your daily routine…')]
       : [{ role: 'user', content: text, d: 250, worker: true }, say('Starting your daily routine…')];
@@ -120,7 +120,7 @@
   /* The day-done card closes every run. `failed` is a worker question (Retry / Not now), so it is
      an 'ask' step drawn by the same card. `scheduled` rides along so the desktop knows whether to
      raise the Windows notification. */
-  const dayDone = (end) => ({ role: 'daydone', end, scheduled: lastRunScheduled, d: 900 });
+  const dayDone = (end) => ({ role: 'daydone', end, scheduled: lastRunScheduled, d: 900, ...(extraRun ? { extra: true, day1: extraDay1, scheduled: false } : {}) });
   const retryAsk = () => ({ role: 'ask', id: 'retry', card: 'daydone', end: 'failed', scheduled: lastRunScheduled, d: 900,
     options: [{ id: 'retry', label: 'Retry' }, { id: 'later', label: 'Not now' }] });
   const jobSteps = (retrying) => {
@@ -136,7 +136,7 @@
       dayDone(end === 'day20' ? 'day20' : 'job')];
   };
 
-  const makeWorkerRun = (text) => (onboarded ? makeDailyRun({ text }) : makeOnboarding(text));
+  const makeWorkerRun = (text) => { extraRun = false; moreTaken = 0; return onboarded ? makeDailyRun({ text }) : makeOnboarding(text); };
 
   /* A typed answer to a worker question: the option it means, or null when it can't tell. */
   const UNCLEAR = 'Sorry, I didn’t get that. Pick an option, or tell me in other words.';
@@ -194,5 +194,22 @@
     }
   }
 
-  window.WorkerFlow = { PLAN, JOB, makeWorkerRun, makeDailyRun, next, interpret, UNCLEAR, setOnboarded, isOnboarded, claimDailyRun };
+  /* ── Run once more (Abhisht, 2026-10-15; LOCAL TRIAL) ── The day-done popup's second button
+     (worker_day_done.jsx RunAgain). The day is already counted, so this is the next job on the
+     board, not another day: engagement jobs can be taken more than once (a post job only once).
+     On Auto the job starts by itself; on Always ask it is asked first, as always. The preview's
+     board holds two more jobs, then it is empty. Its close is flagged `extra` (dayDone reads
+     extraRun): its own popup title, no Windows notification, nothing left in the thread. */
+  const MORE_JOBS = 2;
+  let moreTaken = 0, extraRun = false, extraDay1 = false;
+  function makeExtraRun(from) {
+    extraRun = true; extraDay1 = !!(from && from.day1);
+    const auto = AP().getMode('youtube') === 'auto';
+    const head = [say('Checking the jobs board for another job…', 900), { role: 'thinking', d: 1100 }];
+    if (moreTaken >= MORE_JOBS) return [...head, say('No more paid jobs on the board right now. I’ll check again on tomorrow’s run.')];
+    moreTaken += 1;
+    return [...head, ...(auto ? [say(JOB.label + ': ' + JOB.title + '. Starting it now.'), ...jobSteps()] : [jobAsk()])];
+  }
+
+  window.WorkerFlow = { PLAN, JOB, makeWorkerRun, makeDailyRun, makeExtraRun, next, interpret, UNCLEAR, setOnboarded, isOnboarded, claimDailyRun };
 })();

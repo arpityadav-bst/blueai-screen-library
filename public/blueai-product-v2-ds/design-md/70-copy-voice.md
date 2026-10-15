@@ -17,7 +17,7 @@
   - day, your 20 days: the program unit; never program days, qualifying day.
   - program, period, your 20 days: the program is what the partner joins and what ends on a date ("This program ended on Nov 1"); the period is the program's dates; cash out is never tied to it; "your 20 days" is the count; never say the 20 days end.
   - pending verification, verified: one tick, two ticks; never confirmed, approved, validated.
-  - Always ask, Automatic: the mode per app (the PM's names); never Mode (as a label), auto mode, autopilot, Just this job (as a mode).
+  - Always ask, Auto: the mode per app (the PM's names; “Auto” was “Automatic” until 2026-10-15); never Mode (as a label), auto mode, autopilot, Just this job (as a mode).
   - Sign in, Sign out: account entry and exit; never Log in, Login, Logout, Log out (the site should align), logging in.
   - AI credits: the daily allowance, sentence case; never tokens, coins, free credits, claim, earn (for credits), balance (say "left today").
   - Earnings: money, opened on the site's dashboard; never income, rewards (the site should align: "Reward" on the program card and its sheet, "its own reward", "its reward is added to your earnings", `onblue/apply.html:1280, 1470, 1434, 1436`), wallet, BCX, a ↗ character (use the external icon).
@@ -47,6 +47,6 @@
   - "Agree and continue"; PM; `terms_sheet.jsx:71` (`:60`); live.
   - "Run YouTube jobs automatically?" / "I agree, turn on"; PM; `agent_permissions.jsx:186, 191`; live.
   - "BlueAI will take YouTube jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime."; PM and legal; `agent_permissions.jsx:203`; live since 2026-10-14 (its agreement paragraph is gone). Proposed change, sent to the owners (R51): "BlueAI will take YouTube jobs and do them on your account without asking first: watching, liking and posting comments in your name." (the ConsentDialog body, section 46): the worker never posts videos, and the comment it does post is not named.
-  - "Always ask" / "Automatic"; PM; `worker_flow.jsx:78`; live.
+  - "Always ask" / "Auto" (was "Automatic" until 2026-10-15); PM; `worker_flow.jsx:78`; live.
 - **States:** live, DRAFT, legal.
 - **Do / Don't:** Do quote these exactly in every part marked In V2; send a proposed change to the owner with the reason. Don't fix a typo or a tone in them silently; don't move legal wording between contexts without legal.

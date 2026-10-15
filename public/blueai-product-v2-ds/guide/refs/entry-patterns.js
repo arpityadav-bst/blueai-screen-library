@@ -172,7 +172,7 @@
     r('copy.retry', 'blueai/worker_flow.jsx', 125, "{ id: 'retry', label: 'Retry' }", '"Retry" (PM copy, flagged)'),
     r('copy.try-again', 'blueai/ai_mode.jsx', 86, 'Try again', '"Try again"'),
     r('copy.dots', 'blueai/chat_product.jsx', 284, '\'Type your message...\'', 'three dots, not the ellipsis'),
-    r('copy.modes', 'blueai/agent_permissions.jsx', 8, 'The wording is "Always ask" and "Automatic" everywhere', 'the PM mode names'),
+    r('copy.modes', 'blueai/agent_permissions.jsx', 8, 'The wording is "Always ask" and "Auto" everywhere', 'the PM mode names'),
     r('copy.pitch', 'blueai/worker_flow.jsx', 69, 'I only run a paid job after you say yes to that specific job.', 'pitch bullet'),
     r('copy.pitch-owner', 'blueai/worker_flow.jsx', 16, "bullet stays as live, by Abhisht's call.", 'live by the PM call'),
     r('copy.draft', 'blueai/worker_day_done.jsx', 6, 'are DRAFT unless marked approved.', 'day-done strings are drafts unless marked approved'),

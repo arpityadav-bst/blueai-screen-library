@@ -5,7 +5,7 @@
    paid YouTube job during its daily run:
      always  Always ask (the default): the job ask waits for an answer, then the job runs to the end.
      auto    Automatic: no ask; the worker takes the job and finishes it on its own.
-   The wording is "Always ask" and "Automatic" everywhere, never "Always allow", "Auto" or
+   The wording is "Always ask" and "Auto" everywhere ("Automatic" until 2026-10-15, Abhisht), never "Always allow" or
    "Supervised". The store stays keyed by app (getMode('youtube')), so a second app later is one
    APPS entry plus a UI decision; the UI today shows YouTube only. Arpit's two-app sheet (one
    switch per app) was dropped the same day for this. A one-app bottom sheet was tried after it
@@ -53,7 +53,7 @@
   /* `key` is the number shortcut shown on the popover row and honoured while it is open. */
   const MODES = [
     { id: 'always', key: '1', title: 'Always ask', sub: 'Asks before each job starts, then runs it to the end', Icon: IcoShieldCheck },
-    { id: 'auto', key: '2', title: 'Automatic', sub: 'Starts and finishes jobs without asking', Icon: IcoZap }];
+    { id: 'auto', key: '2', title: 'Auto', sub: 'Starts and finishes jobs without asking', Icon: IcoZap }];
   const APPS = [{ id: 'youtube', name: 'YouTube', Icon: IcoYouTube }];
   const APP = APPS[0];
   const HEADER = 'Mode for ' + APP.name + ' jobs';

@@ -104,7 +104,7 @@ window.V2Refs = (window.V2Refs || []).concat([
 
   // 27 Popover: the per-app mode menu (ModeChip)
   { id: 'overlays.popover.mode-always', file: 'agent_permissions.jsx', line: 55, needle: '{ id: \'always\', key: \'1\', title: \'Always ask\'', value: 'Always ask' },
-  { id: 'overlays.popover.mode-auto', file: 'agent_permissions.jsx', line: 56, needle: '{ id: \'auto\', key: \'2\', title: \'Automatic\'', value: 'Automatic' },
+  { id: 'overlays.popover.mode-auto', file: 'agent_permissions.jsx', line: 56, needle: '{ id: \'auto\', key: \'2\', title: \'Auto\'', value: 'Auto' },
   { id: 'overlays.sheet.mode-chip', file: 'agent_permissions.jsx', line: 180, needle: 'aria-haspopup="dialog" aria-expanded={open} title={HEADER}', value: 'the composer chip opens the mode popover; aria-haspopup dialog' },
 
   // 28 Tabs: V2's only tabs, and the family's
