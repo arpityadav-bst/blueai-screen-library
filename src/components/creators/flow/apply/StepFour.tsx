@@ -1,8 +1,7 @@
 'use client'
 
 import { useCrx } from '../CrxState'
-import { ChoiceGroup, CheckField, INPUT, LABEL } from './controls'
-import { FieldError, withErr } from './forms'
+import { ChoiceGroup, CheckField } from './controls'
 import { FULL_RUN_OPTS, YES_NO_CHIPS } from './options'
 import { choiceSetter, type Props } from './stepProps'
 
@@ -43,8 +42,8 @@ export function StepFour(p: Props) {
           design, not an accident): this step carries FOUR groups, so its gaps are deliberately
           UNEVEN. The PayPal → long-run gap below is the ONE Appy asked to keep its full weight
           (crx-qgap-tight = 20px, plus PayPal's own reserved hint slot ≈ 41px total), while the two
-          gaps after it gave way (the email label sits nearly flush under the long-run group, and the
-          consent line rides the email field's own reserved error slot). The `tight` prop on this
+          gaps after it gave way (the contact line sits nearly flush under the long-run group, and the
+          consent line sits a tight gap under the contact line's hint). The `tight` prop on this
           step's two ChoiceGroups is the fourth gap in that budget — it halves each label→options
           gap. The step emphasises ONE break instead of spacing all three the same; do not "fix" this
           into a uniform rhythm without re-reading the source's budget arithmetic. */}
@@ -63,33 +62,27 @@ export function StepFour(p: Props) {
         />
       </div>
 
-      {/* Pre-filled from the signed-in account and editable, because the question is which email the
-          reader WANTS to be contacted on, which is not necessarily the one they signed in with.
-          Pre-filling answers the common case without deciding it for them. */}
-      <label className="crx-ctl crx-qgap-min">
-        <span className={LABEL}>What email should we contact you on?</span>
-        <input
-          type="email"
-          inputMode="email"
-          autoComplete="email"
-          value={d.email}
-          onChange={(e) => setD((prev) => ({ ...prev, email: e.target.value }))}
-          onBlur={() => p.touch('email')}
-          placeholder="you@example.com"
-          className={withErr(INPUT, err.email)}
-        />
-        <FieldError>{err.email}</FieldError>
-      </label>
+      {/* A STATEMENT, NOT A QUESTION (Abhisht, 2026-10-21). The email is the signed-in account's
+          and cannot be changed, so "What email should we contact you on?" asked something the
+          reader had no way to answer, over a field they could not edit. It now says where we will
+          write, with no input chrome, and the hint (production's copy) says why it is fixed: it is
+          also the email the BlueAI app signs in with. */}
+      <div className="crx-qgap-min">
+        <p className="crx-contact-line">
+          We&rsquo;ll contact you at <b>{d.email}</b>
+        </p>
+        <span className="crx-hint">This is the email you&rsquo;ll sign in to BlueAI with.</span>
+      </div>
 
       {/* ONE CHECKBOX, NOT TWO (PM, 2026-08-13) — replaces both the old "okay to be contacted for
           feedback" question and the old "okay to be emailed about the program" checkbox. Program
           Terms is an underlined in-line mention, not a routed link — there is no Program Terms page
           in this design-only build yet, and an underline that goes nowhere is honest about that in a
           way a broken href would not be. `subtle` — boilerplate you tick on the way out, not a
-          decision like the age gate (see CheckField). crx-qgap-min: the smallest gap on the step by
-          design — this separates the last question from boilerplate, never its peer, and the email
-          field's own reserved error slot sits between the two regardless. */}
-      <div className="crx-qgap-min">
+          decision like the age gate (see CheckField). crx-qgap-tight, not -min (2026-10-21): the
+          email field used to put its reserved error slot between the two; the contact line's hint
+          sits flush instead, so the gap itself has to carry the separation. */}
+      <div className="crx-qgap-tight">
         <CheckField
           subtle
           checked={d.agree}

@@ -16,7 +16,7 @@
 //
 // "WHY DO YOU WANT TO JOIN?" CUT (PM, 2026-08-14), replaced by two capacity chip questions (pcHours,
 // runDays) — see StepThree for the reasoning and options.tsx for why the answers are fixed ranges.
-import { isEmail, type Errors } from './forms'
+import type { Errors } from './forms'
 
 export type Draft = {
   adult: boolean
@@ -70,7 +70,7 @@ export const STEP_FIELDS: readonly string[][] = [
   ['adult', 'describes'],
   ['hasYouTube', 'channel'],
   ['pcHours', 'runDays', 'earnedBefore'],
-  ['hasPaypal', 'fullRun', 'email', 'agree'],
+  ['hasPaypal', 'fullRun', 'agree'],
 ]
 
 // Messages say what to do, not what is wrong — the same rule the campaign form's validate() note
@@ -95,8 +95,8 @@ export function validate(d: Draft): Errors {
   if (!d.hasPaypal) e.hasPaypal = 'Let us know if you have a PayPal account.'
   if (!d.fullRun) e.fullRun = 'Let us know if you are in for the full run.'
 
-  if (!d.email.trim()) e.email = 'Add the email you want to be contacted on.'
-  else if (!isEmail(d.email)) e.email = 'That doesn’t look like an email. Check for a typo.'
+  // No email check (2026-10-21): the email is the signed-in account's and is shown, not asked
+  // (see StepFour), so there is nothing the reader could have typed wrong.
 
   // "Terms of Use" since 2026-08-31: it names the document that exists (the checkbox links it),
   // and it needs no per-variant rewriting — no banned word for the no-"program" variants.

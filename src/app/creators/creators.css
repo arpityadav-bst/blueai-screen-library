@@ -2048,6 +2048,10 @@ body.crx-light .crx {
   border: 1px solid var(--line);
   border-radius: 9px;
 }
+/* step 5's contact line — a statement in a label's slot: the lead-in quiet, the fixed email at label
+   weight, so it reads as information rather than a question waiting on an answer */
+.crx .crx-contact-line { margin: 0; font-size: var(--t-meta); color: var(--dim); overflow-wrap: anywhere; }
+.crx .crx-contact-line b { font-weight: 650; color: var(--ink-inverse); }
 /* muted normal-weight "(optional)" suffix inside a label */
 .crx .crx-label-opt { color: var(--ink-3); font-weight: 400; }
 /* textarea — resting size capped at rows=3, scrolls internally past it, never user-resized */
