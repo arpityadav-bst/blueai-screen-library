@@ -537,19 +537,14 @@
   }
 
   /* ---- viewer geography ----------------------------------------------------
-     TWO VIEWS, switched from the prototype bar at the bottom left. "soon" is
-     what ships while the backend work is pending: the card keeps its shape but
-     the numbers are blurred under a Coming soon note. "live" is the finished
+     TWO VIEWS, switched from the prototype bar at the bottom left. "off" is
+     what ships while the backend work is pending: no geography anywhere, not
+     the card, not the section in a post's details, not the CSV columns (a
+     Coming soon note felt wrong, Abhisht 2026-10-22). "live" is the finished
      card. The choice is remembered per browser. */
-  var geoAll = false, geoMode = 'soon';
-  try { geoMode = window.localStorage.getItem('campaign-report:geo') === 'live' ? 'live' : 'soon'; } catch (e) {}
+  var geoAll = false, geoMode = 'off';
+  try { geoMode = window.localStorage.getItem('campaign-report:geo') === 'live' ? 'live' : 'off'; } catch (e) {}
   var PROCESSING = '<div class="geo-empty">Geography data is still processing.</div>';
-  function soonWrap(inner, small) {
-    return '<div class="soon' + (small ? ' soon--sm' : '') + '"><div class="soon-blur" aria-hidden="true">' + inner + '</div>'
-      + '<div class="soon-msg"><span class="chip chip--soon">Coming soon</span>'
-      + '<b>Geography stats are coming soon</b>'
-      + '<span class="soon-sub">You’ll see where the views on ' + (small ? 'this post' : 'the posts') + ' come from.</span></div></div>';
-  }
   function geoBars(g, limit) {
     var rows = g.rows.slice(0, limit), rest = g.rows.slice(limit);
     if (rest.length) {
@@ -569,15 +564,15 @@
       + ', ' + pct(g.total ? g.cv / g.total : 0) + ' of views. Posts without geography data are left out.</span></p>';
   }
   function renderGeo() {
-    var g = geoOf(scope()), soon = geoMode === 'soon';
-    $('#geo-card').innerHTML =
+    var g = geoOf(scope()), card = $('#geo-card');
+    card.hidden = geoMode === 'off';
+    card.innerHTML = geoMode === 'off' ? '' :
       '<div class="card-head"><div><h2 class="rep-h">Viewer geography</h2>'
       + '<p class="rep-hint">Where the views on the posts came from' + (isFull() ? '' : ', ' + spanText()) + '.'
-      + (soon ? '' : ' Open any post’s details to see its own geography.') + '</p></div>'
-      + (!soon && g.rows.length > 5 ? '<button class="link-btn" type="button" data-geo-all>' + (geoAll ? 'Show top 5' : 'Show all') + '</button>' : '')
+      + ' Open any post’s details to see its own geography.</p></div>'
+      + (g.rows.length > 5 ? '<button class="link-btn" type="button" data-geo-all>' + (geoAll ? 'Show top 5' : 'Show all') + '</button>' : '')
       + '</div>'
-      + (soon ? soonWrap(coverNote(geoOf(posts)) + geoBars(geoOf(posts), 5), false)
-              : g.covered ? coverNote(g) + geoBars(g, geoAll ? 99 : 5) : PROCESSING);
+      + (g.covered ? coverNote(g) + geoBars(g, geoAll ? 99 : 5) : PROCESSING);
     document.querySelectorAll('[data-geo-mode]').forEach(function (b) {
       b.setAttribute('aria-pressed', b.getAttribute('data-geo-mode') === geoMode ? 'true' : 'false');
     });
@@ -928,9 +923,8 @@
   }
   function geoSection(list, single) {
     var g = geoOf(list), p = list[0], body;
-    if (geoMode === 'soon') {
-      body = soonWrap(geoBars(g.covered ? g : geoOf(posts), 4), true);
-    } else if (!g.covered) {
+    if (geoMode === 'off') { return ''; }
+    if (!g.covered) {
       body = single && p.views >= GEO_MIN && !p.pv
         ? '<div class="geo-empty">This post gathered no views ' + spanText() + '.</div>'
         : PROCESSING;
