@@ -1,0 +1,203 @@
+/* Campaigns list (the brand's first page). Loads after report.css and only adds
+   what this page has that the report does not. */
+
+/* The live header runs the full width, so the page's own column (and its New
+   campaign button) sits in the middle, inset from Log out. */
+.top-in { max-width: none; padding: 0 46px; }
+/* Eight table columns plus the ID need more room than the report's band. */
+:root { --band-max: 1280px; }
+
+.list-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 20px; }
+.list-title { font-size: clamp(30px, 3.2vw, 42px); font-weight: 600; line-height: 1.1; letter-spacing: -0.035em; }
+.list-actions { display: flex; align-items: center; gap: 12px; }
+.btn--solid { border-color: var(--ink); background: var(--ink); color: #fff; }
+.btn--solid:hover { border-color: #26272c; background: #26272c; }
+.btn--lg { height: 46px; padding: 0 20px; font-size: 15px; }
+.icon-btn.btn--lg { width: 46px; padding: 0; }
+
+.list-tiles { margin-top: 36px; }
+.list-sub { margin-top: 8px; color: var(--muted); font-size: 15px; }
+.list-sub b { color: var(--ink); font-weight: 500; }
+.list-tiles .tile { gap: 6px; padding: 20px 22px 22px; }
+.list-tiles .tile-l { font-size: 13.5px; }
+.list-tiles .tile-v { font-size: 32px; }
+.list-tiles .tile-s { font-size: 12.5px; }
+
+.band { margin-top: 44px; }
+.band-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 46px; margin-bottom: 14px; }
+.band-h { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; }
+.filter-wrap { position: relative; }
+.band-head .search { flex: 0 1 300px; height: 40px; }
+.band-head .search input { font-size: 14px; }
+.mine-filters { margin: 0 0 14px; }
+.mine-filters .sel { height: 36px; font-size: 13px; }
+.mine-filters .count { font-size: 13px; }
+/* ---- the pill menu: a search field on top once the list is long ------------- */
+.pill-wrap { position: relative; display: inline-flex; }
+.mine-filters .sel[aria-expanded="true"] { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(21, 110, 254, 0.12); }
+.pmenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 40;
+  width: 250px;
+  max-width: calc(100vw - 32px);
+  padding: 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+.pmenu.is-right { right: 0; left: auto; }
+.pmenu.is-cal { width: min(320px, calc(100vw - 32px)); padding: 14px; }
+.pmenu-search { display: flex; align-items: center; gap: 8px; height: 36px; margin-bottom: 6px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: 8px; color: var(--dim); }
+.pmenu-search:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(21, 110, 254, 0.12); }
+.pmenu-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; color: var(--ink); font-size: 13.5px; }
+.pmenu-list { max-height: 264px; overflow-y: auto; list-style: none; outline: 0; }
+.pmenu-list li { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; font-size: 13.5px; cursor: pointer; }
+.pmenu-list li.is-active { background: var(--wash); }
+.pmenu-list li[aria-selected="true"] { color: var(--blue-ink); font-weight: 500; }
+.pmenu-ck { flex: none; width: 14px; font-size: 12px; }
+.pmenu-t { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.pmenu-n { margin-left: auto; color: var(--dim); font-size: 12px; font-variant-numeric: tabular-nums; }
+.pmenu-none { padding: 10px; color: var(--muted); font-size: 13px; }
+
+.crow--head .th { padding: 0; color: inherit; font-weight: inherit; cursor: pointer; }
+.crow--head .th:hover { color: var(--blue-ink); }
+.filter-btn.is-set { border-color: var(--blue-line); background: var(--blue-wash); color: var(--blue-ink); }
+
+/* ---- the table ---------------------------------------------------------------- */
+.clist { overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--card); }
+.crow {
+  display: grid;
+  grid-template-columns: var(--ccols);
+  align-items: center;
+  gap: 24px;
+  padding: 20px 26px;
+  border-top: 1px solid var(--line);
+}
+.clist { --ccols: minmax(0, 1fr) 224px 112px 120px 112px; }
+.clist--new { --ccols: minmax(0, 1fr) 124px 128px 96px 104px 120px 116px 14px; }
+.clist--new .crow { gap: 18px; }
+.clist--new .c-name { display: flex; align-items: baseline; gap: 8px; min-width: 0; color: var(--ink-soft); font-size: 15px; font-weight: 400; }
+.c-title { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+/* The ID rides on the name's line, never under it; the name gives way first. */
+.c-hash {
+  flex: none;
+  padding: 1px 5px;
+  border-radius: 6px;
+  color: var(--dim);
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 11.5px;
+  letter-spacing: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.c-hash:hover, .c-hash:focus-visible { background: var(--wash); color: var(--ink); }
+.clist--new .crow--head { color: var(--ink); font-weight: 600; }
+.c-cell, .c-geo, .c-time { overflow: hidden; color: var(--lede); font-size: 14px; white-space: nowrap; text-overflow: ellipsis; }
+.clist--new .c-num, .clist--new .crow--head > :nth-child(6) { text-align: center; }
+.clist--new .c-num b { font-weight: 400; }
+.crow--head { padding-top: 16px; padding-bottom: 16px; border-top: 0; color: var(--muted); font-size: 13.5px; }
+.crow.is-link { cursor: pointer; transition: background 0.15s ease; }
+.crow.is-link:hover { background: rgba(18, 32, 64, 0.025); }
+.crow.is-link:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; border-radius: 0; }
+
+.c-id { display: grid; gap: 4px; min-width: 0; }
+.c-name { font-size: 15.5px; font-weight: 600; letter-spacing: -0.015em; overflow-wrap: anywhere; }
+.c-name i { margin-left: 8px; color: var(--dim); font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 11.5px; font-style: normal; font-weight: 400; letter-spacing: 0; }
+.c-meta { color: var(--muted); font-size: 13.5px; }
+
+.c-fill { display: grid; gap: 10px; font-size: 14px; color: var(--lede); }
+.c-fill b, .c-spend b, .c-num b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.c-bar { display: block; height: 5px; overflow: hidden; border-radius: 999px; background: var(--lift); }
+.c-bar i { display: block; height: 100%; min-width: 2px; border-radius: inherit; background: var(--green-ink); }
+.c-spend { display: grid; gap: 2px; font-size: 15px; font-variant-numeric: tabular-nums; }
+.c-spend span { color: var(--muted); font-size: 13.5px; }
+.c-go { display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px; color: var(--muted); font-size: 14px; white-space: nowrap; }
+.crow.is-link:hover .c-go { color: var(--ink); }
+.c-why { color: var(--red-ink); font-size: 14px; text-align: right; }
+
+.c-num { font-size: 15px; font-variant-numeric: tabular-nums; }
+.c-num span { color: var(--muted); font-size: 13.5px; }
+.c-state { display: flex; align-items: center; gap: 6px; }
+
+/* A rejected campaign's reason, one hover away instead of a second line. */
+.c-info { position: relative; display: inline-flex; color: var(--red-ink); cursor: help; }
+.c-info::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  z-index: 20;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+  transition: opacity 0.15s ease;
+}
+.c-info:hover::after, .c-info:focus-visible::after { opacity: 1; }
+.c-chev { display: inline-flex; justify-content: flex-end; color: var(--dim); }
+.crow.is-link:hover .c-chev { color: var(--ink); }
+
+.chip--done { background: #fff; color: var(--ink-soft); }
+.chip--rejected { border-color: var(--red-line); background: var(--red-fill); color: var(--red-ink); }
+.chip--review { border-color: var(--blue-line); background: var(--blue-wash); color: var(--blue-ink); }
+.chip--under { border-color: rgba(180, 83, 9, 0.32); background: rgba(217, 119, 6, 0.08); color: #b45309; }
+
+.list-empty { display: grid; justify-items: start; gap: 14px; padding: 26px; border: 1px dashed var(--line-strong); border-radius: 16px; background: var(--card); color: var(--lede); font-size: 14px; }
+.list-filtered { padding: 22px 26px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+
+/* ---- the filter menu ---------------------------------------------------------- */
+.fmenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  display: grid;
+  gap: 2px;
+  min-width: 200px;
+  padding: 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+.fmenu b { padding: 6px 8px 4px; color: var(--dim); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.fmenu label { display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-radius: 8px; font-size: 13.5px; cursor: pointer; }
+.fmenu label:hover { background: var(--wash); }
+.fmenu input { accent-color: var(--blue); }
+
+@media (max-width: 1080px) {
+  .clist--new { --ccols: minmax(0, 1fr) 86px 124px 92px 100px 122px 116px 14px; }
+  .clist--new .c-num { white-space: nowrap; }
+  .clist--new .crow { gap: 14px; padding-right: 20px; padding-left: 20px; }
+  .clist--new .c-name { font-size: 14px; }
+}
+@media (max-width: 960px) {
+  .clist { --ccols: minmax(0, 1fr) 190px 96px 110px; }
+  /* Eight columns stop fitting: name and status on top, the details on the line under them. */
+  .clist--new .crow.crow--head { display: none; }
+  .clist--new .crow { display: flex; flex-wrap: wrap; align-items: center; position: relative; gap: 4px 14px; padding: 16px 44px 16px 18px; }
+  .clist--new .crow::after { content: ""; order: 2; flex-basis: 100%; }
+  .clist--new .c-name { order: 0; flex: 1 1 0; min-width: 0; }
+  .clist--new .c-state { order: 1; flex: none; }
+  .clist--new .c-cell, .clist--new .c-geo, .clist--new .c-time, .clist--new .c-num { order: 3; font-size: 13px; text-align: left; }
+  .clist--new .c-chev { position: absolute; top: 50%; right: 18px; transform: translateY(-50%); }
+  .clist:not(.clist--new) .c-go, .clist:not(.clist--new) .c-why, .clist:not(.clist--new) .crow--head > :last-child { display: none; }
+}
+@media (max-width: 760px) {
+  .list-tiles { grid-template-columns: 1fr; }
+  .crow { gap: 10px 16px; padding: 16px 18px; }
+  .crow--head { display: none; }
+  .clist { --ccols: minmax(0, 1fr) auto; }
+  .clist .c-fill, .clist .c-spend { grid-column: 1 / -1; }
+  .top-in { padding: 0 20px; }
+  .band-head { flex-wrap: wrap; }
+  .band-head .search { flex: 1 1 100%; }
+  .mine-filters .count { flex-basis: 100%; margin-left: 0; }
+}
