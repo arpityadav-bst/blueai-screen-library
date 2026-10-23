@@ -11,14 +11,21 @@
    switch per app) was dropped the same day for this. A one-app bottom sheet was tried after it
    and dropped too (Abhisht: "the previous one with the dialogue was better").
 
-   No worker question offers Automatic (Abhisht, 2026-10-14): the mode is switched only from
-   ModeChip in the composer's bottom bar, in every signed-in chat (product level).
-   ARCHIVED 2026-10-14: AutoRibbon, the one-line "Automatic on YouTube / Change" ribbon above the
-   composer (worker chats only, while Automatic is on). Its code stays below and is still exported,
-   but nothing renders it; chat_product.jsx notes where it went if it comes back.
-   The chip opens the Oct 5 Mode menu as the design system's Popover (DESIGN.md 27): a header naming
+   No worker question offers Automatic (Abhisht, 2026-10-14). Where the mode is switched (LOCAL
+   TRIAL, Abhisht, 2026-10-23; the Preview panel's "Mode control" row or ?control= compares them):
+     ribbon   (default) AppRibbon, while the worker runs on an app. The mode belongs to the app
+              (YouTube today, Instagram later), so the control names that app and shows only once
+              the worker is working inside it (Abhisht: "when the worker detects it's running on
+              YouTube (or any app)"): the 20-day bar above the chat box tucks away and the ribbon
+              takes its place, then they swap back when the run closes. Day 1's setup run never
+              shows it: the person's own answers matter there, so Auto is not put in front of them.
+     chatbox  ModeChip in the composer's bottom bar, in every signed-in chat (the Oct 14 call). One
+              chip cannot say which app it is for, and it is there during setup too.
+   The Oct 14 AutoRibbon (Automatic only) is replaced by AppRibbon, which shows in both modes.
+   Both open the Oct 5 Mode menu as the design system's Popover (DESIGN.md 27): a header naming
    YouTube, one row per mode with a one-line description, a check on the current one and its
-   number shortcut. (Settings' Worker card was removed 2026-10-14: the chip is the one place.) Not persisted: every reload
+   number shortcut. Settings > Worker (back 2026-10-23, settings.jsx) lists every app with its
+   own Always ask | Auto switch, the place to change it outside a run. Not persisted: every reload
    starts a brand-new user on Always ask. The real app keeps the setting per account.
 
    No scroll jump (the bug in Arpit's sheet): the popover opens in view above the composer, focus
@@ -33,8 +40,8 @@
    Look: the "V2 today" tokens (v2_tokens.jsx).
 
    Exposes window.AgentPermissions = { MODES, APPS, HEADER, getMode, setMode, reset, autoApps,
-   requestMode, usePermissionMode, ModeChip, AutoRibbon, ModeRows, AutoConfirm, IcoShieldCheck,
-   IcoZap }. */
+   requestMode, usePermissionMode, ModeChip, AppRibbon, ModeRows, AutoConfirm, IcoShieldCheck,
+   IcoZap, headerFor, arrowKeys }. */
 (function () {
   const { useState, useEffect, useRef } = React;
   const T = () => window.V2Tokens;
@@ -56,14 +63,22 @@
     { id: 'auto', key: '2', title: 'Auto', sub: 'Starts and finishes jobs without asking', Icon: IcoZap }];
   const APPS = [{ id: 'youtube', name: 'YouTube', Icon: IcoYouTube }];
   const APP = APPS[0];
-  const HEADER = 'Mode for ' + APP.name + ' jobs';
+  const headerFor = (a) => 'Mode for ' + a.name + ' jobs';
+  const HEADER = headerFor(APP);
   const byId = (id) => MODES.find((m) => m.id === id) || MODES[0];
+  const appById = (id) => APPS.find((a) => a.id === id) || APP;
 
   /* ── Store ── */
   const fresh = () => Object.fromEntries(APPS.map((a) => [a.id, 'always']));
   let modes = fresh();
   let confirming = null;     // the app whose consent dialog is up
+  let confirmFrom = 'chat';  // where it was asked from: 'chat' (the ribbon or chip) or 'settings'
   let afterConsent = null;   // what the asker does once the person agrees (the job card starts its job)
+  /* Mode popovers open right now (the ribbon's or the chip's). With `confirming`, it says the
+     person is in the middle of choosing a mode (`choosing` below), and the chat holds the
+     run-complete popup, and the ribbon, until they have picked or dismissed it (Abhisht,
+     2026-10-23: "don't overwrite the choosing popup, wait for the user's input"). */
+  let popovers = 0;
   const subs = new Set();
   const emit = () => subs.forEach((f) => f());
   const getMode = (app = APP.id) => modes[app] || 'always';
@@ -71,8 +86,8 @@
   function setMode(app, m) { modes = { ...modes, [app in modes ? app : APP.id]: byId(m).id }; confirming = null; emit(); }
   function reset() { modes = fresh(); confirming = null; afterConsent = null; emit(); }
   // `then` runs only if the mode actually changes; Cancel on the consent drops it.
-  function requestMode(app, m, then) {
-    if (m === 'auto' && getMode(app) !== 'auto') { confirming = app; afterConsent = then || null; emit(); return; }
+  function requestMode(app, m, then, from = 'chat') {
+    if (m === 'auto' && getMode(app) !== 'auto') { confirming = app; confirmFrom = from; afterConsent = then || null; emit(); return; }
     setMode(app, m); if (then) then();
   }
   function agreeAuto() {
@@ -81,30 +96,32 @@
     setMode(app, 'auto'); if (then) then();
   }
   function cancelConfirm() { confirming = null; afterConsent = null; emit(); }
+  const popoverOpened = (on) => { popovers = Math.max(0, popovers + (on ? 1 : -1)); emit(); };
   function usePermissionMode() {
     const [, bump] = useState(0);
     useEffect(() => { const f = () => bump((n) => n + 1); subs.add(f); return () => { subs.delete(f); }; }, []);
-    return { modes, confirming, requestMode, setMode, autoApps };
+    return { modes, confirming, confirmFrom, requestMode, setMode, autoApps, choosing: popovers > 0 || !!confirming };
   }
 
   /* ── The mode rows ── a radio group, one row per mode: icon, title, one-line description, a check
      on the current one and (in the popover) its number shortcut. Picking Automatic goes through
      the consent; Always ask applies at once. Up/Down move between the rows. */
-  function ModeRows({ onPick, keys = false }) {
+  // Arrow keys move focus between a radio group's options (here, and Settings' per-app switches).
+  function arrowKeys(e) {
+    if (!['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+    e.preventDefault();
+    const rows = Array.from(e.currentTarget.querySelectorAll('[role="radio"]'));
+    const i = rows.indexOf(document.activeElement);
+    const next = rows[(i + (e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : rows.length - 1)) % rows.length];
+    if (next) next.focus({ preventScroll: true });
+  }
+  function ModeRows({ onPick, keys = false, app = APP }) {
     const t = T();
     const { modes: cur } = usePermissionMode();
-    const now = cur[APP.id];
-    const choose = (id) => { if (onPick) onPick(id); if (id !== now) requestMode(APP.id, id); };
-    const arrow = (e) => {
-      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
-      e.preventDefault();
-      const rows = Array.from(e.currentTarget.querySelectorAll('[role="radio"]'));
-      const i = rows.indexOf(document.activeElement);
-      const next = rows[(i + (e.key === 'ArrowDown' ? 1 : rows.length - 1)) % rows.length];
-      if (next) next.focus({ preventScroll: true });
-    };
+    const now = cur[app.id];
+    const choose = (id) => { if (onPick) onPick(id); if (id !== now) requestMode(app.id, id); };
     return (
-      <div role="radiogroup" aria-label={HEADER} onKeyDown={arrow}>
+      <div role="radiogroup" aria-label={headerFor(app)} onKeyDown={arrowKeys}>
         {MODES.map((x) => {
           const on = x.id === now;
           return (
@@ -126,20 +143,22 @@
 
   /* ── The mode popover ── anchored ABOVE its nearest positioned ancestor (the composer box for the
      chip, the ribbon for Change), at its left edge, min(364, that box) wide. A non-modal dialog
-     named by its header. Focus moves to the current row on open, without scrolling; Esc closes and
-     returns focus to the button; an outside click or focus leaving closes it; 1 and 2 pick. */
+     named by its header, for one app (the job's, from the ribbon). Focus moves to the current row
+     on open, without scrolling; Esc closes and returns focus to the button; an outside click or
+     focus leaving closes it; 1 and 2 pick. */
   // Darker than the design system's shadow-1 (Abhisht, 2026-10-14), so the popover lifts clearly
   // off the white chat behind it: a deep soft cast plus a tight contact shadow.
   const POP_SHADOW = '0 16px 40px rgba(15,23,42,0.28), 0 3px 10px rgba(15,23,42,0.14)';
-  function ModePopover({ triggerRef, onClose }) {
+  function ModePopover({ triggerRef, onClose, app = APP }) {
     const t = T();
     const ref = useRef(null);
     const back = () => { const b = triggerRef.current; if (b && b.isConnected) b.focus({ preventScroll: true }); };
     const pick = (id) => { onClose(); if (id === 'always') setTimeout(back, 0); };
     useEffect(() => {
+      popoverOpened(true);
       const panel = ref.current;
-      const app = panel && panel.closest('.ba-app');
-      const pin = () => { if (app) { app.scrollTop = 0; app.scrollLeft = 0; } };
+      const win = panel && panel.closest('.ba-app');
+      const pin = () => { if (win) { win.scrollTop = 0; win.scrollLeft = 0; } };
       const row = panel && (panel.querySelector('[role="radio"][aria-checked="true"]') || panel.querySelector('[role="radio"]'));
       if (row) row.focus({ preventScroll: true });
       pin();
@@ -151,19 +170,19 @@
         if (e.key === 'Escape') { e.preventDefault(); onClose(); back(); return; }
         if (/^(INPUT|TEXTAREA)$/.test((e.target && e.target.tagName) || '')) return;
         const hit = MODES.find((x) => x.key === e.key);
-        if (hit) { e.preventDefault(); pick(hit.id); if (hit.id !== getMode()) requestMode(APP.id, hit.id); }
+        if (hit) { e.preventDefault(); pick(hit.id); if (hit.id !== getMode(app.id)) requestMode(app.id, hit.id); }
       };
       document.addEventListener('mousedown', down);
       document.addEventListener('keydown', key);
-      return () => { document.removeEventListener('mousedown', down); document.removeEventListener('keydown', key); pin(); };
+      return () => { document.removeEventListener('mousedown', down); document.removeEventListener('keydown', key); pin(); popoverOpened(false); };
     }, []);
     return (
       <div ref={ref} role="dialog" aria-labelledby="ap-mode-head" tabIndex={-1} className="ba-msg-in"
         onBlur={(e) => { const to = e.relatedTarget; if (to && !e.currentTarget.contains(to) && !(triggerRef.current && triggerRef.current.contains(to))) onClose(); }}
         style={{ position: 'absolute', left: 0, bottom: 'calc(100% + 8px)', width: t.popoverW, maxWidth: '100%', boxSizing: 'border-box', background: t.surface, border: t.stroke + 'px solid ' + t.line, borderRadius: t.radiusMd, boxShadow: POP_SHADOW, padding: 4, zIndex: t.zPopover, outline: 'none', textAlign: 'left' }}>
         <p id="ap-mode-head" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: t.text12, fontWeight: t.wMedium, color: t.ink3, padding: '7px 10px 5px' }}>
-          <APP.Icon size={14} />{HEADER}</p>
-        <ModeRows keys onPick={pick} />
+          <app.Icon size={14} />{headerFor(app)}</p>
+        <ModeRows keys onPick={pick} app={app} />
       </div>);
   }
 
@@ -191,16 +210,20 @@
      ModalOverlay is scoped to the product window whichever surface asked for it. MINIMAL (Arpit,
      2026-10-14): what BlueAI will do, that it posts under your name, that it can be undone, and
      the agreement IS the button ("I agree, turn on"), so there is no checkbox and no separate
-     agreement paragraph. Buttons: the design system's 44px pair, Cancel then the primary. */
+     agreement paragraph. Buttons: the design system's 44px pair, Cancel then the primary.
+     Asked from chat (the ribbon or the chip), one more line says where else it can be changed
+     (Abhisht, 2026-10-23: only in the chat one, not when the person is already in Settings), and
+     the body drops "You can turn this off anytime.", which that line covers; Settings keeps it. */
   function AutoConfirm() {
     const t = T();
-    const { confirming: app } = usePermissionMode();
+    const { confirming: app, confirmFrom: from } = usePermissionMode();
     const a = app ? (APPS.find((x) => x.id === app) || APP) : null;
     const btn = { flex: '1 1 0', minWidth: 0, height: t.controlLg, borderRadius: t.radiusSm, padding: '0 16px', fontSize: t.text13, fontWeight: t.wMedium, fontFamily: 'inherit', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'background ' + t.dur1 + 'ms ' + t.easeStandard };
     return (
       <ModalOverlay isOpen={!!app} onClose={cancelConfirm} title={a ? 'Run ' + a.name + ' jobs automatically?' : ''}>
         {a && <>
-          <p style={{ fontSize: t.text14, color: t.ink2, lineHeight: t.leadingBody }}>BlueAI will take {a.name} jobs and finish them on your account without asking first, including posting videos. You can turn this off anytime.</p>
+          <p style={{ fontSize: t.text14, color: t.ink2, lineHeight: t.leadingBody }}>BlueAI will take {a.name} jobs and finish them on your account without asking first, including posting videos.{from === 'settings' ? ' You can turn this off anytime.' : ''}</p>
+          {from !== 'settings' && <p style={{ fontSize: t.text13, color: t.ink3, lineHeight: t.leadingBody, marginTop: t.space2 }}>You can change this anytime in Settings &gt; Job Approval.</p>}
           <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
             <button onClick={cancelConfirm} style={{ ...btn, background: t.surface, border: t.stroke + 'px solid ' + t.lineStrong, color: t.ink }}
               onMouseEnter={(e) => { e.currentTarget.style.background = t.washHover; }} onMouseLeave={(e) => { e.currentTarget.style.background = t.surface; }}>Cancel</button>
@@ -211,28 +234,34 @@
       </ModalOverlay>);
   }
 
-  /* ── ARCHIVED (2026-10-14, not rendered): Version 2, the Automatic ribbon ── Sits above the composer, only in a chat where the BlueAI
-     worker has started and only while Automatic is on (Abhisht, 2026-10-05): the setting belongs to
-     the worker skill, so it shows up where the worker is working and nowhere else. One line
-     (Arpit, 2026-10-14), "Automatic on YouTube", then "Change", which opens the mode popover above
-     the ribbon. Renders nothing in Always ask, so switching back makes it disappear. */
-  function AutoRibbon() {
+  /* ── The app ribbon (LOCAL TRIAL, Abhisht, 2026-10-23) ── Takes the 20-day bar's place above the
+     chat box while the worker runs on an app (chat_product.jsx does the swap), in both modes. One
+     line: the mode and the app, "Always ask on YouTube" or "Auto on YouTube" (the Oct 14 ribbon's
+     "Automatic on YouTube" with the mode's Oct 15 name), then "Change", which opens that app's
+     mode popover above the ribbon. The same 36px box as the bar, so the swap never moves the
+     thread. Always ask is the bar's white; Auto is blue-tinted: BlueAI is acting on its own.
+     `hidden` closes an open popover as the ribbon leaves. */
+  function AppRibbon({ app: appId = APP.id, hidden = false }) {
     const t = T();
     usePermissionMode();
+    const a = appById(appId);
+    const m = byId(getMode(a.id));
+    const auto = m.id === 'auto';
     const [open, setOpen] = useState(false);
     const btn = useRef(null);
-    if (getMode() !== 'auto') return null;
+    useEffect(() => { if (hidden) setOpen(false); }, [hidden]);
+    const ease = t.dur2 + 'ms ' + t.easeStandard;
     return (
-      <div className="ba-msg-in" style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, padding: '4px 4px 4px 12px', borderRadius: t.radiusMd, background: t.blueTint, border: t.stroke + 'px solid ' + t.blueTintLine }}>
-        <span style={{ display: 'flex', color: t.blueInk }}><IcoZap size={t.iconSm} /></span>
-        <span style={{ flex: 1, minWidth: 0, fontSize: t.text13, fontWeight: t.wMedium, color: t.blueInk, lineHeight: t.leadingSnug, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Automatic on {APP.name}</span>
-        <button ref={btn} type="button" onClick={() => setOpen((v) => !v)} aria-haspopup="dialog" aria-expanded={open}
-          style={{ minHeight: t.hitMin, border: 'none', background: open ? t.washHover : 'transparent', borderRadius: t.radiusSm, padding: '0 8px', fontSize: t.text13, fontWeight: t.wMedium, color: t.blueInk, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', transition: 'background ' + t.dur1 + 'ms ' + t.easeStandard }}
+      <div role="status" style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: t.space2, height: 36, boxSizing: 'border-box', padding: '0 1px 0 10px', borderRadius: t.radiusMd, background: auto ? t.blueTint : t.surface, border: t.stroke + 'px solid ' + (auto ? t.blueTintLine : t.line), boxShadow: auto ? 'none' : t.shadow0, transition: 'background ' + ease + ', border-color ' + ease }}>
+        <span style={{ display: 'flex', color: auto ? t.blueInk : t.ink3 }}><m.Icon size={t.iconSm} /></span>
+        <span style={{ flex: 1, minWidth: 0, fontSize: t.text13, fontWeight: t.wMedium, color: auto ? t.blueInk : t.ink2, lineHeight: t.leadingSnug, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{m.title} on {a.name}</span>
+        <button ref={btn} type="button" onClick={() => setOpen((v) => !v)} aria-haspopup="dialog" aria-expanded={open} aria-label={'Change the mode for ' + a.name + ' jobs'}
+          style={{ height: t.hitMin, border: 'none', background: open ? t.washHover : 'transparent', borderRadius: t.radiusSm, padding: '0 8px', fontSize: t.text13, fontWeight: t.wMedium, color: t.blueInk, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', transition: 'background ' + t.dur1 + 'ms ' + t.easeStandard }}
           onMouseEnter={(e) => { e.currentTarget.style.background = t.washHover; }}
           onMouseLeave={(e) => { if (!open) e.currentTarget.style.background = 'transparent'; }}>Change</button>
-        {open && <ModePopover triggerRef={btn} onClose={() => setOpen(false)} />}
+        {open && <ModePopover triggerRef={btn} onClose={() => setOpen(false)} app={a} />}
       </div>);
   }
 
-  window.AgentPermissions = { MODES, APPS, HEADER, getMode, setMode, reset, autoApps, requestMode, usePermissionMode, ModeChip, AutoRibbon, ModeRows, AutoConfirm, IcoShieldCheck, IcoZap };
+  window.AgentPermissions = { MODES, APPS, HEADER, getMode, setMode, reset, autoApps, requestMode, usePermissionMode, ModeChip, AppRibbon, ModeRows, AutoConfirm, IcoShieldCheck, IcoZap, headerFor, arrowKeys };
 })();

@@ -101,6 +101,30 @@
        needs you (Abhisht, 2026-10-05). 4s is the prototype's stand-in for "nobody answered". */
     const jobWaiting = awaiting && (convo[awaitingIdx].id === 'job' || convo[awaitingIdx].id === 'retry');
     const workerStarted = convo.slice(0, visible).some((s) => s.worker);
+    /* The worker is running on an app: worker_flow.jsx marks the first step it takes inside one
+       `appStart` (the app). With the app ribbon (2026-10-23 trial; Abhisht: it appears "when the
+       worker detects it's running on YouTube (or any app)") the ribbon takes the 20-day bar's place
+       from that step until the run's last line, or a stop. It leaves on the line BEFORE the day-done
+       card (900ms ahead of it), so the swap back plays in view and not under the run-complete
+       popup. The setup run has no `appStart`, so Day 1's setup never shows it. */
+    const shownSteps = convo.slice(0, visible);
+    const lastAppStart = shownSteps.map((s) => !!s.appStart).lastIndexOf(true);
+    const lastRunClose = shownSteps.map((s) => s.role === 'daydone').lastIndexOf(true);
+    const closingNext = !!convo[visible] && convo[visible].role === 'daydone';
+    const ribbonApp = lastAppStart >= 0 ? shownSteps[lastAppStart].appStart : 'youtube';
+    /* Choosing a mode (its popover or the Auto consent is open) holds the run's close (Abhisht,
+       2026-10-23: "don't overwrite the choosing popup, wait for the user's input and then show
+       the today's run done popup"). The ribbon stays, and the run-complete popup waits until they
+       pick or dismiss, then comes 900ms later, the gap a normal close has, so the bar is back first.
+       In ribbon mode only the ribbon opens a choice, so an app this chat ran on is enough to hold it. */
+    const { choosing } = window.AgentPermissions.usePermissionMode();
+    const [popupReady, setPopupReady] = useState(true);
+    useEffect(() => {
+      if (choosing) { setPopupReady(false); return undefined; }
+      const t = setTimeout(() => setPopupReady(true), 900);
+      return () => clearTimeout(t);
+    }, [choosing]);
+    const ribbonOn = permUi === 'ribbon' && ((running && lastAppStart > lastRunClose && !closingNext) || (choosing && lastAppStart >= 0));
     const doneIdx = convo.slice(0, visible).findIndex((s) => s.role === 'daydone'); const lastDone = convo.slice(0, visible).map((s) => s.role).lastIndexOf('daydone');   // today's run has closed: the centre moment shows until dismissed; lastDone, the newest close, as a "Run once more" job gets its own popup
     useEffect(() => {
       if (!onJobWaiting) return;
@@ -190,8 +214,9 @@
       return <FinalBubble key={i} msg={step} feedback={feedbackFor(i, step)} />;
     };
 
-    /* ROB-21350 Version 1: the Mode chip sits in the composer's bottom bar in every signed-in chat
-       (product level), with Send moving down beside it. Version 2 keeps the one-row composer. */
+    /* ROB-21350 mode control. 'chatbox': the Mode chip sits in the composer's bottom bar in every
+       signed-in chat (product level), with Send moving down beside it. 'ribbon' (the 2026-10-23
+       trial): the one-row composer, and the app ribbon above it while the worker runs on an app. */
     const modeChip = permUi === 'chatbox' && !isOnboarding;
     const busy = running && !(typeOk && draft.trim());   // a typed answer turns Stop back into Send
     const sendBtn = (
@@ -267,9 +292,19 @@
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'white', animation: 'ba-pulse 1.3s infinite' }} />
               Send a message to watch BlueAI work
             </div>}
-          {/* (The Automatic ribbon, ROB-21350 Version 2, is archived 2026-10-14: AgentPermissions.AutoRibbon,
-             rendered here when permUi === 'ribbon' && workerStarted, if it ever comes back.) */}
-          {sessionMode === 'moneymaker' && !isOnboarding && <DayProgressBar key={sessionKey} day1={workerDay === 'day1'} step={doneIdx >= 0 && seenDone >= doneIdx ? convo[doneIdx] : null} />}   {/* always there in a worker chat (Abhisht, 2026-10-15); today's run counts once Got it closes its popup */}
+          {/* The 20-day bar is always there in a worker chat (Abhisht, 2026-10-15); today's run counts
+             once Got it closes its popup. With the app ribbon (Abhisht, 2026-10-23: "the progress bar
+             would hide (with animation) and the ribbon will appear") the two share one slot: the bar
+             tucks down into the chat box and the ribbon rises out of it, and back when the run closes
+             (.ba-swap, index.html). Showing both read as clutter. */}
+          {sessionMode === 'moneymaker' && !isOnboarding && <div style={{ position: 'relative' }}>
+            <div className={'ba-swap' + (ribbonOn ? ' is-off' : '')} aria-hidden={ribbonOn}>
+              <DayProgressBar key={sessionKey} hidden={ribbonOn} day1={workerDay === 'day1'} step={doneIdx >= 0 && seenDone >= doneIdx ? convo[doneIdx] : null} />
+            </div>
+            {permUi === 'ribbon' && <div className={'ba-swap' + (ribbonOn ? '' : ' is-off')} aria-hidden={!ribbonOn} style={{ position: 'absolute', left: 0, right: 0, top: 0 }}>
+              <window.AgentPermissions.AppRibbon app={ribbonApp} hidden={!ribbonOn} />
+            </div>}
+          </div>}
           <div style={{ position: 'relative', display: 'flex', flexDirection: modeChip ? 'column' : 'row', alignItems: modeChip ? 'stretch' : 'center', gap: modeChip ? 2 : 8, border: '1.5px solid ' + (isOnboarding ? '#60a5fa' : (composerFocused ? '#1990FF' : '#c7dcf5')), borderRadius: isOnboarding ? 18 : 14, background: 'white', padding: modeChip ? '8px 8px 6px 10px' : '8px 10px', boxShadow: composerFocused ? '0 0 0 3px rgba(25,144,255,0.12)' : (isOnboarding && !started ? '0 0 0 4px rgba(25,144,255,0.12)' : '0 1px 4px rgba(0,0,0,0.04)'), transition: 'border-color 0.15s ease, box-shadow 0.15s ease' }}>
             <textarea ref={taRef} value={draft} disabled={(running && !typeOk) || scheduledOoc} rows={1}
               onChange={(e) => setDraft(e.target.value)}
@@ -288,7 +323,7 @@
               : sendBtn}
           </div>
         </div>}
-        {lastDone > seenDone && <DayDoneOverlay step={convo[lastDone]} onClose={() => setSeenDone(lastDone)} onRunAgain={() => { setSeenDone(lastDone); push(WF().makeExtraRun(convo[lastDone])); }} />}
+        {lastDone > seenDone && !choosing && popupReady && <DayDoneOverlay step={convo[lastDone]} onClose={() => setSeenDone(lastDone)} onRunAgain={() => { setSeenDone(lastDone); push(WF().makeExtraRun(convo[lastDone])); }} />}
       </>);
   }
 

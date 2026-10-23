@@ -104,6 +104,16 @@
     /* Mode rows (agent_permissions.jsx): the keyboard focus ring, in the mode popover and the
        docked answer panel. */
     .ba-mode-row:focus-visible { outline: 2px solid #1990FF; outline-offset: -2px; }
+    /* The 20-day bar and the app ribbon share one slot above the chat box (chat_product.jsx,
+       2026-10-23 trial). One after the other, never both at once (Abhisht: "progress bar goes down
+       hides -> the change mode option appears", and the same back): the one leaving slides down out
+       of its own box and is gone (300ms), then the one coming rises up into it (340ms, from 320ms).
+       The clip keeps each inside the slot's bottom edge while it moves, so it disappears downward
+       rather than sliding over the chat box; its large top and side margins leave room for the
+       bar's open card and the ribbon's mode popover. Reduced motion: the same order, fades only. */
+    .ba-swap { transform: none; clip-path: inset(-400px -40px -6px -40px); transition: transform 340ms cubic-bezier(0.22, 1, 0.36, 1) 320ms, clip-path 340ms cubic-bezier(0.22, 1, 0.36, 1) 320ms, opacity 200ms ease 320ms, visibility 0s linear 320ms; }
+    .ba-swap.is-off { opacity: 0; transform: translateY(100%); clip-path: inset(-400px -40px 100% -40px); visibility: hidden; pointer-events: none; transition: transform 300ms cubic-bezier(0.5, 0, 0.75, 0.4), clip-path 300ms cubic-bezier(0.5, 0, 0.75, 0.4), opacity 120ms ease 180ms, visibility 0s linear 300ms; }
+    @media (prefers-reduced-motion: reduce) { .ba-swap, .ba-swap.is-off { transform: none; clip-path: none; } }
   </style>
 </head>
 <body>
@@ -232,6 +242,8 @@ const SIGNIN_CASES = [
 //   (?input=dock opened the docked answer panel; archived 2026-10-14, ignored now)
 //   ?mode=auto      start with Automatic on for YouTube (default: Always ask). Skips
 //                   the consent dialog: the link stands in for a person who already agreed.
+//   ?control=chatbox   where the mode is changed (2026-10-23 trial): the Oct 14 chip in the chat
+//                   box. Default: the app ribbon, which takes the 20-day bar's place while the worker runs on an app
 // ROB-21388 sign-in handoff (the browser window beside the app):
 //   ?signin=browser open straight on the sign-in handoff, no terms sheet
 //   ?player=out | accepted | other   App Player on this PC: signed out (the app opens the
@@ -244,6 +256,7 @@ const LINK = {
   day: QS.get('day') === 'next' || QS.has('end') ? 'next' : 'day1',
   end: ['job', 'nojob', 'day20', 'failed'].includes(QS.get('end')) ? QS.get('end') : 'job',
   mode: QS.get('mode') === 'auto' ? 'auto' : 'always',
+  control: QS.get('control') === 'chatbox' ? 'chatbox' : 'ribbon',
   signin: QS.get('signin') === 'browser' || CASES_MODE ? 'browser' : null,
   browser: ['other', 'out'].includes(QS.get('browser')) ? QS.get('browser') : 'accepted',
   player: ['accepted', 'other'].includes(QS.get('player')) ? QS.get('player') : 'out'
@@ -636,7 +649,7 @@ function App() {
   // version of the "change it later" control. protoStart: skip sign-in on load. jobWaiting: an unanswered job ask, which lights
   // BlueAI's taskbar button.
   const [protoStart, setProtoStart] = useState(PROTO.start);
-  const permUi = 'chatbox';   // the composer chip is the one mode control; the ribbon is archived (agent_permissions.jsx)
+  const [permUi, setPermUi] = useState(LINK.control);   // 'ribbon' (the app ribbon, 2026-10-23 trial) | 'chatbox' (the composer chip); the Preview panel's Mode control row
   const { modes: permModes } = window.AgentPermissions.usePermissionMode();   // YouTube's mode, for the Preview panel's Mode row
   const [workerDay, setWorkerDay] = useState(LINK.day);
   const [dailyRunKey, setDailyRunKey] = useState(0);
@@ -748,6 +761,7 @@ function App() {
       if (workerDay !== 'day1') p.set('day', workerDay);
       if (workerDay === 'next' && dayEnd !== 'job') p.set('end', dayEnd); if (workerDay === 'next' && dayEnd === 'day20' && barOpt.day20 === 'verified') p.set('verify', 'done'); if (barOpt.icon !== 'gift') p.set('icon', barOpt.icon);
       if (window.AgentPermissions.getMode('youtube') === 'auto') p.set('mode', 'auto');
+      if (permUi === 'chatbox') p.set('control', 'chatbox');
     }
     const url = location.origin + location.pathname + (p.toString() ? '?' + p.toString() : '');
     const done = () => { setLinkCopied(true); setTimeout(() => setLinkCopied(false), 1600); };
@@ -1168,6 +1182,9 @@ function App() {
                panel up: Change mode from (the ribbon is archived; the composer chip stays), Setup
                question, Card (Days is the one), and Answers (chips it is; Other and Docked archived). */
             if (isChat && sessionMode === 'moneymaker' && isLoggedIn) {
+              /* Mode control (2026-10-23 trial, ?control=): where the person changes the mode. App
+                 ribbon: in the 20-day bar's place while the worker runs on an app. Chat box: the Oct 14 chip. */
+              rows.push(<PreviewRow key="permui" label="Mode control" opts={[['App ribbon', 'ribbon'], ['Chat box', 'chatbox']]} val={permUi} set={setPermUi} />);
               /* Mode: YouTube's mode set directly, no consent dialog, exactly like ?mode=auto. */
               rows.push(<PreviewRow key="permmode" label="Mode" opts={[['Always ask', 'always'], ['Auto', 'auto']]} val={permModes.youtube}
                 set={(v) => window.AgentPermissions.setMode('youtube', v)} />);

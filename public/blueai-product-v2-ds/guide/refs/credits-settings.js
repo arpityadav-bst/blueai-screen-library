@@ -1,23 +1,23 @@
 /* Refs owned by the credits-settings slice (sections 47 to 49). Format: guide/refs/README.md. */
 window.V2Refs = (window.V2Refs || []).concat([
   // ---- the grant (one constant) ------------------------------------------------------------
-  { id: 'credits-settings.grant.daily', file: 'index.html', line: 715, needle: 'const DAILY_GRANT = 2000;', value: 'the daily grant, 2,000 AI credits' },
-  { id: 'credits-settings.grant.zero-or-full', file: 'index.html', line: 716, needle: 'const credits = zeroCredits ? 0 : DAILY_GRANT;', value: 'balance is 0 or 2,000, never in between' },
-  { id: 'credits-settings.grant.low-dot', file: 'index.html', line: 718, needle: 'const lowDot = credits < 1000 && !byokActive;', value: 'low dot under 1,000, so it only fires at 0; hidden on own key with nothing in its place' },
+  { id: 'credits-settings.grant.daily', file: 'index.html', line: 728, needle: 'const DAILY_GRANT = 2000;', value: 'the daily grant, 2,000 AI credits' },
+  { id: 'credits-settings.grant.zero-or-full', file: 'index.html', line: 729, needle: 'const credits = zeroCredits ? 0 : DAILY_GRANT;', value: 'balance is 0 or 2,000, never in between' },
+  { id: 'credits-settings.grant.low-dot', file: 'index.html', line: 731, needle: 'const lowDot = credits < 1000 && !byokActive;', value: 'low dot under 1,000, so it only fires at 0; hidden on own key with nothing in its place' },
   { id: 'credits-settings.grant.popup-daily', file: 'credits_popup_parts.jsx', line: 14, needle: 'const DAILY = 2500;', value: 'a second grant, 2,500, in the shared popup parts' },
   { id: 'credits-settings.grant.explainer', file: 'credits_popup_parts.jsx', line: 105, needle: "const EXPLAIN_CREDITS = 'BlueAI runs on credits. Every job and chat uses some. You get limited credits each day, enough for 4 to 5 jobs.';", value: 'explainer copy, PM approved 2026-10-06, kept word for word' },
 
   // ---- header credits pill -----------------------------------------------------------------
-  { id: 'credits-settings.pill.label', file: 'index.html', line: 335, needle: 'role="button" tabIndex={0} aria-label="AI credits"', value: "div role=button, aria-label 'AI credits', no hover or focus style" },
-  { id: 'credits-settings.pill.ring', file: 'index.html', line: 337, needle: "background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', borderRadius: 24, padding: 1.5", value: '1.5px brand-gradient ring, radius 24' },
-  { id: 'credits-settings.pill.dot', file: 'index.html', line: 338, needle: "width: 8, height: 8, borderRadius: '50%', background: '#ef4444', border: '1.5px solid white'", value: '8px dot #ef4444 (3.76:1) with a white border' },
-  { id: 'credits-settings.pill.inner', file: 'index.html', line: 339, needle: "gap: 5, background: 'white', borderRadius: 24, padding: '5px 10px'", value: 'white capsule, gap 5, padding 5 10 (about 26px tall)' },
-  { id: 'credits-settings.pill.glyph', file: 'index.html', line: 340, needle: 'src="assets/Credits.svg" alt="" style={{ width: 14, height: 14 }}', value: 'credits glyph 14px' },
-  { id: 'credits-settings.pill.number', file: 'index.html', line: 341, needle: "fontSize: 13, fontWeight: 700 }}>{credits.toLocaleString('en-US')}", value: 'number 13/700 in gradient text' },
+  { id: 'credits-settings.pill.label', file: 'index.html', line: 348, needle: 'role="button" tabIndex={0} aria-label="AI credits"', value: "div role=button, aria-label 'AI credits', no hover or focus style" },
+  { id: 'credits-settings.pill.ring', file: 'index.html', line: 350, needle: "background: 'linear-gradient(90deg,#0EA4C5,#7B4CFF)', borderRadius: 24, padding: 1.5", value: '1.5px brand-gradient ring, radius 24' },
+  { id: 'credits-settings.pill.dot', file: 'index.html', line: 351, needle: "width: 8, height: 8, borderRadius: '50%', background: '#ef4444', border: '1.5px solid white'", value: '8px dot #ef4444 (3.76:1) with a white border' },
+  { id: 'credits-settings.pill.inner', file: 'index.html', line: 352, needle: "gap: 5, background: 'white', borderRadius: 24, padding: '5px 10px'", value: 'white capsule, gap 5, padding 5 10 (about 26px tall)' },
+  { id: 'credits-settings.pill.glyph', file: 'index.html', line: 353, needle: 'src="assets/Credits.svg" alt="" style={{ width: 14, height: 14 }}', value: 'credits glyph 14px' },
+  { id: 'credits-settings.pill.number', file: 'index.html', line: 354, needle: "fontSize: 13, fontWeight: 700 }}>{credits.toLocaleString('en-US')}", value: 'number 13/700 in gradient text' },
 
   // ---- V2 URL states -----------------------------------------------------------------------
-  { id: 'credits-settings.url.credits-zero', file: 'index.html', line: 206, needle: '?credits=0            start with zero credits', value: '?credits=0 starts at zero credits' },
-  { id: 'credits-settings.url.start-worker', file: 'index.html', line: 223, needle: '?start=worker   land signed in on the BlueAI worker home', value: '?start=worker lands signed in on the worker home' },
+  { id: 'credits-settings.url.credits-zero', file: 'index.html', line: 216, needle: '?credits=0            start with zero credits', value: '?credits=0 starts at zero credits' },
+  { id: 'credits-settings.url.start-worker', file: 'index.html', line: 233, needle: '?start=worker   land signed in on the BlueAI worker home', value: '?start=worker lands signed in on the worker home' },
 
   // ---- countdown ---------------------------------------------------------------------------
   { id: 'credits-settings.countdown.utc', file: 'credits_popup_parts.jsx', line: 22, needle: 'The daily refill is due at 00:00 UTC', value: 'refill at 00:00 UTC' },
@@ -49,24 +49,24 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'credits-settings.ooc.tip-offset', file: 'credits_popup_parts.jsx', line: 148, needle: 'left: -189, width: 260', value: 'tooltip hard-placed at left -189' },
   { id: 'credits-settings.ooc.refreshed-title', file: 'credits_popup_options.jsx', line: 29, needle: "'New credits are here'", value: "'New credits are here' (comparison page only)" },
   { id: 'credits-settings.ooc.refreshed-line', file: 'credits_popup_options.jsx', line: 30, needle: 'credits for today.', value: "'You have {grant} credits for today.' (comparison page only)" },
-  { id: 'credits-settings.ooc.trigger', file: 'chat_product.jsx', line: 135, needle: 'if (zeroCredits) { if (onNoCredits) onNoCredits(); return; }', value: 'the popup opens only after Send, draft kept' },
-  { id: 'credits-settings.ooc.composer-disabled', file: 'chat_product.jsx', line: 274, needle: 'disabled={(running && !typeOk) || scheduledOoc}', value: 'composer disabled in the scheduled run chat' },
-  { id: 'credits-settings.ooc.placeholder', file: 'chat_product.jsx', line: 282, needle: "scheduledOoc ? 'BlueAI is out of credits until tomorrow...'", value: "placeholder 'BlueAI is out of credits until tomorrow...'" },
+  { id: 'credits-settings.ooc.trigger', file: 'chat_product.jsx', line: 159, needle: 'if (zeroCredits) { if (onNoCredits) onNoCredits(); return; }', value: 'the popup opens only after Send, draft kept' },
+  { id: 'credits-settings.ooc.composer-disabled', file: 'chat_product.jsx', line: 309, needle: 'disabled={(running && !typeOk) || scheduledOoc}', value: 'composer disabled in the scheduled run chat' },
+  { id: 'credits-settings.ooc.placeholder', file: 'chat_product.jsx', line: 317, needle: "scheduledOoc ? 'BlueAI is out of credits until tomorrow...'", value: "placeholder 'BlueAI is out of credits until tomorrow...'" },
   { id: 'credits-settings.ooc.warning', file: 'chat_bubbles.jsx', line: 188, needle: "role: 'warning', title: 'Out of credits', content: ['You’ve used all of today’s AI credits.', 'Credits will be refreshed tomorrow.']", value: "warning bubble: 'Credits will be refreshed tomorrow.'" },
   { id: 'credits-settings.ooc.fail', file: 'chat_bubbles.jsx', line: 189, needle: "'Not enough credits for this job. Credits will be refreshed tomorrow.'", value: 'Not enough credits for this job. Credits will be refreshed tomorrow.' },
 
   // ---- settings cards ----------------------------------------------------------------------
-  { id: 'credits-settings.settings.card', file: 'settings.jsx', line: 34, needle: "borderRadius: 16, padding: 16, boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.06)'", value: 'card radius 16, padding 16, shadow plus 6% border' },
-  { id: 'credits-settings.settings.title', file: 'settings.jsx', line: 16, needle: "fontSize: 17, fontWeight: 700, color: '#111827' }}>BlueStacks Instance", value: 'card title 17/700 #111827' },
-  { id: 'credits-settings.settings.bluestacks', file: 'settings.jsx', line: 19, needle: 'BlueStacks App Player', value: "'Connected to BlueStacks App Player', shown whether or not it is installed" },
-  { id: 'credits-settings.settings.row', file: 'settings.jsx', line: 85, needle: "padding: '16px 0', borderBottom: '1px solid #eef2f6'", value: 'field row 16px 0 with a #eef2f6 rule, last row included' },
-  { id: 'credits-settings.settings.card-18', file: 'settings.jsx', line: 100, needle: 'borderRadius: 16, padding: 18', value: 'a second card padding, 18' },
-  { id: 'credits-settings.settings.ai-model', file: 'settings.jsx', line: 108, needle: "fieldRow('AI Model', null,", value: "a second 'AI Model' picker (Chat AI Settings)" },
-  { id: 'credits-settings.settings.max-tokens', file: 'settings.jsx', line: 120, needle: "fieldRow('Max Output Tokens', 'Maximum number of tokens to generate (5,000-100,000)'", value: "'Max Output Tokens' and its 5,000 to 100,000 hint" },
-  { id: 'credits-settings.settings.saved', file: 'settings.jsx', line: 124, needle: 'Settings saved successfully.', value: "inline 'Settings saved successfully.' for 2500ms" },
-  { id: 'credits-settings.settings.save', file: 'settings.jsx', line: 126, needle: '>Save settings</button>', value: "a Save button in one card, apply-on-change in the others" },
-  { id: 'credits-settings.settings.order', file: 'settings.jsx', line: 142, needle: '<AISettingsCard />', value: 'developer card last, after AI Mode and own key, with no grouping' },
-  { id: 'credits-settings.settings.route', file: 'index.html', line: 725, needle: "setByokOn(true); setActiveTab('settings'); setHighlightByok(true);", value: 'routing to own key also turns it on' },
+  { id: 'credits-settings.settings.card', file: 'settings.jsx', line: 79, needle: "borderRadius: 16, padding: 16, boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.06)'", value: 'card radius 16, padding 16, shadow plus 6% border' },
+  { id: 'credits-settings.settings.title', file: 'settings.jsx', line: 61, needle: "fontSize: 17, fontWeight: 700, color: '#111827' }}>BlueStacks Instance", value: 'card title 17/700 #111827' },
+  { id: 'credits-settings.settings.bluestacks', file: 'settings.jsx', line: 64, needle: 'BlueStacks App Player', value: "'Connected to BlueStacks App Player', shown whether or not it is installed" },
+  { id: 'credits-settings.settings.row', file: 'settings.jsx', line: 130, needle: "padding: '16px 0', borderBottom: '1px solid #eef2f6'", value: 'field row 16px 0 with a #eef2f6 rule, last row included' },
+  { id: 'credits-settings.settings.card-18', file: 'settings.jsx', line: 145, needle: 'borderRadius: 16, padding: 18', value: 'a second card padding, 18' },
+  { id: 'credits-settings.settings.ai-model', file: 'settings.jsx', line: 153, needle: "fieldRow('AI Model', null,", value: "a second 'AI Model' picker (Chat AI Settings)" },
+  { id: 'credits-settings.settings.max-tokens', file: 'settings.jsx', line: 165, needle: "fieldRow('Max Output Tokens', 'Maximum number of tokens to generate (5,000-100,000)'", value: "'Max Output Tokens' and its 5,000 to 100,000 hint" },
+  { id: 'credits-settings.settings.saved', file: 'settings.jsx', line: 169, needle: 'Settings saved successfully.', value: "inline 'Settings saved successfully.' for 2500ms" },
+  { id: 'credits-settings.settings.save', file: 'settings.jsx', line: 171, needle: '>Save settings</button>', value: "a Save button in one card, apply-on-change in the others" },
+  { id: 'credits-settings.settings.order', file: 'settings.jsx', line: 188, needle: '<AISettingsCard />', value: 'developer card last, after AI Mode and own key, with no grouping' },
+  { id: 'credits-settings.settings.route', file: 'index.html', line: 738, needle: "setByokOn(true); setActiveTab('settings'); setHighlightByok(true);", value: 'routing to own key also turns it on' },
 
   // ---- bring your own key ------------------------------------------------------------------
   { id: 'credits-settings.byok.providers', file: 'byok_settings.jsx', line: 15, needle: "hint: 'Find at https://console.anthropic.com/settings'", value: 'five providers with models and a where-to-find hint each' },
@@ -89,7 +89,7 @@ window.V2Refs = (window.V2Refs || []).concat([
   { id: 'credits-settings.byok.notice-amber', file: 'byok_settings.jsx', line: 109, needle: "background: '#fffbeb', border: '1px solid #fde68a'", value: 'yellow notice for a state that needs no answer' },
   { id: 'credits-settings.byok.none', file: 'byok_settings.jsx', line: 110, needle: 'No API key configured. Add one to get started.', value: 'No API key configured. Add one to get started.' },
   { id: 'credits-settings.byok.add', file: 'byok_settings.jsx', line: 114, needle: '>Add a provider</option>', value: 'Add a provider' },
-  { id: 'credits-settings.byok.own-key-note', file: 'index.html', line: 482, needle: 'No BlueAI credits are consumed while this is on.', value: 'No BlueAI credits are consumed while this is on.' },
+  { id: 'credits-settings.byok.own-key-note', file: 'index.html', line: 495, needle: 'No BlueAI credits are consumed while this is on.', value: 'No BlueAI credits are consumed while this is on.' },
 
   // ---- AI mode -----------------------------------------------------------------------------
   { id: 'credits-settings.aimode.status', file: 'ai_mode.jsx', line: 16, needle: 'const STATUS = {', value: 'eight-state lifecycle: idle, checking, downloading, installing, running, install_failed, startup_failed, blocked' },

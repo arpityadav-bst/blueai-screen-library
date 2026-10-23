@@ -1,12 +1,57 @@
 // BlueAI: Settings Screen
 // Matches the live product: NO page title, NO account card (Profile / Chat History /
 // Report Issue / Log Out live in the header ? and kebab menus). Cards, in order:
-// BlueStacks Instance · Telegram · Chat AI Settings.
+// BlueStacks Instance · Job Approval · Telegram · Chat AI Settings.
 
 const { useState } = React;
 
-/* (The Worker card with the mode rows was removed 2026-10-14, Abhisht: not needed. The mode is
-   changed only from the chip next to the chat box, agent_permissions.jsx.) */
+/* Worker (back 2026-10-23, Abhisht: "add a Worker section to Settings with a mode row per app,
+   same consent for Auto"; removed 2026-10-14 while the chat box chip was always on screen). The
+   app ribbon in chat only shows while the worker runs on an app, so this is where the mode is
+   changed any other time, the "turn this off anytime" the consent promises. One row per app in
+   AgentPermissions.APPS (YouTube today): the app's mark and name, an Always ask | Auto switch, and
+   the picked mode's one-line description. The same setting the ribbon changes; picking Auto opens
+   the same consent, and Cancel leaves it on Always ask. Heading and line approved by Abhisht,
+   2026-10-23: "Job Approval" (not "Worker Mode": too close to the AI Mode card below) and
+   "Choose whether BlueAI asks before taking a job on each app." */
+function AppModeRow({ app }) {
+  const AP = window.AgentPermissions;
+  const t = window.V2Tokens;
+  const { modes } = AP.usePermissionMode();
+  const now = AP.MODES.find((m) => m.id === modes[app.id]) || AP.MODES[0];
+  return (
+    <div style={{ display: 'flex', gap: t.space3, padding: '10px 0 2px' }}>
+      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: t.radiusSm, background: t.sunken, color: t.ink2, flexShrink: 0 }}><app.Icon size={18} /></span>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: t.space2, minHeight: 32 }}>
+          <span style={{ fontSize: t.text14, fontWeight: t.wSemibold, color: t.ink }}>{app.name}</span>
+          <div role="radiogroup" aria-label={AP.headerFor(app)} onKeyDown={AP.arrowKeys} style={{ display: 'flex', padding: 2, borderRadius: t.radiusSm, background: t.sunken, flexShrink: 0 }}>
+            {AP.MODES.map((m) => {
+              const on = m.id === now.id;
+              return (
+                <button key={m.id} type="button" role="radio" aria-checked={on} tabIndex={on ? 0 : -1} className="ba-mode-row" onClick={() => { if (!on) AP.requestMode(app.id, m.id, null, 'settings'); }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5, height: 28, padding: '0 10px', border: 'none', borderRadius: t.radiusSm - 2, background: on ? t.surface : 'transparent', boxShadow: on ? '0 1px 2px rgba(15,23,42,0.14)' : 'none', fontSize: t.text12, fontWeight: on ? t.wSemibold : t.wMedium, color: on ? (m.id === 'auto' ? t.blueInk : t.ink) : t.ink3, cursor: on ? 'default' : 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', transition: 'background ' + t.dur1 + 'ms ' + t.easeStandard + ', color ' + t.dur1 + 'ms ' + t.easeStandard }}>
+                  <m.Icon size={13} />{m.title}
+                </button>);
+            })}
+          </div>
+        </div>
+        <p style={{ fontSize: t.text12, color: t.ink3, lineHeight: 1.4, marginTop: 2 }}>{now.sub}</p>
+      </div>
+    </div>
+  );
+}
+
+function WorkerCard() {
+  const AP = window.AgentPermissions;
+  return (
+    <div data-section="worker-settings" style={{ background: 'white', borderRadius: 16, padding: 16, boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.06)', marginBottom: 14 }}>
+      <h2 style={{ fontSize: 17, fontWeight: 700, color: '#111827', marginBottom: 2 }}>Job Approval</h2>
+      <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 4 }}>Choose whether BlueAI asks before taking a job on each app.</p>
+      {AP.APPS.map((a) => <AppModeRow key={a.id} app={a} />)}
+    </div>
+  );
+}
 
 function BluestacksCard() {
   return (
@@ -135,6 +180,7 @@ function SettingsScreen({ byok, aiModeConditions }) {
   return (
     <div style={{ paddingTop: 16, paddingBottom: 20 }}>
       <BluestacksCard />
+      <WorkerCard />
       <TelegramCard />
       <window.AiMode.AIModeCard {...aiMode} />
       {/* Bring Your Own Key, available in every geo; the canonical place to add/manage a key. */}

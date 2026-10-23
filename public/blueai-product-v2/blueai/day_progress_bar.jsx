@@ -119,8 +119,9 @@
     + ' @media (prefers-reduced-motion: reduce) { .dpb-sheen, .dpb-spark { display: none; } .dpb-pop { animation: none !important; } }';
 
   /* `step` is today's closed run (its day-done step, once Got it has closed the popup), or null
-     before that; `day1` says this chat is the person's first day. */
-  function DayProgressBar({ step, day1 }) {
+     before that; `day1` says this chat is the person's first day; `hidden` is set while the job
+     ribbon has its place (chat_product.jsx, 2026-10-23 trial), and closes an open card. */
+  function DayProgressBar({ step, day1, hidden = false }) {
     const [open, setOpen] = useState(false);
     const [opens, setOpens] = useState(0);   // replays the milestone mark's shine on each open
     const [glints, setGlints] = useState(0);   // counts the moments today's run started to count
@@ -135,6 +136,7 @@
     const milestone = ran && step.end === 'day20';   // the one moment the mark shines in full
     // Today's run has just started to count (Got it closed its popup): the quiet mark glints once.
     useEffect(() => { if (wasRan.current === false && ran) setGlints((g) => g + 1); wasRan.current = ran; }, [ran]);
+    useEffect(() => { if (hidden) setOpen(false); }, [hidden]);
     let n = { ...base, verified: first ? 0 : base.verified, pending: ran ? 1 : 0 };
     n.day = n.verified + 1;   // today
     if (won) n = { ...n, verified: n.target, pending: 0, day: n.target };

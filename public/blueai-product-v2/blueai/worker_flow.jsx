@@ -8,7 +8,10 @@
                       and waits (25 min in the Oct 4 log). That daily ask is what gets automated.
 
    AUTOMATIC IS NOT IN THE QUESTIONS (Abhisht, 2026-10-14): no question offers it. The person
-   switches modes only from the control next to the chat box (agent_permissions.jsx). The
+   switches modes only from the mode control (agent_permissions.jsx): the app ribbon while the
+   worker runs on an app (2026-10-23 trial), or the chip in the chat box. The first step the worker
+   takes inside an app carries `appStart: <app>` (the daily routine's first video; a job's first
+   step, for Run once more and Retry), which is how the chat knows it is on that app. The
    onboarding "take it on my own, or check with you first?" question and the job ask's "Yes,
    switch to Automatic" were removed with that call (and the Preview's Setup question row). The
    daily run still reads the mode: on Automatic it takes the job without asking. The mode is
@@ -49,6 +52,7 @@
     skill: 'blueai-worker'
   };
   const JOB = {
+    app: 'youtube',   // the app the job runs on, whose mode it follows
     label: 'Paid job available',
     title: 'Watch the video and provide feedback'
   };
@@ -101,7 +105,7 @@
       : [{ role: 'user', content: text, d: 250, worker: true }, say('Starting your daily routine…')];
     return [
       ...head,
-      say('Watching a tech Short…', 1000),
+      { ...say('Watching a tech Short…', 1000), appStart: JOB.app },   // the routine runs on the job's app: the worker is on YouTube from here
       say('Liking this tech Short…'),
       say('Checking the jobs board…', 1000),
       { role: 'thinking', d: 1200 },
@@ -125,7 +129,7 @@
     options: [{ id: 'retry', label: 'Retry' }, { id: 'later', label: 'Not now' }] });
   const jobSteps = (retrying) => {
     const end = retrying ? 'job' : DD().getEnd();
-    const open = [say('Opening the job’s video on YouTube…', 1000), say('Watching the video…', 1100)];
+    const open = [{ ...say('Opening the job’s video on YouTube…', 1000), appStart: JOB.app }, say('Watching the video…', 1100)];
     if (end === 'failed') return [...open,
       { role: 'final', tone: 'fail', content: 'I couldn’t finish “' + JOB.title + '”. App Player closed during the job.', d: 900 },
       retryAsk()];
