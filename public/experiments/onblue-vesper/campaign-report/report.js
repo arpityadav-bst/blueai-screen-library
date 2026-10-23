@@ -207,9 +207,11 @@
     more: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5.5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="18.5" r="1.6"/></svg>',
     globe: ic('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/>'),
     link: ic('<path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/>'),
+    check: ic('<path d="M5 12.5l4.5 4.5L19 7.5"/>', 14, 2.2),
+    lock: ic('<rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/>', 16),
+    globe16: ic('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/>', 16),
     search: ic('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>', 16),
     refresh: ic('<path d="M20 11a8 8 0 0 0-14.3-4.9L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.3 4.9L20 16"/><path d="M20 20v-4h-4"/>', 18),
-    share: ic('<path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>', 16),
     cal: ic('<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>', 16),
     caret: ic('<path d="m7 10 5 5 5-5"/>', 14, 2),
     close: ic('<path d="M6 6l12 12M18 6 6 18"/>', 18, 2),
@@ -295,7 +297,7 @@
     ].join('');
     $('#c-updated').textContent = ago(updatedAt);
     $('#btn-refresh').innerHTML = IC.refresh;
-    $('#btn-share').innerHTML = IC.share + 'Share';
+    renderShareBtn();
     $('#btn-csv').textContent = 'Download CSV';
   }
   function renderRangeBtn() {
@@ -1013,19 +1015,80 @@
   }
 
   /* ---- share --------------------------------------------------------------- */
+  /* PRIVATE UNTIL THE OWNER SAYS OTHERWISE (ROB-21554). One switch per report,
+     "Anyone with the link can view", off by default. Off stops the link at once;
+     on again brings back the SAME link, so links already sent work again. The
+     prototype keeps the setting in localStorage; the product keeps it on the
+     campaign, with a share token and a report read that needs no sign-in. */
   var pop = $('#share-pop');
-  function closeShare() { pop.hidden = true; $('#btn-share').classList.remove('is-on'); }
+  var SHARE_KEY = 'campaign-report:shared:' + C.ref;
+  var SHARE_URL = 'https://onblue.ai/r/' + C.ref + '-k7Q2';
+  var shared = false;
+  try { shared = window.localStorage.getItem(SHARE_KEY) === 'on'; } catch (e) {}
+
+  /* The label stays "Share" in both states so the buttons beside it never move;
+     the icon carries the state: a lock while private, a globe once shared. */
+  function renderShareBtn() {
+    var b = $('#btn-share');
+    b.innerHTML = (shared ? IC.globe16 : IC.lock) + 'Share';
+    b.classList.toggle('is-shared', shared);
+    b.title = shared ? 'Shared: anyone with the link can view' : 'Private: only you can see this report';
+  }
+  function paintShare() {
+    pop.innerHTML = '<h3>Share this report</h3>'
+      + '<button class="share-row" type="button" role="switch" aria-checked="' + shared + '" data-share-toggle>'
+      + '<span class="share-ic">' + (shared ? IC.globe16 : IC.lock) + '</span>'
+      + '<span class="share-txt"><b>Anyone with the link can view</b><span>'
+      + (shared ? 'The numbers stay up to date.' : 'Only you can see this report.')
+      + '</span></span><span class="switch" aria-hidden="true"><i></i></span></button>'
+      + (shared ? '<div class="pop-link"><input readonly value="' + SHARE_URL + '" aria-label="Report link"><button class="btn" type="button" data-copy="' + SHARE_URL + '">Copy</button></div>' : '');
+  }
+  // The popover is repainted, so a keyboard user gets focus put back on the
+  // switch; a mouse click doesn't, which would only draw a focus ring.
+  function setShared(on, byKeyboard) {
+    shared = on;
+    try { window.localStorage.setItem(SHARE_KEY, on ? 'on' : 'off'); } catch (e) {}
+    renderShareBtn();
+    paintShare();
+    applyViewAs();
+    var sw = pop.querySelector('[data-share-toggle]');
+    if (sw && byKeyboard) { sw.focus(); }
+  }
+  function closeShare() { pop.hidden = true; $('#btn-share').classList.remove('is-on'); $('#btn-share').setAttribute('aria-expanded', 'false'); }
   function toggleShare() {
     if (!pop.hidden) { closeShare(); return; }
-    var url = 'https://onblue.ai/r/' + C.ref + '-k7Q2';
-    pop.innerHTML = '<h3>Share this report</h3>'
-      + '<p>Anyone with the link can view this report. No sign-in needed, and the numbers stay up to date.</p>'
-      + '<div class="pop-link"><input readonly value="' + url + '"><button class="btn" type="button" data-copy="' + url + '">Copy</button></div>';
+    paintShare();
     pop.hidden = false;
+    $('#btn-share').setAttribute('aria-expanded', 'true');
     $('#btn-share').classList.add('is-on');
     var r = $('#btn-share').getBoundingClientRect();
     pop.style.top = (r.bottom + 8) + 'px';
     pop.style.left = Math.max(16, Math.min(window.innerWidth - pop.offsetWidth - 16, r.right - pop.offsetWidth)) + 'px';
+  }
+
+  /* ---- view as (prototype review control) --------------------------------- */
+  /* Three people can open a report:
+     - owner: the brand's own account, everything.
+     - viewer: opened the share link. Sharing on: the report read only (no
+       account, no All campaigns link, no Share, no CSV). Sharing off: the
+       no-permission page.
+     - other: a different signed-in account on the report's own address. That
+       address is owner only whatever the share switch says, so always the
+       no-permission page, with "Switch account" instead of "Sign in".
+     "Sign in" / "Switch account" lead back to the owner's view here. */
+  var viewAs = 'owner';
+  try { viewAs = window.localStorage.getItem('campaign-report:viewas') || 'owner'; } catch (e) {}
+  if (['owner', 'viewer', 'other'].indexOf(viewAs) < 0) { viewAs = 'owner'; }
+  function applyViewAs() {
+    var viewer = viewAs === 'viewer', other = viewAs === 'other';
+    document.body.classList.toggle('is-viewer', viewer);
+    document.body.classList.toggle('is-link-off', (viewer && !shared) || other);
+    $('#top-name').textContent = other ? 'Another account' : 'Abhisht';
+    $('#link-off-signin').textContent = other ? 'Switch account' : 'Sign in';
+    if (viewer || other) { closeShare(); }
+    document.querySelectorAll('[data-viewas]').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.getAttribute('data-viewas') === viewAs ? 'true' : 'false');
+    });
   }
 
   /* ---- toast, copy, csv ---------------------------------------------------- */
@@ -1037,8 +1100,22 @@
     clearTimeout(toastT);
     toastT = setTimeout(function () { t.hidden = true; }, 1800);
   }
-  function copy(text) {
-    var done = function () { toast('Link copied'); };
+  /* A copy button answers on itself: "Copied" with a check, then back to its
+     label. The eyes are on the button, and a toast at the bottom of the screen
+     is easy to miss. Copies from a menu (which closes) still use the toast. */
+  function flashCopied(btn) {
+    if (!btn._label) { btn._label = btn.innerHTML; }
+    btn.innerHTML = IC.check + 'Copied';
+    btn.classList.add('is-copied');
+    clearTimeout(btn._copiedT);
+    btn._copiedT = setTimeout(function () {
+      btn.innerHTML = btn._label;
+      btn._label = null;
+      btn.classList.remove('is-copied');
+    }, 1600);
+  }
+  function copy(text, btn) {
+    var done = btn ? function () { flashCopied(btn); } : function () { toast('Link copied'); };
     try {
       navigator.clipboard.writeText(text).then(done, done);
     } catch (e) { done(); }
@@ -1130,7 +1207,14 @@
       $('#posts-card').scrollIntoView({ block: 'start', behavior: 'smooth' });
       return;
     }
-    if ((a = t.getAttribute('data-copy'))) { copy(a); return; }
+    if (t.hasAttribute('data-share-toggle')) { setShared(!shared, ev.detail === 0); return; }
+    if ((a = t.getAttribute('data-viewas'))) {
+      viewAs = a;
+      try { window.localStorage.setItem('campaign-report:viewas', a); } catch (e) {}
+      applyViewAs();
+      return;
+    }
+    if ((a = t.getAttribute('data-copy'))) { copy(a, t); return; }
     if (t.hasAttribute('data-clear') || t.id === 'f-clear') {
       clearTimeout(searchT);
       searching(false);
@@ -1227,6 +1311,7 @@
 
   /* ---- go ------------------------------------------------------------------ */
   $('.search-ic').innerHTML = IC.search;
+  applyViewAs();
   renderHead();
   syncSelects();
   renderAll();

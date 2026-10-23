@@ -18,8 +18,9 @@
       <svg viewBox="0 0 24 24" width="26" height="26" fill="#2f6dff" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg>
       <span><i>on</i>Blue</span>
     </a>
-    <div class="top-user">
-      <span>Abhisht</span>
+    <span class="viewer-tag">View only</span>
+    <div class="top-user" data-owner>
+      <span id="top-name">Abhisht</span>
       <a class="top-out" href="#">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l-4-4 4-4M6 12h10"/></svg>
         Log out
@@ -32,7 +33,7 @@
 
   <div class="sample-note"><b>Sample data.</b> Titles, channels and numbers on this page are made up for review.</div>
 
-  <a class="back" href="campaigns.html">&lsaquo; All campaigns</a>
+  <a class="back" href="campaigns.html" data-owner>&lsaquo; All campaigns</a>
 
   <div class="rep-head">
     <div class="rep-name">
@@ -43,8 +44,8 @@
       <span class="updated" id="c-updated"></span>
       <button class="btn" type="button" id="btn-range" aria-haspopup="dialog" aria-expanded="false"></button>
       <button class="btn icon-btn" type="button" id="btn-refresh" aria-label="Refresh numbers"></button>
-      <button class="btn" type="button" id="btn-share"></button>
-      <button class="btn" type="button" id="btn-csv"></button>
+      <button class="btn" type="button" id="btn-share" aria-haspopup="dialog" data-owner></button>
+      <button class="btn" type="button" id="btn-csv" data-owner></button>
     </div>
   </div>
 
@@ -124,8 +125,17 @@
 
 </main>
 
+<!-- No access: a share link the owner turned off, or the report's own address
+     opened by a different account. Never names the campaign or the brand. -->
+<div class="link-off" id="link-off">
+  <h1>You don't have permission to access this report</h1>
+  <!-- "turn on", not "back on": nobody here can tell paused from never shared. -->
+  <p>Ask the owner to turn on link sharing.</p>
+  <p class="link-off-owner">Is this your report? <button class="link-btn" type="button" data-viewas="owner" id="link-off-signin">Sign in</button></p>
+</div>
+
 <div class="menu" id="menu" role="menu" hidden></div>
-<div class="pop" id="share-pop" hidden></div>
+<div class="pop" id="share-pop" role="dialog" aria-label="Share this report" hidden></div>
 <div class="pop pop--range" id="range-pop" role="dialog" aria-label="Date range" hidden></div>
 <div class="scrim" id="scrim" hidden></div>
 <aside class="drawer" id="drawer" aria-hidden="true" aria-label="Details"></aside>
@@ -139,6 +149,12 @@
     <button type="button" data-tiles-mode="current" aria-pressed="true">Current</button>
     <button type="button" data-tiles-mode="compact" aria-pressed="false">Compact</button>
     <button type="button" data-tiles-mode="notarget" aria-pressed="false">Compact, no target</button>
+  </div>
+  <div class="devbar">
+    <b>View as</b>
+    <button type="button" data-viewas="owner" aria-pressed="true">Owner</button>
+    <button type="button" data-viewas="viewer" aria-pressed="false">Link viewer</button>
+    <button type="button" data-viewas="other" aria-pressed="false">Another account</button>
   </div>
   <div class="devbar">
     <b>Geography</b>
