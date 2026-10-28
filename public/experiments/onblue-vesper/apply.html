@@ -421,6 +421,100 @@ body { min-height: 100vh; }
   .bal-top { flex-direction: column; gap: 14px; }
   .bal-act { justify-content: flex-start; }
 }
+/* THE 70% CLUB'S NOTE (ROB-21572, local mock, Abhisht 2026-10-26). A partner paid
+   for October without reaching all their days gets the reason beside the figure it
+   explains, not in a popup: the question is "why is this money here", and the
+   answer belongs next to the money. It arrives once the figure has painted, so the
+   eye lands on the number first, and it stays until it is closed.
+   BLACK BY DEFAULT (Abhisht, 2026-10-26: "green feels off"): the solid button's
+   own pair, --solid-bg and --solid-ink, so it inverts with the theme the way that
+   button does. Green stays as a switch in the review dock for comparison.
+   GREEN IS OPAQUE, NOT --green-fill. The fill is translucent, and the pointer is a
+   rotated square half inside the bubble, so a see-through fill would draw it twice.
+   The mix is the same tint laid on the card, which is what --green-fill looks like
+   there. */
+.bal-fig { flex: 1; min-width: 0; }
+.bal-figrow { display: flex; align-items: center; gap: 16px; }
+.bal-tip {
+  --tip-bg: var(--solid-bg);
+  --tip-line: var(--solid-bg);
+  --tip-ink: var(--solid-ink);
+  --tip-x: color-mix(in srgb, var(--solid-ink) 62%, transparent);
+  --tip-x-hover: color-mix(in srgb, var(--solid-ink) 14%, transparent);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 1 auto;
+  min-width: 0;
+  padding: 5px 5px 5px 12px;
+  border: 1px solid var(--tip-line);
+  border-radius: 8px;
+  background: var(--tip-bg);
+  box-shadow: 0 6px 16px -10px rgba(18, 32, 64, 0.35);
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.5s var(--ease), transform 0.8s var(--ease);
+}
+.bal-tip.is-green {
+  --tip-bg: color-mix(in srgb, var(--green) 9%, var(--card-bg));
+  --tip-line: var(--green-line);
+  --tip-ink: var(--ink);
+  --tip-x: var(--muted);
+  --tip-x-hover: var(--wash-hover);
+  box-shadow: none;
+}
+.bal-tip[hidden] { display: none; }
+.bal-tip.is-in { opacity: 1; transform: none; }
+.bal-tip.is-out { opacity: 0; transform: translateX(-4px); transition-duration: 0.22s; }
+.bal-tip::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin-top: -5px;
+  background: var(--tip-bg);
+  border-left: 1px solid var(--tip-line);
+  border-bottom: 1px solid var(--tip-line);
+  transform: rotate(45deg);
+}
+/* ONE LINE (Abhisht, 2026-10-26): no title, no body, just the sentence */
+.bal-tip p { margin: 0; color: var(--tip-ink); font-size: 13px; line-height: 1.4; letter-spacing: -0.01em; }
+.bal-tip-x {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--tip-x);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.bal-tip-x:hover { background: var(--tip-x-hover); color: var(--tip-ink); }
+.bal-tip-x:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 1px; }
+/* on a phone there is no room beside the figure, so the note drops under it and
+   points up at it instead */
+@media (max-width: 560px) {
+  .bal-figrow { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .bal-tip { flex: none; max-width: 100%; transform: translateY(-6px); }
+  .bal-tip.is-out { transform: translateY(-3px); }
+  .bal-tip::before {
+    left: 22px;
+    top: -6px;
+    margin-top: 0;
+    border-bottom: 0;
+    border-top: 1px solid var(--tip-line);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bal-tip, .bal-tip.is-out { transform: none; transition: opacity 0.2s linear; }
+}
 .bal-ledger { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border-soft); }
 .dash-quiet { color: var(--muted); font-size: 13.5px; letter-spacing: -0.01em; }
 
@@ -1367,7 +1461,14 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
                stands alone in a panel; two different label styles inside one
                card read as two different kinds of thing. -->
           <span class="mini-title">Balance</span>
-          <span class="earn-figure" data-fig="balance">$0</span>
+          <div class="bal-figrow">
+            <span class="earn-figure" data-fig="balance">$0</span>
+            <!-- the 70% club's note (ROB-21572 mock); renderDash decides whether it shows -->
+            <aside class="bal-tip" data-bal-tip aria-label="About your balance" hidden>
+              <p>Thanks for sticking with us in our first month of beta. We’ve added your October award!</p>
+              <button class="bal-tip-x" type="button" aria-label="Dismiss" data-bal-tip-x><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </aside>
+          </div>
           <span class="dash-note bal-min" id="cash-status" data-cash-status>Cash-out minimum: <b>$10</b></span>
         </div>
         <!-- quiet, not the page's solid CTA: cashing out is a frequent,
@@ -1439,6 +1540,28 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
           <span class="pill"></span>
           <span class="pill"></span>
           <span class="pill"></span>
+        </div>
+        <p class="pill-legend"><span><i class="pill is-done" aria-hidden="true"></i>Verified</span><span><i class="pill is-pending" aria-hidden="true"></i>Pending verification</span></p>
+      </div>
+      <button class="progtile-info" type="button" aria-label="About Partner Starter Program" data-sheet="prog-info"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg></button>
+    </article>
+    <!-- THE 70% CLUB SEES NOVEMBER. Their October award lands after the month
+         closes, so by then the active tile is the new month, not started yet. -->
+    <article class="card progtile" data-pane="active" data-when="partial" hidden>
+      <div class="progtile-id">
+        <span class="progtile-name">Partner Starter Program</span>
+        <span class="progtile-ends">Ends Dec 1, 2026</span>
+      </div>
+      <div class="progtile-cond">
+        <div class="cond-line">
+          <span class="cond-label">Days run</span>
+          <span class="cond-count"><b>0</b> of 20 days</span>
+        </div>
+        <div class="pills" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="20" aria-valuetext="0 of 20 days" aria-label="Days run">
+          <span class="pill"></span><span class="pill"></span><span class="pill"></span><span class="pill"></span><span class="pill"></span>
+          <span class="pill"></span><span class="pill"></span><span class="pill"></span><span class="pill"></span><span class="pill"></span>
+          <span class="pill"></span><span class="pill"></span><span class="pill"></span><span class="pill"></span><span class="pill"></span>
+          <span class="pill"></span><span class="pill"></span><span class="pill"></span><span class="pill"></span><span class="pill"></span>
         </div>
         <p class="pill-legend"><span><i class="pill is-done" aria-hidden="true"></i>Verified</span><span><i class="pill is-pending" aria-hidden="true"></i>Pending verification</span></p>
       </div>
@@ -2300,9 +2423,63 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     one: {
       balance: 150, earned: 90, active: 1, past: 0,
       txns: [{ date: 'Mar 8, 2026', label: 'Cash out to PayPal', amount: 90 }]
+    },
+    /* THE 70% CLUB (ROB-21572 mock): ran 14 of their 20 October days and were paid
+       anyway, here at $1.50 a day; the amount rule (share of days or the full $30)
+       is still open and nothing on screen depends on it. oct70 is what shows the
+       note beside the balance. */
+    partial: {
+      balance: 21, earned: 21, active: 1, past: 0, oct70: true,
+      txns: [{ date: 'Nov 2, 2026', label: 'Program reward: Partner Starter Program', amount: 21 }]
     }
   };
   var acct = 'empty';
+
+  /* THE NOTE'S LIFE. It shows while the account is in the 70% club and until it is
+     closed; closing is remembered. A re-render (a tab switch, a refresh) must not
+     replay the entrance, so it only animates when it goes from hidden to shown. */
+  var TIP_KEY = 'onblue:oct70-note-closed';
+  function tipClosed() {
+    try { return window.localStorage.getItem(TIP_KEY) === '1'; } catch (e) { return false; }
+  }
+  function showTip(on) {
+    var tip = document.querySelector('[data-bal-tip]');
+    if (!tip) { return; }
+    if (!on) {
+      clearTimeout(tip._arrive);
+      tip.classList.remove('is-in', 'is-out');
+      tip.hidden = true;
+      return;
+    }
+    if (!tip.hidden) { return; }
+    tip.classList.remove('is-in', 'is-out');
+    tip.hidden = false;
+    tip._arrive = setTimeout(function () { tip.classList.add('is-in'); }, 900);
+  }
+  (function wireTip() {
+    var tip = document.querySelector('[data-bal-tip]');
+    if (!tip) { return; }
+    tip.querySelector('[data-bal-tip-x]').addEventListener('click', function () {
+      try { window.localStorage.setItem(TIP_KEY, '1'); } catch (e) {}
+      tip.classList.remove('is-in');
+      tip.classList.add('is-out');
+      /* the close button is about to vanish, so focus goes to the balance's own action */
+      var cash = document.querySelector('[data-sheet="cash-out"]');
+      if (cash && !cash.disabled) { cash.focus(); }
+      setTimeout(function () { showTip(false); }, 240);
+    });
+  })();
+  /* for the review toggler's Color bar: black is the default, green is the first try */
+  window.onblueTipColor = function (id) {
+    var tip = document.querySelector('[data-bal-tip]');
+    if (tip) { tip.classList.toggle('is-green', id === 'green'); }
+  };
+  /* for the review toggler's "Show again": forget the close and replay the entrance */
+  window.onblueTipReplay = function () {
+    try { window.localStorage.removeItem(TIP_KEY); } catch (e) {}
+    showTip(false);
+    showTip(!!ACCOUNTS[acct].oct70);
+  };
 
   /* THE CASH-OUT RULE. The minimum only (Abhisht, 2026-10-14): the period lock
      from the PM spec of 2026-10-12 (Cash out opening only once the program period
@@ -2361,6 +2538,8 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       var when = el.getAttribute('data-when');
       el.hidden = el.getAttribute('data-pane') !== tab || (when !== null && when !== acct);
     });
+
+    showTip(!!a.oct70 && !tipClosed());
   }
 
   function setAccount(id) {

@@ -36,7 +36,7 @@
   try {
     var q = new URLSearchParams(window.location.search);
     [['creator', 'onblue:dev-creator', ['apply', 'in']],
-     ['account', 'onblue:dev-cr-account', ['empty', 'one']]].forEach(function (k) {
+     ['account', 'onblue:dev-cr-account', ['empty', 'one', 'partial']]].forEach(function (k) {
       var v = q.get(k[0]);
       if (v && k[2].indexOf(v) > -1) { window.localStorage.setItem(k[1], v); }
     });
@@ -157,22 +157,47 @@
      ids differ - empty/one here, none/one/two there - so a shared key would
      hand each page the other's last answer to fall back from. */
   function creatorDock() {
+    /* SHOW AGAIN (ROB-21572 mock, 2026-10-26). Closing the 70% club's balance note
+       is remembered, so a reviewer needs a way to see its entrance more than once.
+       A button rather than a switch: there is no state to light, only an action. */
+    var acctOn = 'empty', creatorIn = false;
+    var note = document.createElement('div');
+    note.className = 'devbar';
+    note.innerHTML = '<b>Note</b><button type="button">Show again</button>';
+    note.querySelector('button').addEventListener('click', function () {
+      if (window.onblueTipReplay) { window.onblueTipReplay(); }
+    });
+    /* the note's colour, to compare (2026-10-26): black is the pick on trial,
+       green the first version */
+    var color = build({
+      label: 'Color', store: 'onblue:dev-note-color', initial: 'black',
+      states: [{ id: 'black', name: 'Black' }, { id: 'green', name: 'Green' }],
+      apply: function (on) { if (window.onblueTipColor) { window.onblueTipColor(on); } }
+    });
+    function placeNote() { note.hidden = color.hidden = !(creatorIn && acctOn === 'partial'); }
     var account = build({
       label: 'Account', store: 'onblue:dev-cr-account',
       /* the second name is the page's, not this file's: a creator holds a
          programme and an agency holds campaigns, and a bar saying the same word
          on both would be describing only one of them */
       states: [{ id: 'empty', name: 'Empty' },
-               { id: 'one', name: dash.getAttribute('data-one') || 'One program' }],
-      apply: function (on) { if (window.onblueAccount) { window.onblueAccount(on); } }
+               { id: 'one', name: dash.getAttribute('data-one') || 'One program' },
+               { id: 'partial', name: 'October exception' }],
+      apply: function (on) {
+        acctOn = on;
+        placeNote();
+        if (window.onblueAccount) { window.onblueAccount(on); }
+      }
     });
     /* (The Period switch went with the cash-out period lock, 2026-10-14.) */
-    document.body.appendChild(dock([account, build({
+    document.body.appendChild(dock([color, note, account, build({
       label: 'Creator', store: 'onblue:dev-creator', initial: 'apply',
       states: [{ id: 'apply', name: 'Application' },
                { id: 'in', name: 'Approved' }],
       apply: function (on) {
         account.hidden = on !== 'in';
+        creatorIn = on === 'in';
+        placeNote();
         if (window.onblueApproved) { window.onblueApproved(on === 'in'); }
       }
     })]));
