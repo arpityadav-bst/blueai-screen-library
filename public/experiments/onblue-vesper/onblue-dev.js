@@ -36,7 +36,9 @@
   try {
     var q = new URLSearchParams(window.location.search);
     [['creator', 'onblue:dev-creator', ['apply', 'in']],
-     ['account', 'onblue:dev-cr-account', ['empty', 'one', 'partial']]].forEach(function (k) {
+     ['account', 'onblue:dev-cr-account', ['empty', 'one', 'partial']],
+     ['platforms', 'onblue:dev-platforms', ['live', 'new']],
+     ['agency', 'onblue:dev-stage', ['review', 'approved']]].forEach(function (k) {
       var v = q.get(k[0]);
       if (v && k[2].indexOf(v) > -1) { window.localStorage.setItem(k[1], v); }
     });
@@ -250,7 +252,17 @@
       apply: function (on) { if (window.onblueAccount) { window.onblueAccount(on); } }
     });
 
-    document.body.appendChild(dock([flow, account, build({
+    /* PLATFORMS (PM, 2026-10-30, ROB-21562): live's fixed YouTube chip, or the
+       picker for multi-platform campaigns. Top of the dock, because it is the
+       question this copy of the page exists to answer. */
+    var plat = build({
+      label: 'Platforms', store: 'onblue:dev-platforms', initial: 'new',
+      states: [{ id: 'live', name: 'Live (YouTube only)' },
+               { id: 'new', name: 'New (YouTube + Instagram)' }],
+      apply: function (on) { if (window.onbluePlatforms) { window.onbluePlatforms(on); } }
+    });
+
+    document.body.appendChild(dock([plat, flow, account, build({
       /* TWO STATES, BECAUSE CREATING IS NOT ONE OF THEM. It used to be three,
          with Create sitting beside In review and Campaigns as though the three
          were places you could be. Creating a campaign is a dialog over the
@@ -274,6 +286,7 @@
         var app = on === 'approved' && !SMALL.matches;
         account.hidden = !app;
         flow.hidden = !app;
+        plat.hidden = !app;
         if (window.onblueStage) { window.onblueStage(on); }
       }
     })]));
@@ -283,6 +296,7 @@
       var app = !SMALL.matches && document.body.classList.contains('is-approved');
       account.hidden = !app;
       flow.hidden = !app;
+      plat.hidden = !app;
     };
     if (SMALL.addEventListener) { SMALL.addEventListener('change', resize); }
     else if (SMALL.addListener) { SMALL.addListener(resize); }

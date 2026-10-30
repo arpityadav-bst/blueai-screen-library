@@ -489,6 +489,11 @@ body { min-height: 100vh; }
 @media (hover: hover) { .selchip.is-fixed:hover { border-color: rgba(21, 110, 254, 0.42); background: rgba(21, 110, 254, 0.09); color: var(--blue-ink); } }
 .chip-yt { flex: none; }
 .chip-note { align-self: center; color: var(--dim-ink); font-size: 12px; letter-spacing: -0.005em; }
+/* MULTI-PLATFORM (PM, 2026-10-30, ROB-21562). The same selchip the fixed row
+   and the country row use, now pressable, with the platform's own mark beside
+   the name. An unpicked chip keeps its mark in colour: the logo is how a reader
+   finds Instagram in the row, and greying it would hide the thing being offered. */
+.chip-plat { flex: none; }
 
 /* ---- the filed panel --------------------------------------------------------
    DIALOG SCALE, NOT PAGE SCALE. What stood here was .title-xl, the homepage's
@@ -2736,6 +2741,42 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     { title: 'Budget and schedule' },
     { title: 'Where it runs' }
   ];
+
+  /* ---- platforms (PM, 2026-10-30, ROB-21562) -------------------------------
+     THE SERVER NOW TAKES A LIST. A campaign carries details.platforms, and each
+     job ops create on it names one of them. Release 1 is YouTube and Instagram
+     (ROB-21589), so both are offered here.
+     GROWTH PICKS ANY, ENGAGEMENT PICKS ONE. A growth campaign is our videos
+     posted from members' accounts, and the same brief works on either app. An
+     engagement campaign is one post the brand already published, and a post
+     lives on one platform, so the choice is which one its link points at.
+     The review dock's Platforms switch flips between live (the fixed YouTube
+     chip) and this, so both can be judged in the real dialog. */
+  var platNew = true;
+  var PLATFORMS = {
+    youtube: {
+      name: 'YouTube', an: 'a YouTube', hosts: ['youtube.com', 'youtu.be'],
+      urlLabel: 'YouTube video URL', urlPh: 'https://youtube.com/watch?v=...',
+      urlHint: 'A public YouTube video or Short.', paste: 'Paste a public YouTube video or Short.',
+      mark: '<svg class="chip-plat" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">'
+        + '<path fill="#FF0000" d="M23.5 6.2a3 3 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3 3 0 0 0 .5 6.2C0 8.07 0 12 0 12s0 3.93.5 5.8a3 3 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51A3 3 0 0 0 23.5 17.8C24 15.93 24 12 24 12s0-3.93-.5-5.8z"/>'
+        + '<path fill="#fff" d="M9.55 15.57V8.43L15.82 12l-6.27 3.57z"/></svg>'
+    },
+    instagram: {
+      name: 'Instagram', an: 'an Instagram', hosts: ['instagram.com', 'instagr.am'],
+      urlLabel: 'Instagram Reel URL', urlPh: 'https://instagram.com/reel/...',
+      urlHint: 'A public Instagram Reel.', paste: 'Paste a public Instagram Reel.',
+      mark: '<svg class="chip-plat" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">'
+        + '<defs><linearGradient id="pl-ig-grad" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse">'
+        + '<stop offset="0" stop-color="#FEC053"/><stop offset=".35" stop-color="#F2203E"/>'
+        + '<stop offset=".7" stop-color="#B729A8"/><stop offset="1" stop-color="#5342D6"/></linearGradient></defs>'
+        + '<rect x="1.5" y="1.5" width="21" height="21" rx="6" fill="url(#pl-ig-grad)"/>'
+        + '<rect x="6.2" y="6.2" width="11.6" height="11.6" rx="3.6" fill="none" stroke="#fff" stroke-width="1.9"/>'
+        + '<circle cx="12" cy="12" r="2.9" fill="none" stroke="#fff" stroke-width="1.9"/>'
+        + '<circle cx="17.2" cy="6.8" r="1.1" fill="#fff"/></svg>'
+    }
+  };
+  var PLATFORM_ORDER = ['youtube', 'instagram'];
   /* WHICH FIELDS BELONG TO A STEP IS NOW A QUESTION, NOT A CONSTANT. It was a
      fixed table, and the table described one campaign: a video URL and a set of
      actions, which is "Boost a post" and none of the other eight. Step one now
@@ -2743,7 +2784,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
      type and a lookup table would be a second place to keep that right. */
   function stepFields(i) {
     var b = BRIEFS[d.type];
-    if (i === 0) { return ['name']; }
+    if (i === 0) { return platNew ? ['platforms', 'name', 'postUrl'] : ['name']; }
     if (i === 1) {
       return (b && b.gen ? ['bid', 'gen', 'budget'] : ['bid', 'budget'])
         .concat(['startAt', 'endAt', 'startAtTime', 'endAtTime']);
@@ -2766,6 +2807,17 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
   function validate(d) {
     var e = {};
     var b = BRIEFS[d.type];
+    if (platNew) {
+      if (!d.platforms.length) e.platforms = 'Pick at least one platform.';
+      /* A LINK FROM THE OTHER PLATFORM IS THE ONE MISTAKE THIS FORM CAN SEE.
+         Switching the chip after pasting is the easy way to make it, and the
+         server would accept the campaign and send members to the wrong app. */
+      var url = String(d.postUrl || '').toLowerCase();
+      var other = d.platforms[0] === 'youtube' ? 'instagram' : 'youtube';
+      if (d.type === 'engagement' && url && PLATFORMS[other].hosts.some(function (h) { return url.indexOf(h) !== -1; })) {
+        e.postUrl = 'That’s ' + PLATFORMS[other].an + ' link. ' + PLATFORMS[d.platforms[0]].paste;
+      }
+    }
     if (!d.name.trim()) e.name = 'Give the campaign a name.';
     /* THE TYPE'S OWN FIELDS CARRY THEIR OWN FLAG, which is where this comment
        said it belonged: nothing in the catalogue used to say which were
@@ -2822,6 +2874,9 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     /* set by the catalogue before the form is ever shown, so the brief always
        knows which deal it is describing */
     type: '', kind: '', unit: '',
+    /* YOUTUBE STARTS ON, because it is what every campaign so far has run on
+       and the one a brand is most likely to want. Instagram is one press away. */
+    platforms: ['youtube'],
     /* the campaign's own name, which is what the dashboard lists it under and
        the one thing on this form nobody else can supply */
     name: '',
@@ -2888,6 +2943,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     d.unit = b ? (b.per > 1 ? num(b.per) + ' ' + b.unit : b.unit.replace(/s$/, '')) : '1,000 verified views';
     d.review = b ? b.review : '';
     d.gen = '';
+    d.platforms = ['youtube'];
     if (b) {
       /* CHIPS START ON, ALL OF THEM. An engagement campaign asks for a watch, a
          like and a comment; that is the product, not a preference, and opening
@@ -3135,7 +3191,52 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     render();
   });
 
+  /* THE PLATFORM ROW, PRESSABLE (PM, 2026-10-30). Built like the country row
+     under it on the last step: selchips that say their state with a tick and
+     aria-pressed. One label per kind, because one kind takes a list and the
+     other takes one answer, and a plural label over a single choice would
+     promise a second pick the row then refuses. */
+  function platformRow(err) {
+    var many = d.type === 'growth';
+    return '<div class="q" data-field="platforms" role="group" aria-labelledby="q-plat">'
+      + '<span class="q-label" id="q-plat">' + (many ? 'Platforms' : 'Platform') + '</span>'
+      + '<div class="chip-row">'
+      + PLATFORM_ORDER.map(function (id) {
+          var on = d.platforms.indexOf(id) !== -1;
+          return '<button type="button" class="selchip' + (on ? ' is-on' : '') + '"'
+            + ' aria-pressed="' + (on ? 'true' : 'false') + '" data-platform="' + id + '">'
+            + (on ? TICK : '') + PLATFORMS[id].mark + esc(PLATFORMS[id].name) + '</button>';
+        }).join('')
+      + '</div>'
+      + msgSlot(err.platforms, many ? 'Pick one or both.' : 'The platform your video is on.')
+      + '</div>';
+  }
+
+  document.addEventListener('click', function (ev) {
+    var b = ev.target.closest ? ev.target.closest('[data-platform]') : null;
+    if (!b) { return; }
+    var id = b.getAttribute('data-platform');
+    if (d.type === 'growth') {
+      var at = d.platforms.indexOf(id);
+      if (at === -1) { d.platforms = d.platforms.concat([id]); }
+      else { d.platforms = d.platforms.filter(function (p) { return p !== id; }); }
+      /* emptied by hand is an answer to correct now, not at Continue */
+      touched.platforms = true;
+    } else {
+      d.platforms = [id];
+      /* a link already pasted is re-read against the new choice straight away */
+      if (d.postUrl) { touched.postUrl = true; }
+    }
+    render('[data-platform="' + id + '"]');
+  });
+
   function typeField(f, err) {
+    /* THE LINK FIELD SPEAKS THE PICKED PLATFORM. Label, example and hint all
+       name it, so a brand that picked Instagram is never asked for a YouTube URL. */
+    if (platNew && f.key === 'postUrl') {
+      var pl = PLATFORMS[d.platforms[0]] || PLATFORMS.youtube;
+      f = { key: f.key, label: pl.urlLabel, kind: f.kind, ph: pl.urlPh, hint: pl.urlHint };
+    }
     var e = err[f.key];
     /* A CHIP THAT CANNOT BE UNPICKED. YouTube is the only platform that runs,
        so this is the form stating a fact rather than asking a question - and
@@ -3249,12 +3350,13 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
        the name is a fixed question this renderer owns, and the type's fields are
        appended after it, so a `fixed` field has nowhere to sit unless it is
        pulled to the front. */
-    var pre = b ? b.fields.filter(function (f) { return f.kind === 'fixed'; }) : [];
+    var pre = b && !platNew ? b.fields.filter(function (f) { return f.kind === 'fixed'; }) : [];
     /* THE NAME IS THE ONE FIXED QUESTION ON THIS STEP, and it is first because
        it is the only thing on the form nobody but the buyer can supply. It is
        also what the dashboard lists the campaign under, so a campaign without
        one would arrive on that screen as a row with a blank left column. */
-    var html = pre.map(function (f) { return typeField(f, err); }).join('')
+    var html = (b && platNew ? platformRow(err) : '')
+      + pre.map(function (f) { return typeField(f, err); }).join('')
       + '<label class="q" data-field="name">'
       + '<span class="q-label">Campaign name</span>'
       + '<input type="text" class="field' + (err.name ? ' err' : '') + '" name="name" '
@@ -4363,6 +4465,13 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     showView('list');
   }
   window.onblueWorkflow = setWorkflow;
+  /* the review dock's Platforms switch: live's fixed chip, or the picker */
+  window.onbluePlatforms = function (v) {
+    platNew = v !== 'live';
+    d.platforms = ['youtube'];
+    delete touched.platforms;
+    render();
+  };
   function visible(cs) {
     return flow === 'v2' ? cs : cs.filter(function (c) { return c.kind !== 'growth'; });
   }
@@ -5409,6 +5518,8 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     var c = {
       id: 'made-' + Date.now(),
       kind: growth ? 'growth' : 'engagement',
+      /* what the create call sends as details.platforms */
+      platforms: platNew ? d.platforms.slice() : ['youtube'],
       sample: false,
       name: d.name || 'Untitled campaign',
       /* THE SHORT ID IS THE HANDLE a support or settlement conversation reaches
@@ -5479,6 +5590,7 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     d.startAt = ''; d.endAt = ''; d.note = '';
     d.startAtTime = '12:00'; d.endAtTime = '12:00';
     d.country = 'Worldwide';
+    d.platforms = ['youtube'];
   }
 
   /* LOGGING OUT DROPS WHAT WAS KEPT. There is no session to end, but there is
