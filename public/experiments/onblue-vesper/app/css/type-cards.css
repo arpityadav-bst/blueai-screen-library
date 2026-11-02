@@ -28,14 +28,18 @@
 .nw-type .nw-type-go svg { transition: transform 0.24s var(--ease-hover); }
 .nw-type:hover .nw-type-go { border-color: transparent; background: var(--ink); color: var(--solid-ink); }
 .nw-type:hover .nw-type-go svg { transform: translateX(3px); }
-/* the card's name is a heading under the dialog's title, never its equal */
-.nw-type .nw-type-name { padding-right: var(--sp-8); font: var(--t-heading); letter-spacing: var(--tr-heading); color: var(--app-ink-1); }
-.nw-type .nw-type-body { font: var(--t-body); letter-spacing: var(--tr-body); color: var(--app-ink-2); }
+/* TWO OF EACH, NO MORE (Appy): two sizes (the name, and one text size for
+   everything under it), two weights (500 says "this is the thing", 400 says
+   "about it"), two inks (ink-1 for names and values, ink-3 for what describes
+   them). Every extra step read as mess, not hierarchy. The name is a heading
+   under the dialog's title, never its equal. */
+.nw-type .nw-type-name { padding-right: var(--sp-8); font: var(--t-heading); font-weight: 500; letter-spacing: var(--tr-heading); color: var(--app-ink-1); }
+.nw-type .nw-type-body { font: var(--t-body); letter-spacing: var(--tr-body); color: var(--app-ink-3); }
 .nw-type .nw-type-facts { display: grid; grid-template-columns: auto 1fr; gap: var(--sp-1) var(--sp-4); margin-top: auto; padding-top: var(--sp-3); border-top: 1px solid var(--app-row-line); }
 /* label / value rows, so the two cards' facts line up as a comparison */
 .nw-type .nw-type-spec { display: contents; }
-.nw-type .nw-type-spec i { font: var(--t-small); font-style: normal; color: var(--app-ink-3); }
-.nw-type .nw-type-spec b { font: var(--t-small); font-weight: 500; color: var(--app-ink-2); }
+.nw-type .nw-type-spec i { font: var(--t-body); font-style: normal; color: var(--app-ink-3); }
+.nw-type .nw-type-spec b { font: var(--t-body); font-weight: 500; color: var(--app-ink-1); }
 
 /* the current type carries a tick, over the art */
 .nw-type .nw-tick {

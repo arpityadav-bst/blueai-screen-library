@@ -20,7 +20,12 @@
 .pr-title { font: var(--t-title); letter-spacing: var(--tr-title); color: var(--app-ink-1); }
 .pr-title em { font-family: var(--serif-font); font-style: italic; font-weight: 400; font-size: 1.06em; letter-spacing: 0; color: var(--blue-ink); }
 .pr-head .app-btn { margin: -6px -8px -6px 0; }
-.pr-lede { margin-top: var(--sp-1); font: var(--t-body-lg); letter-spacing: var(--tr-body); color: var(--app-ink-3); }
+/* TWO OF EACH, AS IN THE TYPE PICKER (css/type-cards.css): beside the figures
+   (title, prices, the sum) there is one text size, 14px; two weights, 500 for
+   the thing and 400 for what describes it; two inks per surface, ink-1 and
+   ink-3 on the light, white and white at 60% on the dark. Green is the
+   graph's own colour, not a third ink. */
+.pr-lede { margin-top: var(--sp-1); font: var(--t-body); letter-spacing: var(--tr-body); color: var(--app-ink-3); }
 
 /* the two prices are the headline; picking one switches the sum below */
 .pr-cards { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); margin-top: var(--sp-6); }
@@ -29,19 +34,21 @@
 .pr-card-t { font: var(--t-body); font-weight: 500; color: var(--app-ink-1); }
 .pr-price { display: flex; align-items: baseline; gap: 6px; margin-top: var(--sp-3); }
 .pr-price b { font: var(--t-figure); letter-spacing: var(--tr-title); color: var(--app-ink-1); font-variant-numeric: tabular-nums; }
-.pr-price span { font: var(--t-small); color: var(--app-ink-2); }
-.pr-sub { margin-top: 2px; font: var(--t-small); color: var(--app-ink-3); }
+/* the type cards' rule (css/type-cards.css): under the figure, one text size,
+   ink-1 for names, ink-3 for what describes them */
+.pr-price span { font: var(--t-body); color: var(--app-ink-3); }
+.pr-sub { margin-top: 2px; font: var(--t-body); color: var(--app-ink-3); }
 .pr-tags { display: flex; flex-wrap: wrap; gap: var(--sp-1); margin-top: var(--sp-4); }
 .pr-tags span {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 24px;
-  padding: 0 var(--sp-2);
+  height: 28px;
+  padding: 0 var(--sp-3);
   border-radius: var(--r-pill);
   background: var(--neutral-fill);
-  color: var(--app-ink-2);
-  font: var(--t-label);
+  color: var(--app-ink-1);
+  font: var(--t-body);
 }
 .pr-card[aria-pressed="true"] .pr-tags span { background: var(--app-panel); }
 
@@ -56,7 +63,7 @@
   padding: var(--sp-5) var(--sp-6);
   border-radius: var(--r-md);
   background: var(--ink);
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.6);
 }
 .pr-calc::before {
   content: "";
@@ -85,7 +92,7 @@
 @keyframes pr-clouds { to { transform: translateX(-50%); } }
 .pr-calc > * { position: relative; z-index: 1; }
 .pr-calc-row { display: flex; align-items: baseline; justify-content: space-between; }
-.pr-calc-k { font: var(--t-small); font-weight: 500; color: rgba(255, 255, 255, 0.62); }
+.pr-calc-k { font: var(--t-body); color: rgba(255, 255, 255, 0.6); }
 .pr-calc-b { font: var(--t-body); font-weight: 500; color: #fff; font-variant-numeric: tabular-nums; }
 /* the slider, drawn for the dark: a faint track, a blue fill to the thumb
    (--fill, set by pricing.js), a white thumb with a blue halo */
@@ -104,29 +111,83 @@
 .pr-range::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px rgba(21, 110, 254, 0.4); }
 .pr-range::-moz-range-progress { height: 4px; border-radius: var(--r-pill); background: var(--blue); }
 .pr-get { padding-top: var(--sp-3); border-top: 1px solid rgba(255, 255, 255, 0.1); }
-.pr-get-k { font: var(--t-small); color: rgba(255, 255, 255, 0.55); }
+.pr-get-k { font: var(--t-body); color: rgba(255, 255, 255, 0.6); }
 .pr-result { display: flex; align-items: baseline; gap: 6px; margin-top: 2px; }
 .pr-result b { font: var(--t-metric); letter-spacing: var(--tr-display); color: #fff; font-variant-numeric: tabular-nums; }
-.pr-result #pr-u { font: var(--t-body); font-weight: 500; color: rgba(255, 255, 255, 0.72); }
-.pr-what { margin-top: var(--sp-1); font: var(--t-small); color: rgba(255, 255, 255, 0.62); }
+.pr-result #pr-u { font: var(--t-body); font-weight: 500; color: #fff; }
+.pr-what { margin-top: var(--sp-1); font: var(--t-body); color: rgba(255, 255, 255, 0.6); }
 .pr-acts { display: flex; flex-wrap: wrap; gap: var(--sp-1); margin-top: var(--sp-3); }
 .pr-acts span {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 24px;
-  padding: 0 var(--sp-2);
+  height: 28px;
+  padding: 0 var(--sp-3);
   border-radius: var(--r-pill);
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
-  font: var(--t-label);
+  font: var(--t-body);
   font-variant-numeric: tabular-nums;
 }
-.pr-acts svg { color: rgba(255, 255, 255, 0.62); }
+.pr-acts svg { color: rgba(255, 255, 255, 0.6); }
 @media (prefers-reduced-motion: reduce) { .pr-calc::after { animation: none; } }
 
-.pr-foot { margin-top: var(--sp-4); font: var(--t-small); color: var(--app-ink-3); }
+.pr-foot { margin-top: var(--sp-4); font: var(--t-body); color: var(--app-ink-3); }
 
 @media (max-width: 560px) {
   .pr-cards { grid-template-columns: 1fr; }
 }
+
+/* ---- the sum's motion and graph (pricing.js roll + drawGraph) ---- */
+/* the rolling number: each digit a one-line window onto a wheel of 0 to 9 */
+.pr-result .od { display: inline-flex; }
+/* inline-flex, so the window's baseline is its first row's (an overflow-hidden
+   inline-block would sit on its bottom edge and lift the number off "views");
+   clip-path does the clipping for the same reason */
+.pr-result .od-d { display: inline-flex; flex-direction: column; height: 1lh; clip-path: inset(0); }
+.pr-result .od-s { display: block; flex: none; transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.15); }
+.pr-result .is-set .od-s, .pr-result.is-set .od-s { transition: none; }
+.pr-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* the graph, on the calculator's right, over the dots */
+.pr-get { display: grid; grid-template-columns: minmax(0, 1fr) 184px; align-items: end; gap: var(--sp-6); }
+.pr-get-text { min-width: 0; }
+/* the band's name sits over its picture, in the graph's green */
+/* EACH BAND HAS ITS METAL (Appy): green to start, gold once the budget is
+   strong, diamond at the top. One tone and its halo per band; the curve, the
+   crowd, the point and the band's name all take it, and ease between them */
+.pr-graph-col { --pr-tone: #34d399; --pr-halo: rgba(52, 211, 153, 0.35); display: flex; flex-direction: column; gap: var(--sp-2); }
+.pr-graph-col[data-tier="2"] { --pr-tone: #f5c451; --pr-halo: rgba(245, 196, 81, 0.35); }
+.pr-graph-col[data-tier="3"] { --pr-tone: #a5f3fc; --pr-halo: rgba(165, 243, 252, 0.4); }
+.pr-tier { font: var(--t-body); font-weight: 500; color: var(--pr-tone); text-align: right; transition: color 0.4s var(--ease-hover); }
+/* diamond's name catches the light: a slow sheen across the word */
+.pr-graph-col[data-tier="3"] .pr-tier {
+  background: linear-gradient(100deg, #a5f3fc 30%, #ffffff 50%, #a5f3fc 70%) 0 0 / 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: pr-sheen 2.4s linear infinite;
+}
+@keyframes pr-sheen { from { background-position: 100% 0; } to { background-position: -150% 0; } }
+.pr-graph { position: relative; height: 96px; }
+/* growth: a views chart, its curve raised from the baseline by the budget */
+.pr-curve { display: block; width: 100%; height: 100%; overflow: visible; }
+.pr-curve-g { transform-box: view-box; transform-origin: 50% 100%; transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.1); }
+/* crossing into a band morphs the curve itself (one command shape for all three) */
+.pr-area, .pr-line { transition: d 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.1), stroke 0.4s var(--ease-hover); }
+.pr-area { fill: url(#pr-fill); }
+.pr-stop-a { stop-color: var(--pr-tone); stop-opacity: 0.4; transition: stop-color 0.4s var(--ease-hover); }
+.pr-stop-b { stop-color: var(--pr-tone); stop-opacity: 0; transition: stop-color 0.4s var(--ease-hover); }
+.pr-line { fill: none; stroke: var(--pr-tone); stroke-width: 2; stroke-linecap: round; }
+/* the point the curve has reached, with a soft ring */
+.pr-tip { position: absolute; right: -5px; bottom: calc(var(--s, 0) * 100% - 5px); width: 10px; height: 10px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px var(--pr-halo); transition: bottom 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.1), box-shadow 0.3s var(--ease-hover); }
+/* the top band's point glows wider: the picture's last upgrade */
+.pr-graph[data-tier="3"] .pr-tip { box-shadow: 0 0 0 6px var(--pr-halo), 0 0 0 12px rgba(165, 243, 252, 0.14); }
+/* engagement: a crowd, one dot per share of the people the budget brings */
+.pr-crowd { display: grid; align-content: end; gap: 8px; height: 100%; }
+/* a smaller crowd has bigger people, so every band fills the same space */
+.pr-graph[data-tier="1"] .pr-crowd i { width: 16px; height: 16px; }
+.pr-graph[data-tier="2"] .pr-crowd i { width: 13px; height: 13px; }
+.pr-crowd i { justify-self: center; width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, 0.12); transition: background 0.2s var(--ease-hover), transform 0.2s var(--ease-hover); }
+.pr-crowd i.is-on { background: var(--pr-tone); transform: scale(1.1); }
+@media (max-width: 560px) { .pr-get { grid-template-columns: minmax(0, 1fr); } .pr-graph-col { display: none; } }
+@media (prefers-reduced-motion: reduce) { .pr-result .od-s, .pr-curve-g, .pr-tip, .pr-crowd i, .pr-area, .pr-line, .pr-tier { transition: none; } .pr-graph-col .pr-tier { animation: none; } }
