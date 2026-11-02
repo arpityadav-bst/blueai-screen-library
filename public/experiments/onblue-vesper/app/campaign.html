@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en" class="app" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Campaign, onBlue for business</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%23156efe%22%3E%3Cpath%20d%3D%22M12%202.6C12.55%202.6%2012.88%203.15%2013.08%204.7c.62%204.7%201.52%205.6%206.22%206.22%201.55.2%202.1.53%202.1%201.08s-.55.88-2.1%201.08c-4.7.62-5.6%201.52-6.22%206.22-.2%201.55-.53%202.1-1.08%202.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15%2012.88%202.6%2012.55%202.6%2012s.55-.88%202.1-1.08c4.7-.62%205.6-1.52%206.22-6.22C11.12%203.15%2011.45%202.6%2012%202.6Z%22%2F%3E%3C%2Fsvg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&family=Instrument+Serif:ital@1&display=swap">
+<link rel="stylesheet" href="../onblue.css">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/components.css">
+<!-- the search box, filter pills and their menus are the Campaigns page's, reused as they are -->
+<link rel="stylesheet" href="css/campaigns.css">
+<link rel="stylesheet" href="css/report.css">
+<link rel="stylesheet" href="css/report-tiles.css">
+<link rel="stylesheet" href="css/report-detail.css">
+<link rel="stylesheet" href="css/report-overlay.css">
+<link rel="stylesheet" href="css/report-geo.css">
+</head>
+<body data-page="campaigns">
+
+<aside class="app-side" id="side" aria-label="Main"></aside>
+
+<main class="app-panel">
+  <header class="app-head rp-head" id="head"></header>
+  <div class="app-body" id="body"></div>
+</main>
+
+<div class="rp-menu" id="menu" role="menu" hidden></div>
+<div class="rp-menu" id="more-menu" role="menu" aria-label="Share or download" hidden></div>
+<div class="rp-pop" id="share-pop" role="dialog" aria-label="Share this report" hidden></div>
+<div class="rp-pop rp-pop--range" id="range-pop" role="dialog" aria-label="Date range" hidden></div>
+<div class="rp-scrim" id="scrim" hidden></div>
+<aside class="rp-drawer" id="drawer" aria-hidden="true" aria-label="Details"></aside>
+
+<!-- Prototype review controls, not part of the product. -->
+<div class="app-dock" aria-label="Prototype controls">
+  <div class="app-dock-bar rp-dock-open">
+    <b>Open</b>
+    <a href="campaign.html?id=a667ef59">Live</a>
+    <a href="campaign.html?id=9d4e7a10">Two platforms</a>
+    <a href="campaign.html?id=f0a1b2c3">Engagement</a>
+    <a href="campaign.html?id=5b2c8e47">In review</a>
+    <a href="campaign.html?id=7f0d2b68">Under target</a>
+    <a href="campaign.html?id=c7e19f02">Over budget</a>
+    <a href="campaign.html?id=eee2ed33">Rejected</a>
+    <a href="campaign.html?id=a15d7f22">Sample</a>
+    <a href="campaign.html?id=00000000">Unknown</a>
+  </div>
+  <div class="app-dock-bar" data-dock-posts>
+    <b>Posts</b>
+    <button type="button" data-posts-state="data">As data</button>
+    <button type="button" data-posts-state="none">None yet</button>
+  </div>
+  <div class="app-dock-bar">
+    <b>View as</b>
+    <button type="button" data-viewas="owner">Owner</button>
+    <button type="button" data-viewas="link">Link viewer</button>
+    <button type="button" data-viewas="other">Another account</button>
+  </div>
+  <div class="app-dock-bar" data-dock-geo hidden>
+    <b>Geography</b>
+    <button type="button" data-geo-mode="off">Hidden</button>
+    <button type="button" data-geo-mode="live">Live data</button>
+    <button type="button" data-geo-mode="processing">Processing</button>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="shell.js"></script>
+<script src="filters.js"></script>
+<script src="../campaign-report/sample-posts.js"></script>
+<script src="report-seed.js"></script>
+<script src="report-model.js"></script>
+<script src="report-calc.js"></script>
+<script src="report-ui.js"></script>
+<script src="report-chart.js"></script>
+<script src="report-bento.js"></script>
+<script src="report-engage.js"></script>
+<script src="report-posts.js"></script>
+<script src="report-geo.js"></script>
+<script src="report-drawer.js"></script>
+<script src="report-tools.js"></script>
+<script src="report-states.js"></script>
+<script src="report-page.js"></script>
+</body>
+</html>

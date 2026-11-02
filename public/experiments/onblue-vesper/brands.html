@@ -1492,6 +1492,7 @@ body.is-signed-in .acct { display: block; }
   transition: background 0.18s ease;
 }
 .acct-item:hover { background: var(--wash-hover); }
+.acct-item[hidden] { display: none; }
 .acct-item svg { flex: none; color: var(--muted); }
 body.is-signed-in .hero-alt,
 body.is-signed-in .close-alt,
@@ -1782,6 +1783,10 @@ body.is-signed-in #site-nav .nav-cta { display: none; }
           <svg class="acct-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
         </button>
         <div class="acct-menu" id="acct-menu" role="menu" hidden>
+          <a class="acct-item" href="app/campaigns.html" role="menuitem" id="acct-campaigns" hidden>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 9h17M8 13.5h8M8 16.5h5"/></svg>
+            Your campaigns
+          </a>
           <button class="acct-item" type="button" role="menuitem" data-logout>
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17 5 12l5-5"/><path d="M5 12h11"/><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg>
             Log out
@@ -2947,7 +2952,7 @@ body.is-signed-in #site-nav .nav-cta { display: none; }
             <input class="field" id="reg-site" name="site" type="text" inputmode="url" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="https://youragency.com">
             <span class="msg" data-msg="site"></span>
           </label>
-          <button class="btn btn-solid hero-solid gate-go" type="submit"><span class="scramble">Continue</span></button>
+          <button class="btn btn-solid hero-solid gate-go" type="submit"><span class="scramble">Submit for review</span></button>
         </form>
           <!-- NO SIGN-IN LINE UNDER THIS FORM. I put one back arguing that with
                level one gone this pane is the gate's front door and a front door
@@ -3305,6 +3310,9 @@ body.is-signed-in #site-nav .nav-cta { display: none; }
   function signedIn() {
     try { return window.sessionStorage.getItem('onblue:signedin') === '1'; } catch (e) { return false; }
   }
+  function hasAgency() {
+    try { return !!window.sessionStorage.getItem('onblue:agency'); } catch (e) { return false; }
+  }
   function markSignedIn() {
     try { window.sessionStorage.setItem('onblue:signedin', '1'); } catch (e) {}
     document.body.classList.add('is-signed-in');
@@ -3336,6 +3344,8 @@ body.is-signed-in #site-nav .nav-cta { display: none; }
     var av = document.getElementById('acct-av');
     if (n) { n.textContent = label; }
     if (av) { av.textContent = label.charAt(0).toUpperCase(); }
+    var go = document.getElementById('acct-campaigns');
+    if (go) { go.hidden = !hasAgency(); }
   }
 
   (function session() {
@@ -3376,7 +3386,7 @@ body.is-signed-in #site-nav .nav-cta { display: none; }
          put the next sign-in straight back into a state the reader just left,
          and the in-review one-shot is the worst of them to leave lying around. */
       try {
-        ['onblue:signedin', 'onblue:agency', 'onblue:new', 'onblue:email', 'onblue:site']
+        ['onblue:signedin', 'onblue:agency', 'onblue:new', 'onblue:email', 'onblue:site', 'onblue:agency-status']
           .forEach(function (k) { window.sessionStorage.removeItem(k); });
       } catch (e2) {}
       setAcct(false);
@@ -3533,6 +3543,9 @@ body.is-signed-in #site-nav .nav-cta { display: none; }
     function open(asReturning) {
       window.clearTimeout(closing);
       returning = !!asReturning;
+      /* AN AGENCY ON RECORD GOES TO ITS CAMPAIGNS. The doors and the agency form
+         both ask a question this account has already answered. */
+      if (signedIn() && hasAgency()) { leave('app/campaigns.html'); return; }
       /* THE ASK IS RESET ON EVERY OPEN, like the level below it and for the same
          reason: which pane you were on last time is not something to inherit,
          and without this a reader who looked at sign-in once found it again
@@ -3545,6 +3558,7 @@ body.is-signed-in #site-nav .nav-cta { display: none; }
          Sign in link and "Get started" under Create a campaign are both true.
          UNLESS THEY ARE ALREADY IN, in which case the doors are a question with
          its answer already given and the agency form is the step that is left. */
+      if (signedIn()) { prefillReg(); }
       pane(signedIn() ? 'register' : (returning ? 'signin' : 'choose'));
       clearError();
       /* both doors again on every open: a field left standing from last time is
@@ -3625,10 +3639,54 @@ body.is-signed-in #site-nav .nav-cta { display: none; }
       loading = true;
       if (loadEl) { loadEl.hidden = false; }
       window.setTimeout(function () {
+        /* A RETURNING AGENCY ALREADY HAS ONE. Sign in from a fresh tab has no
+           agency in this session, so the prototype stands one in, named from the
+           email's domain and already approved, and goes to its campaigns. Only
+           Create a campaign asks a new account to register. */
+        if (returning) {
+          if (!hasAgency()) { standInAgency(); }
+          leave('app/campaigns.html');
+          return;
+        }
         loading = false;
+        prefillReg();
         pane('register');
         if (loadEl) { loadEl.hidden = true; }
       }, 1150);
+    }
+
+    /* NEVER ASK TWICE. The door already took an address, so Work email arrives
+       filled, and the website is read off that address unless it is free mail,
+       where the domain says nothing about the agency. The website follows the
+       email only until the agency types its own. Both stay editable. */
+    var FREE_MAIL = /^(gmail|googlemail|outlook|hotmail|live|msn|yahoo|ymail|icloud|me|aol|proton|protonmail|zoho|gmx|mail|rediffmail)\./i;
+    var siteTyped = false;
+    function siteFrom(mail) {
+      var dom = (mail.split('@')[1] || '').trim().toLowerCase();
+      return dom && dom.indexOf('.') > 0 && !FREE_MAIL.test(dom) ? 'https://' + dom : '';
+    }
+    function prefillReg() {
+      var mail = document.getElementById('reg-mail');
+      var site = document.getElementById('reg-site');
+      if (!mail || !site) { return; }
+      var known = '';
+      try { known = window.sessionStorage.getItem('onblue:email') || ''; } catch (e) {}
+      if (known && !mail.value) { mail.value = known; }
+      if (!siteTyped && !site.value) { site.value = siteFrom(mail.value); }
+    }
+    (function followEmail() {
+      var mail = document.getElementById('reg-mail');
+      var site = document.getElementById('reg-site');
+      if (!mail || !site) { return; }
+      site.addEventListener('input', function () { siteTyped = site.value.trim() !== ''; });
+      mail.addEventListener('input', function () { if (!siteTyped) { site.value = siteFrom(mail.value); } });
+    })();
+    function standInAgency() {
+      try {
+        var dom = ((window.sessionStorage.getItem('onblue:email') || '').split('@')[1] || '').split('.')[0];
+        window.sessionStorage.setItem('onblue:agency', dom ? dom.charAt(0).toUpperCase() + dom.slice(1) : 'Acme Games');
+        window.sessionStorage.setItem('onblue:agency-status', 'approved');
+      } catch (e) {}
     }
 
     /* ---- registering an agency -------------------------------------------
@@ -3663,6 +3721,7 @@ body.is-signed-in #site-nav .nav-cta { display: none; }
         /* ONE-SHOT: this is what puts the next page on the in-review screen, and
            it is separate from the name because the name has to survive it. */
         window.sessionStorage.setItem('onblue:new', '1');
+        window.sessionStorage.setItem('onblue:agency-status', 'review');
         window.sessionStorage.setItem('onblue:email', mail.value.trim());
         if (site.value.trim()) { window.sessionStorage.setItem('onblue:site', site.value.trim()); }
       } catch (e2) {}
@@ -3671,7 +3730,7 @@ body.is-signed-in #site-nav .nav-cta { display: none; }
          is not one; the doors come first now, so by the time this form is
          submitted the way back in has already been chosen and the only thing
          left is the dashboard. */
-      leave('campaign.html');
+      leave('app/campaigns.html');
     });
 
     gate.addEventListener('click', function (e) {

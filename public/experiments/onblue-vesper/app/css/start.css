@@ -1,0 +1,130 @@
+/* The first thing a new agency sees: one large Create a campaign card, and
+   everything else that wants its attention (review status, drafts) in a
+   floating stack at the bottom right, so nothing sits on top of the card. */
+
+/* ---- the start card ---- */
+/* DARK (Appy's pick, final): an ink card on the white page, the one dark
+   surface in the app, so the way in is the first thing the eye lands on.
+   Its sky and clouds turn ink with it (css/sky.css), the wash becomes a blue
+   glow, and the solid button inverts so it still reads as the one action. */
+.start-card {
+  --sky: var(--ink);
+  /* a dot carries less ink than a line, so it takes more light to be seen */
+  --sky-dot: rgba(255, 255, 255, 0.16);
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 48%);
+  min-height: 320px;
+  overflow: hidden;
+  border-radius: var(--card-radius);
+  background: var(--ink);
+  color: rgba(255, 255, 255, 0.72);
+}
+.start-copy { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: var(--sp-10); }
+.start-title { display: block; font: var(--t-display); letter-spacing: var(--tr-display); color: #fff; }
+.start-title em { font-family: var(--serif-font); font-style: italic; font-weight: 400; font-size: 1.06em; letter-spacing: 0; color: #4a8dff; } /* onBlue's own blue ink on dark (onblue.css, dark theme) */
+.start-lede { display: block; max-width: 44ch; margin-top: var(--sp-2); font: var(--t-body-lg); letter-spacing: var(--tr-body); color: rgba(255, 255, 255, 0.62); }
+.start-card .start-cta { margin-top: var(--sp-6); background: #fff; color: var(--ink); box-shadow: none; }
+.start-cta svg { transition: transform 0.24s var(--ease-hover); }
+.start-card:hover .start-cta svg { transform: translateX(3px); }
+
+/* the art: five creator films fanned, cut off by the card's own bottom edge */
+.start-art { position: relative; container-type: inline-size; }
+/* NO EDGE (Appy's pick, option A): the ground is a wash that starts as
+   nothing behind the copy and deepens toward the right, so the art arrives
+   rather than sitting in a box. It is wider than the art column so it begins
+   under the text, where it is still invisible. */
+.start-art::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 -60%;
+  /* charcoal, not blue (Appy): the ink lifts toward a warm grey behind the films */
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.035) 45%, rgba(255, 255, 255, 0.09) 100%);
+  pointer-events: none;
+}
+/* start-art.js sets each film's place: ll, l, c (front, playing, and larger), r, rr, and
+   the in/out poses a film passes through as the fan moves on */
+.start-art .sa-film {
+  position: absolute;
+  left: 38%;
+  top: 44px;
+  width: 152px;
+  height: 270px;
+  margin-left: -76px;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  background: var(--neutral-fill);
+  box-shadow: 0 22px 44px -18px rgba(0, 0, 0, 0.8);
+  /* a hairline of light at the edge, so a dark film (gameplay at night) never
+     melts into the ink behind it */
+  outline: 1px solid rgba(255, 255, 255, 0.16);
+  outline-offset: -1px;
+  transition: transform 0.7s var(--ease-hover), opacity 0.7s var(--ease-hover);
+}
+/* the spread follows the art column's own width (cqw), so a wider page fans
+   the films further apart; the max() keeps the old spacing as a floor */
+.start-art { --f1: max(90px, 19cqw); --f2: max(168px, 37cqw); --f3: max(236px, 52cqw); --h1: max(100px, 21cqw); --h2: max(186px, 40cqw); }
+.start-art [data-pos="ll"] { z-index: 1; transform: translateX(calc(var(--f2) * -1)) translateY(44px) rotate(-16deg); }
+.start-art [data-pos="l"] { z-index: 2; transform: translateX(calc(var(--f1) * -1)) translateY(16px) rotate(-8deg); }
+.start-art [data-pos="c"] { z-index: 3; transform: translateY(-6px) scale(1.14); }
+.start-art [data-pos="r"] { z-index: 2; transform: translateX(var(--f1)) translateY(16px) rotate(8deg); }
+.start-art [data-pos="rr"] { z-index: 1; transform: translateX(var(--f2)) translateY(44px) rotate(16deg); }
+.start-art [data-pos="in"] { z-index: 0; opacity: 0; transform: translateX(var(--f3)) translateY(80px) rotate(24deg); }
+.start-art [data-pos="out"] { z-index: 0; opacity: 0; transform: translateX(calc(var(--f3) * -1)) translateY(80px) rotate(-24deg); }
+/* the fan opens a little toward the pointer: the card answers being pointed at */
+.start-card:hover .start-art [data-pos="ll"] { transform: translateX(calc(var(--h2) * -1)) translateY(38px) rotate(-19deg); }
+.start-card:hover .start-art [data-pos="l"] { transform: translateX(calc(var(--h1) * -1)) translateY(10px) rotate(-10deg); }
+.start-card:hover .start-art [data-pos="c"] { transform: translateY(-14px) scale(1.14); }
+.start-card:hover .start-art [data-pos="r"] { transform: translateX(var(--h1)) translateY(10px) rotate(10deg); }
+.start-card:hover .start-art [data-pos="rr"] { transform: translateX(var(--h2)) translateY(38px) rotate(19deg); }
+/* a narrower card has room for three: the outer pair steps back out of the copy's way */
+@media (max-width: 1199px) { .start-art [data-pos="ll"], .start-art [data-pos="rr"] { opacity: 0; } }
+.start-art .sa-film video { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* DEPTH BY LIGHT: the front film is fully clear; each step away from it sits
+   further behind an ink veil, so the eye goes to the one that plays. A veil,
+   not opacity: the films overlap, and a faded film would show the one behind
+   it through itself. No filter either (the Mac rule, css/sky.css). */
+.start-art .sa-film::after { content: ""; position: absolute; inset: 0; background: var(--ink); opacity: var(--veil, 0); transition: opacity 0.7s var(--ease-hover); pointer-events: none; }
+.start-art [data-pos="l"], .start-art [data-pos="r"] { --veil: 0.35; }
+.start-art [data-pos="ll"], .start-art [data-pos="rr"], .start-art [data-pos="in"], .start-art [data-pos="out"] { --veil: 0.62; }
+@media (prefers-reduced-motion: reduce) { .start-art .sa-film, .start-art .sa-film::after, .start-cta svg { transition: none; } }
+
+@media (max-width: 720px) {
+  .start-card { grid-template-columns: minmax(0, 1fr); }
+  .start-copy { padding: var(--sp-6); }
+  .start-art { display: none; }
+}
+
+/* ---- the floating stack ---- */
+.notices {
+  position: fixed;
+  right: var(--sp-6);
+  bottom: var(--sp-6);
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  width: 360px;
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+}
+.notice {
+  border: 1px solid var(--app-panel-line);
+  border-radius: var(--r-md);
+  background: var(--app-panel);
+  box-shadow: var(--elev-2);
+}
+/* the agency popover's measure (css/components.css .agency-pop): 14 on top, 16 round the rest */
+.notice-head { position: relative; display: flex; align-items: flex-start; gap: var(--sp-3); padding: 14px var(--sp-4) var(--sp-4); }
+.notice-head > svg { flex: none; margin-top: 2px; color: var(--notice-ink); }
+.notice-text { flex: 1; min-width: 0; font: var(--t-small); color: var(--app-ink-3); }
+.notice-text b { display: block; margin-bottom: 2px; padding-right: var(--sp-6); font: var(--t-body); font-weight: 500; color: var(--app-ink-1); }
+/* the button sits on the title's line, as in the agency popover; the text runs under it */
+.notice-head .app-btn { position: absolute; top: calc(14px + 10px - var(--ctl-sm) / 2); right: var(--sp-2); }
+.notice-head .app-btn svg { transition: transform 0.2s var(--ease-hover); }
+.notice.is-folded .notice-fold svg { transform: rotate(180deg); }
+.notice.is-folded .needs-list, .notice.is-folded .needs-all { display: none; }
+
+@media (max-width: 767px) {
+  .notices { left: var(--sp-2); right: var(--sp-2); bottom: var(--sp-2); width: auto; }
+}

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en" class="app app-flow" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>New campaign, onBlue for business</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%23156efe%22%3E%3Cpath%20d%3D%22M12%202.6C12.55%202.6%2012.88%203.15%2013.08%204.7c.62%204.7%201.52%205.6%206.22%206.22%201.55.2%202.1.53%202.1%201.08s-.55.88-2.1%201.08c-4.7.62-5.6%201.52-6.22%206.22-.2%201.55-.53%202.1-1.08%202.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15%2012.88%202.6%2012.55%202.6%2012s.55-.88%202.1-1.08c4.7-.62%205.6-1.52%206.22-6.22C11.12%203.15%2011.45%202.6%2012%202.6Z%22%2F%3E%3C%2Fsvg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&family=Instrument+Serif:ital@1&display=swap">
+<link rel="stylesheet" href="../onblue.css">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/flow.css">
+<link rel="stylesheet" href="css/new-dialog.css">
+<link rel="stylesheet" href="css/new.css">
+<link rel="stylesheet" href="css/type-cards.css">
+<link rel="stylesheet" href="css/type-picker.css">
+</head>
+<body data-page="new">
+
+<!-- the close leads the bar, right beside what it closes; the bar's row sits on the
+     content's grid, so the close, the step rail and the form share one left edge -->
+<header class="flow-head">
+  <div class="flow-head-in"><div class="flow-head-row">
+  <button class="app-btn app-btn--icon app-btn--quiet" type="button" id="nw-close" aria-label="Close" title="Close and save as a draft">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+  </button>
+  <span class="nw-head-sep" aria-hidden="true"></span>
+  <span>New campaign</span>
+  </div></div>
+</header>
+
+<main class="flow-main" id="nw-main">
+  <div class="flow-wrap" id="nw-wrap">
+    <nav class="nw-rail" id="nw-rail" aria-label="Steps"></nav>
+    <form class="flow-col" id="nw-form" novalidate>
+      <div class="dashes nw-dashes" id="nw-dashes"></div>
+      <div id="nw-step"></div>
+    </form>
+  </div>
+</main>
+
+<footer class="flow-foot" id="nw-foot">
+  <div class="flow-foot-in"><div class="flow-foot-row">
+    <button class="app-btn app-btn--lg" type="button" id="nw-back">Back</button>
+    <p class="note" id="nw-note" aria-live="polite"></p>
+    <button class="app-btn app-btn--solid app-btn--lg" type="submit" form="nw-form" id="nw-next">Continue</button>
+  </div></div>
+</footer>
+
+<!-- under 640px the setup is blocked; reading campaigns still works on a phone -->
+<section class="app-empty nw-phone" aria-labelledby="nw-phone-t">
+  <svg class="nw-phone-spark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg>
+  <h2 class="app-display" id="nw-phone-t">Create campaigns on a <em>computer</em>.</h2>
+  <p>The setup needs a bigger screen. Your campaigns and reports work here.</p>
+  <div class="nw-phone-acts">
+    <button class="app-btn app-btn--solid app-btn--lg" type="button" data-copy-link>Copy link to this page</button>
+    <a class="app-btn app-btn--lg" href="campaigns.html">Back to campaigns</a>
+  </div>
+</section>
+
+<script src="data.js"></script>
+<script src="shell.js"></script>
+<script src="new-dialog.js"></script>
+<script src="new-model.js"></script>
+<script src="new-ui.js"></script>
+<script src="new-cal.js"></script>
+<script src="new-steps.js"></script>
+<script src="new-review.js"></script>
+<script src="type-cards.js"></script>
+<script src="type-picker.js"></script>
+<script src="new.js"></script>
+</body>
+</html>

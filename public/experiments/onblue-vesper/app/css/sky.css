@@ -1,0 +1,47 @@
+/* The start card's sky (Appy's pick, final): a quiet dot field on the card,
+   and large soft clouds of the card's own ground (--sky, css/start.css)
+   drifting across above it, so the dots disappear wherever a cloud passes. The sky itself is never drawn.
+   PURE CSS BACKGROUNDS AND ONE TRANSFORM ANIMATION: no canvas, mask, filter
+   or blur, any of which caps Chrome at 30fps on some Macs. The new campaign
+   type cards carry the same sky in miniature, still on a grid (css/type-cards.css). */
+
+/* the dots: strongest on the right where the films fan out, gone before the copy */
+.start-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(270deg, transparent 10%, var(--sky) 80%),
+    radial-gradient(circle at 1px 1px, var(--sky-dot) 1px, transparent 1.5px) 0 0 / 16px 16px;
+  pointer-events: none;
+}
+
+/* the clouds: two card widths of one repeating tile, slid left by one card
+   width and looped, so it never jumps; a transform, so it runs on the
+   compositor. Each cloud is a few overlapping ellipses, kept clear of the
+   tile's edges so none is ever cut. The art column is lifted above it, so
+   the blue wash and the films are never covered, and the copy above that. */
+.start-art { z-index: 1; }
+.start-copy { z-index: 2; }
+.start-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 200%;
+  height: 100%;
+  background:
+    radial-gradient(ellipse 230px 96px at 30% 40%, var(--sky) 30%, transparent 100%),
+    radial-gradient(ellipse 160px 84px at 38% 24%, var(--sky) 30%, transparent 100%),
+    radial-gradient(ellipse 150px 74px at 22% 58%, var(--sky) 30%, transparent 100%),
+    radial-gradient(ellipse 210px 90px at 72% 72%, var(--sky) 30%, transparent 100%),
+    radial-gradient(ellipse 140px 76px at 79% 54%, var(--sky) 30%, transparent 100%);
+  background-size: 50% 100%;
+  background-repeat: repeat-x;
+  animation: sky-clouds 30s linear infinite;
+  pointer-events: none;
+}
+@keyframes sky-clouds { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .start-card::after { animation: none; } }

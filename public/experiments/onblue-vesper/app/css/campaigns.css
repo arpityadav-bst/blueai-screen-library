@@ -1,0 +1,251 @@
+/* The Campaigns page, on PM's list (campaign-report/campaigns.css, "New"):
+   a big title, Your campaigns as one search + one row of pills + a table of
+   one-line rows, Sample reports under it. The list is the product. */
+
+/* the refresh button, PM's #btn-refresh */
+.app-btn.is-spinning svg { animation: app-spin 0.7s linear infinite; }
+
+/* ---- page head: in the body, no sticky bar (PM's .list-head) ---- */
+.list-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "titles actions";
+  align-items: center;
+  gap: var(--sp-4);
+  padding-top: var(--sp-4);
+}
+.list-titles { grid-area: titles; min-width: 0; }
+.list-title { font: var(--t-display); letter-spacing: var(--tr-display); color: var(--app-ink-1); }
+.list-sub { margin-top: var(--sp-2); font: var(--t-body-lg); letter-spacing: var(--tr-body); color: var(--app-ink-3); font-variant-numeric: tabular-nums; }
+.list-sub b { font-weight: 500; color: var(--app-ink-1); }
+.list-actions { grid-area: actions; display: flex; align-items: center; gap: var(--sp-3); }
+/* the phone menu button (the sidebar's drawer): two classes, to outrank .app-btn's display */
+.list-head .app-menu-btn { grid-area: menu; display: none; }
+/* phone: the menu and the actions share the top line, the title takes the next */
+@media (max-width: 767px) {
+  .list-head { grid-template-areas: "menu actions" "titles titles"; padding-top: 0; }
+  .list-head .app-menu-btn { display: inline-flex; justify-self: start; }
+}
+.list-head + .start { margin-top: var(--sp-8); }
+
+/* ---- Your campaigns: heading and search on one line, then the pills ---- */
+.band-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-4); min-height: var(--ctl); margin-bottom: var(--sp-3); }
+.search {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex: 0 1 300px;
+  height: var(--ctl);
+  padding: 0 var(--sp-3);
+  border: 1px solid var(--app-panel-line);
+  border-radius: var(--r-xs);
+  background: var(--app-panel);
+  color: var(--app-ink-3);
+}
+.search[hidden], .toolbar[hidden] { display: none; }
+.search:focus-within { border-color: var(--blue-line); box-shadow: var(--focus-ring); }
+.search input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; color: var(--app-ink-1); font: var(--t-body); letter-spacing: var(--tr-body); }
+.search input::placeholder { color: var(--ph-ink); }
+/* the label carries the ring; the app's own :focus-visible ring would draw a second one */
+.search input:focus, .search input:focus-visible { outline: none; box-shadow: none; }
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); margin-bottom: var(--sp-4); }
+.pills { display: contents; }
+.toolbar .count { margin-left: auto; font: var(--t-small); color: var(--app-ink-3); font-variant-numeric: tabular-nums; }
+@media (max-width: 767px) {
+  .band-head { flex-wrap: wrap; }
+  .band-head .search { flex: 1 1 100%; }
+  .toolbar .count { flex-basis: 100%; margin-left: 0; }
+}
+
+.pill-wrap { position: relative; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  height: 32px;
+  padding: 0 var(--sp-3);
+  border: 1px solid var(--app-panel-line);
+  border-radius: var(--r-pill);
+  background: var(--app-panel);
+  color: var(--app-ink-2);
+  font: var(--t-small);
+  font-weight: 500;
+  cursor: pointer;
+}
+.pill:hover { background: var(--app-nav-hover); }
+.pill .v { display: inline-flex; align-items: center; gap: var(--sp-1); color: var(--app-ink-1); }
+.pill.is-set { border-color: var(--blue-line); background: var(--blue-wash); }
+.pill[aria-expanded="true"] { border-color: var(--blue-line); box-shadow: var(--focus-ring); }
+.pill svg { color: var(--app-ink-3); }
+
+.pmenu {
+  position: absolute;
+  top: calc(100% + var(--sp-1));
+  left: 0;
+  z-index: 30;
+  width: 260px;
+  padding: var(--sp-1);
+  border: 1px solid var(--app-panel-line);
+  border-radius: var(--r-md);
+  background: var(--app-panel);
+  box-shadow: var(--elev-2);
+}
+.pmenu.is-right { left: auto; right: 0; }
+.pmenu-search { display: flex; align-items: center; gap: var(--sp-2); height: var(--ctl); margin-bottom: var(--sp-1); padding: 0 var(--sp-2); border-bottom: 1px solid var(--app-row-line); color: var(--app-ink-3); }
+.pmenu-search input { flex: 1; border: 0; outline: 0; background: none; font: var(--t-body); color: var(--app-ink-1); }
+.pmenu-list { max-height: 280px; overflow-y: auto; list-style: none; outline: 0; }
+.pmenu li { display: flex; align-items: center; gap: var(--sp-2); height: var(--nav-row); padding: 0 var(--sp-2); border-radius: var(--r-sm); color: var(--app-ink-1); cursor: pointer; }
+.pmenu li.is-active { background: var(--app-nav-hover); }
+.pmenu-ck { width: 16px; color: var(--notice-ink); }
+.pmenu-t { flex: 1; display: flex; align-items: center; gap: var(--sp-2); min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.pmenu-n { color: var(--app-ink-3); font: var(--t-small); font-variant-numeric: tabular-nums; }
+.pmenu-none { padding: var(--sp-2); font: var(--t-small); color: var(--app-ink-3); }
+/* Ends on: Custom range, two date fields (filters.js showRange) */
+.pmenu.is-range { width: 300px; padding: var(--sp-3); }
+.pmenu-title { margin-bottom: var(--sp-3); font: var(--t-body); font-weight: 500; color: var(--app-ink-1); }
+.pmenu-range { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-2); }
+.pmenu-range label { display: flex; flex-direction: column; gap: var(--sp-1); font: var(--t-label); color: var(--app-ink-3); }
+.pmenu-date { height: var(--ctl); padding: 0 var(--sp-2); border: 1px solid var(--app-panel-line); border-radius: var(--r-xs); background: var(--app-panel); color: var(--app-ink-1); font: var(--t-small); }
+.pmenu-err { margin-top: var(--sp-2); font: var(--t-small); color: var(--err-ink); }
+.pmenu-acts { display: flex; justify-content: flex-end; gap: var(--sp-2); margin-top: var(--sp-3); }
+
+/* ---- the table: PM's one-line rows, his columns in his order ---- */
+/* a list page runs wider than the app's reading column: eight columns need
+   the room, and a 1080p screen has it */
+body[data-page="campaigns"] .app-body { max-width: 1280px; }
+@media (min-width: 2048px) { body[data-page="campaigns"] .app-body { max-width: 1440px; } }
+/* one white card with a firmer edge than a plain card, so the list holds its
+   shape on a white page without a second container (Appy: the tray was one
+   layer too many) */
+.tbl { overflow: hidden; border: 1px solid var(--app-list-line); border-radius: var(--r-md); container-type: inline-size; background: var(--app-panel); }
+.row {
+  display: grid;
+  /* Campaign takes the slack; Type is wider than PM's for the platform marks.
+     32px between columns: the room comes from this page's wider column
+     (below), so the gaps never squeeze the name */
+  grid-template-columns: minmax(160px, 1fr) 104px 164px 88px 104px 120px 112px 16px;
+  align-items: center;
+  gap: var(--sp-8);
+  /* relaxed rows (56 is the common "relaxed" step; one line of content earns
+     the room above it): air between rows, not wider columns, is what calms a list */
+  min-height: 64px;
+  padding: var(--sp-3) var(--sp-6);
+  border-bottom: 1px solid var(--app-row-line);
+  font: var(--t-body);
+  letter-spacing: var(--tr-body);
+  color: var(--app-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.row:last-child { border-bottom: 0; }
+.row > * { min-width: 0; }
+.row.is-link { cursor: pointer; transition: background var(--dur-hover) var(--ease-hover); }
+.row.is-link:hover { background: var(--app-nav-hover); transition-duration: 0ms; }
+.row.is-link:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
+/* the header band (Appy's pick, A, final): the column labels on a grey band across the card's top */
+.row--head { min-height: 44px; padding-top: 0; padding-bottom: 0; background: var(--app-band); font: var(--t-small); font-weight: 500; color: var(--app-ink-2); }
+.th { border: 0; background: none; padding: 0; font: inherit; color: inherit; cursor: pointer; }
+.th:hover, .th.is-on { color: var(--notice-ink); }
+/* the ID rides on the name's line, never under it; the name gives way first */
+.c-name { display: flex; align-items: baseline; gap: var(--sp-2); }
+.c-title { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: var(--t-body-lg); letter-spacing: var(--tr-body); color: var(--app-ink-1); }
+.c-hash {
+  flex: none;
+  padding: 1px 5px;
+  border: 0;
+  border-radius: var(--r-xs);
+  background: none;
+  color: var(--app-ink-4);
+  font: var(--t-label);
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-weight: 400;
+  cursor: copy;
+  transition: background var(--dur-hover) var(--ease-hover), color var(--dur-hover) var(--ease-hover);
+}
+.c-hash:hover, .c-hash:focus-visible { background: var(--app-nav-active); color: var(--app-ink-1); transition-duration: 0ms; }
+.c-prod, .c-geo, .c-ends { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.c-ends.is-none { color: var(--app-ink-3); }
+/* ONE DARK ANCHOR PER ROW: the name and the fill read first; product, type,
+   market and end date are context, so they step back to the grey the units use */
+.row:not(.row--head) :is(.c-prod, .c-type, .c-geo, .c-ends) { color: var(--app-ink-quiet); }
+.c-type { display: flex; align-items: center; gap: 6px; }
+.c-type > span:last-child { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.c-type .app-plats { flex: none; }
+.c-type .app-plat { width: 14px; height: 14px; }
+.c-num { text-align: center; white-space: nowrap; }
+.c-num b { font-weight: 400; color: var(--app-ink-1); }
+.c-num span { font: var(--t-small); color: var(--app-ink-3); }
+.c-ph { display: none; }
+.c-state { display: flex; align-items: center; gap: 6px; }
+.c-chev { display: inline-flex; justify-content: flex-end; color: var(--app-ink-4); }
+.row.is-link:hover .c-chev { color: var(--app-ink-1); }
+/* a rejected campaign's reason, one hover away instead of a second line (PM's) */
+.c-info { position: relative; display: inline-flex; color: var(--err-ink); cursor: help; }
+.c-info::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + var(--sp-2));
+  left: 50%;
+  z-index: 20;
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  background: var(--app-ink-1);
+  color: var(--on-accent);
+  font: var(--t-label);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+  transition: opacity var(--dur-hover) var(--ease-hover);
+}
+.c-info:hover::after, .c-info:focus-visible::after { opacity: 1; }
+
+/* filters that match nothing */
+.list-filtered { padding: var(--sp-5); font: var(--t-body); color: var(--app-ink-3); }
+
+/* columns step down with the table's own width, never a sideways scroll:
+   Product goes first, then Geography, then Ends on */
+@container (max-width: 1140px) { .row { grid-template-columns: minmax(160px, 1fr) 164px 88px 104px 120px 112px 16px; gap: var(--sp-4); } .c-prod { display: none; } }
+@container (max-width: 880px) { .row { grid-template-columns: minmax(160px, 1fr) 164px 104px 120px 112px 16px; } .c-geo { display: none; } }
+@container (max-width: 720px) {
+  .row { grid-template-columns: minmax(120px, 1fr) 156px 116px 108px 16px; gap: var(--sp-3); padding-left: var(--sp-4); padding-right: var(--sp-4); }
+  .c-ends { display: none; }
+}
+/* phone: each row is a card. Line 1 name, ID and status; line 2 one meta line
+   (product, type, geography, end: the hidden columns as words); line 3 fill */
+@container (max-width: 600px) {
+  .row { grid-template-columns: minmax(0, 1fr) auto; row-gap: 2px; padding-top: var(--sp-3); padding-bottom: var(--sp-3); }
+  .row--head { display: none; }
+  .c-name { grid-column: 1; grid-row: 1; }
+  .c-state { grid-column: 2; grid-row: 1; }
+  .c-ph { grid-column: 1 / -1; grid-row: 2; display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: var(--t-small); color: var(--app-ink-3); }
+  .c-num { grid-column: 1 / -1; grid-row: 3; text-align: left; }
+  .c-type, .c-chev { display: none; }
+}
+
+/* ---- drafts the wizard saved (new-drafts.js, plan CL-2) ---- */
+/* the drafts card is a .notice in the floating stack (css/start.css) */
+.needs .notice-head > svg { color: var(--app-ink-3); }
+.needs-list { list-style: none; }
+.needs-row { display: flex; align-items: center; gap: var(--sp-3); min-height: 52px; padding: var(--sp-2) var(--sp-4); border-top: 1px solid var(--app-row-line); }
+.needs-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.needs-name { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: var(--t-body); font-weight: 500; color: var(--app-ink-1); }
+.needs-sub { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: var(--t-small); color: var(--app-ink-3); }
+.needs-more { position: relative; }
+.needs-more-btn { width: var(--ctl-sm); }
+.needs-menu {
+  position: absolute;
+  top: calc(100% + var(--sp-1));
+  right: 0;
+  z-index: 30;
+  width: 200px;
+  padding: var(--sp-1);
+  border: 1px solid var(--app-panel-line);
+  border-radius: var(--r-md);
+  background: var(--app-panel);
+  box-shadow: var(--elev-2);
+}
+.needs-menu .app-menu-item { color: var(--err-ink); }
+.needs-menu .app-menu-item svg { color: currentColor; }
+.needs-all { display: block; padding: var(--sp-3) var(--sp-4); border-top: 1px solid var(--app-row-line); width: 100%; text-align: left; font: var(--t-small); font-weight: 500; }
+/* the stack sits at the bottom of the screen, so a draft's menu opens upward */
+.notices .needs-menu { top: auto; bottom: calc(100% + var(--sp-1)); }

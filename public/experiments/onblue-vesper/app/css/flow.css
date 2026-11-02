@@ -1,0 +1,145 @@
+/* Full-screen flows (register agency, new campaign) and every form control in
+   the app. No sidebar: a flow is a separate, focused space. REVAMP-PLAN.md 2.6. */
+
+/* ---- the frame ---- */
+/* a flow is white edge to edge; html.app.app-flow outranks shell.css's grey ground */
+html.app.app-flow, html.app.app-flow body { background: var(--app-panel) !important; }
+.app-flow body { display: flex; flex-direction: column; }
+.flow-head {
+  flex: none;
+  height: 56px;
+  border-bottom: 1px solid var(--app-row-line);
+  color: var(--app-ink-1);
+  font: 500 15px/20px var(--ui-font);
+  letter-spacing: var(--tr-body);
+}
+/* ONE GRID FOR THE WHOLE FLOW: the head's row, the rail and form, and the
+   foot's buttons all sit on the same two columns, so nothing floats in a
+   corner far from the form it belongs to */
+.flow-head-in { display: grid; grid-template-columns: 240px minmax(0, 640px); justify-content: center; gap: var(--sp-12); height: 100%; padding: 0 var(--sp-6); }
+.flow-head-row { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--sp-2); min-width: 0; }
+.flow-main { flex: 1; min-height: 0; overflow-y: auto; }
+.flow-wrap { display: grid; grid-template-columns: 240px minmax(0, 640px); justify-content: center; gap: var(--sp-12); padding: var(--sp-12) var(--sp-6) var(--sp-16); }
+.flow-col { min-width: 0; }
+.flow-foot { flex: none; height: 72px; border-top: 1px solid var(--app-row-line); background: var(--app-panel); }
+/* the bar is full bleed; its buttons sit on the content's own grid, so Back lines up
+   with the form's left edge and the primary with its right, right under the last field */
+.flow-foot-in { display: grid; grid-template-columns: 240px minmax(0, 640px); justify-content: center; gap: var(--sp-12); height: 100%; padding: 0 var(--sp-6); }
+.flow-foot-row { grid-column: 2; display: flex; align-items: center; gap: var(--sp-3); min-width: 0; }
+/* the note sits beside the primary it is about */
+.flow-foot .note { flex: 1; font: var(--t-small); color: var(--app-ink-3); text-align: right; }
+.flow-foot .app-btn--solid { margin-left: auto; }
+/* the primary holds one width from step to step, so it stays where the hand
+   learned it is; only the last step's longer label may grow it */
+.flow-foot .app-btn--solid { min-width: 184px; }
+@media (max-width: 1023px) {
+  .flow-wrap { grid-template-columns: minmax(0, 640px); gap: var(--sp-6); padding-top: var(--sp-8); }
+  .flow-foot-in, .flow-head-in { grid-template-columns: minmax(0, 640px); }
+  .flow-foot-row { grid-column: 1; }
+}
+/* a toast in a flow clears the footer bar */
+.app-flow .app-toast { bottom: calc(72px + var(--sp-4)); }
+
+/* ---- step head ---- */
+.eyebrow-app { font: 500 11px/16px var(--ui-font); letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-ink-3); }
+@media (min-width: 2048px) { .eyebrow-app { font-size: 12px; } }
+.flow-title { margin-top: var(--sp-3); font: var(--t-display); letter-spacing: var(--tr-display); color: var(--app-ink-1); }
+.flow-title em { font-family: var(--serif-font); font-style: italic; font-weight: 400; font-size: 1.06em; letter-spacing: 0; color: var(--blue-ink); }
+.flow-lede { margin-top: var(--sp-2); font: var(--t-body-lg); letter-spacing: var(--tr-body); color: var(--app-ink-3); }
+.flow-fields { display: flex; flex-direction: column; gap: var(--sp-6); margin-top: var(--sp-8); }
+
+/* ---- step rail ---- */
+.app-steps { position: sticky; top: 0; display: flex; flex-direction: column; gap: var(--sp-1); list-style: none; }
+.app-step {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  height: 36px;
+  padding: 0 var(--sp-2);
+  border: 0;
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--app-ink-3);
+  font: var(--t-body);
+  letter-spacing: var(--tr-body);
+  text-align: left;
+  cursor: pointer;
+}
+.step-dot { display: grid; place-items: center; width: 20px; height: 20px; border: 1px solid var(--border); border-radius: 50%; font: var(--t-label); }
+.app-step.is-current { background: var(--blue-wash); color: var(--app-ink-1); font-weight: 500; }
+.app-step.is-current .step-dot { border-color: transparent; background: var(--notice-ink); color: var(--on-accent); }
+.app-step.is-done { color: var(--app-ink-2); }
+.app-step.is-done .step-dot { border-color: transparent; background: var(--ink); color: var(--on-accent); }
+.app-step.is-done:hover { background: var(--app-nav-hover); }
+/* a step already visited that still has gaps: it says so where the eye looks for it */
+.app-step.is-warn .step-dot { border-color: var(--err-line); color: var(--err-ink); }
+.app-step.is-warn:hover { background: var(--app-nav-hover); }
+/* the button is the only target, so a press always lands on what survives a repaint */
+.app-step > * { pointer-events: none; }
+.app-step[aria-disabled="true"] { color: var(--app-ink-4); cursor: default; }
+.app-step[aria-disabled="true"] .step-dot { border-color: transparent; background: var(--neutral-fill); }
+.dashes { display: none; gap: var(--sp-1); align-items: center; font: var(--t-small); font-weight: 500; color: var(--app-ink-3); }
+.dashes i { width: 24px; height: 4px; border-radius: var(--r-pill); background: var(--hair-2); }
+.dashes i.on { background: var(--blue); }
+.dashes i.done { background: var(--ink); }
+@media (max-width: 1023px) { .app-steps { display: none; } .dashes { display: flex; } }
+
+/* ---- fields ---- */
+.app-field { display: flex; flex-direction: column; gap: var(--sp-2); }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); }
+@media (max-width: 600px) { .field-row { grid-template-columns: 1fr; } }
+.label { display: flex; justify-content: space-between; font: var(--t-body); font-weight: 500; letter-spacing: var(--tr-body); color: var(--app-ink-1); }
+.label .opt, .label .counter { font-weight: 400; color: var(--app-ink-3); }
+.input, .textarea, .select {
+  width: 100%;
+  height: var(--ctl-lg);
+  padding: 0 var(--sp-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xs);
+  background: var(--app-panel);
+  color: var(--app-ink-1);
+  font: var(--t-body-lg);
+  letter-spacing: var(--tr-body);
+  outline: 0;
+  transition: border-color var(--dur-hover) var(--ease-hover);
+}
+.textarea { height: auto; min-height: 104px; padding: 10px var(--sp-3); resize: vertical; }
+.input::placeholder, .textarea::placeholder { color: var(--ph-ink); }
+.input:hover, .textarea:hover, .select:hover { border-color: var(--card-line-hover); }
+.input:focus, .textarea:focus, .select:focus { border-color: var(--blue-line); box-shadow: var(--focus-ring); }
+.input.is-bad, .textarea.is-bad { border-color: var(--err-line); }
+/* focused and invalid: one red ring, not red inside blue */
+.input.is-bad:focus, .textarea.is-bad:focus { border-color: var(--err-line); box-shadow: 0 0 0 3px color-mix(in srgb, var(--err-line) 22%, transparent); }
+.money { position: relative; }
+.money::before { content: "$"; position: absolute; left: var(--sp-3); top: 50%; transform: translateY(-50%); color: var(--app-ink-3); font: var(--t-body-lg); }
+.money .input { padding-left: 26px; font-variant-numeric: tabular-nums; }
+.help { margin-top: -2px; font: var(--t-small); color: var(--app-ink-3); }
+.help.is-err { color: var(--err-ink); }
+
+/* choice cards and chips (selection is one treatment everywhere) */
+.choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); }
+@media (max-width: 600px) { .choice-grid { grid-template-columns: 1fr; } }
+.app-choice[aria-pressed="true"], .chip-choice[aria-pressed="true"] { border-color: var(--blue-line); background: var(--blue-wash); }
+.chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.chip-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  height: var(--ctl-lg);
+  padding: 0 var(--sp-4);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-pill);
+  background: var(--app-panel);
+  color: var(--app-ink-1);
+  font: var(--t-body);
+  font-weight: 500;
+  cursor: pointer;
+}
+.chip-choice:hover { border-color: var(--card-line-hover); }
+.chip-choice .app-plat { width: 20px; height: 20px; }
+
+/* a quiet box for estimates and "what happens next" */
+.note-box { display: flex; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); border-radius: var(--r-md); background: var(--app-ground); color: var(--app-ink-2); }
+.note-box > svg { flex: none; margin-top: 2px; color: var(--app-ink-3); }
+.note-box--warn { background: var(--warn-fill); color: var(--app-ink-1); }
+.note-box--warn > svg { color: var(--warn-ink); }

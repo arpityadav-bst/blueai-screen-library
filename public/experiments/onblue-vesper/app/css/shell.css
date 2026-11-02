@@ -1,0 +1,252 @@
+/* The app frame: a sidebar on the ground, content on one inset white panel.
+   The panel scrolls, the page does not. REVAMP-PLAN.md 2.2 to 2.4. */
+
+html.app, html.app body {
+  background: var(--app-side) !important;
+  color: var(--app-ink-2);
+  height: 100%;
+  overflow: hidden;
+}
+.app body {
+  font: var(--t-body);
+  letter-spacing: var(--tr-body);
+  display: grid;
+  grid-template-columns: var(--app-sidebar-w) minmax(0, 1fr);
+}
+.app :focus-visible { outline: none; box-shadow: var(--focus-ring); }
+/* hidden always wins over a component's own display */
+.app [hidden] { display: none !important; }
+
+/* ---- sidebar ----
+   ONE STEP UP FROM THE PAGE (Appy, 2026-11-03): the sidebar runs its own type
+   and row tokens a step above the content's, so everything in it scales
+   together, subtly, without touching the pages. */
+.app-side {
+  --t-body: 400 15px/22px var(--ui-font);
+  --t-small: 400 14px/20px var(--ui-font);
+  --t-label: 500 13px/18px var(--ui-font);
+  --nav-row: 40px;
+  /* the nav rows inherit their text, so the sidebar sets its own from its own token */
+  font: var(--t-body);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding: var(--sp-2) var(--sp-4) var(--sp-4);
+  min-height: 0;
+  overflow-y: auto;
+}
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  height: 60px;
+  padding: 0 var(--sp-3);
+  font: 500 18px/24px var(--ui-font);
+  letter-spacing: var(--tr-display);
+  color: var(--app-ink-1);
+}
+.app-brand svg { width: 24px; height: 24px; color: var(--spark-ink); }
+.app-brand i { font-style: normal; color: var(--blue); }
+
+
+/* New campaign is the first nav row, written like the rest (Appy): a plus and
+   its name, a button dressed as a nav item, spaced off the logo */
+.app-nav-new { width: 100%; margin-top: var(--sp-3); border: 0; background: none; font: inherit; letter-spacing: inherit; text-align: left; cursor: pointer; }
+
+.app-group-label {
+  padding: var(--sp-6) var(--sp-3) var(--sp-1);
+  font: var(--t-label);
+  color: var(--app-ink-4);
+}
+.app-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  height: var(--nav-row);
+  padding: 0 var(--sp-3);
+  border-radius: var(--r-sm);
+  color: var(--app-ink-2);
+  font-weight: 500;
+  transition: background var(--dur-hover) var(--ease-hover), color var(--dur-hover) var(--ease-hover);
+}
+.app-nav-item svg { flex: none; color: var(--app-ink-3); }
+.app-nav-item:hover { background: var(--app-nav-hover); color: var(--app-ink-1); transition-duration: 0ms; }
+.app-nav-item:hover svg { color: var(--app-ink-2); }
+.app-nav-item[aria-current="page"] { background: var(--app-nav-active); color: var(--app-ink-1); }
+.app-nav-item[aria-current="page"] svg { color: var(--app-ink-1); }
+.app-nav-item .app-count { margin-left: auto; }
+.app-nav-item .ext { margin-left: auto; color: var(--app-ink-4); }
+
+.app-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--sp-1);
+  border-radius: var(--r-pill);
+  background: var(--neutral-fill);
+  color: var(--app-ink-3);
+  font: var(--t-label);
+  font-variant-numeric: tabular-nums;
+}
+
+.app-side-spacer { flex: 1; min-height: var(--sp-6); }
+
+/* the identity row and its menu: set off from the nav by a hairline */
+.app-acct { position: relative; margin-top: var(--sp-3); padding-top: var(--sp-3); border-top: 1px solid var(--app-row-line); }
+.app-acct-btn {
+  display: flex;
+  align-items: center;
+  /* 6 + 28 + 6: the avatar centres on the 16px icons' line (12 + 8) and the
+     text starts at 40, where the nav labels start (12 + 16 + 12) */
+  gap: 6px;
+  width: 100%;
+  height: var(--nav-row);
+  padding: 0 var(--sp-3) 0 6px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--app-ink-1);
+  font: var(--t-small);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+.app-acct-btn:hover, .app-acct-btn[aria-expanded="true"] { background: var(--app-nav-hover); }
+.app-acct-av {
+  flex: none;
+  display: grid;
+  place-items: center;
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--app-panel-line);
+  border-radius: var(--r-sm);
+  background: var(--app-panel);
+  color: var(--app-ink-1);
+  font: var(--t-small);
+  font-weight: 500;
+}
+/* in review: a blue dot on the avatar's corner, ringed in the sidebar's tone */
+.app-acct-av.is-review::after { content: ""; position: absolute; right: -3px; bottom: -3px; width: 9px; height: 9px; border: 2px solid var(--app-side); border-radius: 50%; background: var(--notice-ink); }
+.app-acct-name { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: var(--t-body); font-weight: 500; color: var(--app-ink-1); }
+.app-acct-btn svg { flex: none; color: var(--app-ink-4); }
+.app-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + var(--sp-1));
+  z-index: 20;
+  padding: var(--sp-1);
+  border: 1px solid var(--app-panel-line);
+  border-radius: var(--r-md);
+  background: var(--app-panel);
+  box-shadow: var(--elev-2);
+}
+.app-menu-note { padding: var(--sp-2) var(--sp-2) var(--sp-1); font: var(--t-small); color: var(--app-ink-3); overflow-wrap: anywhere; }
+.app-menu-sep { height: 1px; margin: var(--sp-1) 0; background: var(--app-row-line); }
+.app-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  width: 100%;
+  height: var(--nav-row);
+  padding: 0 var(--sp-2);
+  border: 0;
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--app-ink-1);
+  font: var(--t-body);
+  letter-spacing: var(--tr-body);
+  text-align: left;
+  cursor: pointer;
+}
+.app-menu-item:hover { background: var(--app-nav-hover); }
+.app-menu-item svg { color: var(--app-ink-3); }
+
+/* ---- panel ---- */
+.app-panel {
+  margin: var(--app-gutter) var(--app-gutter) var(--app-gutter) 0;
+  min-height: 0;
+  overflow-y: auto;
+  border: 1px solid var(--app-panel-line);
+  border-radius: var(--card-radius);
+  background: var(--app-canvas);
+}
+.app-head {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  height: var(--app-header-h);
+  padding: 0 var(--sp-8);
+  border-bottom: 1px solid var(--app-row-line);
+  background: var(--app-canvas);
+}
+.app-title { font: var(--t-title); letter-spacing: var(--tr-title); color: var(--app-ink-1); }
+.app-sub { color: var(--app-ink-3); font-variant-numeric: tabular-nums; }
+.app-sub b { font-weight: 500; color: var(--app-ink-1); }
+.app-head-actions { margin-left: auto; display: flex; align-items: center; gap: var(--sp-2); }
+.app-body {
+  max-width: var(--app-content-max);
+  margin: 0 auto;
+  padding: var(--sp-6) var(--sp-8) var(--sp-16);
+}
+/* the phone menu button: specific enough to beat .app-btn's own display */
+.app-head .app-menu-btn { display: none; }
+
+@media (min-width: 2048px) {
+  .app-side { --t-body: 400 16px/24px var(--ui-font); --t-small: 400 15px/22px var(--ui-font); --t-label: 500 14px/20px var(--ui-font); --nav-row: 44px; }
+}
+
+/* rail: 768 to 1199 */
+@media (max-width: 1199px) {
+  .app body { grid-template-columns: var(--app-rail-w) minmax(0, 1fr); }
+  .app-side { align-items: center; padding: var(--sp-2) var(--sp-2) var(--sp-3); }
+  .app-brand span, .app-nav-item span, .app-nav-item .app-count,
+  .app-nav-item .ext, .app-group-label, .app-acct-name, .app-acct-btn > svg { display: none; }
+  .app-brand, .app-nav-item, .app-acct-btn { justify-content: center; width: 40px; padding: 0; }
+  /* a spacer in the rail: the word itself would print across the 64px column */
+  .app-group-label { display: block; height: var(--sp-4); padding: 0; font-size: 0; overflow: hidden; color: transparent; }
+  .app-menu { right: auto; width: 240px; }
+  .app-head, .app-body { padding-left: var(--sp-6); padding-right: var(--sp-6); }
+}
+
+/* phone: the sidebar becomes an overlay behind a menu button */
+@media (max-width: 767px) {
+  .app body { grid-template-columns: minmax(0, 1fr); }
+  .app-side {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 40;
+    width: 280px;
+    align-items: stretch;
+    padding: var(--sp-2) var(--sp-3) var(--sp-3);
+    background: var(--app-side);
+    transform: translateX(-100%);
+    transition: transform 0.2s var(--ease-hover);
+  }
+  .app.is-nav-open .app-side { transform: none; box-shadow: var(--elev-3); }
+  .app.is-nav-open .app-scrim { display: block; }
+  .app-brand span, .app-nav-item span, .app-nav-item .app-count,
+  .app-nav-item .ext, .app-acct-btn > svg { display: revert; }
+  .app-acct-name { display: block; }
+  .app-group-label { display: block; height: auto; padding: var(--sp-6) var(--sp-3) var(--sp-1); font: var(--t-label); color: var(--app-ink-4); }
+  .app-brand, .app-nav-item { justify-content: flex-start; width: auto; padding: 0 var(--sp-3); }
+  .app-acct-btn { justify-content: flex-start; width: auto; padding: 0 var(--sp-3) 0 6px; }
+  .app-menu { right: 0; width: auto; }
+  .app-panel { margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+  .app-head .app-menu-btn { display: inline-flex; }
+  .app-head, .app-body { padding-left: var(--sp-4); padding-right: var(--sp-4); }
+  /* a phone-sized title and gap, so the head's actions keep the 16px gutter */
+  .app-head { height: 56px; gap: var(--sp-2); }
+  .app-head .app-title { font: var(--t-heading); letter-spacing: var(--tr-heading); }
+  .app-sub { display: none; }
+}
+/* the drawer's close: phone only (two classes, to outrank .app-btn's own display) */
+.app-side .app-side-close { display: none; }
+@media (max-width: 767px) { .app-side .app-side-close { display: inline-flex; position: absolute; top: var(--sp-2); right: var(--sp-2); } }
+.app-scrim { display: none; position: fixed; inset: 0; z-index: 39; background: var(--app-scrim); }
+

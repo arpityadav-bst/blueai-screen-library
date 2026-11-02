@@ -1,0 +1,182 @@
+/* The campaign page, part 2: the bento. Six columns; rank decides size and
+   place. The Fill lead 4 wide, with the small tiles stacked beside it (Views or
+   Completions, Spend, Time left), then the proof, the split, and the rest.
+   Tiles carry no shadow: only things that float get one. */
+
+.rp-bento { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--sp-4); }
+.rp-tile {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--pad-card-sm);
+  border: 1px solid var(--app-card-line);
+  border-radius: var(--r-md);
+  background: var(--app-panel);
+  box-shadow: var(--elev-card);
+}
+.rp-lead { grid-column: span 4; grid-row: span 2; }
+/* three tiles beside it while there is a Time left tile, two once growth has ended */
+.rp-bento--timed > .rp-lead, .rp-bento--eng > .rp-lead { grid-row: span 3; }
+.rp-proof, .rp-checks { grid-column: span 4; }
+.rp-proof--wide, .rp-bento--eng > .rp-board { grid-column: span 6; }
+.rp-stat, .rp-money, .rp-split, .rp-creators, .rp-resp, .rp-time, .rp-video { grid-column: span 2; }
+/* growth: Who and Response share the last row */
+.rp-bento--growth > .rp-creators, .rp-bento--growth > .rp-resp { grid-column: span 3; }
+
+/* ---- shared tile text ---- */
+.rp-label { font: var(--t-small); font-weight: 500; color: var(--app-ink-3); }
+.rp-hint { font: var(--t-small); color: var(--app-ink-3); }
+.rp-sub { margin-top: var(--sp-1); max-width: 520px; font: var(--t-small); color: var(--app-ink-3); }
+.rp-foot { margin-top: auto; padding-top: var(--sp-3); font: var(--t-small); color: var(--app-ink-3); }
+.rp-none { padding: var(--sp-6) 0; font: var(--t-small); color: var(--app-ink-3); }
+.rp-big { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sp-2); margin-top: var(--sp-2); font: var(--t-small); color: var(--app-ink-3); }
+.rp-big b { font: var(--t-title); letter-spacing: var(--tr-title); color: var(--app-ink-1); font-variant-numeric: tabular-nums; }
+.rp-tile-head { display: flex; align-items: baseline; gap: var(--sp-2); }
+.rp-tile-head .app-link { margin-left: auto; font: var(--t-small); font-weight: 500; }
+
+/* ---- 1 is it working ---- */
+.rp-lead { gap: var(--sp-3); }
+.rp-lead .rp-big b { font: var(--t-metric); letter-spacing: var(--tr-display); }
+.rp-spark { display: block; width: 100%; height: auto; margin-top: auto; }
+
+/* chart strokes, shared with the detail chart */
+.rp-grid line { stroke: var(--app-row-line); stroke-width: 1; }
+.rp-grid--dash line { stroke: var(--hair); stroke-dasharray: 2 4; }
+.rp-line { fill: none; stroke: var(--blue); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.rp-area { fill: var(--blue-wash); }
+.rp-dot { fill: var(--app-panel); stroke: var(--blue); stroke-width: 2; }
+.rp-ref { fill: none; stroke: var(--app-ink-4); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.rp-ref-label { fill: var(--app-ink-3); font: var(--t-label); }
+.rp-spark-now { stroke: var(--hair-2); stroke-dasharray: 2 3; }
+.rp-axis text { fill: var(--app-ink-4); font: var(--t-label); font-weight: 400; }
+
+/* ---- 2 what it costs ---- */
+.rp-moneybar, .rp-fillbar { margin-top: var(--sp-3); }
+.rp-dl { margin-top: auto; padding-top: var(--sp-4); }
+/* the rows that explain the spend bar sit right under it, not at the tile's foot */
+.rp-money .rp-dl { margin-top: var(--sp-4); padding-top: 0; }
+.rp-dl-row { display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-3); padding: var(--sp-2) 0; border-top: 1px solid var(--app-row-line); font: var(--t-body); }
+.rp-dl-row dt { display: flex; flex-direction: column; min-width: 0; color: var(--app-ink-3); }
+.rp-dl-row dt span { font: var(--t-small); color: var(--app-ink-4); }
+.rp-dl-row dd { flex: none; color: var(--app-ink-1); font-weight: 500; font-variant-numeric: tabular-nums; text-align: right; }
+.rp-dl-row.is-warn dd { color: var(--warn-ink); }
+
+/* ---- 3 the proof: posts in their true shape ---- */
+.rp-strip { display: flex; gap: var(--sp-3); margin-top: var(--sp-3); overflow-x: auto; scrollbar-width: none; }
+.rp-strip::-webkit-scrollbar { display: none; }
+/* more posts to the right: the edge fades, so it reads as scrollable, not cut (report-page.js fade) */
+.rp-strip.is-overflow:not(.is-end) { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); }
+.rp-pcard { flex: none; display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: 0; border: 0; background: none; font: inherit; text-align: left; cursor: pointer; }
+.rp-pcard .rp-thumb { transition: box-shadow var(--dur-hover) var(--ease-hover); }
+.rp-pcard:hover .rp-thumb { box-shadow: 0 0 0 2px var(--blue-line); transition-duration: 0ms; }
+.rp-pcard-v { margin-top: 6px; font: var(--t-small); font-weight: 500; color: var(--app-ink-1); font-variant-numeric: tabular-nums; }
+.rp-pcard-c { font: var(--t-small); color: var(--app-ink-3); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+/* the card is as wide as its thumbnail; the text under it never widens it */
+.rp-pcard-v, .rp-pcard-c { width: 0; min-width: 100%; }
+
+/* the thumbnail: 9:16 for Shorts and Reels, 16:9 for a YouTube video. The
+   colour behind it is the post's own stand-in art, shown when there is no image. */
+.rp-thumb {
+  position: relative;
+  flex: none;
+  display: block;
+  height: var(--th, 40px);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  background: linear-gradient(160deg, hsl(var(--h) 70% 72%), hsl(calc(var(--h) + 40) 60% 46%));
+}
+.rp-thumb--tall { aspect-ratio: 9 / 16; }
+.rp-thumb--wide { aspect-ratio: 16 / 9; }
+.rp-thumb--row { --th: 40px; border-radius: var(--r-xs); }
+.rp-thumb--row.rp-thumb--tall { margin-inline: var(--sp-2); }
+.rp-thumb--strip { --th: 168px; }
+.rp-thumb--lg { --th: 280px; }
+.rp-thumb--lg.rp-thumb--wide { width: 100%; height: auto; }
+.rp-thumb-em { position: absolute; inset: 0; display: grid; place-items: center; font-size: 32px; line-height: 1; }
+.rp-thumb--row .rp-thumb-em { font-size: 17px; }
+.rp-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.rp-thumb-mark { position: absolute; top: 6px; left: 6px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: var(--r-xs); background: var(--app-panel); box-shadow: var(--elev-1); }
+.rp-thumb-flag { position: absolute; left: 6px; bottom: 6px; padding: 0 6px; border-radius: var(--r-xs); background: var(--ink); color: var(--solid-ink); font: var(--t-label); line-height: 20px; }
+
+.rp-av { flex: none; display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: var(--r-pill); background: var(--neutral-fill); color: var(--app-ink-2); font: var(--t-label); }
+.rp-av--sm { width: 24px; height: 24px; }
+.rp-av--lg { width: 48px; height: 48px; font: var(--t-body-lg); font-weight: 500; }
+
+/* ---- 4 where ---- */
+.rp-split-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: calc(100% + var(--sp-4));
+  margin: var(--sp-2) calc(var(--sp-2) * -1) 0;
+  padding: var(--sp-2);
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.rp-split-row:hover { background: var(--app-nav-hover); }
+.rp-split-row.is-on { border-color: var(--blue-line); background: var(--blue-wash); }
+.rp-split-name { display: flex; align-items: center; gap: 6px; font: var(--t-body); font-weight: 500; color: var(--app-ink-1); }
+.rp-split-name b { margin-left: auto; font-weight: 500; font-variant-numeric: tabular-nums; }
+.rp-split-sub { font: var(--t-small); color: var(--app-ink-3); }
+
+/* ---- 5 who ---- */
+.rp-crows { margin-top: var(--sp-3); }
+.rp-crow {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  width: calc(100% + var(--sp-4));
+  height: 36px;
+  margin: 0 calc(var(--sp-2) * -1);
+  padding: 0 var(--sp-2);
+  border: 0;
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--app-ink-1);
+  font: var(--t-body);
+  text-align: left;
+  cursor: pointer;
+}
+.rp-crow:hover { background: var(--app-nav-hover); }
+.rp-crow-n { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.rp-crow b { font-weight: 500; font-variant-numeric: tabular-nums; }
+
+/* ---- 6 response, per 1,000 views ---- */
+/* the inner table, not the tile: the tile carries the same class */
+.rp-tile > .rp-resp { margin-top: var(--sp-3); }
+.rp-resp-row { display: grid; grid-template-columns: 1fr repeat(var(--cols, 1), 64px); align-items: center; height: 36px; border-top: 1px solid var(--app-row-line); font: var(--t-body); color: var(--app-ink-3); }
+.rp-resp-row b { justify-self: end; font-weight: 500; color: var(--app-ink-1); font-variant-numeric: tabular-nums; }
+.rp-resp-head { height: 24px; border-top: 0; }
+.rp-resp-head span { justify-self: end; }
+
+/* ---- 7 time left ---- */
+.rp-time .app-bar { margin-top: var(--sp-3); }
+.app-bar--time i { background: var(--app-ink-4); }
+
+/* ---- engagement: completion checks, the board, the agency's own video ---- */
+.rp-figs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-4); margin-top: var(--sp-3); }
+.rp-fig { display: flex; flex-direction: column; font: var(--t-small); color: var(--app-ink-3); }
+.rp-fig b { font: var(--t-title); letter-spacing: var(--tr-title); color: var(--app-ink-1); font-variant-numeric: tabular-nums; }
+.rp-fig small { font: var(--t-small); color: var(--app-ink-4); }
+.rp-fig.is-ok b { color: var(--app-success-ink); }
+.rp-fig.is-bad b { color: var(--err-ink); }
+.rp-video { flex-direction: row; align-items: flex-start; gap: var(--sp-4); }
+.rp-video-txt { min-width: 0; }
+.rp-video-t { margin-top: var(--sp-2); font: var(--t-body); font-weight: 500; color: var(--app-ink-1); }
+.rp-xlink { display: inline-flex; align-items: center; gap: var(--sp-1); margin-top: var(--sp-3); font: var(--t-small); font-weight: 500; }
+
+/* the grid steps down with the panel, never a sideways scroll */
+@media (max-width: 1023px) {
+  .rp-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: dense; }
+  .rp-bento > .rp-tile { grid-column: span 1; grid-row: auto; }
+  .rp-bento > .rp-lead, .rp-bento > .rp-proof, .rp-bento > .rp-checks, .rp-bento > .rp-board { grid-column: span 2; }
+}
+@media (max-width: 640px) {
+  .rp-bento { grid-template-columns: minmax(0, 1fr); }
+  .rp-bento > .rp-tile { grid-column: span 1 !important; }
+  .rp-figs { grid-template-columns: minmax(0, 1fr); gap: var(--sp-2); }
+}

@@ -1,0 +1,146 @@
+/* New campaign wizard (app/new.html). Builds on flow.css: the frame, rail,
+   fields and chips are the foundation's; this file holds only what the
+   wizard adds. REVAMP-PLAN.md 3.4. */
+
+.nw-dashes { margin-bottom: var(--sp-6); }
+.flow-head #nw-close { margin-left: calc(var(--sp-2) * -1); }
+.nw-head-sep { width: 1px; height: 20px; background: var(--app-row-line); }
+@media (max-width: 1023px) { .nw-rail { display: none; } }
+.nw-rail .app-steps { top: var(--sp-2); }
+.nw-rail .app-step { width: 100%; }
+
+/* the type on the eyebrow, and the way back to change it */
+.nw-change { margin-left: var(--sp-2); font: var(--t-small); font-weight: 500; letter-spacing: 0; text-transform: none; }
+
+/* a pressed chip also carries a tick, so a group that adds up never looks like one that swaps */
+.nw-chip-tick { display: inline-flex; margin-left: calc(var(--sp-1) * -1); color: var(--notice-ink); }
+
+/* ---- step 1: the reference upload under its paste box ---- */
+.nw-refs { min-height: 88px; }
+.nw-drop {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px dashed var(--border);
+  border-radius: var(--r-md);
+  color: var(--app-ink-3);
+  cursor: pointer;
+  transition: border-color var(--dur-hover) var(--ease-hover);
+}
+.nw-drop:hover { border-color: var(--card-line-hover); transition-duration: 0ms; }
+.nw-drop:focus-within { border-color: var(--blue-line); box-shadow: var(--focus-ring); }
+.nw-drop > svg { flex: none; }
+.nw-drop-t { min-width: 0; font: var(--t-small); }
+.nw-drop-t b { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: var(--t-body); font-weight: 500; color: var(--app-ink-1); }
+.nw-drop input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+/* ---- step 2: budget presets (P1), rate, estimate, window ---- */
+.nw-budgets { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-2); }
+@media (max-width: 600px) { .nw-budgets { grid-template-columns: 1fr 1fr; } }
+/* top-aligned, and the tag's row kept on every card, so the four amounts share one baseline */
+.nw-budget { min-height: 64px; justify-content: flex-start; padding: var(--sp-3) var(--sp-4); }
+.nw-budget:not(:has(.app-tag))::after { content: ''; height: 20px; }
+.nw-budgets.is-bad .nw-budget { border-color: var(--err-line); }
+.nw-budget .nw-budget-v { font: var(--t-body-lg); font-weight: 500; letter-spacing: var(--tr-body); color: var(--app-ink-1); font-variant-numeric: tabular-nums; }
+.nw-budget .app-tag { position: static; align-self: flex-start; }
+.nw-half { width: calc(50% - var(--sp-2)); }
+@media (max-width: 600px) { .nw-half { width: 100%; } }
+.nw-line { margin-top: calc(var(--sp-4) * -1); font: var(--t-small); color: var(--app-ink-3); }
+.nw-runs { margin-top: calc(var(--sp-4) * -1); }
+.nw-dt { display: grid; grid-template-columns: minmax(0, 1fr) 116px; gap: var(--sp-2); }
+
+/* ---- step 2: Starts and Ends, PM's date and time triggers (new-cal.js) ---- */
+/* a control that opens a panel is still a field: the input's box, ring and error */
+.nw-dtb {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-width: 0;
+  height: var(--ctl-lg);
+  padding: 0 var(--sp-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xs);
+  background: var(--app-panel);
+  color: var(--app-ink-1);
+  font: var(--t-body-lg);
+  letter-spacing: var(--tr-body);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--dur-hover) var(--ease-hover);
+}
+.nw-dtb:hover { border-color: var(--card-line-hover); }
+.nw-dtb:focus-visible, .nw-dtb[aria-expanded="true"] { border-color: var(--blue-line); box-shadow: var(--focus-ring); }
+.nw-dtb.is-bad { border-color: var(--err-line); }
+.nw-dtb-i { flex: none; color: var(--notice-ink); }
+.nw-dtb-v { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.nw-dtb-v.is-ph { color: var(--ph-ink); }
+.nw-dtb-c { flex: none; color: var(--app-ink-3); transition: transform var(--dur-hover) var(--ease-hover); }
+.nw-dtb[aria-expanded="true"] .nw-dtb-c { transform: rotate(180deg); }
+
+/* the panel: fixed to the viewport, so the scrolling form never clips it */
+.nw-cal { position: fixed; z-index: 40; width: 320px; max-width: calc(100vw - var(--sp-8)); padding: var(--sp-3); border: 1px solid var(--app-panel-line); border-radius: var(--r-md); background: var(--app-panel); box-shadow: var(--elev-2); }
+.nw-cal-head { display: flex; align-items: center; justify-content: space-between; }
+.nw-cal-m { font: var(--t-body); font-weight: 600; letter-spacing: var(--tr-body); color: var(--app-ink-1); }
+.nw-cal-nav { display: grid; place-items: center; width: var(--ctl-sm); height: var(--ctl-sm); border: 0; border-radius: var(--r-sm); background: none; color: var(--app-ink-3); cursor: pointer; }
+.nw-cal-nav:hover { background: var(--app-nav-hover); color: var(--app-ink-1); }
+.nw-cal-nav:disabled { opacity: 0.3; pointer-events: none; }
+.nw-cal-wk, .nw-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+.nw-cal-wk { margin-top: var(--sp-3); font: var(--t-label); color: var(--app-ink-3); text-align: center; }
+.nw-cal-grid { row-gap: 2px; margin-top: var(--sp-2); }
+.nw-cal-d, .nw-tm-o { border: 0; border-radius: var(--r-sm); background: none; color: var(--app-ink-2); font: var(--t-small); font-variant-numeric: tabular-nums; cursor: pointer; }
+.nw-cal-d { display: grid; place-items: center; width: 38px; height: 36px; margin-inline: auto; }
+.nw-cal-d:hover:not(:disabled):not(.is-on), .nw-tm-o:hover:not(.is-on) { background: var(--app-nav-hover); color: var(--app-ink-1); }
+.nw-cal-d:focus-visible, .nw-tm-o:focus-visible { box-shadow: inset 0 0 0 2px var(--blue-line); }
+/* the days either side of the month stay, so a week never ends mid-row */
+.nw-cal-d.is-out { color: var(--app-ink-4); }
+.nw-cal-d.is-today { color: var(--notice-ink); font-weight: 600; }
+.nw-cal-d.is-on, .nw-tm-o.is-on { background: var(--notice-ink); color: var(--on-accent); font-weight: 600; }
+.nw-cal-d:disabled { color: var(--border); cursor: not-allowed; }
+/* the time list: the calendar's panel at the trigger's width, eight rows and the ninth cut */
+.nw-cal--time { padding: var(--sp-1); }
+.nw-tm { position: relative; display: grid; gap: 2px; max-height: 268px; overflow-y: auto; scrollbar-gutter: stable; }
+.nw-tm-o { display: block; width: 100%; padding: 7px var(--sp-3); font: var(--t-body); text-align: left; }
+@media (prefers-reduced-motion: reduce) { .nw-dtb-c { transition: none; } }
+.note-box p { font: var(--t-body); letter-spacing: var(--tr-body); }
+.note-box p b { font-weight: 500; color: var(--app-ink-1); font-variant-numeric: tabular-nums; }
+
+/* ---- step 3: what happens next ---- */
+.nw-next { padding: var(--sp-4) var(--sp-5); }
+.nw-next-t { font: var(--t-body); font-weight: 500; color: var(--app-ink-1); }
+.nw-next ol { margin-top: var(--sp-2); padding-left: var(--sp-5); font: var(--t-body); letter-spacing: var(--tr-body); color: var(--app-ink-2); }
+.nw-next li + li { margin-top: var(--sp-1); }
+
+/* ---- step 4: three summary cards ---- */
+.nw-cards { display: flex; flex-direction: column; gap: var(--sp-3); margin-top: var(--sp-8); }
+.nw-card { padding: var(--pad-card); border: 1px solid var(--app-panel-line); border-radius: var(--r-md); background: var(--app-panel); }
+.nw-card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); }
+.nw-card-head h2 { font: var(--t-body-lg); font-weight: 500; letter-spacing: var(--tr-body); color: var(--app-ink-1); }
+.nw-card-head .app-btn { margin-right: calc(var(--sp-2) * -1); }
+.nw-dl { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: var(--sp-2) var(--sp-4); margin-top: var(--sp-3); }
+.nw-dl dt { font: var(--t-small); color: var(--app-ink-3); }
+.nw-dl dd { font: var(--t-body); letter-spacing: var(--tr-body); color: var(--app-ink-1); overflow-wrap: anywhere; }
+@media (max-width: 600px) { .nw-dl { grid-template-columns: 1fr; gap: 0; } .nw-dl dd + dt { margin-top: var(--sp-2); } }
+.nw-plats { display: inline-flex; align-items: center; gap: var(--sp-2); vertical-align: top; }
+.nw-pre { white-space: pre-line; }
+.nw-missing { color: var(--err-ink); font-weight: 500; }
+.nw-none { color: var(--app-ink-3); }
+.nw-review-notes { display: flex; flex-direction: column; gap: var(--sp-3); margin-top: var(--sp-6); }
+/* the one-line rule about what locks on approval, right above the rows it is about */
+.nw-lock { display: flex; align-items: center; gap: var(--sp-2); font: var(--t-small); color: var(--warn-ink); }
+.nw-lock svg { flex: none; }
+.nw-review-notes + .nw-cards { margin-top: var(--sp-4); }
+
+/* ---- footer: an unfinished wizard keeps its primary focusable ---- */
+/* its disabled and busy states are components.css's .app-btn--solid[aria-disabled] and .app-spin */
+
+/* ---- phones: the setup is blocked, the rest of the app is not ---- */
+.nw-phone { display: none; }
+/* one brand mark and one way out: the header's title and close go, the page keeps its exit */
+@media (max-width: 639px) {
+  body[data-page="new"] .flow-head, body[data-page="new"] .flow-main, body[data-page="new"] .flow-foot { display: none; }
+  .nw-phone { display: grid; place-content: center; min-height: 100dvh; padding: var(--sp-8) var(--sp-4); text-align: center; }
+}
+.nw-phone-spark { width: 48px; height: 48px; margin: 0 auto var(--sp-4); color: var(--spark-ink); }
+.nw-phone-acts { display: flex; flex-direction: column; gap: var(--sp-2); width: 100%; max-width: 320px; margin: var(--sp-8) auto 0; }

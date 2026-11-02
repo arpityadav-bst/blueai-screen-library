@@ -1,0 +1,146 @@
+/* The two campaign type cards (type-cards.js), shown in the type picker
+   (css/type-picker.css). Each card SHOWS its deal above the words, on the
+   start card's dark sky in miniature (css/sky.css): ink, a faint white dot
+   field, clouds of ink drifting across it (the dots are gone wherever one
+   passes), a charcoal lift over both, then the films. The start card opens this picker, so
+   the two read as one piece. The rows line up across the two cards
+   (subgrid), so the facts divider sits at one height in both. */
+
+.nw-types { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: auto; gap: var(--sp-4); }
+@media (max-width: 600px) { .nw-types { grid-template-columns: 1fr; } }
+/* stroke, hover (blue edge, rise) and chosen state: the shared pick card
+   (components.css .app-pick); this card adds its own button, which fills */
+.nw-type { display: grid; grid-template-rows: subgrid; grid-row: span 5; row-gap: var(--sp-2); padding: var(--sp-6); }
+.nw-type .nw-type-go {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  height: var(--ctl-lg);
+  margin-top: var(--sp-3);
+  border: 1px solid var(--app-panel-line);
+  border-radius: var(--r-xs);
+  color: var(--app-ink-1);
+  font: var(--t-body);
+  font-weight: 500;
+  transition: background var(--dur-hover) var(--ease-hover), color var(--dur-hover) var(--ease-hover);
+}
+.nw-type .nw-type-go svg { transition: transform 0.24s var(--ease-hover); }
+.nw-type:hover .nw-type-go { border-color: transparent; background: var(--ink); color: var(--solid-ink); }
+.nw-type:hover .nw-type-go svg { transform: translateX(3px); }
+/* the card's name is a heading under the dialog's title, never its equal */
+.nw-type .nw-type-name { padding-right: var(--sp-8); font: var(--t-heading); letter-spacing: var(--tr-heading); color: var(--app-ink-1); }
+.nw-type .nw-type-body { font: var(--t-body); letter-spacing: var(--tr-body); color: var(--app-ink-2); }
+.nw-type .nw-type-facts { display: grid; grid-template-columns: auto 1fr; gap: var(--sp-1) var(--sp-4); margin-top: auto; padding-top: var(--sp-3); border-top: 1px solid var(--app-row-line); }
+/* label / value rows, so the two cards' facts line up as a comparison */
+.nw-type .nw-type-spec { display: contents; }
+.nw-type .nw-type-spec i { font: var(--t-small); font-style: normal; color: var(--app-ink-3); }
+.nw-type .nw-type-spec b { font: var(--t-small); font-weight: 500; color: var(--app-ink-2); }
+
+/* the current type carries a tick, over the art */
+.nw-type .nw-tick {
+  position: absolute;
+  top: var(--sp-4);
+  right: var(--sp-4);
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--notice-ink);
+  color: var(--on-accent);
+  transform: scale(0);
+  transition: transform 150ms var(--ease-hover);
+}
+.nw-type[aria-pressed="true"] .nw-tick { transform: scale(1); }
+
+/* ---- the art ---- */
+.nw-type .nw-art {
+  position: relative;
+  display: block;
+  height: 208px;
+  margin: calc(var(--sp-6) * -1) calc(var(--sp-6) * -1) var(--sp-3);
+  overflow: hidden;
+  border-radius: calc(var(--r-md) - 1px) calc(var(--r-md) - 1px) 0 0;
+  background:
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.16) 1px, transparent 1.5px) 0 0 / 16px 16px,
+    var(--ink);
+}
+/* the clouds, of the art's own ink: two art widths of one repeating tile, slid left one width and looped */
+.nw-type .nw-art::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 200%;
+  height: 100%;
+  background:
+    radial-gradient(ellipse 120px 56px at 30% 36%, var(--ink) 30%, transparent 100%),
+    radial-gradient(ellipse 84px 46px at 38% 22%, var(--ink) 30%, transparent 100%),
+    radial-gradient(ellipse 90px 42px at 24% 54%, var(--ink) 30%, transparent 100%),
+    radial-gradient(ellipse 110px 52px at 72% 72%, var(--ink) 30%, transparent 100%),
+    radial-gradient(ellipse 76px 42px at 78% 56%, var(--ink) 30%, transparent 100%);
+  background-size: 50% 100%;
+  background-repeat: repeat-x;
+  animation: nw-clouds 26s linear infinite;
+}
+.nw-type .nw-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.08));
+}
+@keyframes nw-clouds { to { transform: translateX(-50%); } }
+.nw-type .nw-art img {
+  position: absolute;
+  left: 50%;
+  top: 30px;
+  z-index: 2;
+  width: 100px;
+  height: 178px;
+  margin-left: -50px;
+  border-radius: var(--r-sm);
+  object-fit: cover;
+  box-shadow: 0 16px 32px -14px rgba(0, 0, 0, 0.8);
+  /* the start card's hairline of light, so a dark film keeps its edge on the ink */
+  outline: 1px solid rgba(255, 255, 255, 0.16);
+  outline-offset: -1px;
+  transition: transform 0.32s var(--ease-hover);
+}
+/* growth: many films, made by creators, fanned */
+.nw-art--growth img:nth-child(1) { transform: translateX(-84px) translateY(14px) rotate(-9deg); }
+.nw-art--growth img:nth-child(2) { z-index: 3; }
+.nw-art--growth img:nth-child(3) { transform: translateX(84px) translateY(14px) rotate(9deg); }
+.nw-type:hover .nw-art--growth img:nth-child(1) { transform: translateX(-100px) translateY(8px) rotate(-12deg); }
+.nw-type:hover .nw-art--growth img:nth-child(2) { transform: translateY(-6px); }
+.nw-type:hover .nw-art--growth img:nth-child(3) { transform: translateX(100px) translateY(8px) rotate(12deg); }
+/* engagement: your one film, and what people do with it */
+.nw-art--engagement img { left: 40%; }
+.nw-type .nw-acts { position: absolute; left: calc(40% + 68px); top: 52px; z-index: 3; display: grid; justify-items: start; gap: var(--sp-2); }
+.nw-type .nw-acts span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 var(--sp-3);
+  border-radius: var(--r-pill);
+  background: var(--app-panel);
+  box-shadow: var(--elev-1);
+  color: var(--app-ink-1);
+  font: var(--t-small);
+  font-weight: 500;
+  transition: transform 0.32s var(--ease-hover);
+}
+.nw-type .nw-acts svg { color: var(--blue); }
+.nw-type .nw-acts span:nth-child(2) { margin-left: var(--sp-3); }
+.nw-type .nw-acts span:nth-child(3) { margin-left: var(--sp-1); }
+.nw-type:hover .nw-acts span { transform: translateX(4px); }
+.nw-type:hover .nw-acts span:nth-child(2) { transform: translateX(8px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .nw-type .nw-art::before { animation: none; }
+  .nw-type .nw-art img, .nw-type .nw-acts span, .nw-type .nw-tick, .nw-type .nw-type-go svg { transition: none; }
+}

@@ -1,0 +1,144 @@
+/* The campaign page, part 1: header, object block, lifecycle, and the states
+   that are not a running report. REVAMP-PLAN.md 3.6 (CR-1, CR-7, CR-10). */
+
+/* ---- page header: breadcrumb left, tools right ---- */
+.rp-crumb { display: flex; align-items: center; gap: var(--sp-1); min-width: 0; font: var(--t-body); font-weight: 500; }
+.rp-crumb a { flex: none; color: var(--app-ink-3); transition: color var(--dur-hover) var(--ease-hover); }
+.rp-crumb a:hover { color: var(--app-ink-1); transition-duration: 0ms; }
+.rp-crumb svg { flex: none; color: var(--app-ink-4); }
+.rp-crumb span { min-width: 0; color: var(--app-ink-1); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.rp-head .app-head-actions { align-items: center; flex: none; }
+.rp-range.is-set { border-color: var(--blue-line); background: var(--blue-wash); }
+/* an open popover's trigger says it is open, so the two read as one */
+#btn-share[aria-expanded="true"], #btn-more[aria-expanded="true"] { border-color: var(--blue-line); background: var(--blue-wash); color: var(--notice-ink); }
+#btn-share[aria-expanded="true"] svg { color: currentColor; }
+/* disabled, or aria-disabled so it keeps focus and its tooltip (Download CSV before any post) */
+.app-btn:disabled, .app-btn[aria-disabled="true"],
+.app-btn:disabled:hover, .app-btn[aria-disabled="true"]:hover { border-color: transparent; background: var(--neutral-fill); color: var(--app-ink-4); cursor: not-allowed; }
+.app-btn:disabled svg, .app-btn[aria-disabled="true"] svg { color: var(--app-ink-4); }
+@media (max-width: 1100px) { .rp-csv span { display: none; } .rp-csv { width: var(--ctl); padding: 0; } }
+/* phone: Share and CSV move into the More menu, the switch and the range stay */
+.rp-head .rp-more { display: none; }
+@media (max-width: 767px) {
+  .rp-crumb a, .rp-crumb > svg, .rp-csv, #btn-share, #range-label, .rp-range > svg:last-child { display: none; }
+  .rp-head .rp-more { display: inline-flex; }
+  .rp-range { width: var(--ctl); padding: 0; }
+  .rp-seg button { padding: 0 var(--sp-2); }
+  /* the metric switch scrolls inside its card instead of pushing the page sideways */
+  #metric-host { display: block; width: 100%; overflow-x: auto; scrollbar-width: none; }
+  /* the title gets its own lines; Updated and refresh drop under the meta */
+  .rp-obj { flex-direction: column; gap: var(--sp-2); }
+  .rp-obj-title { flex-wrap: wrap; }
+  .rp-obj-title .app-title { white-space: normal; }
+  .rp-life-segs span { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* two platforms: the switch takes a full-width row of its own under the crumb and tools */
+  .rp-head:has(#seg-host) { flex-wrap: wrap; height: auto; gap: var(--sp-2); padding-block: var(--sp-2); }
+  .rp-head:has(#seg-host) .app-head-actions { display: contents; }
+  .rp-head:has(#seg-host) .rp-crumb { flex: 1 1 0; }
+  #seg-host { order: 1; flex: 1 0 100%; }
+  #seg-host .rp-seg { display: flex; }
+  #seg-host .rp-seg button { flex: 1; justify-content: center; }
+}
+
+/* segmented switch: All / YouTube / Instagram, and the chart's metric */
+.rp-seg { display: inline-flex; gap: 2px; padding: 2px; border-radius: var(--r-sm); background: var(--neutral-fill); }
+.rp-seg button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 var(--sp-3);
+  border: 1px solid transparent;
+  border-radius: var(--r-xs);
+  background: none;
+  color: var(--app-ink-3);
+  font: var(--t-small);
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.rp-seg button:hover { color: var(--app-ink-1); }
+.rp-seg button[aria-pressed="true"] { border-color: var(--app-panel-line); background: var(--app-panel); color: var(--app-ink-1); box-shadow: var(--elev-1); }
+
+/* ---- object block ---- */
+.rp-obj { display: flex; align-items: flex-start; gap: var(--sp-4); }
+.rp-obj-main { flex: 1; min-width: 0; }
+.rp-obj-title { display: flex; align-items: center; gap: var(--sp-2); min-width: 0; }
+.rp-obj-title .app-title { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.rp-meta { margin-top: var(--sp-1); font: var(--t-small); color: var(--app-ink-3); }
+.rp-hash { border: 0; padding: 0; background: none; color: inherit; font: inherit; font-variant-numeric: tabular-nums; cursor: copy; }
+.rp-hash:hover { color: var(--app-ink-1); }
+.rp-obj-side { flex: none; display: flex; align-items: center; gap: var(--sp-1); font: var(--t-small); color: var(--app-ink-4); }
+.rp-obj-side .app-btn { width: var(--ctl-sm); }
+.rp-obj-side .is-spinning svg { animation: rp-spin 0.7s linear infinite; }
+@keyframes rp-spin { to { transform: rotate(360deg); } }
+
+/* ---- lifecycle: four segments, done green, current blue ---- */
+.rp-life { display: flex; align-items: flex-start; gap: var(--sp-6); margin: var(--sp-4) 0 var(--sp-6); }
+.rp-life-segs { flex: 1; display: flex; gap: var(--sp-1); list-style: none; }
+.rp-life-segs li { flex: 1; display: flex; flex-direction: column; gap: 6px; font: var(--t-label); color: var(--app-ink-4); }
+.rp-life-segs i { display: block; height: 4px; border-radius: var(--r-pill); background: var(--hair-2); }
+.rp-life-segs .is-done { color: var(--app-ink-3); }
+.rp-life-segs .is-done i { background: var(--green); }
+.rp-life-segs .is-now { color: var(--app-ink-1); }
+.rp-life-segs .is-now i { background: var(--blue); }
+.rp-life-segs .is-bad { color: var(--err-ink); }
+.rp-life-segs .is-bad i { background: var(--err-ink); }
+.rp-life-note { flex: none; max-width: 40%; font: var(--t-small); color: var(--app-ink-3); text-align: right; }
+@media (max-width: 640px) { .rp-life { flex-direction: column; align-items: stretch; gap: var(--sp-2); } .rp-life-note { max-width: none; text-align: left; } }
+
+/* ---- banners the shared set does not have ---- */
+.rp-banner--error { border-color: var(--err-line-soft); background: var(--err-fill); }
+.rp-banner--error > svg { color: var(--err-ink); }
+/* under the title block: close to the name, the lifecycle keeps its own gap below */
+.rp-obj + .app-banner { margin: var(--sp-4) 0 0; }
+.rp-banner-act { flex: none; margin: -4px 0 -4px auto; }
+@media (max-width: 640px) { .rp-banner--error { flex-wrap: wrap; } .rp-banner-act { margin: 0 0 0 calc(16px + var(--sp-3)); } }
+
+/* ---- waiting, in review, rejected ---- */
+.rp-wait { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: var(--sp-4); align-items: start; }
+.rp-wait--solo { grid-template-columns: minmax(0, 480px); }
+.rp-wait-main { padding: var(--sp-10) var(--sp-8); text-align: center; }
+.rp-wait-main p { max-width: 440px; margin: var(--sp-2) auto var(--sp-6); font: var(--t-body-lg); color: var(--app-ink-3); }
+.rp-wait-h, .rp-veil-msg h2 { margin-top: var(--sp-4); font: var(--t-title); letter-spacing: var(--tr-title); color: var(--app-ink-1); }
+.rp-icon-tile { display: inline-grid; place-items: center; width: 48px; height: 48px; border-radius: var(--r-md); background: var(--blue-wash); color: var(--notice-ink); }
+.rp-icon-tile svg { width: 24px; height: 24px; }
+@media (max-width: 900px) { .rp-wait { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---- unknown id and no access ---- */
+.rp-empty-cta { margin-top: var(--sp-6) !important; }
+.rp-noaccess h2 { font: var(--t-title); }
+.rp-noaccess-own { margin-top: var(--sp-6) !important; font: var(--t-body) !important; }
+
+/* ---- no posts yet: the answer first, the real shape dimmed under it ---- */
+.rp-veil-msg.rp-card { display: flex; flex-direction: column; align-items: center; margin-bottom: var(--sp-4); padding: var(--sp-10) var(--sp-6); text-align: center; }
+/* only a glimpse of the shape: capped, so the fade ends near Accounting instead of in a white gap */
+.rp-veil-ghost { position: relative; max-height: 360px; overflow: hidden; }
+.rp-veil-under { opacity: 0.4; pointer-events: none; user-select: none; }
+.rp-veil-ghost::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, var(--app-panel)); }
+.rp-veil-msg p { max-width: 400px; margin-top: var(--sp-2); font: var(--t-body-lg); color: var(--app-ink-3); }
+.rp-veil-msg em, .rp-wait-h em { font-family: var(--serif-font); font-style: italic; font-weight: 400; font-size: 1.06em; letter-spacing: 0; color: var(--blue-ink); }
+
+/* ---- H2, the shared link: no sidebar, a bare header ---- */
+.rp-linkview body { grid-template-columns: minmax(0, 1fr); }
+.rp-linkview .app-side, .rp-linkview .app-scrim { display: none !important; }
+.rp-linkview .app-panel { margin-left: var(--app-gutter); }
+/* the bar's padding follows .app-body's column, so the brand lines up with the title under it */
+.rp-bare {
+  --rp-pad: var(--sp-8);
+  position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: var(--sp-3); height: 56px;
+  padding: 0 max(var(--rp-pad), calc((100% - var(--app-content-max)) / 2 + var(--rp-pad)));
+  border-bottom: 1px solid var(--app-row-line); background: var(--app-canvas);
+}
+@media (max-width: 1199px) { .rp-bare { --rp-pad: var(--sp-6); } }
+@media (max-width: 767px) { .rp-bare { --rp-pad: var(--sp-4); } }
+.rp-bare-brand { display: flex; align-items: center; gap: var(--sp-2); font: 500 15px/20px var(--ui-font); letter-spacing: var(--tr-display); color: var(--app-ink-1); }
+.rp-bare-brand svg { width: 20px; height: 20px; color: var(--spark-ink); }
+.rp-bare-brand i { font-style: normal; color: var(--blue); }
+.rp-viewonly::before { content: none; }
+@media (max-width: 767px) { .rp-linkview .app-panel { margin: 0; } }
+
+/* ---- prototype dock: campaign links sit with the buttons ---- */
+.rp-dock-open { flex-wrap: wrap; max-width: calc(100vw - 24px); }
+.rp-dock-open a { display: inline-flex; align-items: center; height: 24px; padding: 0 var(--sp-2); border-radius: var(--r-xs); color: rgba(255, 255, 255, 0.75); }
+.rp-dock-open a[aria-current="true"] { background: rgba(255, 255, 255, 0.16); color: #fff; }

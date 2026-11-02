@@ -1,0 +1,132 @@
+/* The "How pricing works" dialog (pricing.js). Self-contained, because it
+   opens on pages that do not load the confirm dialog's stylesheet. */
+
+.pr {
+  width: min(760px, calc(100vw - 32px));
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--app-panel-line);
+  border-radius: var(--card-radius);
+  /* the page's three tones, inside the dialog: the dialog is the room, the two
+     prices and the calculator are the white things you act on */
+  background: var(--app-canvas);
+  color: var(--app-ink-2);
+  box-shadow: var(--elev-3);
+}
+.pr::backdrop { background: var(--app-scrim); }
+.pr-in { padding: var(--sp-8); }
+@media (max-width: 600px) { .pr-in { padding: var(--sp-6); } }
+.pr-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); }
+.pr-title { font: var(--t-title); letter-spacing: var(--tr-title); color: var(--app-ink-1); }
+.pr-title em { font-family: var(--serif-font); font-style: italic; font-weight: 400; font-size: 1.06em; letter-spacing: 0; color: var(--blue-ink); }
+.pr-head .app-btn { margin: -6px -8px -6px 0; }
+.pr-lede { margin-top: var(--sp-1); font: var(--t-body-lg); letter-spacing: var(--tr-body); color: var(--app-ink-3); }
+
+/* the two prices are the headline; picking one switches the sum below */
+.pr-cards { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); margin-top: var(--sp-6); }
+/* stroke, hover and chosen state: the shared pick card (components.css .app-pick) */
+.pr-card { display: flex; flex-direction: column; align-items: flex-start; padding: var(--sp-5); }
+.pr-card-t { font: var(--t-body); font-weight: 500; color: var(--app-ink-1); }
+.pr-price { display: flex; align-items: baseline; gap: 6px; margin-top: var(--sp-3); }
+.pr-price b { font: var(--t-figure); letter-spacing: var(--tr-title); color: var(--app-ink-1); font-variant-numeric: tabular-nums; }
+.pr-price span { font: var(--t-small); color: var(--app-ink-2); }
+.pr-sub { margin-top: 2px; font: var(--t-small); color: var(--app-ink-3); }
+.pr-tags { display: flex; flex-wrap: wrap; gap: var(--sp-1); margin-top: var(--sp-4); }
+.pr-tags span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 var(--sp-2);
+  border-radius: var(--r-pill);
+  background: var(--neutral-fill);
+  color: var(--app-ink-2);
+  font: var(--t-label);
+}
+.pr-card[aria-pressed="true"] .pr-tags span { background: var(--app-panel); }
+
+/* THE LIVE SUM IS THE ANSWER, SO IT IS THE ONE DARK BLOCK (Appy): the start
+   card's ink and sky (css/sky.css) at a smaller scale. Dark means "the
+   outcome" across the app: your first campaign, and what your budget buys.
+   Dots, a charcoal lift and clouds: backgrounds and one transform, nothing heavier. */
+.pr-calc {
+  position: relative;
+  overflow: hidden;
+  margin-top: var(--sp-4);
+  padding: var(--sp-5) var(--sp-6);
+  border-radius: var(--r-md);
+  background: var(--ink);
+  color: rgba(255, 255, 255, 0.72);
+}
+.pr-calc::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.07) 100%),
+    linear-gradient(270deg, transparent 0%, var(--ink) 75%),
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.16) 1px, transparent 1.5px) 0 0 / 16px 16px;
+}
+.pr-calc::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background:
+    radial-gradient(ellipse 150px 60px at 32% 30%, var(--ink) 30%, transparent 100%),
+    radial-gradient(ellipse 100px 50px at 40% 18%, var(--ink) 30%, transparent 100%),
+    radial-gradient(ellipse 140px 56px at 74% 72%, var(--ink) 30%, transparent 100%);
+  background-size: 50% 100%;
+  background-repeat: repeat-x;
+  animation: pr-clouds 30s linear infinite;
+}
+@keyframes pr-clouds { to { transform: translateX(-50%); } }
+.pr-calc > * { position: relative; z-index: 1; }
+.pr-calc-row { display: flex; align-items: baseline; justify-content: space-between; }
+.pr-calc-k { font: var(--t-small); font-weight: 500; color: rgba(255, 255, 255, 0.62); }
+.pr-calc-b { font: var(--t-body); font-weight: 500; color: #fff; font-variant-numeric: tabular-nums; }
+/* the slider, drawn for the dark: a faint track, a blue fill to the thumb
+   (--fill, set by pricing.js), a white thumb with a blue halo */
+.pr-range {
+  display: block;
+  width: 100%;
+  height: 4px;
+  margin: var(--sp-4) 0;
+  border-radius: var(--r-pill);
+  background: linear-gradient(var(--blue), var(--blue)) 0 0 / var(--fill, 20%) 100% no-repeat, rgba(255, 255, 255, 0.16);
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+.pr-range::-webkit-slider-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px rgba(21, 110, 254, 0.4); -webkit-appearance: none; appearance: none; }
+.pr-range::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px rgba(21, 110, 254, 0.4); }
+.pr-range::-moz-range-progress { height: 4px; border-radius: var(--r-pill); background: var(--blue); }
+.pr-get { padding-top: var(--sp-3); border-top: 1px solid rgba(255, 255, 255, 0.1); }
+.pr-get-k { font: var(--t-small); color: rgba(255, 255, 255, 0.55); }
+.pr-result { display: flex; align-items: baseline; gap: 6px; margin-top: 2px; }
+.pr-result b { font: var(--t-metric); letter-spacing: var(--tr-display); color: #fff; font-variant-numeric: tabular-nums; }
+.pr-result #pr-u { font: var(--t-body); font-weight: 500; color: rgba(255, 255, 255, 0.72); }
+.pr-what { margin-top: var(--sp-1); font: var(--t-small); color: rgba(255, 255, 255, 0.62); }
+.pr-acts { display: flex; flex-wrap: wrap; gap: var(--sp-1); margin-top: var(--sp-3); }
+.pr-acts span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 var(--sp-2);
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font: var(--t-label);
+  font-variant-numeric: tabular-nums;
+}
+.pr-acts svg { color: rgba(255, 255, 255, 0.62); }
+@media (prefers-reduced-motion: reduce) { .pr-calc::after { animation: none; } }
+
+.pr-foot { margin-top: var(--sp-4); font: var(--t-small); color: var(--app-ink-3); }
+
+@media (max-width: 560px) {
+  .pr-cards { grid-template-columns: 1fr; }
+}

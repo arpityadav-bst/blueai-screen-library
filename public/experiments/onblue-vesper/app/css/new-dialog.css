@@ -1,0 +1,21 @@
+/* The app's confirm dialog (new-dialog.js) and the one destructive button. */
+
+.app-dialog {
+  width: min(400px, calc(100vw - 32px));
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--app-panel-line);
+  border-radius: var(--card-radius);
+  background: var(--app-panel);
+  color: var(--app-ink-2);
+  box-shadow: var(--elev-3);
+}
+/* padding sits on the form, so a click whose target is the dialog itself is the backdrop */
+.app-dialog > form { padding: var(--sp-6); }
+.app-dialog::backdrop { background: var(--app-scrim); }
+.app-dialog-title { font: var(--t-heading); letter-spacing: var(--tr-heading); color: var(--app-ink-1); }
+.app-dialog-body { margin-top: var(--sp-2); font: var(--t-body); letter-spacing: var(--tr-body); color: var(--app-ink-3); }
+.app-dialog-foot { display: flex; justify-content: flex-end; gap: var(--sp-2); margin-top: var(--sp-6); }
+
+.app-btn--danger { border-color: transparent; background: var(--err-ink); color: var(--on-accent); }
+.app-btn--danger:hover { border-color: transparent; background: var(--err-line); }

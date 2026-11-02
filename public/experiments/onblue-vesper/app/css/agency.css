@@ -1,0 +1,63 @@
+/* The agency settings page (settings.html).
+   Fields, inputs and help lines come from flow.css; this adds the agency avatar
+   inside the name field, the busy spinner and the settings card.
+   REVAMP-PLAN.md 3.2 (B2) and 3.9 (G1). */
+
+/* ---- agency name with its avatar in front, the way the sidebar will show it ---- */
+.agency-input { position: relative; }
+.agency-input .input { padding-left: 44px; }
+.agency-av {
+  position: absolute;
+  left: var(--sp-3);
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--r-xs);
+  background: var(--ink);
+  color: var(--on-accent);
+  font: var(--t-label);
+  overflow: hidden;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+/* nothing typed and no icon yet: no tile at all, rather than an empty square */
+.agency-av.is-empty { visibility: hidden; }
+/* ...and no room kept for it: the placeholder starts where every other field's does */
+.agency-av.is-empty + .input { padding-left: var(--sp-3); }
+.agency-av.has-icon { background: var(--app-panel); box-shadow: inset 0 0 0 1px var(--app-panel-line); }
+.agency-av img { display: block; width: 24px; height: 24px; object-fit: cover; }
+
+/* ---- read-only field: looks settled, not broken ---- */
+.input[readonly] { background: var(--app-ground); color: var(--app-ink-2); cursor: default; }
+.input[readonly]:hover { border-color: var(--border); }
+.input[readonly]:focus { border-color: var(--border); box-shadow: none; }
+
+/* busy and disabled primaries: .app-spin and .app-btn--solid[aria-disabled] live in components.css */
+
+/* ---- settings card ---- */
+.set-wrap { max-width: 640px; }
+.set-card {
+  border: 1px solid var(--app-card-line);
+  border-radius: var(--r-md);
+  background: var(--app-panel);
+  box-shadow: var(--elev-card);
+  overflow: hidden;
+}
+.set-body { display: flex; flex-direction: column; gap: var(--sp-6); padding: var(--sp-6); }
+.set-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-3) var(--sp-6);
+  border-top: 1px solid var(--app-row-line);
+  background: var(--app-ground);
+}
+.set-status { display: flex; }
+.set-note { flex: 1; min-width: 0; font: var(--t-small); color: var(--app-ink-3); }
+.set-note.is-err { color: var(--err-ink); }
+@media (max-width: 767px) {
+  .set-body { padding: var(--sp-4); }
+  .set-foot { padding: var(--sp-3) var(--sp-4); }
+}

@@ -1,0 +1,21 @@
+/* The campaign type picker (type-picker.js): a dialog over the page the
+   agency is on, like How pricing works. The page's three tones inside it: the
+   dialog is the room, the two type cards are the white things you pick. */
+
+.tp {
+  width: min(880px, calc(100vw - 32px));
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--app-panel-line);
+  border-radius: var(--card-radius);
+  background: var(--app-canvas);
+  color: var(--app-ink-2);
+  box-shadow: var(--elev-3);
+}
+.tp::backdrop { background: var(--app-scrim); }
+.tp-in { padding: var(--sp-8); }
+.tp-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); margin-bottom: var(--sp-6); }
+.tp-title { font: var(--t-title); letter-spacing: var(--tr-title); color: var(--app-ink-1); }
+.tp-title em { font-family: var(--serif-font); font-style: italic; font-weight: 400; font-size: 1.06em; letter-spacing: 0; color: var(--blue-ink); }
+.tp-head .app-btn { margin: -6px -8px -6px 0; }
+@media (max-width: 600px) { .tp-in { padding: var(--sp-6); } }
