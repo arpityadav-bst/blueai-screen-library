@@ -1,0 +1,6 @@
+/* The PM's report inside the app's frame (campaign.html, report-frame.js).
+   The frame fills the content area edge to edge and scrolls on its own, so the
+   panel itself does not; it shows once its top bar is hidden, never before. */
+.app-panel--frame { overflow: hidden; }
+.pm-report { display: block; width: 100%; height: 100%; border: 0; background: transparent; visibility: hidden; }
+.pm-report.is-ready { visibility: visible; }
