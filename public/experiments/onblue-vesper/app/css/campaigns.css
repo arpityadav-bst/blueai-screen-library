@@ -120,7 +120,7 @@ body[data-page="campaigns"] .app-body { max-width: 1280px; }
 .tbl { overflow: hidden; border: 1px solid var(--app-list-line); border-radius: var(--r-md); container-type: inline-size; background: var(--app-panel); }
 .row {
   display: grid;
-  /* Campaign takes the slack; Type is wider than PM's for the platform marks.
+  /* Campaign takes the slack.
      32px between columns: the room comes from this page's wider column
      (below), so the gaps never squeeze the name */
   grid-template-columns: minmax(160px, 1fr) 104px 164px 88px 104px 120px 112px 16px;
@@ -169,8 +169,6 @@ body[data-page="campaigns"] .app-body { max-width: 1280px; }
 .row:not(.row--head) :is(.c-prod, .c-type, .c-geo, .c-ends) { color: var(--app-ink-quiet); }
 .c-type { display: flex; align-items: center; gap: 6px; }
 .c-type > span:last-child { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.c-type .app-plats { flex: none; }
-.c-type .app-plat { width: 14px; height: 14px; }
 .c-num { text-align: center; white-space: nowrap; }
 .c-num b { font-weight: 400; color: var(--app-ink-1); }
 .c-num span { font: var(--t-small); color: var(--app-ink-3); }

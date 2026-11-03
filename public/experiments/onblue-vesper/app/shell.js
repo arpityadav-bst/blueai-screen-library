@@ -69,10 +69,9 @@
       + '<button class="app-nav-item app-nav-new" type="button" data-new title="New campaign">' + I.plus + '<span>New campaign</span></button>'
       + item('campaigns.html', I.campaigns, 'Campaigns', page === 'campaigns', '<span class="app-count" id="side-count" hidden></span>')
       + item('campaigns.html#samples', I.samples, 'Sample reports', false)
-      + '<div class="app-group-label">Agency</div>'
-      + item('settings.html', I.settings, 'Settings', page === 'settings')
+      // Settings and How pricing works are off the nav for now (Appy, 2026-11-03):
+      // settings.html and pricing.js stay, unlinked, until they come back
       + '<div class="app-side-spacer"></div>'
-      + '<a class="app-nav-item" href="#pricing" data-pricing>' + I.pricing + '<span>How pricing works</span></a>'
       // no Help item until there is a help page to send it to: a dead link is worse than none
       /* ONE IDENTITY ROW, ONE LINE (Appy): the agency's name on a nav-height row,
          its avatar on the nav icons' centre line and its name where their labels

@@ -36,10 +36,9 @@
   var ORDER = ['growth', 'engagement'];
 
   var PLATS = {
+    // YouTube only for now (data.js): the form asks no platform question
     youtube: { an: 'a YouTube', hosts: ['youtube.com', 'youtu.be'], urlLabel: 'YouTube video URL',
-      urlPh: 'https://youtube.com/watch?v=...', urlHint: 'A public YouTube video or Short.', paste: 'Paste a public YouTube video or Short.' },
-    instagram: { an: 'an Instagram', hosts: ['instagram.com', 'instagr.am'], urlLabel: 'Instagram Reel URL',
-      urlPh: 'https://instagram.com/reel/...', urlHint: 'A public Instagram Reel.', paste: 'Paste a public Instagram Reel.' }
+      urlPh: 'https://youtube.com/watch?v=...', urlHint: 'A public YouTube video or Short.', paste: 'Paste a public YouTube video or Short.' }
   };
   var ACTIONS = ['Watch', 'Like', 'Comment'];
   // label, then the code the Campaigns list already uses for it
@@ -73,7 +72,6 @@
     b.postUrl = ''; b.actions = ACTIONS.slice();
     b.site = ''; b.refs = ''; b.refsFiles = '';
     b.bid = t === 'growth' ? TYPES.growth.ratePh : '';
-    if (t === 'engagement' && b.platforms.length !== 1) { b.platforms = [b.platforms[0] || 'youtube']; }
   }
 
   // would switching type throw away something the agency typed?
@@ -133,15 +131,11 @@
   function errors(b) {
     var e = {}, t = TYPES[b.type];
     if (!t) { e.type = 'Pick a campaign type.'; return e; }
-    if (!b.platforms.length) { e.platforms = 'Pick at least one platform.'; }
     if (!b.name.trim()) { e.name = 'Give the campaign a name.'; }
     if (!b.product.trim()) { e.product = "Name the product you're promoting."; }
     if (b.type === 'engagement') {
-      var pl = PLATS[b.platforms[0]] || PLATS.youtube, other = b.platforms[0] === 'instagram' ? 'youtube' : 'instagram';
-      var url = b.postUrl.trim().toLowerCase();
-      var hit = function (p) { return PLATS[p].hosts.some(function (h) { return url.indexOf(h) >= 0; }); };
-      if (url && hit(other)) { e.postUrl = "That's " + PLATS[other].an + ' link. ' + pl.paste; }
-      else if (!url || !hit(b.platforms[0] || 'youtube')) { e.postUrl = pl.paste; }
+      var pl = PLATS.youtube, url = b.postUrl.trim().toLowerCase();
+      if (!pl.hosts.some(function (h) { return url.indexOf(h) >= 0; })) { e.postUrl = pl.paste; }
       if (!b.actions.length) { e.actions = 'Pick at least one action.'; }
     }
     var bud = budgetOf(b);
@@ -160,10 +154,10 @@
     return e;
   }
 
-  var STEP_OF = { type: 0, platforms: 1, name: 1, product: 1, postUrl: 1, actions: 1, site: 1, refs: 1,
+  var STEP_OF = { type: 0, name: 1, product: 1, postUrl: 1, actions: 1, site: 1, refs: 1,
     budget: 2, bid: 2, start: 2, end: 2, market: 3, note: 3 };
   // how the Review step names a field it is waiting on
-  var NAMES = { type: 'campaign type', platforms: 'platform', name: 'campaign name', product: 'product name',
+  var NAMES = { type: 'campaign type', name: 'campaign name', product: 'product name',
     postUrl: 'video URL', actions: 'action', budget: 'budget', bid: 'bid', start: 'start', end: 'end', note: 'notes' };
 
   function stepErrors(b, i) {
@@ -229,7 +223,6 @@
       if (m) { b.market = m[0]; }
     }
     b.name = (src.name || c.title || '').trim() + ' (copy)';
-    b.platforms = (c.platforms || b.platforms).slice(0, t === 'engagement' ? 1 : 2);
     var bud = String(Number(num(src.budget || c.budget)) || '');
     b.budgetPick = !bud ? '' : PRESETS.indexOf(bud) >= 0 ? bud : 'custom';
     b.budgetCustom = b.budgetPick === 'custom' ? bud : '';

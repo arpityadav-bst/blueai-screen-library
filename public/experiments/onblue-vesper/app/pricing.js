@@ -163,7 +163,7 @@
       // engagement: every completion is all three actions, so the person count is each count
       d.querySelector('#pr-acts').innerHTML = kind === 'engagement'
         ? '<span>' + ICON.eye + short(n) + ' watches</span><span>' + ICON.heart + short(n) + ' likes</span><span>' + ICON.chat + short(n) + ' comments</span>'
-        : '<span>' + ICON.play + 'YouTube Shorts and Instagram Reels</span>';
+        : '<span>' + ICON.play + 'YouTube Shorts</span>';
       d.querySelectorAll('[data-pr-kind]').forEach(function (c) { c.setAttribute('aria-pressed', String(c.getAttribute('data-pr-kind') === kind)); });
     }
     d.addEventListener('input', paint);

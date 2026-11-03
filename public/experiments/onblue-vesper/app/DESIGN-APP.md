@@ -4,6 +4,12 @@ This is the design doc for the app behind sign-in (`app/`). It describes what is
 
 Live specimens of every component: `app/style-guide.html` (it links the real app CSS, so it can never drift from the pages).
 
+> **Current scope (Appy, 2026-11-03), ahead of the sections below:**
+> - **YouTube only.** Instagram is out until it is a real integration: no platform question in the form, no platform marks or Platform filter in the list, every row `platforms: ['youtube']`. Section 6 describes the multi-platform build that was removed.
+> - **The report is the PM's**, copied from main (`app/campaign.html` = `campaign-report/index.html`, assets read from there). The app's own report (section 3.10, 4.5) was removed and comes back on a later branch; it is in git history at `9a4fb76`.
+> - **Settings and How pricing works are off the sidebar.** `settings.html` and `pricing.js` stay in the folder, unlinked.
+> - The dock's **First visit** shows a brand-new account (the start card) even after campaigns were filed in this browser.
+
 ---
 
 ## 1. How the app is put together

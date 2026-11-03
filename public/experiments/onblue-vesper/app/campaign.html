@@ -1,91 +1,174 @@
 <!doctype html>
-<html lang="en" class="app" data-theme="light">
+<!-- The campaign report, for now: the PM's latest report from main
+     (campaign-report/index.html), copied as it is, with its stylesheet and
+     scripts read from where they live there (Appy, 2026-11-03). Its "All
+     campaigns" link lands on this app's Campaigns page. The app's own report
+     comes back in a later branch. -->
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
-<title>Campaign, onBlue for business</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%23156efe%22%3E%3Cpath%20d%3D%22M12%202.6C12.55%202.6%2012.88%203.15%2013.08%204.7c.62%204.7%201.52%205.6%206.22%206.22%201.55.2%202.1.53%202.1%201.08s-.55.88-2.1%201.08c-4.7.62-5.6%201.52-6.22%206.22-.2%201.55-.53%202.1-1.08%202.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15%2012.88%202.6%2012.55%202.6%2012s.55-.88%202.1-1.08c4.7-.62%205.6-1.52%206.22-6.22C11.12%203.15%2011.45%202.6%2012%202.6Z%22%2F%3E%3C%2Fsvg%3E">
+<title>Campaign report prototype</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%232f6dff%22%3E%3Cpath%20d%3D%22M12%202.6C12.55%202.6%2012.88%203.15%2013.08%204.7c.62%204.7%201.52%205.6%206.22%206.22%201.55.2%202.1.53%202.1%201.08s-.55.88-2.1%201.08c-4.7.62-5.6%201.52-6.22%206.22-.2%201.55-.53%202.1-1.08%202.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15%2012.88%202.6%2012.55%202.6%2012s.55-.88%202.1-1.08c4.7-.62%205.6-1.52%206.22-6.22C11.12%203.15%2011.45%202.6%2012%202.6Z%22%2F%3E%3C%2Fsvg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&family=Instrument+Serif:ital@1&display=swap">
-<link rel="stylesheet" href="../onblue.css">
-<link rel="stylesheet" href="css/tokens.css">
-<link rel="stylesheet" href="css/shell.css">
-<link rel="stylesheet" href="css/components.css">
-<!-- the search box, filter pills and their menus are the Campaigns page's, reused as they are -->
-<link rel="stylesheet" href="css/campaigns.css">
-<link rel="stylesheet" href="css/report.css">
-<link rel="stylesheet" href="css/report-tiles.css">
-<link rel="stylesheet" href="css/report-detail.css">
-<link rel="stylesheet" href="css/report-overlay.css">
-<link rel="stylesheet" href="css/report-geo.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../campaign-report/report.css">
 </head>
-<body data-page="campaigns">
+<body>
 
-<aside class="app-side" id="side" aria-label="Main"></aside>
+<header class="top">
+  <div class="top-in">
+    <a class="logo" href="#" aria-label="onBlue">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="#2f6dff" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg>
+      <span><i>on</i>Blue</span>
+    </a>
+    <span class="viewer-tag">View only</span>
+    <div class="top-user" data-owner>
+      <span id="top-name">Abhisht</span>
+      <a class="top-out" href="#">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 16l-4-4 4-4M6 12h10"/></svg>
+        Log out
+      </a>
+    </div>
+  </div>
+</header>
 
-<main class="app-panel">
-  <header class="app-head rp-head" id="head"></header>
-  <div class="app-body" id="body"></div>
+<main class="page">
+
+  <div class="sample-note"><b>Sample data.</b> Titles, channels and numbers on this page are made up for review.</div>
+
+  <a class="back" href="campaigns.html" data-owner>&lsaquo; All campaigns</a>
+
+  <div class="rep-head">
+    <div class="rep-name">
+      <h1 class="title" id="c-name"></h1>
+      <div class="rep-meta" id="c-meta"></div>
+    </div>
+    <div class="rep-actions">
+      <span class="updated" id="c-updated"></span>
+      <button class="btn" type="button" id="btn-range" aria-haspopup="dialog" aria-expanded="false"></button>
+      <button class="btn icon-btn" type="button" id="btn-refresh" aria-label="Refresh numbers"></button>
+      <button class="btn" type="button" id="btn-share" aria-haspopup="dialog" data-owner></button>
+      <button class="btn" type="button" id="btn-csv" data-owner></button>
+    </div>
+  </div>
+
+  <div class="tiles tiles--five" id="tiles-top"></div>
+  <div class="tiles tiles--four" id="tiles-posts"></div>
+
+  <div class="rep-grid">
+    <section class="card">
+      <h2 class="rep-h">Views over time</h2>
+      <p class="rep-hint" id="chart-hint"></p>
+      <div class="chart" id="chart"></div>
+    </section>
+    <aside class="card">
+      <h2 class="rep-h">Accounting</h2>
+      <table class="acct" id="acct"></table>
+      <p class="rep-foot" id="acct-foot">If the campaign closes under target, unconsumed budget is settled per the make-good policy in your agreement.</p>
+    </aside>
+  </div>
+
+  <section class="card" id="top-creators"></section>
+
+  <section class="card" id="top-posts"></section>
+
+  <section class="card" id="geo-card"></section>
+
+  <section class="card" id="posts-card">
+    <div class="card-head posts-head">
+      <div>
+        <h2 class="rep-h">Posts published in this period</h2>
+        <p class="rep-hint" id="posts-hint"></p>
+      </div>
+      <label class="search">
+        <span class="search-ic" data-ic="search"></span>
+        <span class="search-spin" aria-hidden="true"></span>
+        <input id="f-q" type="search" placeholder="Search titles or channels" autocomplete="off">
+      </label>
+    </div>
+
+    <div class="filters">
+      <label class="sel" data-sel="posted"><span class="sel-k">Published</span><span class="sel-v"></span>
+        <select id="f-posted" aria-label="Published">
+          <option value="any">Any time</option>
+          <option value="24h">Last 24 hours</option>
+          <option value="7d">Last 7 days</option>
+          <option value="30d">Last 30 days</option>
+        </select>
+      </label>
+      <label class="sel" data-sel="views"><span class="sel-k">Views</span><span class="sel-v"></span>
+        <select id="f-views" aria-label="Views">
+          <option value="any">Any</option>
+          <option value="0">No views yet</option>
+          <option value="1-99">1 to 99</option>
+          <option value="100-999">100 to 999</option>
+          <option value="1000+">1,000 or more</option>
+        </select>
+      </label>
+      <label class="sel" data-sel="status"><span class="sel-k">Status</span><span class="sel-v"></span>
+        <select id="f-status" aria-label="Status">
+          <option value="all">All</option>
+          <option value="live">Live</option>
+          <option value="removed">Removed</option>
+        </select>
+      </label>
+      <label class="sel" data-sel="group"><span class="sel-k">Group by</span><span class="sel-v"></span>
+        <select id="f-group" aria-label="Group by">
+          <option value="none">None</option>
+          <option value="creator">Creator</option>
+        </select>
+      </label>
+      <button class="link-btn" type="button" id="f-clear" hidden>Clear filters</button>
+      <span class="count" id="f-count"></span>
+    </div>
+
+    <div id="posts-list"></div>
+    <div class="pager" id="pager"></div>
+  </section>
+
 </main>
 
-<div class="rp-menu" id="menu" role="menu" hidden></div>
-<div class="rp-menu" id="more-menu" role="menu" aria-label="Share or download" hidden></div>
-<div class="rp-pop" id="share-pop" role="dialog" aria-label="Share this report" hidden></div>
-<div class="rp-pop rp-pop--range" id="range-pop" role="dialog" aria-label="Date range" hidden></div>
-<div class="rp-scrim" id="scrim" hidden></div>
-<aside class="rp-drawer" id="drawer" aria-hidden="true" aria-label="Details"></aside>
+<!-- No access: a share link the owner turned off, or the report's own address
+     opened by a different account. Never names the campaign or the brand. -->
+<div class="link-off" id="link-off">
+  <h1>You don't have permission to access this report</h1>
+  <!-- "turn on", not "back on": nobody here can tell paused from never shared. -->
+  <p>Ask the owner to turn on link sharing.</p>
+  <p class="link-off-owner">Is this your report? <button class="link-btn" type="button" data-viewas="owner" id="link-off-signin">Sign in</button></p>
+</div>
 
-<!-- Prototype review controls, not part of the product. -->
-<div class="app-dock" aria-label="Prototype controls">
-  <div class="app-dock-bar rp-dock-open">
-    <b>Open</b>
-    <a href="campaign.html?id=a667ef59">Live</a>
-    <a href="campaign.html?id=9d4e7a10">Two platforms</a>
-    <a href="campaign.html?id=f0a1b2c3">Engagement</a>
-    <a href="campaign.html?id=5b2c8e47">In review</a>
-    <a href="campaign.html?id=7f0d2b68">Under target</a>
-    <a href="campaign.html?id=c7e19f02">Over budget</a>
-    <a href="campaign.html?id=eee2ed33">Rejected</a>
-    <a href="campaign.html?id=a15d7f22">Sample</a>
-    <a href="campaign.html?id=00000000">Unknown</a>
+<div class="menu" id="menu" role="menu" hidden></div>
+<div class="pop" id="share-pop" role="dialog" aria-label="Share this report" hidden></div>
+<div class="pop pop--range" id="range-pop" role="dialog" aria-label="Date range" hidden></div>
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Details"></aside>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<!-- Prototype review controls, not part of the product: one look at a time on
+     the real page. -->
+<div class="devdock" aria-label="Prototype controls">
+  <div class="devbar">
+    <b>Top cards</b>
+    <button type="button" data-tiles-mode="current" aria-pressed="true">Current</button>
+    <button type="button" data-tiles-mode="compact" aria-pressed="false">Compact</button>
+    <button type="button" data-tiles-mode="notarget" aria-pressed="false">Compact, no target</button>
   </div>
-  <div class="app-dock-bar" data-dock-posts>
-    <b>Posts</b>
-    <button type="button" data-posts-state="data">As data</button>
-    <button type="button" data-posts-state="none">None yet</button>
-  </div>
-  <div class="app-dock-bar">
+  <div class="devbar">
     <b>View as</b>
-    <button type="button" data-viewas="owner">Owner</button>
-    <button type="button" data-viewas="link">Link viewer</button>
-    <button type="button" data-viewas="other">Another account</button>
+    <button type="button" data-viewas="owner" aria-pressed="true">Owner</button>
+    <button type="button" data-viewas="viewer" aria-pressed="false">Link viewer</button>
+    <button type="button" data-viewas="other" aria-pressed="false">Another account</button>
   </div>
-  <div class="app-dock-bar" data-dock-geo hidden>
+  <div class="devbar">
     <b>Geography</b>
-    <button type="button" data-geo-mode="off">Hidden</button>
-    <button type="button" data-geo-mode="live">Live data</button>
-    <button type="button" data-geo-mode="processing">Processing</button>
+    <button type="button" data-geo-mode="off" aria-pressed="true">Hidden</button>
+    <button type="button" data-geo-mode="live" aria-pressed="false">Live data</button>
   </div>
 </div>
 
-<script src="data.js"></script>
-<script src="shell.js"></script>
-<script src="filters.js"></script>
 <script src="../campaign-report/sample-posts.js"></script>
-<script src="report-seed.js"></script>
-<script src="report-model.js"></script>
-<script src="report-calc.js"></script>
-<script src="report-ui.js"></script>
-<script src="report-chart.js"></script>
-<script src="report-bento.js"></script>
-<script src="report-engage.js"></script>
-<script src="report-posts.js"></script>
-<script src="report-geo.js"></script>
-<script src="report-drawer.js"></script>
-<script src="report-tools.js"></script>
-<script src="report-states.js"></script>
-<script src="report-page.js"></script>
+<script src="../campaign-report/report.js"></script>
 </body>
 </html>

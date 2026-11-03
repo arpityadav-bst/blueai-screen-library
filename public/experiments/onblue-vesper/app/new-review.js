@@ -50,7 +50,6 @@
     var est = N.estimate(b), bud = N.budgetOf(b), zone = N.zone();
     var what = [
       ['Type', esc(t.name)],
-      [growth ? 'Platforms' : 'Platform', e.platforms ? MISSING : '<span class="nw-plats">' + U.plats(b.platforms) + '</span>'],
       ['Campaign name', val(b.name.trim(), true, e.name)],
       ['Product', val(b.product.trim(), true, e.product)]
     ];
@@ -73,7 +72,7 @@
     return U.head(S.eyebrow(b), 'Check it <em>over</em>.', 'Edit anything before you submit.')
       + '<div class="nw-review-notes">'
       + (s.status === 'review' ? '<div class="note-box">' + U.I.info + '<p><b>' + esc(s.agency) + '</b> is still in review. This campaign waits until you are approved, then goes into review.</p></div>' : '')
-      + '<p class="nw-lock">' + U.I.warn + "Platform and market can't change once the campaign is approved.</p></div>"
+      + '<p class="nw-lock">' + U.I.warn + "The market can't change once the campaign is approved.</p></div>"
       + '<div class="nw-cards">'
       + card('What to promote', 1, what) + card('Budget and schedule', 2, money) + card('Where it runs', 3, who)
       + '</div>';

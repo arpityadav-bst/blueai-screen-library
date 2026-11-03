@@ -84,10 +84,6 @@
 .app-status--rejected::before { background: var(--err-ink); }
 .app-status--under::before { background: var(--warn-ink); }
 
-/* ---- platform marks ---- */
-.app-plats { display: inline-flex; align-items: center; gap: var(--sp-1); }
-.app-plat { display: block; width: 16px; height: 16px; }
-
 /* ---- progress bar ---- */
 .app-bar { height: 4px; border-radius: var(--r-pill); background: var(--bar-bg); overflow: hidden; }
 .app-bar i { display: block; height: 100%; border-radius: inherit; background: var(--blue); }

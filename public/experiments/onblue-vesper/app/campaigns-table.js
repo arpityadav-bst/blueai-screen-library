@@ -1,7 +1,5 @@
 /* Campaigns page, the table: PM's "New" list (campaign-report/campaigns.js
-   rowNew), one line per row, his columns in his order. The one addition is the
-   platform marks in the Type cell, because a campaign can now run on YouTube,
-   Instagram or both. Pure renderers over a row (data.js shape); campaigns.js
+   rowNew), one line per row, his columns in his order. Pure renderers over a row (data.js shape); campaigns.js
    owns the view state and passes the sort in. */
 (function () {
   'use strict';
@@ -50,7 +48,7 @@
       // phones only: the columns that do not fit come back as one line of words
       + '<span class="c-ph">' + esc(c.product) + ' &middot; ' + typeOf(c) + ' &middot; ' + esc(geo(c.geo)) + ' &middot; ' + endsOn(c) + '</span>'
       + '<span class="c-prod">' + esc(c.product) + '</span>'
-      + '<span class="c-type">' + D.marks(c.platforms) + '<span>' + typeOf(c) + '</span></span>'
+      + '<span class="c-type"><span>' + typeOf(c) + '</span></span>'
       + '<span class="c-geo">' + esc(geo(c.geo)) + '</span>'
       + '<span class="c-ends' + (rejected ? ' is-none' : '') + '">' + endsOn(c) + '</span>'
       + '<span class="c-num"><b>' + compact(c.done) + '</b> <span>' + unit(c) + '</span></span>'

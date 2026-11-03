@@ -12,24 +12,18 @@
     return esc(T[b.type].name) + '<button class="app-link nw-change" type="button" data-act="change-type">Change</button>';
   }
 
-  // ---- 1: what to promote (PM's field order: platform, name, product, then the type's own) ----
+  // ---- 1: what to promote (PM's field order: name, product, then the type's own;
+  // no platform question while the app is YouTube only) ----
   function promote(b, err) {
-    var growth = b.type === 'growth', pl = N.PLATS[b.platforms[0]] || N.PLATS.youtube;
-    var html = U.chips({
-      v: 'platforms', attr: 'data-plat', label: growth ? 'Platforms' : 'Platform', err: err.platforms, one: !growth,
-      hint: growth ? 'Pick one or both.' : 'Pick one: the platform your video is on.',
-      items: ['youtube', 'instagram'].map(function (p) {
-        return { value: p, on: b.platforms.indexOf(p) >= 0, html: U.mark(p) + window.onblueData.PLATFORMS[p].name };
-      })
-    })
-      + U.text({ k: 'name', label: 'Campaign name', value: b.name, ph: 'Fernweh Coffee: spring launch', err: err.name })
+    var growth = b.type === 'growth', pl = N.PLATS.youtube;
+    var html = U.text({ k: 'name', label: 'Campaign name', value: b.name, ph: 'Fernweh Coffee: spring launch', err: err.name })
       + U.text({ k: 'product', label: 'Product name', value: b.product, ph: 'Fernweh Coffee', err: err.product });
     if (growth) {
       html += U.text({ k: 'site', label: 'Reference websites', value: b.site, ph: 'fernwehcoffee.com, another-brand.com', plain: true,
         hint: 'Sites whose look and tone we should take cues from.' })
         + refs(b);
     } else {
-      // the link field speaks the picked platform: label, example and hint
+      // the link field speaks YouTube: label, example and hint
       html += U.text({ k: 'postUrl', label: pl.urlLabel, value: b.postUrl, ph: pl.urlPh, hint: pl.urlHint, type: 'url', plain: true, err: err.postUrl })
         + U.chips({
           v: 'actions', attr: 'data-action', label: 'Action', err: err.actions, hint: 'What each member does.',

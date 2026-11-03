@@ -27,6 +27,8 @@
     step = Math.max(1, Math.min(4, d.step || 1)); seen = Math.max(step, d.seen || 1);
     if (step === 4 && N.firstMissing(b)) { step = N.firstMissing(b).step; }
   })();
+  // YouTube only for now (data.js): a draft or copy from when Instagram was offered runs there too
+  b.platforms = ['youtube'];
   // no type named: the picker chooses one, over Campaigns. Phones keep the page,
   // which tells them to use a computer.
   if (!b.type) {
@@ -157,7 +159,8 @@
     submit();
   }
 
-  // P12: no confirmation sheet; the report says "Campaign submitted"
+  // P12: no confirmation sheet. While the report is the PM's sample (campaign.html),
+  // a submit lands on the list, where the new campaign leads, and says so
   function submit() {
     var btn = $('#nw-next');
     if (btn.getAttribute('aria-busy') === 'true') { return; }
@@ -168,7 +171,7 @@
       var row = N.toRow(b, D.newId(), A.session.status);
       D.saveCampaign(row);
       D.deleteDraft(id);
-      location.href = 'campaign.html?id=' + encodeURIComponent(row.id) + '&submitted=1';
+      location.href = 'campaigns.html?state=done&submitted=1';
     }, 600);
   }
 
@@ -227,18 +230,6 @@
   document.addEventListener('click', function (e) {
     var t = e.target.closest ? e.target : null, el;
     if (!t) { return; }
-    if ((el = t.closest('[data-plat]'))) {
-      var p = el.dataset.plat;
-      if (b.type === 'growth') {
-        b.platforms = b.platforms.indexOf(p) >= 0 ? b.platforms.filter(function (x) { return x !== p; }) : ['youtube', 'instagram'].filter(function (x) { return x === p || b.platforms.indexOf(x) >= 0; });
-      } else {
-        b.platforms = [p];
-        if (b.postUrl) { shown.postUrl = true; } // a pasted link is re-read against the new platform
-      }
-      shown.platforms = true;
-      save(); render('[data-plat="' + p + '"]');
-      return;
-    }
     if ((el = t.closest('[data-action]'))) {
       var a = el.dataset.action, on = b.actions.indexOf(a) >= 0;
       b.actions = N.ACTIONS.filter(function (x) { return x === a ? !on : b.actions.indexOf(x) >= 0; });

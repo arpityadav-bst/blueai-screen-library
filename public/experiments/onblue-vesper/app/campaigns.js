@@ -2,7 +2,7 @@
    "New" version): the list is the product. A big title with one live / in
    review line, then Your campaigns (search, one row of filter pills, the
    table), then Sample reports by his rule. No cards, no tabs. What is ours:
-   the sidebar shell, the type tokens, the Platform pill and marks, the start
+   the sidebar shell, the type tokens, the start
    card on a brand-new account's very first visit. */
 (function () {
   'use strict';
@@ -14,9 +14,12 @@
     done: D.MINE,
     running: D.MINE.filter(function (c) { return c.status !== 'completed'; }),
     // "none yet" means none of PM's demo rows: what the agency filed itself still shows
-    empty: D.OWN
+    empty: D.OWN,
+    // the dock's First visit: a brand-new account, so the start card shows even
+    // after campaigns have been filed in this browser
+    first: []
   };
-  var NO_F = { status: 'all', product: 'all', type: 'all', platform: 'all', geo: 'all', ends: 'any' };
+  var NO_F = { status: 'all', product: 'all', type: 'all', geo: 'all', ends: 'any' };
   var view = { state: 'done', f: Object.assign({}, NO_F), q: '', sort: { key: '', dir: '' } };
   var LIFE = ['live', 'review', 'completed', 'under', 'rejected'];
 
@@ -41,8 +44,7 @@
     return d.getFullYear() === ref.getFullYear() && d.getMonth() === ref.getMonth();
   }
 
-  /* PM's pills in his order, Platform slotted after Type (it is what the marks
-     in the Type cell say). A pill only shows when the rows differ on it;
+  /* PM's pills in his order. A pill only shows when the rows differ on it;
      Ends on always shows (filters.js: a `fixed` def). */
   var DEFS = [
     { k: 'status', label: 'Status', plural: 'statuses', of: statusKey,
@@ -50,8 +52,6 @@
       order: function (a, b) { return LIFE.indexOf(a) - LIFE.indexOf(b); } },
     { k: 'product', label: 'Product', plural: 'products', of: function (c) { return c.product; } },
     { k: 'type', label: 'Type', plural: 'types', of: typeOf },
-    { k: 'platform', label: 'Platform', plural: 'platforms', of: function (c) { return c.platforms; },
-      name: function (v) { return D.marks([v]) + D.PLATFORMS[v].name; } },
     { k: 'geo', label: 'Geography', plural: 'geographies', of: function (c) { return geo(c.geo); } },
     { k: 'ends', label: 'Ends on', plural: 'dates', fixed: function (rows) {
       return [['any', 'Any time'], ['next7', 'Next 7 days'], ['this', 'This month'], ['last', 'Last month'], ['custom', 'Custom range']].map(function (o) {
@@ -67,7 +67,6 @@
     if (f.status !== 'all' && statusKey(c) !== f.status) { return false; }
     if (f.product !== 'all' && c.product !== f.product) { return false; }
     if (f.type !== 'all' && typeOf(c) !== f.type) { return false; }
-    if (f.platform !== 'all' && c.platforms.indexOf(f.platform) < 0) { return false; }
     if (f.geo !== 'all' && geo(c.geo) !== f.geo) { return false; }
     if (!endsIn(c, f.ends)) { return false; }
     var q = view.q.trim().toLowerCase().replace(/^#/, '');
@@ -129,7 +128,7 @@
     $('#head-new').hidden = start;
     $('#empty-create-sub').textContent = A.session.status === 'review'
       ? 'Draft it now. It goes into review once ' + A.session.agency + ' is approved.'
-      : 'Pick YouTube, Instagram or both and set a budget. You pay only for what your campaign delivers.';
+      : 'Set a budget and grow on YouTube. You pay only for what your campaign delivers.';
     $('#mine-sect').hidden = start;
     if (!start) { renderList(); }
     // PM's rule: samples are for an agency that has not seen a finished report of its own.
@@ -215,9 +214,10 @@
   toSamples();
   // straight from registering: shell.js turns the gate's one-shot flag into justRegistered
   if (A.session.justRegistered) { A.toast('Agency submitted'); }
-  // the wizard's close button lands here with ?saved=1; the flag is one-shot
-  if (new URLSearchParams(location.search).get('saved') === '1') {
-    A.toast('Draft saved');
+  // the wizard lands here with ?saved=1 (closed) or ?submitted=1 (filed); one-shot flags
+  var flag = new URLSearchParams(location.search);
+  if (flag.get('saved') === '1' || flag.get('submitted') === '1') {
+    A.toast(flag.get('submitted') === '1' ? 'Campaign submitted' : 'Draft saved');
     history.replaceState(null, '', location.pathname + location.hash);
   }
 })();
