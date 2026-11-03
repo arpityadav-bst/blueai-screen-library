@@ -278,3 +278,8 @@
 .agency-pop-text b { display: block; margin-bottom: 2px; padding-right: var(--sp-6); font: var(--t-body); font-weight: 500; color: var(--app-ink-1); }
 /* the close sits on the title's line, centred on it; the text below runs the full width under it */
 .agency-pop .app-btn { position: absolute; top: calc(14px + 10px - var(--ctl-sm) / 2); right: var(--sp-2); }
+/* the short note (side-lists.js): the title alone, one line, and it fades as it goes */
+.agency-pop--note { width: auto; align-items: center; padding: 10px var(--sp-4); white-space: nowrap; transition: opacity 0.2s var(--ease-hover); }
+.agency-pop--note > svg { margin-top: 0; }
+.agency-pop--note .agency-pop-text b { margin-bottom: 0; padding-right: 0; }
+.agency-pop--note.is-going { opacity: 0; }

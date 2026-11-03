@@ -173,7 +173,7 @@
       var row = N.toRow(b, D.newId());
       D.saveCampaign(row);
       D.deleteDraft(id);
-      location.href = 'campaigns.html?state=done&submitted=1';
+      location.href = 'campaigns.html?submitted=1';
     }, 600);
   }
 

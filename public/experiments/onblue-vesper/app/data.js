@@ -76,6 +76,14 @@
 
   window.onblueData = {
     MINE: MINE, OWN: OWN, SAMPLES: SAMPLES, STATUS: STATUS, TODAY: new Date(2026, 9, 22),
+    /* A NEW ACCOUNT, AS THE DOCK MAKES ONE: what the agency has filed since
+       "New account" was pressed (onblue-first-since), so a campaign submitted
+       there shows in its list and its sidebar, and earlier ones do not. */
+    fresh: function () {
+      var since = 0;
+      try { since = Number(window.localStorage.getItem('onblue-first-since')) || 0; } catch (e) { /* all of them */ }
+      return OWN.filter(function (c) { return !since || Date.parse(c.createdAt) >= since; });
+    },
     find: function (id) { return MINE.concat(SAMPLES).filter(function (c) { return c.id === id; })[0] || null; },
     isSample: function (c) { return SAMPLES.indexOf(c) >= 0; },
     newId: function () { return Math.random().toString(16).slice(2, 10).padEnd(8, '0'); },

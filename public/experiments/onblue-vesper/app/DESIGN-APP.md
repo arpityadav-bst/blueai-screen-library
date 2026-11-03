@@ -9,7 +9,7 @@ Live specimens of every component: `app/style-guide.html` (it links the real app
 > - **A campaign opens what main opens for it**: `app/campaign.html` is the app's frame (sidebar, content area) with the PM's own screen in an iframe, untouched. In review: his dashboard's in-review screen (`campaign.html` #view-campaign) with this campaign's name and setup. A sample: his report for that sample. Other engagement: his engagement sample in the same state. Other growth: his detailed `campaign-report/index.html`. An iframe because his stylesheet and the app's share bare class names (`.btn`, `.card`, `.page`, `.chip`). `report-frame.js` hides his top bar and points his "All campaigns" link at the app. The app's own report (section 3.10, 4.5) was removed and comes back on a later branch; it is in git history at `9a4fb76`.
 > - **Settings and How pricing works are off the sidebar.** `settings.html` and `pricing.js` stay in the folder, unlinked.
 > - **No campaigns until the agency is approved** (as on main). In review: no New campaign in the sidebar or header, the start card says "Your agency is in review" and opens nothing, the form sends you back, drafts are hidden. The old "waiting" status is gone.
-> - The dock's **First visit** shows a brand-new account (the start card) even after campaigns were filed in this browser.
+> - The dock's **Account** bar: **New account** (starts over: the start card and Get started, then only what is filed from there), **Campaigns running** (none finished, samples show), **Has finished campaigns** (samples step aside).
 
 ---
 

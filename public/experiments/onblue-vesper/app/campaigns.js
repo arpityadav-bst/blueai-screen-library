@@ -15,9 +15,8 @@
     running: D.MINE.filter(function (c) { return c.status !== 'completed'; }),
     // "none yet" means none of PM's demo rows: what the agency filed itself still shows
     empty: D.OWN,
-    // the dock's First visit: a brand-new account, so the start card shows even
-    // after campaigns have been filed in this browser
-    first: []
+    // the dock's New account: brand new, then whatever it files from there (data.js fresh)
+    first: D.fresh()
   };
   var NO_F = { status: 'all', product: 'all', type: 'all', geo: 'all', ends: 'any' };
   var view = { state: 'done', f: Object.assign({}, NO_F), q: '', sort: { key: '', dir: '' } };
@@ -189,7 +188,14 @@
     var rf = t.closest('[data-refresh]');
     if (rf) { refresh(rf); return; }
     var st = t.closest('[data-state]');
-    if (st) { view.state = st.dataset.state; resetFilters(); view.sort = { key: '', dir: '' }; save(); render(); return; }
+    if (st) {
+      // New account starts the account over: nothing filed before this counts in it
+      if (st.dataset.state === 'first') {
+        try { localStorage.setItem('onblue-first-since', String(Date.now())); } catch (err) { /* this visit only */ }
+        STATES.first = D.fresh();
+      }
+      view.state = st.dataset.state; resetFilters(); view.sort = { key: '', dir: '' }; save(); render(); return;
+    }
     var ag = t.closest('[data-agency]');
     if (ag) {
       var approving = A.session.status === 'review' && ag.dataset.agency === 'approved';

@@ -74,9 +74,12 @@ html.app, html.app body {
 /* a Get started step: a ring to do, a green tick done (quiet), a dashed ring waiting */
 button.app-nav-step { width: 100%; border: 0; background: none; font: inherit; letter-spacing: inherit; text-align: left; cursor: pointer; }
 span.app-nav-step:hover { background: none; }
-.app-nav-step.is-done, .app-nav-step.is-wait { color: var(--app-ink-3); cursor: default; }
+.app-nav-step.is-done, .app-nav-step.is-wait { color: var(--app-ink-3); }
+span.app-nav-step { cursor: default; }
 .app-step-mark { flex: none; display: grid; place-items: center; width: 16px; height: 16px; border: 1.5px solid var(--app-ink-4); border-radius: 50%; color: #fff; }
 .app-step-mark.is-done { border-color: var(--green); background: var(--green); }
+/* the tick stays white: the nav's own rule greys every icon in a row */
+.app-nav-item .app-step-mark svg { color: #fff; }
 .app-step-mark.is-wait { border-style: dashed; }
 .app-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .app-nav-item {
