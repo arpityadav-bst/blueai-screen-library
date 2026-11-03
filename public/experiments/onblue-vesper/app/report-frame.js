@@ -86,12 +86,15 @@
     + '.ob-steps .is-done { color: #0b0b0d; } .ob-steps .is-done i { background: rgba(22,163,74,.12); color: #15803d; }'
     + '.ob-steps .is-now { border-color: rgba(21,110,254,.4); background: rgba(21,110,254,.06); color: #0b0b0d; } .ob-steps .is-now i { background: #156efe; color: #fff; }'
     + '.ob-ghost { position: relative; margin-top: 20px; }'
-    + '.ob-ghost-in { opacity: .45; pointer-events: none; user-select: none; }'
+    + '.ob-ghost-in { opacity: .35; pointer-events: none; user-select: none; }'
     + '.ob-bar { display: block; height: 10px; margin-top: 10px; border-radius: 999px; background: rgba(0,0,0,.07); }'
     + '.ob-chart { height: 180px; margin-top: 14px; border-radius: 10px; background: linear-gradient(180deg, rgba(21,110,254,.06), rgba(21,110,254,0)); }'
     + '.ob-row { display: block; height: 14px; margin-top: 14px; border-radius: 999px; background: rgba(0,0,0,.06); }'
-    + '.ob-ghost-say { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); padding: 14px 20px; border: 1px solid rgba(0,0,0,.08); border-radius: 12px; background: #fff; box-shadow: 0 10px 30px -12px rgba(18,32,64,.25); text-align: center; font-size: 14px; font-weight: 500; color: #0b0b0d; white-space: nowrap; }'
-    + '.ob-ghost-say span { display: block; margin-top: 2px; font-size: 13px; font-weight: 400; color: #5f636b; }';
+    // the line over the outline is the one thing to read there: larger, lifted, with its own mark
+    + '.ob-ghost-say { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 4px; padding: 26px 40px 28px; border: 1px solid rgba(0,0,0,.1); border-radius: 18px; background: #fff; box-shadow: 0 24px 60px -18px rgba(18,32,64,.38), 0 2px 6px rgba(18,32,64,.06); text-align: center; font-size: 19px; font-weight: 600; letter-spacing: -0.015em; color: #0b0b0d; white-space: nowrap; }'
+    + '.ob-ghost-say i { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 8px; border-radius: 12px; background: rgba(21,110,254,.08); color: #156efe; }'
+    + '.ob-ghost-say span { display: block; font-size: 15px; font-weight: 400; letter-spacing: -0.005em; color: #5f636b; }';
+  var CHART = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16"/><path d="M6 16l4-5 3 3 5-7"/></svg>';
   function addAhead(doc) {
     var cam = doc.getElementById('view-campaign'), grid = cam && cam.querySelector('.rep-grid');
     if (!grid || cam.querySelector('.ob-steps')) { return; }
@@ -110,7 +113,7 @@
       + '<div class="card dash-panel" style="margin-top: 16px"><h2 class="rep-h">' + (growth ? 'Views over time' : 'Progress') + '</h2><div class="ob-chart"></div></div>'
       + '<div class="card dash-panel" style="margin-top: 16px"><h2 class="rep-h">' + (growth ? 'Posts' : 'Proof of work') + '</h2>'
       + '<span class="ob-row"></span><span class="ob-row" style="width: 88%"></span><span class="ob-row" style="width: 94%"></span></div></div>'
-      + '<p class="ob-ghost-say">Your report starts here once it&rsquo;s live.<span>' + (growth ? 'Views' : 'Completions') + ', spend and proof of work, as they happen.</span></p>'
+      + '<p class="ob-ghost-say"><i aria-hidden="true">' + CHART + '</i>Your report starts here once it&rsquo;s live.<span>' + (growth ? 'Views' : 'Completions') + ', spend and proof of work, as they happen.</span></p>'
       + '</section>');
   }
 
