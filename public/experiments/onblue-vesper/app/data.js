@@ -3,6 +3,8 @@
    every field kept. Added for the revamp: `platforms`. YOUTUBE ONLY for now
    (Appy, 2026-11-03): Instagram is out until it is a real integration, so
    every row runs on YouTube and nothing in the app offers a platform choice.
+   The six samples' end dates follow the PM's dashboard on main (campaign.html),
+   whose reports they open, so a row and its report agree (Appy, 2026-11-03).
    The samples keep PM's `note` (his Fill-cell state note, "target met"). */
 (function () {
   'use strict';
@@ -25,12 +27,12 @@
   ];
 
   var SAMPLES = [
-    { id: '7c2d91e4', title: 'Spring Launch: Product Reveal Short', product: 'Airtap', kind: 'engagement', platforms: ['youtube'], geo: 'US', done: 212, target: 500, spent: '$212', budget: '$500', note: '7 days left', status: 'live', left: '7 days left', ends: 'Oct 29, 2026' },
-    { id: '4b0a63f7', title: 'Creator Collab Teaser', product: 'Airtap', kind: 'engagement', platforms: ['youtube'], geo: 'US', done: 118, target: 150, spent: '$118', budget: '$150', note: '3 days left', status: 'live', left: '3 days left', ends: 'Oct 25, 2026' },
+    { id: '7c2d91e4', title: 'Spring Launch: Product Reveal Short', product: 'Airtap', kind: 'engagement', platforms: ['youtube'], geo: 'US', done: 212, target: 500, spent: '$212', budget: '$500', note: '7 days left', status: 'live', left: '7 days left', ends: 'Sep 24, 2026' },
+    { id: '4b0a63f7', title: 'Creator Collab Teaser', product: 'Airtap', kind: 'engagement', platforms: ['youtube'], geo: 'US', done: 118, target: 150, spent: '$118', budget: '$150', note: '3 days left', status: 'live', left: '3 days left', ends: 'Sep 20, 2026' },
     { id: 'd21e88ac', title: 'July Brand Anthem', product: 'Fernweh Coffee', kind: 'engagement', platforms: ['youtube'], geo: 'US', done: 300, target: 300, spent: '$300', budget: '$300', note: 'target met', status: 'completed', ends: 'Aug 31, 2026' },
     { id: '09c4b3d5', title: 'Summer Drop Part 1', product: 'Fernweh Coffee', kind: 'engagement', platforms: ['youtube'], geo: 'US', done: 96, target: 200, spent: '$96', budget: '$200', note: 'make-good applied', status: 'under', ends: 'Sep 6, 2026' },
-    { id: 'a15d7f22', title: 'Airtap: format tests', product: 'Airtap', kind: 'growth', platforms: ['youtube'], geo: 'US', done: 102000, target: 300000, spent: '$510', budget: '$1,500', note: '6 videos live', status: 'live', left: '8 days left', ends: 'Oct 30, 2026' },
-    { id: '3e81b0c5', title: 'Fernweh Coffee: category films', product: 'Fernweh Coffee', kind: 'growth', platforms: ['youtube'], geo: 'Worldwide', done: 0, target: 400000, spent: '$0', budget: '$2,000', note: 'brief with our team', status: 'review', ends: 'Nov 21, 2026' }
+    { id: 'a15d7f22', title: 'Airtap: format tests', product: 'Airtap', kind: 'growth', platforms: ['youtube'], geo: 'US', done: 102000, target: 300000, spent: '$510', budget: '$1,500', note: '6 videos live', status: 'live', left: '8 days left', ends: 'Sep 30, 2026' },
+    { id: '3e81b0c5', title: 'Fernweh Coffee: category films', product: 'Fernweh Coffee', kind: 'growth', platforms: ['youtube'], geo: 'Worldwide', done: 0, target: 400000, spent: '$0', budget: '$2,000', note: 'brief with our team', status: 'review', ends: 'Oct 14, 2026' }
   ];
 
   var STATUS = {
