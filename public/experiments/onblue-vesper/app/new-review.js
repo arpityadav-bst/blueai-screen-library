@@ -47,7 +47,7 @@
 
   function review(b) {
     var e = N.errors(b), t = T[b.type], growth = b.type === 'growth';
-    var est = N.estimate(b), bud = N.budgetOf(b), zone = N.zone();
+    var bud = N.budgetOf(b), zone = N.zone();
     var what = [
       ['Type', esc(t.name)],
       ['Campaign name', val(b.name.trim(), true, e.name)],
@@ -63,8 +63,7 @@
       ['Campaign budget', e.budget ? MISSING : N.money(bud)],
       [t.rateLabel, e.bid ? MISSING : N.price(N.num(b.bid))],
       ['Starts', e.start ? MISSING : esc(N.when(b.startDate, b.startTime) + ' (' + zone + ')')],
-      ['Ends', e.end ? MISSING : esc(N.when(b.endDate, b.endTime) + ' (' + zone + ')')],
-      ['Estimate', est ? 'About ' + est.n.toLocaleString('en-US') + ' ' + esc(est.unit) : NONE]
+      ['Ends', e.end ? MISSING : esc(N.when(b.endDate, b.endTime) + ' (' + zone + ')')]
     ];
     var who = [['Market', esc(b.market)], ['Notes', b.note.trim() ? '<span class="nw-pre">' + esc(b.note.trim()) + '</span>' : NONE]];
     // above the fold, before the rows: what locks once approved

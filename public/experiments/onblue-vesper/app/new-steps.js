@@ -48,13 +48,6 @@
   }
 
   // ---- 2: budget and schedule ----
-  function estimate(b) {
-    var e = N.estimate(b), growth = b.type === 'growth';
-    if (e) { return 'That buys about <b>' + e.n.toLocaleString('en-US') + '</b> ' + esc(e.unit) + ', if every one of them passes.'; }
-    if (!N.budgetOf(b)) { return growth ? 'Pick a budget to see how many views it covers.' : 'Pick a budget to see how many completions it covers.'; }
-    return growth ? 'Enter a rate to see how many views your budget covers.' : 'Enter a bid to see how many completions your budget covers.';
-  }
-
   function runs(b) {
     var n = N.days(b);
     return 'Times are in your time zone (' + N.zone() + ').' + (n ? ' Runs ' + n + (n === 1 ? ' day.' : ' days.') : '');
@@ -83,11 +76,10 @@
         // no "never pay more than your budget" promise: the report bills past it (Over budget),
         // and cap vs overrun is an open PM question (REVAMP-PLAN.md top section)
         hint: growth ? 'Minimum ' + N.price(t.min) + '. You pay this for every 1,000 views the campaign earns.' : 'The bid is what you pay for each completion.' })
-      + '<div class="note-box" aria-live="polite">' + U.I.info + '<p id="nw-est">' + estimate(b) + '</p></div>'
       + '<div class="field-row">' + when('start', 'Starts', b, err) + when('end', 'Ends', b, err) + '</div>'
       + '<p class="nw-line nw-runs" id="nw-runs">' + esc(runs(b)) + '</p>';
     return U.head(eyebrow(b), 'Budget and <em>schedule</em>.') + '<div class="flow-fields">' + html + '</div>';
   }
 
-  window.onblueNewSteps = { eyebrow: eyebrow, promote: promote, budget: budget, estimate: estimate, runs: runs };
+  window.onblueNewSteps = { eyebrow: eyebrow, promote: promote, budget: budget, runs: runs };
 })();

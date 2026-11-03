@@ -209,7 +209,6 @@
     if (!k) { return; }
     b[k] = el.value;
     if (k === 'note') { $('#nw-count').textContent = el.value.length + '/500'; }
-    if (k === 'bid' || k === 'budgetCustom') { $('#nw-est').innerHTML = S.estimate(b); }
     if (/^(start|end)(Date|Time)$/.test(k)) { $('#nw-runs').textContent = S.runs(b); }
     if (el.hasAttribute('data-cal')) { check(el.getAttribute('data-v')); } // a pick is a finished answer
     save();

@@ -119,12 +119,8 @@
     return d ? fmtDay(d) + ', ' + fmtTime(time) : '';
   }
 
-  // PM's floor math: what the budget covers if every result passes
-  function estimate(b) {
-    var t = TYPES[b.type], bud = budgetOf(b);
-    if (!t || !isMoney(bud) || !isMoney(b.bid) || Number(bud) < Number(b.bid)) { return null; }
-    return { n: Math.floor(Number(bud) / Number(num(b.bid))) * t.per, unit: t.unit };
-  }
+  // NO ESTIMATE OF RESULTS (PM, 2026-11-03): we can't guarantee a number of
+  // views, so the form never says what a budget "buys"
 
   /* Every rule, keyed by field, in the order the fields appear. The messages
      are PM's where PM wrote one; the rest follow plan CC-4 to CC-10. */
@@ -232,7 +228,7 @@
   window.onblueNew = {
     TYPES: TYPES, ORDER: ORDER, PLATS: PLATS, ACTIONS: ACTIONS, MARKETS: MARKETS, PRESETS: PRESETS, STEPS: STEPS,
     blank: blank, setType: setType, typeOwned: typeOwned, budgetOf: budgetOf, money: money, price: price, num: num,
-    zone: zone, days: days, when: when, at: at, fmtDay: fmtDay, fmtTime: fmtTime, estimate: estimate, errors: errors, stepErrors: stepErrors,
+    zone: zone, days: days, when: when, at: at, fmtDay: fmtDay, fmtTime: fmtTime, errors: errors, stepErrors: stepErrors,
     stepValid: stepValid, firstMissing: firstMissing, hasInput: hasInput, toRow: toRow, fromCampaign: fromCampaign, STEP_OF: STEP_OF
   };
 })();
