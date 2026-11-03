@@ -22,6 +22,8 @@
   var c = D.find(new URLSearchParams(location.search).get('id') || '');
   var HIS = { '7c2d91e4': 'spring', '4b0a63f7': 'collab', 'd21e88ac': 'anthem', '09c4b3d5': 'summer', 'a15d7f22': 'northline', '3e81b0c5': 'fernweh' };
   var ENGAGE = { live: 'spring', completed: 'anthem', under: 'summer' };
+  // opening a sample ticks Get started's step, in the sidebar already drawn too
+  if (c && window.onblueSideLists && D.isSample(c)) { window.onblueSideLists.sawSample(); if (A.refreshSide) { A.refreshSide(); } }
   var route = !c ? { page: 'report' }
     : c.status === 'review' ? { page: 'dash', own: c.kind === 'engagement' ? 'mine-boost' : 'mine-films' }
     : HIS[c.id] ? { page: 'dash', open: HIS[c.id] }

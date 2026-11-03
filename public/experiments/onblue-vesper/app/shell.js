@@ -35,7 +35,6 @@
     spark: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg>',
     plus: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
     campaigns: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 9h17M8 13.5h8M8 16.5h5"/></svg>',
-    samples: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16M7 16v-5M12 16V7M17 16v-8"/></svg>',
     settings: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
     // a circle reads smaller than a square of the same span, so this one runs a
     // unit wider than the others (optical sizing): r 9.5 against their 17-wide boxes
@@ -62,14 +61,19 @@
     if (!side) { return; }
     var page = document.body.getAttribute('data-page');
     var review = session.status === 'review';
+    // on a campaign's own page, its row in Active is the current place, if it is there
+    var open = page === 'campaign' ? new URLSearchParams(location.search).get('id') : '';
+    var L = window.onblueSideLists, inActive = L ? L.has(open) : false;
     side.innerHTML =
       '<a class="app-brand" href="../brands.html" aria-label="onBlue home">' + I.spark + '<span><i>on</i>Blue</span></a>'
       // phone only: the drawer's own way out, beside the scrim and Escape
       + '<button class="app-btn app-btn--icon app-btn--quiet app-side-close" type="button" data-nav-close aria-label="Close menu">' + I.close + '</button>'
       // an agency in review cannot create campaigns yet (as on main), so the way in waits too
       + (review ? '' : '<button class="app-nav-item app-nav-new" type="button" data-new title="New campaign">' + I.plus + '<span>New campaign</span></button>')
-      + item('campaigns.html', I.campaigns, 'Campaigns', page === 'campaigns', '<span class="app-count" id="side-count" hidden></span>')
-      + item('campaigns.html#samples', I.samples, 'Sample reports', false)
+      + item('campaigns.html', I.campaigns, 'Campaigns', page === 'campaigns' || (page === 'campaign' && !inActive), '<span class="app-count" id="side-count" hidden></span>')
+      // Sample reports came off the nav (it only scrolled the list page); the samples stay there
+      // what you are doing: Active campaigns, or Get started (side-lists.js)
+      + (L ? L.html(open, review) : '')
       // Settings and How pricing works are off the nav for now (Appy, 2026-11-03):
       // settings.html and pricing.js stay, unlinked, until they come back
       + '<div class="app-side-spacer"></div>'
@@ -153,6 +157,12 @@
 
   document.addEventListener('click', function (e) {
     var t = e.target;
+    var fold = t.closest('[data-side-fold]');
+    if (fold && window.onblueSideLists) {
+      window.onblueSideLists.fold(fold.getAttribute('data-side-fold'));
+      renderSide();
+      return;
+    }
     if (t.closest('[data-pop-close]')) {
       if (note) { note = null; } else { try { window.sessionStorage.setItem(POP_KEY, 'closed'); } catch (err) { /* this page only */ } }
       renderPop();
@@ -245,6 +255,8 @@
       // anything that depends on the status (the drafts notice) repaints
       document.dispatchEvent(new CustomEvent('onblue:status'));
     },
+    // the list page repaints the sidebar when its dock changes which campaigns there are
+    refreshSide: function () { renderSide(); },
     setCount: function (n) {
       var c = document.getElementById('side-count');
       if (!c) { return; }

@@ -149,6 +149,7 @@
     $('#samples').hidden = !showSamples;
     $('#sample-list').innerHTML = showSamples ? T.table(D.SAMPLES, '', null) : '';
     A.setCount(live);
+    if (A.refreshSide) { A.refreshSide(); }
     document.querySelectorAll('[data-state]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.state === view.state)); });
     document.querySelectorAll('[data-agency]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.agency === A.session.status)); });
   }
