@@ -19,14 +19,12 @@
   function unit(c) { return growth(c) ? 'views' : 'completions'; }
   function typeOf(c) { return growth(c) ? 'Video growth' : 'Video engagement'; }
   function geo(g) { return /^worldwide$/i.test(g) ? 'WW' : g; }
-  // 'waiting' counts as In review: it is filed, and goes into review once the agency is approved
-  function statusKey(c) { return c.status === 'waiting' ? 'review' : c.status; }
+  function statusKey(c) { return c.status; }
   function endsOn(c) { return c.status === 'rejected' ? 'Did not run' : c.ends; }
 
   function status(c) {
     var s = D.STATUS[c.status];
-    var tip = c.status === 'waiting' ? ' tabindex="0" title="Goes into review once ' + esc(A.session.agency) + ' is approved."' : '';
-    return '<span class="app-status app-status--' + s[1] + '"' + tip + '>' + s[0] + '</span>';
+    return '<span class="app-status app-status--' + s[1] + '">' + s[0] + '</span>';
   }
 
   // A sortable heading: the arrow shows only on the column the list is sorted by.

@@ -67,11 +67,9 @@
       ['Estimate', est ? 'About ' + est.n.toLocaleString('en-US') + ' ' + esc(est.unit) : NONE]
     ];
     var who = [['Market', esc(b.market)], ['Notes', b.note.trim() ? '<span class="nw-pre">' + esc(b.note.trim()) + '</span>' : NONE]];
-    var s = A.session;
-    // above the fold, before the rows: the agency's own wait (its own neutral note), then what locks
+    // above the fold, before the rows: what locks once approved
     return U.head(S.eyebrow(b), 'Check it <em>over</em>.', 'Edit anything before you submit.')
       + '<div class="nw-review-notes">'
-      + (s.status === 'review' ? '<div class="note-box">' + U.I.info + '<p><b>' + esc(s.agency) + '</b> is still in review. This campaign waits until you are approved, then goes into review.</p></div>' : '')
       + '<p class="nw-lock">' + U.I.warn + "The market can't change once the campaign is approved.</p></div>"
       + '<div class="nw-cards">'
       + card('What to promote', 1, what) + card('Budget and schedule', 2, money) + card('Where it runs', 3, who)

@@ -189,9 +189,9 @@
       || b.budgetPick || b.note.trim() || b.bid.trim() !== def);
   }
 
-  /* The row the Campaigns list and the report read, in data.js's shape.
-     It waits while the agency itself is in review (plan D2, CL-5). */
-  function toRow(b, id, agencyStatus) {
+  /* The row the Campaigns list and the report read, in data.js's shape. Only an
+     approved agency reaches the form, so a filed campaign goes into review. */
+  function toRow(b, id) {
     var t = TYPES[b.type], bud = Number(budgetOf(b)), bid = Number(num(b.bid));
     var market = MARKETS.filter(function (m) { return m[0] === b.market; })[0] || MARKETS[2];
     var end = at(b.endDate, b.endTime);
@@ -202,7 +202,7 @@
       platforms: b.platforms.slice(), geo: market[1],
       done: 0, target: bid > 0 ? Math.floor(bud / bid) * t.per : 0,
       spent: '$0', budget: money(bud),
-      status: agencyStatus === 'review' ? 'waiting' : 'review',
+      status: 'review',
       ends: end ? end.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '',
       brief: brief, createdAt: new Date().toISOString()
     };

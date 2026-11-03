@@ -27,6 +27,8 @@
 .start-card .start-cta { margin-top: var(--sp-6); background: #fff; color: var(--ink); box-shadow: none; }
 .start-cta svg { transition: transform 0.24s var(--ease-hover); }
 .start-card:hover .start-cta svg { transform: translateX(3px); }
+/* in review the card informs, it does not open anything (campaigns.js startCard) */
+.start-card.is-review { cursor: default; }
 
 /* the art: five creator films fanned, cut off by the card's own bottom edge */
 .start-art { position: relative; container-type: inline-size; }

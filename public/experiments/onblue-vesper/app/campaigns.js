@@ -96,10 +96,23 @@
   // ---- agency status --------------------------------------------------------------
   /* It speaks from the sidebar's agency card now (shell.js, onblueApp.agencyNote):
      "in review" stays there by itself; approval is said once, the moment it happens. */
-  function sayApproved(moved) {
+  function sayApproved() {
     // the title is one short line; whose approval it is, the identity row already says
-    A.agencyNote('You&rsquo;re approved', 'Campaigns you submit now go straight to review.'
-      + (moved ? ' ' + moved + ' waiting campaign' + (moved > 1 ? 's' : '') + ' moved into review.' : ''));
+    A.agencyNote('You&rsquo;re approved', 'You can create campaigns now.');
+  }
+
+  /* THE START CARD IN REVIEW (as on main: no campaigns until the agency is
+     approved). Same card, same films, but it says where things stand and is
+     not a way in: no link, no button, until approval turns it back. */
+  function startCard(review) {
+    var card = $('.start-card');
+    if (review) { card.removeAttribute('href'); card.removeAttribute('data-new'); } else { card.setAttribute('href', 'new.html'); card.setAttribute('data-new', ''); }
+    card.classList.toggle('is-review', review);
+    $('.start-title').innerHTML = review ? 'Your agency is in <em>review.</em>' : 'Start your first <em>campaign.</em>';
+    $('#empty-create-sub').textContent = review
+      ? 'We review every agency before approving it, usually within a working day. We will email ' + A.session.email + ' the moment you can create campaigns.'
+      : 'Set a budget and grow on YouTube. You pay only for what your campaign delivers.';
+    $('.start-cta').hidden = review;
   }
 
   // ---- Your campaigns -------------------------------------------------------------
@@ -124,11 +137,10 @@
     $('#sub').hidden = !rows.length;
     $('#sub').innerHTML = '<b>' + live + '</b> live &middot; <b>' + review + '</b> in review';
     $('#empty').hidden = !start;
-    // the start card is itself the way in; the plain empty card keeps the header's
-    $('#head-new').hidden = start;
-    $('#empty-create-sub').textContent = A.session.status === 'review'
-      ? 'Draft it now. It goes into review once ' + A.session.agency + ' is approved.'
-      : 'Set a budget and grow on YouTube. You pay only for what your campaign delivers.';
+    // the start card is itself the way in; in review there is no way in yet (as on main)
+    var review = A.session.status === 'review';
+    $('#head-new').hidden = start || review;
+    startCard(review);
     $('#mine-sect').hidden = start;
     if (!start) { renderList(); }
     // PM's rule: samples are for an agency that has not seen a finished report of its own.
@@ -180,10 +192,8 @@
     var ag = t.closest('[data-agency]');
     if (ag) {
       var approving = A.session.status === 'review' && ag.dataset.agency === 'approved';
-      // promote before setStatus, which promotes too, so the count is the real one
-      var moved = ag.dataset.agency === 'approved' ? D.promoteWaiting() : 0;
       A.setStatus(ag.dataset.agency);
-      if (approving) { sayApproved(moved); }
+      if (approving) { sayApproved(); }
       render();
     }
   });

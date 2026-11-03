@@ -66,7 +66,8 @@
       '<a class="app-brand" href="../brands.html" aria-label="onBlue home">' + I.spark + '<span><i>on</i>Blue</span></a>'
       // phone only: the drawer's own way out, beside the scrim and Escape
       + '<button class="app-btn app-btn--icon app-btn--quiet app-side-close" type="button" data-nav-close aria-label="Close menu">' + I.close + '</button>'
-      + '<button class="app-nav-item app-nav-new" type="button" data-new title="New campaign">' + I.plus + '<span>New campaign</span></button>'
+      // an agency in review cannot create campaigns yet (as on main), so the way in waits too
+      + (review ? '' : '<button class="app-nav-item app-nav-new" type="button" data-new title="New campaign">' + I.plus + '<span>New campaign</span></button>')
       + item('campaigns.html', I.campaigns, 'Campaigns', page === 'campaigns', '<span class="app-count" id="side-count" hidden></span>')
       + item('campaigns.html#samples', I.samples, 'Sample reports', false)
       // Settings and How pricing works are off the nav for now (Appy, 2026-11-03):
@@ -117,7 +118,7 @@
     p.setAttribute('role', 'status');
     p.innerHTML = (note ? I.check : I.clock) + '<span class="agency-pop-text"><b>' + (note ? note.title : 'Registration received') + '</b>'
       + (note ? note.body : 'We usually approve within one working day and will email '
-        + esc(session.email) + '. You can draft campaigns meanwhile.') + '</span>'
+        + esc(session.email) + '. You can create campaigns once you are approved.') + '</span>'
       + '<button class="app-btn app-btn--sm app-btn--icon app-btn--quiet" type="button" data-pop-close aria-label="Dismiss">' + I.close + '</button>';
     document.body.appendChild(p);
     // level with the card, lifted only as far as the window's foot requires
@@ -200,6 +201,7 @@
      computer. ?new=1 opens it on arrival: where the form sends an address
      that names no type. */
   function newCampaign() {
+    if (session.status === 'review') { return; } // nothing to create until the agency is approved
     if (!window.matchMedia('(min-width: 640px)').matches) { window.location.href = 'new.html'; return; }
     if (window.onblueTypePicker) { window.onblueTypePicker(); return; }
     var s = document.createElement('script');
@@ -239,9 +241,9 @@
       set('onblue:agency-status', s);
       // back into review is news again: its popover shows, and an old "approved" goes
       if (s === 'review') { note = null; try { window.sessionStorage.removeItem(POP_KEY); } catch (e) { /* shows anyway */ } }
-      // approval moves the waiting campaigns into review without a reload
-      if (s !== 'review' && window.onblueData) { window.onblueData.promoteWaiting(); }
       renderSide();
+      // anything that depends on the status (the drafts notice) repaints
+      document.dispatchEvent(new CustomEvent('onblue:status'));
     },
     setCount: function (n) {
       var c = document.getElementById('side-count');

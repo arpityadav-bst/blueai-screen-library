@@ -27,6 +27,9 @@
     step = Math.max(1, Math.min(4, d.step || 1)); seen = Math.max(step, d.seen || 1);
     if (step === 4 && N.firstMissing(b)) { step = N.firstMissing(b).step; }
   })();
+  /* NO CAMPAIGNS UNTIL THE AGENCY IS APPROVED (Appy, 2026-11-03, as on main):
+     an agency in review is sent back to Campaigns, which says why */
+  if (A.session.status === 'review') { location.replace('campaigns.html'); return; }
   // YouTube only for now (data.js): a draft or copy from when Instagram was offered runs there too
   b.platforms = ['youtube'];
   // no type named: the picker chooses one, over Campaigns. Phones keep the page,
@@ -86,11 +89,10 @@
     next.removeAttribute('title');
     note.textContent = '';
     if (step < 4) { next.textContent = NEXT[step]; return; }
-    var bud = N.budgetOf(b), s = A.session, waits = s.status === 'review';
-    // an agency still in review: the campaign waits, so the button does not promise a review
-    next.textContent = (waits ? 'Submit' : 'Submit for review') + (m && m.key === 'budget' ? '' : ', ' + N.money(bud) + ' budget');
+    var bud = N.budgetOf(b);
+    next.textContent = 'Submit for review' + (m && m.key === 'budget' ? '' : ', ' + N.money(bud) + ' budget');
     if (m) { next.setAttribute('aria-disabled', 'true'); next.title = m.text; note.textContent = m.text; }
-    else { note.textContent = waits ? 'Waits for ' + s.agency + ' to be approved.' : 'You pay only for what your campaign delivers.'; }
+    else { note.textContent = 'You pay only for what your campaign delivers.'; }
   }
 
   function render(focusSel) {
@@ -168,7 +170,7 @@
     btn.setAttribute('aria-busy', 'true');
     btn.innerHTML = '<span class="app-spin" aria-hidden="true"></span>Submitting…';
     setTimeout(function () {
-      var row = N.toRow(b, D.newId(), A.session.status);
+      var row = N.toRow(b, D.newId());
       D.saveCampaign(row);
       D.deleteDraft(id);
       location.href = 'campaigns.html?state=done&submitted=1';

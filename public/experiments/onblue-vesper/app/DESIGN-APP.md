@@ -8,6 +8,7 @@ Live specimens of every component: `app/style-guide.html` (it links the real app
 > - **YouTube only.** Instagram is out until it is a real integration: no platform question in the form, no platform marks or Platform filter in the list, every row `platforms: ['youtube']`. Section 6 describes the multi-platform build that was removed.
 > - **The report is the PM's**, from main: `app/campaign.html` is the app's frame (sidebar, content area) with his `campaign-report/index.html` in an iframe, untouched. An iframe because his stylesheet and the app's share bare class names (`.btn`, `.card`, `.page`, `.chip`). `report-frame.js` hides his top bar and points his "All campaigns" link at the app. The app's own report (section 3.10, 4.5) was removed and comes back on a later branch; it is in git history at `9a4fb76`.
 > - **Settings and How pricing works are off the sidebar.** `settings.html` and `pricing.js` stay in the folder, unlinked.
+> - **No campaigns until the agency is approved** (as on main). In review: no New campaign in the sidebar or header, the start card says "Your agency is in review" and opens nothing, the form sends you back, drafts are hidden. The old "waiting" status is gone.
 > - The dock's **First visit** shows a brand-new account (the start card) even after campaigns were filed in this browser.
 
 ---

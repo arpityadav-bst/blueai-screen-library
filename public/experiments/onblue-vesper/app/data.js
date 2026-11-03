@@ -45,7 +45,7 @@
   /* WHAT THE AGENCY MAKES IN THIS PROTOTYPE, kept in localStorage so the wizard,
      the list and the report agree. Submitted campaigns use the row shape above
      plus `brief` (everything the wizard asked) and `createdAt`; their status is
-     'review', or 'waiting' while the agency itself is still in review. Drafts
+     'review'. Drafts
      are { id, step, updatedAt, brief }. Both lists are newest first. */
   var K_CAMPAIGNS = 'onblue-app-campaigns', K_DRAFTS = 'onblue-app-drafts';
   function read(k) { try { return JSON.parse(window.localStorage.getItem(k) || '[]'); } catch (e) { return []; } }
@@ -55,27 +55,11 @@
 
   // the agency's own submitted campaigns lead the list, as the newest
   var OWN = read(K_CAMPAIGNS);
-  // campaigns filed while Instagram was offered run on YouTube now
-  OWN.forEach(function (c) { c.platforms = ['youtube']; });
+  // campaigns filed while Instagram was offered run on YouTube now; and one filed
+  // while an agency in review could still create (it waited) is simply in review
+  OWN.forEach(function (c) { c.platforms = ['youtube']; if (c.status === 'waiting') { c.status = 'review'; } });
   MINE = OWN.concat(MINE);
-  STATUS.waiting = ['Waiting', 'waiting'];
   STATUS.draft = ['Draft', 'draft'];
-
-  /* A campaign filed while the agency was in review waits; once the agency is
-     approved it moves into review (FL-3). Done here on load, before shell.js,
-     so no page ever shows a stale Waiting; the key is read directly for that
-     reason. Mutates OWN in place, so MINE and every list built on it agree. */
-  function promoteWaiting() {
-    var n = 0;
-    OWN.forEach(function (c) { if (c.status === 'waiting') { c.status = 'review'; n++; } });
-    if (n) { write(K_CAMPAIGNS, OWN); }
-    return n;
-  }
-  (function () {
-    var st = '', fresh = '';
-    try { st = window.sessionStorage.getItem('onblue:agency-status') || ''; fresh = window.sessionStorage.getItem('onblue:new') || ''; } catch (e) { /* storage off */ }
-    if (st !== 'review' && fresh !== '1') { promoteWaiting(); }
-  })();
 
   /* ONE BILLING RULE for the list and the report: the agency's price is
      budget / target (per 1,000 views for growth, per completion for
@@ -97,6 +81,6 @@
     drafts: function () { return read(K_DRAFTS); },
     saveDraft: function (d) { upsert(K_DRAFTS, d); },
     deleteDraft: function (id) { remove(K_DRAFTS, id); },
-    promoteWaiting: promoteWaiting, rateOf: rateOf, spentOf: spentOf
+    rateOf: rateOf, spentOf: spentOf
   };
 })();

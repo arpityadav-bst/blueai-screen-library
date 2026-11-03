@@ -47,7 +47,8 @@
   function render() {
     var el = document.getElementById('needs');
     if (!el) { return; }
-    var list = D.drafts();
+    // in review the form is closed, so drafts wait out of sight until approval
+    var list = A.session.status === 'review' ? [] : D.drafts();
     el.hidden = !list.length;
     if (!list.length) { el.innerHTML = ''; return; }
     var shown = all ? list : list.slice(0, MAX);
@@ -108,4 +109,5 @@
   });
 
   render();
+  document.addEventListener('onblue:status', render);
 })();
