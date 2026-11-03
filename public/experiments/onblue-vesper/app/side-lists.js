@@ -26,7 +26,16 @@
     var rows = st === 'first' ? D.fresh() : st === 'empty' ? D.OWN : D.MINE;
     return rows.filter(function (c) { return c.status === 'live' || c.status === 'review'; });
   }
-  function shut(key) { return get('onblue-side-' + key) === 'closed'; }
+  /* FOLDED HIDES WHAT WAS THERE, NOT WHAT ARRIVES (Appy): folding Active keeps
+     the ids it hid, and a campaign that joins Active afterwards opens it again,
+     so a campaign just submitted is never filed out of sight. */
+  function ids() { return active().map(function (c) { return c.id; }); }
+  function shut(key) {
+    if (get('onblue-side-' + key) !== 'closed') { return false; }
+    if (key !== 'active') { return true; }
+    var hid = get('onblue-side-active-ids').split(',');
+    return ids().every(function (id) { return hid.indexOf(id) >= 0; });
+  }
   function head(key, label) {
     return '<button class="app-group-label app-group-fold" type="button" data-side-fold="' + key + '" aria-expanded="' + !shut(key) + '">' + label + CHEV + '</button>';
   }
@@ -96,7 +105,13 @@
       var rows = active();
       return rows.length ? !shut('active') && rows.some(function (c) { return c.id === open; }) : !shut('start') && open === SAMPLE;
     },
-    fold: function (key) { set('onblue-side-' + key, shut(key) ? 'open' : 'closed'); },
+    fold: function (key) {
+      var closing = !shut(key);
+      set('onblue-side-' + key, closing ? 'closed' : 'open');
+      if (key === 'active' && closing) { set('onblue-side-active-ids', ids().join(',')); }
+    },
+    // a new account starts with every section open
+    reset: function () { set('onblue-side-active', 'open'); set('onblue-side-start', 'open'); },
     // a sample report has been opened: the Get started step is done
     sawSample: function () { set(K_SAMPLE, '1'); }
   };

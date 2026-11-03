@@ -192,6 +192,7 @@
       // New account starts the account over: nothing filed before this counts in it
       if (st.dataset.state === 'first') {
         try { localStorage.setItem('onblue-first-since', String(Date.now())); } catch (err) { /* this visit only */ }
+        if (window.onblueSideLists) { window.onblueSideLists.reset(); }
         STATES.first = D.fresh();
       }
       view.state = st.dataset.state; resetFilters(); view.sort = { key: '', dir: '' }; save(); render(); return;
