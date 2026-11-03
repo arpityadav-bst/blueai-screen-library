@@ -1,10 +1,10 @@
 <!doctype html>
-<!-- The campaign report, for now: the app's frame (sidebar, content area) around
-     the PM's latest report from main, campaign-report/index.html, shown as it is
-     (Appy, 2026-11-03). It sits in a frame of its own because its stylesheet and
-     the app's share class names (.btn, .card, .page, .chip); inside the frame
-     neither can reach the other. report-frame.js hides his page's own top bar,
-     since the app's frame replaces it. The app's own report comes back later. -->
+<!-- A campaign, opened: the app's frame (sidebar, content area) around the PM's
+     own screen for it from main, shown as it is (Appy, 2026-11-03): his in-review
+     screen, his sample reports, or his detailed growth report, as report-frame.js
+     picks. In a frame of its own because his stylesheets and the app's share
+     class names (.btn, .card, .page, .chip); inside the frame neither can reach
+     the other. The app's own report comes back later. -->
 <html lang="en" class="app" data-theme="light">
 <head>
 <meta charset="utf-8">
@@ -26,7 +26,8 @@
 <aside class="app-side" id="side" aria-label="Main"></aside>
 
 <main class="app-panel app-panel--frame">
-  <iframe class="pm-report" id="pm-report" src="../campaign-report/index.html" title="Campaign report"></iframe>
+  <!-- report-frame.js chooses which of the PM's screens this campaign opens -->
+  <iframe class="pm-report" id="pm-report" title="Campaign"></iframe>
 </main>
 
 <script src="data.js"></script>
