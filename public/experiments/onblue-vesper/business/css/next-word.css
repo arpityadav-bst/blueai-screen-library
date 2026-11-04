@@ -1,0 +1,17 @@
+/* THE WORD "next" (Appy: like a film cut, the word flips fast through other
+   looks and settles on the normal title; then "aesthetic, not overwhelming"):
+   only the site's own palette (ink, greys, volt, the halftone) and a few
+   quiet type changes, serif italic, mono, hairline, outline, small caps.
+   js/next-word.js steps the classes; the width is locked to the normal word
+   so the line never moves. Type, colour and background only; no filters. */
+.ob-next { display: inline-block; text-align: center; white-space: nowrap; border-radius: 0.1em; }   /* the wide cuts (mono, small caps) are sized down to fit the word's width */
+.ob-next[class*="nx-"] { letter-spacing: -0.01em; }
+.nx-1 { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-weight: 400; }
+.nx-2 { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-weight: 500; font-size: 0.72em; color: var(--ink-3); }
+.nx-3 { font-weight: 300; color: transparent; -webkit-text-stroke: 0.022em var(--ink-1); }
+.nx-4 { color: #c6f432; background: #0b0b0a; }
+.nx-5 { font-weight: 200; color: var(--ink-3); }
+.nx-6 { background: linear-gradient(180deg, transparent 58%, #c6f432 58%, #c6f432 88%, transparent 88%); }
+.nx-7 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-variant: small-caps; font-size: 0.88em; letter-spacing: 0.01em; }
+/* the site's halftone accent, as one of the cuts (base.css .ob-tone) */
+.ob-next.ob-tone { padding-bottom: 0; }

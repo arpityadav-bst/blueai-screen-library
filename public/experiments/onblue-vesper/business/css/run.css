@@ -1,0 +1,192 @@
+/* The agent run (run.html): BlueAI works in front of you, one step at a
+   time. A stepper on top, what it has learned on the left, the current step
+   in the middle. Ends in the free report and sign-up.
+   2026-11-04 finish: the homepage's language (Geist 500, ink titles with
+   --tr-display, 1.25rem panels with hairlines and the glassy float shadow,
+   the volt yes dot, one lit panel per screen). Tokens --p-* come from
+   product.css (linked after this sheet). Motion is transform and opacity only. */
+
+.ob-run { display: grid; grid-template-rows: auto 1fr; min-height: 100vh; overflow-x: clip; }
+
+/* ---- the bar: logo, the six steps, save ----------------------------------- */
+.ob-runbar { position: sticky; top: 0; z-index: 30; display: grid; grid-template-columns: 15.75rem minmax(0, 1fr) auto; align-items: center; gap: var(--s6); height: 4rem; padding: 0 var(--s6); border-bottom: 1px solid var(--line); background: var(--bg); }
+.ob-runbar .ob-logo { position: relative; z-index: 0; grid-column: 1; grid-row: 1; justify-self: start; max-width: max-content; }
+.ob-runbar-end { position: relative; z-index: 3; grid-column: 3; grid-row: 1; display: flex; justify-content: flex-end; }
+.ob-runbar { transition: box-shadow 0.2s var(--ease); }
+.ob-runbar.is-scrolled { box-shadow: 0 0.875rem 1.5rem -1.25rem rgba(10, 10, 9, 0.32); }
+.ob-runbar-end .ob-btn { gap: 0.375rem; }
+.ob-runbar-end [hidden] { display: none; }
+.ob-runbar-end .ob-btn[disabled] { opacity: 1; color: var(--ink-3); box-shadow: none; }
+.ob-runbar-end .ob-btn svg path { stroke-width: 3; }
+.ob-runbar-now { display: none; }
+.ob-stepper { grid-column: 2 / 4; grid-row: 1; display: flex; justify-content: center; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+.ob-stepper li { display: flex; align-items: center; gap: 0.5rem; height: 2rem; padding: 0 0.75rem 0 0.375rem; border-radius: var(--r-pill); color: var(--ink-3); font: var(--t-small); font-weight: 500; white-space: nowrap; transition: color 0.15s var(--ease), background 0.15s var(--ease); }
+.ob-stepper i { display: grid; place-items: center; width: 1.25rem; height: 1.25rem; border: 1px solid var(--line-2); color: var(--ink-4); border-radius: 50%; font: 600 0.6875rem/1 var(--font); font-style: normal; font-variant-numeric: tabular-nums; }
+.ob-stepper i svg { width: 0.75rem; height: 0.75rem; }
+.ob-stepper i svg path { stroke-width: 3.2; }
+.ob-stepper li.is-now { background: var(--surface); color: var(--ink-1); box-shadow: inset 0 1px 0 #fff, 0 0 0 1px var(--line), var(--shadow-1); }
+.ob-stepper li.is-now i { border-color: transparent; background: linear-gradient(180deg, #2c2c29 0%, #0b0b0a 100%); color: #fff; }
+.ob-stepper li.is-done { color: var(--ink-2); cursor: pointer; }
+.ob-stepper li.is-done:hover { background: var(--surface-2); color: var(--ink-1); }
+.ob-stepper li.is-done i { border-color: transparent; background: var(--ink-1); color: #fff; }
+
+/* ---- the left column: what BlueAI knows ----------------------------------- */
+.ob-run-body { display: grid; grid-template-columns: 18.75rem minmax(0, 1fr); min-height: 0; background: linear-gradient(var(--line), var(--line)) 18.75rem 0 / 1px 100% no-repeat; }
+.ob-knows, .ob-stage { min-width: 0; }
+.ob-knows { position: sticky; top: 4rem; align-self: start; display: flex; flex-direction: column; height: calc(100vh - 4rem); overflow: hidden; padding: var(--s8) var(--s6); }
+.ob-knows-head { flex: none; display: flex; align-items: center; gap: var(--s3); }
+.ob-knows-fav { flex: none; display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: var(--r-md); background: linear-gradient(180deg, #2c2c29 0%, #0b0b0a 100%); color: #fff; font: 600 1.125rem/1 var(--font); overflow: hidden; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 0 0 1px var(--line), var(--shadow-1); }
+.ob-knows-fav img { width: 100%; height: 100%; object-fit: cover; background: #fff; }
+.ob-knows-head b { display: block; color: var(--ink-1); font: 500 1rem/1.25 var(--font); letter-spacing: -0.02em; }
+.ob-knows-head small { color: var(--ink-3); font: var(--t-small); }
+.ob-knows-label { flex: none; display: flex; align-items: center; justify-content: space-between; width: 100%; margin: var(--s8) 0 var(--s3); padding: 0; border: 0; background: none; color: var(--ink-1); font: 500 0.875rem/1.3 var(--font); text-align: left; pointer-events: none; }
+/* the card is a clipping frame around the scrolling list, so no row can ever
+   show outside its rounded edges; the edge fades sit on the frame, not in the
+   list's own scroll */
+.ob-facts-wrap { position: relative; display: flex; min-height: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--p-r); background: var(--surface); box-shadow: inset 0 1px 0 #fff, var(--shadow-1); }
+.ob-facts { flex: 1; display: grid; align-content: start; min-height: 0; margin: 0; padding: 0; list-style: none; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.ob-fact { position: relative; padding: var(--s3) var(--s4); border-top: 1px solid var(--line); }
+/* rows above or below the card's edges fade out instead of being cut flat */
+.ob-facts-wrap::before, .ob-facts-wrap::after { content: ""; position: absolute; z-index: 1; left: 0; right: 0; height: 2.5rem; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+.ob-facts-wrap::before { top: 0; background: linear-gradient(var(--surface), rgba(255, 255, 255, 0)); }
+.ob-facts-wrap::after { bottom: 0; background: linear-gradient(rgba(255, 255, 255, 0), var(--surface)); }
+.ob-facts-wrap:has(.ob-facts.has-above)::before, .ob-facts-wrap:has(.ob-facts.has-more)::after { opacity: 1; }
+.ob-fact:first-child { border-top: 0; }
+.ob-fact span { display: block; color: var(--ink-4); font: var(--t-label); }
+.ob-fact b { display: block; margin-top: 0.125rem; color: var(--ink-1); font: 500 0.875rem/1.4 var(--font); text-wrap: balance; }
+.ob-fact.is-dim b { color: var(--ink-3); }
+.ob-fact .ob-guess { margin-left: var(--s1); }
+.ob-fact.is-new { animation: ob-fact-in 0.4s var(--ease) both; }
+@keyframes ob-fact-in { from { transform: translateY(0.375rem); } }
+.ob-fact.is-new::before { content: ""; position: absolute; left: 0; top: var(--s3); bottom: var(--s3); width: 0.1875rem; border-radius: 0 0.1875rem 0.1875rem 0; background: var(--accent); animation: ob-run-fade 1.6s var(--ease) forwards; }
+@keyframes ob-run-fade { 0%, 55% { opacity: 1; } to { opacity: 0; } }
+.ob-knows-label .ob-count[hidden] { display: none; }
+.ob-knows-empty { padding: var(--s4); color: var(--ink-4); font: var(--t-small); }
+
+/* ---- the stage: BlueAI speaks, works, shows ------------------------------- */
+.ob-stage { width: min(47.5rem, 100%); margin: 0 auto; padding: var(--s16) var(--s6) var(--s24); }
+.ob-say { display: flex; gap: var(--s4); align-items: flex-start; }
+.ob-say h1 { margin: 0; color: var(--ink-1); font: var(--t-p-title); letter-spacing: var(--tr-display); text-wrap: balance; }
+.ob-say p { margin: var(--s3) 0 0; color: var(--ink-3); font: 400 1.0625rem/1.5 var(--font); letter-spacing: var(--tr-mid); text-wrap: pretty; }
+.ob-say .ob-agent { margin-top: 0.125rem; }
+.ob-say, .ob-workbox, .ob-aside, .ob-out { animation: ob-rise 0.4s var(--ease) both; }
+
+/* the live checklist: a floating card with a progress line on its top edge */
+.ob-workbox { position: relative; margin: var(--s8) 0 0 3.5rem; overflow: hidden; border: 1px solid rgba(10, 10, 9, 0.08); border-radius: var(--p-r); background: var(--surface); box-shadow: var(--p-float); }
+.ob-workbar { height: 0.25rem; margin: var(--s5) var(--s5) 0; overflow: hidden; border-radius: var(--r-pill); background: rgba(10, 10, 9, 0.06); }
+.ob-workbar span { display: block; height: 100%; border-radius: var(--r-pill); background: linear-gradient(90deg, #9ccf12, #c6f432); transform: scaleX(0); transform-origin: left; transition: transform 0.7s var(--ease); }
+.ob-work { display: grid; gap: 0.125rem; margin: 0; padding: var(--s3) var(--s5) var(--s4); list-style: none; }
+.ob-work li { display: flex; align-items: center; gap: var(--s3); min-height: 2.25rem; color: var(--ink-3); font: var(--t-body); transition: color 0.2s var(--ease); }
+.ob-work li i { flex: none; display: grid; place-items: center; width: 1.375rem; height: 1.375rem; border-radius: 50%; border: 1.5px solid rgba(10, 10, 9, 0.22); }
+.ob-work li i svg { width: 0.875rem; height: 0.875rem; }
+.ob-work li i svg path { stroke-width: 3.2; }
+.ob-work li.is-now { color: var(--ink-1); font-weight: 500; }
+.ob-work li.is-now i { border: 2px solid rgba(10, 10, 9, 0.12); border-top-color: var(--ink-1); animation: ob-spin 0.8s linear infinite; }
+.ob-work li.is-done { color: var(--ink-2); }
+.ob-work li.is-done i { border-color: transparent; background: var(--ink-1); color: #fff; }
+@keyframes ob-spin { to { transform: rotate(360deg); } }
+
+/* "while I work": a quick question (float card) or a proof card (lit) */
+.ob-aside { margin: var(--s4) 0 0 3.5rem; padding: var(--s6); }
+.ob-aside h3 { margin: 0 0 var(--s4); color: var(--ink-1); font: var(--t-h3); letter-spacing: -0.02em; }
+.ob-aside-row { display: flex; gap: var(--s2); }
+.ob-aside-row .ob-input { flex: 1; }
+.ob-aside-skip { display: inline-block; margin-top: var(--s4); color: var(--ink-4); font: var(--t-small); font-weight: 500; }
+.ob-aside-skip:hover { color: var(--ink-1); }
+.ob-aside.ob-proofcard { display: flex; align-items: center; gap: var(--s5); padding: var(--s6) var(--s8); }
+.ob-proofcard b { flex: none; color: var(--ink-1); font: var(--t-p-figure); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ob-proofcard span { color: var(--ink-2); font: 400 1rem/1.45 var(--font); text-wrap: pretty; }
+
+/* ---- results ------------------------------------------------------------- */
+.ob-out { margin: var(--s8) 0 0 3.5rem; }
+.ob-next { display: flex; flex-wrap: wrap; gap: var(--s3) var(--s4); align-items: center; margin-top: var(--s8); }
+.ob-hint { color: var(--ink-4); font: var(--t-small); }
+.ob-next .ob-hint { color: var(--ink-3); font-size: 0.875rem; }
+
+/* a panel with its own small head (bars, formats) */
+.ob-panel { margin-top: var(--s6); padding: var(--s5) var(--s6) var(--s6); border: 1px solid var(--line); border-radius: var(--p-r); background: var(--surface); box-shadow: inset 0 1px 0 #fff, var(--shadow-1); }
+.ob-panel-h { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--s2) var(--s4); margin-bottom: var(--s4); }
+.ob-panel-h h3 { margin: 0; color: var(--ink-1); font: 500 1rem/1.3 var(--font); letter-spacing: -0.015em; }
+.ob-panel-h span { color: var(--ink-4); font: var(--t-small); }
+
+/* step 2: competitors, one list card with hairlines */
+.ob-rows { display: grid; overflow: hidden; border: 1px solid rgba(10, 10, 9, 0.08); border-radius: var(--p-r); background: var(--surface); box-shadow: var(--p-float); }
+.ob-row { display: flex; align-items: center; gap: var(--s4); padding: 0.875rem var(--s5); border-top: 1px solid var(--line); cursor: pointer; transition: background 0.15s var(--ease); }
+.ob-row:first-child { border-top: 0; }
+@media (hover: hover) { .ob-row:not(.is-off):hover { background: rgba(10, 10, 9, 0.015); } }
+.ob-row.is-off { background: var(--surface-2); }
+.ob-row-drop { display: none; flex: none; color: var(--ink-3); font: var(--t-label); font-style: normal; }
+.ob-row.is-off .ob-row-drop { display: block; }
+.ob-row:focus-visible { outline: 0; box-shadow: inset 0 0 0 0.1875rem rgba(198, 244, 50, 0.6); }
+/* a soft tile tinted per name (--h), so the ticks are the row's only ink */
+.ob-row-av { flex: none; display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: var(--r-md); background: hsl(var(--h, 40) 32% 93%); color: hsl(var(--h, 40) 30% 28%); font: 600 1rem/1 var(--font); box-shadow: inset 0 0 0 1px hsl(var(--h, 40) 22% 85%); }
+.ob-checking { display: inline-block; width: 0.75rem; height: 0.75rem; margin-right: 0.375rem; vertical-align: -0.0625rem; border: 2px solid rgba(10, 10, 9, 0.12); border-top-color: var(--ink-1); border-radius: 50%; animation: ob-spin 0.8s linear infinite; }
+.ob-row-main { flex: 1; min-width: 0; }
+.ob-row-main b { display: block; color: var(--ink-1); font: 500 0.9688rem/1.3 var(--font); }
+.ob-row-main small { color: var(--ink-3); font: var(--t-small); }
+.ob-row-av, .ob-row-main { transition: opacity 0.2s var(--ease); }
+.ob-row.is-off .ob-row-av, .ob-row.is-off .ob-row-main { opacity: 0.4; }
+.ob-row.is-off .ob-row-main b { text-decoration: line-through; text-decoration-color: var(--ink-4); }
+
+/* the yes dot (on) or a hollow ring (off), rows and angles */
+.ob-tick { flex: none; display: grid; place-items: center; width: 1.375rem; height: 1.375rem; border: 1.5px solid var(--line-2); border-radius: 50%; color: transparent; transition: background 0.15s var(--ease), transform 0.2s var(--ease); }
+.ob-tick svg { width: 0.875rem; height: 0.875rem; }
+.ob-tick svg path { stroke-width: 3.2; }
+.ob-row:not(.is-off) .ob-tick, .ob-angle:not(.is-off) .ob-tick { border-color: transparent; background: var(--ink-1); color: #fff; }
+.ob-row.is-off .ob-tick { border-color: var(--ink-4); }
+.ob-row.is-checking .ob-tick { visibility: hidden; }
+.ob-next .ob-btn--ink.is-busy { opacity: 0.72; }
+.ob-btn--ink .ob-checking { margin-right: 0.5rem; border-color: rgba(255, 255, 255, 0.3); border-top-color: #fff; }
+.ob-row:active .ob-tick, .ob-angle:active .ob-tick { transform: scale(0.9); }
+.ob-stage .ob-add { margin-top: var(--s3); }
+
+/* step 3: what wins. The winning format leads as the screen's one lit panel */
+.ob-win { display: flex; align-items: center; gap: var(--s6); padding: var(--s6); border-color: rgba(10, 10, 9, 0.08); box-shadow: var(--p-float); }
+.ob-win-media { flex: none; width: 6rem; aspect-ratio: 9 / 16; overflow: hidden; border-radius: 0.875rem; background: #111; box-shadow: 0 0 0 1px var(--line), var(--shadow-2); }
+.ob-win-media video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ob-win-fig { display: block; margin-top: var(--s4); color: var(--ink-1); font: var(--t-p-figure); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.ob-win-fig small { margin-left: 0.5rem; color: var(--ink-3); font: 400 1rem/1 var(--font); letter-spacing: var(--tr-mid); }
+.ob-win p { margin: var(--s2) 0 0; color: var(--ink-2); font: 400 1rem/1.5 var(--font); text-wrap: pretty; }
+.ob-win p b { color: var(--ink-1); font-weight: 500; }
+.ob-stage .ob-hbars--posted .ob-hbar:not(.is-you) .ob-hbar-t span { background: rgba(10, 10, 9, 0.26); }
+.ob-stage .ob-hbars--posted .ob-hbar.is-est .ob-hbar-t span { background: repeating-linear-gradient(135deg, rgba(10, 10, 9, 0.26) 0 0.25rem, rgba(10, 10, 9, 0.1) 0.25rem 0.5rem); }
+.ob-stage .ob-hbars--rank .ob-hbar:not(.is-top) .ob-hbar-t span { background: rgba(10, 10, 9, 0.26); }
+.ob-stage .ob-hbars--rank .ob-hbar.is-top { color: var(--ink-1); font-weight: 500; }
+.ob-stage .ob-hbars--rank .ob-hbar.is-top .ob-hbar-t span { background: linear-gradient(90deg, #9ccf12, #c6f432); }
+.ob-stage .ob-hbars--posted .ob-hbar.is-you .ob-hbar-t span { background: var(--ink-1); }
+.ob-stage .ob-panel .ob-hbars { gap: 0.625rem; margin-top: 0; }
+.ob-stage .ob-hbar { grid-template-columns: 8.5rem 1fr 2.5rem; color: var(--ink-2); }
+.ob-stage .ob-hbar-t { height: 0.5rem; border-radius: var(--r-pill); }
+.ob-stage .ob-hbar-t span { border-radius: var(--r-pill); }
+.ob-stage .ob-hbar.is-you { color: var(--ink-1); font-weight: 500; }
+.ob-stage .ob-hbar b { font-variant-numeric: tabular-nums; }
+.ob-tiles3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s3); margin-top: var(--s3); }
+.ob-tiles2 { grid-template-columns: repeat(2, 1fr); }
+.ob-stat { display: grid; align-content: start; gap: var(--s2); padding: var(--s5); border: 1px solid var(--line); border-radius: var(--p-r); background: var(--surface); box-shadow: inset 0 1px 0 #fff, var(--shadow-1); }
+.ob-stat b { color: var(--ink-1); font: 600 1.75rem/1.05 var(--font); letter-spacing: -0.035em; font-variant-numeric: tabular-nums; }
+.ob-stat span { color: var(--ink-3); font: var(--t-small); }
+
+/* step 4: angles (cards) */
+.ob-stage .ob-angle { position: relative; gap: var(--s2); padding: var(--s5) 3.25rem var(--s5) var(--s5); border-color: rgba(10, 10, 9, 0.08); border-radius: var(--p-r); box-shadow: var(--p-float); transition: background 0.2s var(--ease), box-shadow 0.2s var(--ease), transform 0.2s var(--ease); }
+.ob-stage .ob-angle:hover { border-color: var(--line-2); }
+.ob-stage .ob-angle:focus-visible { outline: 0; box-shadow: var(--p-ring), var(--p-float); }
+.ob-stage .ob-angle.is-off { opacity: 1; border-style: dashed; border-color: var(--ink-4); background: var(--surface-2); box-shadow: none; }
+.ob-stage .ob-angle.is-off > :not(.ob-tick):not(.ob-angle-off) { opacity: 0.45; }
+.ob-stage .ob-angle.is-off .ob-tick { border-color: var(--ink-3); }
+.ob-angle-off { display: none; position: absolute; top: 1.4375rem; right: 3.25rem; color: var(--ink-2); font: var(--t-label); font-style: normal; font-weight: 500; }
+.ob-stage .ob-angle.is-off .ob-angle-off { display: block; }
+.ob-stage .ob-angle small { color: var(--ink-3); font: var(--t-small); font-weight: 500; }
+.ob-stage .ob-angle .ob-tick { position: absolute; top: var(--s5); right: var(--s5); }
+.ob-stage .ob-angle { display: flex; flex-direction: column; align-items: flex-start; }
+.ob-stage .ob-angle .ob-chip { margin-top: auto; }
+.ob-stage .ob-angle b { margin-bottom: var(--s2); }
+
+/* step 1: the market, fixable where it is shown */
+.ob-market { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); margin: var(--s5) 0 0; color: var(--ink-3); font: var(--t-small); }
+.ob-market b { color: var(--ink-1); font-weight: 500; }
+.ob-market .ob-guess { margin-left: 0; }
+.ob-market .ob-link { margin-left: var(--s1); font-size: 0.8125rem; }
+.ob-market .ob-pick { height: 2rem; font-size: 0.8125rem; }
+.ob-upnext b { white-space: nowrap; }
+
+/* steps 5 and 6, the sign-up and the phone layout: run-2.css */

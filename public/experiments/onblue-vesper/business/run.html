@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BlueAI is building your report: onBlue for business</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&display=swap">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/parts.css">
+<link rel="stylesheet" href="css/run.css">
+<link rel="stylesheet" href="css/run-2.css">
+<link rel="stylesheet" href="css/product.css">
+</head>
+<body class="ob-page">
+<div class="ob-run">
+  <header class="ob-runbar">
+    <a class="ob-logo" href="./"><svg class="ob-logo-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg><span><span class="ob-logo-on">on</span>Blue</span></a>
+    <ol class="ob-stepper" data-stepper aria-label="Report steps"></ol>
+    <p class="ob-runbar-now" data-stepnow aria-hidden="true"></p>
+    <div class="ob-runbar-end"><button class="ob-btn ob-btn--sm" type="button" data-save>Save my report</button></div>
+  </header>
+  <div class="ob-run-body">
+    <aside class="ob-knows" aria-label="What BlueAI knows">
+      <div class="ob-knows-head" data-knows-head></div>
+      <button class="ob-knows-label" type="button" data-knows-toggle aria-expanded="false">What BlueAI knows <span class="ob-count" data-facts-count>0</span></button>
+      <div class="ob-facts-wrap"><ul class="ob-facts" data-facts></ul></div>
+    </aside>
+    <main class="ob-stage" data-stage aria-live="polite"></main>
+  </div>
+</div>
+
+<div class="ob-modal" data-signup-modal role="dialog" aria-modal="true" aria-labelledby="ob-su-t">
+  <div class="ob-modal-box ob-signup">
+    <button class="ob-x" type="button" aria-label="Close" data-close><span data-ico="close"></span></button>
+    <span data-agent></span>
+    <h3 id="ob-su-t">Save your report</h3>
+    <p data-su-sub>Free, and it picks up right where BlueAI left off.</p>
+    <button class="ob-btn" type="button" data-google><span data-ico="google"></span>Continue with Google</button>
+    <div class="ob-or" data-su-or>or</div>
+    <form data-email-form novalidate><label class="ob-signup-label" for="ob-su-email">Email</label><input class="ob-input" id="ob-su-email" type="email" placeholder="you@yourbrand.com" autocomplete="email" required><p class="ob-signup-err" data-su-err role="alert" hidden></p><button class="ob-btn ob-btn--ink" type="submit">Continue with email</button></form>
+    <p class="ob-signup-note">No card needed.</p>
+  </div>
+</div>
+
+<script src="js/ob.js"></script>
+<script src="js/report.js"></script>
+<script src="js/run-steps.js"></script>
+<script src="js/run-steps-2.js"></script>
+<script>
+  document.querySelectorAll('[data-ico]').forEach(function (n) { n.innerHTML = OB.icon(n.getAttribute('data-ico'), 16); });
+  document.querySelectorAll('[data-agent]').forEach(function (n) { n.outerHTML = OB.agent(); });
+</script>
+<script src="js/run.js"></script>
+</body>
+</html>

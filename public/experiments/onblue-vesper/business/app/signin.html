@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in: onBlue for business</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&display=swap">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/parts.css">
+<link rel="stylesheet" href="../css/product.css">
+<style>
+  /* Sign in: one card on the page, the product's finish (hairline panel with the
+     volt rim, ink button, plain truthful copy). Leads into the app without the tour. */
+  body { background: var(--bg); }
+  .si { display: grid; grid-template-rows: auto 1fr auto; min-height: 100vh; padding: var(--s6) var(--s4); }
+  .si-top { display: flex; align-items: center; justify-content: space-between; width: min(67.5rem, 100%); margin: 0 auto; }
+  .si-top a:not(.ob-logo) { color: var(--ink-3); font: var(--t-small); font-weight: 500; text-decoration: none; }
+  .si-top a:not(.ob-logo):hover { color: var(--ink-1); }
+  /* the card sits at a fixed offset from the top, so a message never moves it */
+  .si-main { display: grid; justify-items: center; align-items: start; padding: clamp(var(--s10), 11vh, 7.5rem) 0 var(--s12); }
+  .si-card { position: relative; width: min(26rem, 100%); padding: var(--s10) var(--s8) var(--s8); overflow: hidden; border: 1px solid var(--line); border-radius: var(--p-r); background: var(--p-glow), var(--surface); box-shadow: var(--p-float); }
+  .si-card .ob-agent { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; margin-bottom: var(--s5); border-radius: 50%; }
+  .si-card::before { content: ""; position: absolute; top: 0; left: 18%; right: 18%; height: 1.5px; background: var(--p-rim); }
+  .si-card h1 { margin: 0; color: var(--ink-1); font: 500 2rem/1.1 var(--font); letter-spacing: -0.035em; }
+  .si-card > p { margin: var(--s2) 0 0; color: var(--ink-3); font: var(--t-body); }
+  .si-google { width: 100%; height: 3rem; margin-top: var(--s8); gap: 0.625rem; }
+  .si-or { display: flex; align-items: center; gap: var(--s3); margin: var(--s5) 0; color: var(--ink-4); font: var(--t-label); }
+  .si-or::before, .si-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .si-card label { display: block; margin-bottom: var(--s2); color: var(--ink-2); font: var(--t-small); font-weight: 500; }
+  .si-card .ob-input { height: 3rem; }
+  .si-card .ob-btn--ink { width: 100%; height: 3rem; margin-top: var(--s3); }
+  /* a message sits right under what it is about (the field, or the Google button) and takes no room when empty */
+  .si-msg { display: flex; align-items: flex-start; gap: 0.5rem; margin: var(--s2) 0 0; color: var(--ink-2); font: var(--t-small); text-wrap: pretty; }
+  .si-msg:empty { display: none; }
+  .si-msg svg { flex: none; width: 1rem; height: 1rem; margin-top: 0.125rem; color: #c2452d; }
+  .si-msg a { color: var(--ink-1); font-weight: 500; text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 0.1875rem; }
+  .si-card .ob-input.is-err, .si-card .ob-input.is-err:focus { border-color: #d0573f; box-shadow: 0 0 0 0.25rem rgba(208, 87, 63, 0.14); }
+  .si-alt { margin: var(--s3) 0 0; padding-top: var(--s5); border-top: 1px solid var(--line); color: var(--ink-3); font: var(--t-small); }
+  .si-alt a { color: var(--ink-1); font-weight: 500; text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 0.1875rem; }
+  .si-alt a:hover { text-decoration-color: var(--ink-1); }
+  .si-foot { color: var(--ink-4); font: var(--t-label); text-align: center; }
+  @media (max-width: 480px) { .si-card { padding: var(--s8) var(--s5) var(--s6); } .si-card h1 { font-size: 1.75rem; } }
+</style>
+</head>
+<body class="ob-page">
+<div class="si">
+  <header class="si-top">
+    <a class="ob-logo" href="../" data-logo></a>
+    <a href="../">Back to the website</a>
+  </header>
+  <main class="si-main">
+    <div class="si-card">
+      <span data-agent></span>
+      <h1>Welcome back</h1>
+      <p>Sign in to see your videos, budget and views.</p>
+      <button class="ob-btn si-google" type="button" data-google><span data-gicon></span>Continue with Google</button>
+      <p class="si-msg" role="status" aria-live="polite" data-gmsg></p>
+      <div class="si-or">or</div>
+      <form data-email novalidate>
+        <label for="si-email">Email</label>
+        <input class="ob-input" id="si-email" type="email" placeholder="you@yourbrand.com" autocomplete="email" required>
+        <p class="si-msg" role="status" aria-live="polite" data-msg></p>
+        <button class="ob-btn ob-btn--ink" type="submit">Continue with email</button>
+      </form>
+      <p class="si-alt">New to onBlue? <a href="../">Get your free report first</a>. It takes about a minute, and you sign up only if you want to keep it.</p>
+    </div>
+  </main>
+  <p class="si-foot">A design prototype. No password is stored.</p>
+</div>
+<script src="../js/ob.js"></script>
+<script src="../js/report.js"></script>
+<script>
+(function () {
+  'use strict';
+  var OB = window.OB;
+  document.querySelector('[data-logo]').innerHTML = OB.logoMark + '<span><span class="ob-logo-on">on</span>Blue</span>';
+  document.querySelector('[data-gicon]').outerHTML = OB.icon('google', 18);
+  document.querySelector('[data-agent]').outerHTML = OB.agent();
+  var msg = document.querySelector('[data-msg]'), gmsg = document.querySelector('[data-gmsg]'), input = document.getElementById('si-email');
+
+  // one rule with sign-up: any email works, and an account exists only once a report was saved
+  // with it (sign-up stores the email and opens the app). Nothing here ever makes an account up.
+  function account() { var r = OB.report.get(); return r && r.email && OB.store('onblue-app-stage') ? r : null; }
+  function finish(r) {
+    OB.sess('onblue:signedin', '1'); OB.sess('onblue:email', r.email); OB.sess('onblue:site', r.site || '');
+    OB.sess('onblue:agency', r.brand); OB.sess('onblue:agency-status', 'approved');
+    OB.store('onblue-tour-done', 1);   // a returning user: straight to Home, never the first-visit tour
+    window.location.href = 'home.html';
+  }
+  // the line under the card ("New to onBlue? Get your free report first") carries the way in, so a message never repeats it
+  function say(html, bad, where) {
+    msg.innerHTML = ''; gmsg.innerHTML = '';
+    if (html) { (where || msg).innerHTML = OB.icon('close', 16) + '<span>' + html + '</span>'; }
+    input.classList.toggle('is-err', !!bad);
+  }
+  function none(email) {
+    var r = OB.report.get();
+    // a report this browser emailed but never saved: send them back to it, not to a new one
+    if (r && email && String(r.email || '').toLowerCase() === email) { return 'You have a free report for ' + OB.esc(r.brand) + ', but no account yet. <a href="../run.html?resume=1">Open your report</a> and save it to sign up.'; }
+    return email ? 'No onBlue account for ' + OB.esc(email) + ' yet.' : 'No onBlue account is linked to that Google account yet.';
+  }
+
+  input.addEventListener('input', function () { say(''); });
+  document.querySelector('[data-google]').addEventListener('click', function () {
+    var r = account();
+    if (r) { finish(r); return; }
+    say(none(''), false, gmsg);
+  });
+  document.querySelector('[data-email]').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var email = input.value.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { say('That doesn\'t look like an email yet.', true); input.focus(); return; }
+    var r = account();
+    if (r && r.email.toLowerCase() === email) { finish(r); return; }
+    say(none(email), true); input.focus();
+  });
+})();
+</script>
+</body>
+</html>

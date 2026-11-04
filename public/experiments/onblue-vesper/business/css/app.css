@@ -1,0 +1,223 @@
+/* The dashboard (business/app/*.html): a quiet rail, one page at a time,
+   BlueAI's prompt bar on Home. Light only. Carries the homepage's finish:
+   Geist 500 for UI, 600 only for figures, ink with volt used sparingly,
+   1.25rem panels on 1px hairlines with an inset top light, glassy floating
+   cards for anything that lifts off the page. Motion is transform and
+   opacity only. Tokens --p-* come from product.css (linked after this). */
+
+.ob-app { display: grid; grid-template-columns: 15.5rem minmax(0, 1fr); min-height: 100vh; background: linear-gradient(var(--line), var(--line)) no-repeat calc(15.5rem - 1px) 0 / 1px 100%; }   /* the rail's edge runs the full page, not only the sticky rail */
+
+/* ---- the rail ------------------------------------------------------------ */
+.ob-side { position: sticky; top: 0; display: flex; flex-direction: column; gap: 0.125rem; height: 100vh; padding: var(--s5) var(--s3) var(--s3); border-right: 1px solid var(--line); background: linear-gradient(180deg, #f3f3ef 0%, var(--bg) 100%); }
+.ob-side .ob-logo { padding: var(--s1) var(--s3) var(--s8); }
+.ob-side-nav { display: flex; flex-direction: column; gap: 0.125rem; }
+.ob-navi { position: relative; display: flex; align-items: center; gap: 0.6875rem; height: 2.375rem; padding: 0 var(--s3); border: 1px solid transparent; border-radius: 0.625rem; color: var(--ink-3); font: 500 0.9375rem/1 var(--font); letter-spacing: var(--tr-mid); text-decoration: none; transition: background 0.15s var(--ease), color 0.15s var(--ease); }
+.ob-navi:hover { background: rgba(10, 10, 9, 0.04); color: var(--ink-1); }
+.ob-navi:focus-visible { outline: 0; box-shadow: var(--p-ring); }
+.ob-navi.is-on { border-color: rgba(10, 10, 9, 0.07); background: var(--surface); color: var(--ink-1); box-shadow: inset 0 1px 0 #fff, 0 1px 0.125rem rgba(10, 10, 9, 0.05), 0 0.375rem 0.875rem -0.5rem rgba(10, 10, 9, 0.22); }
+.ob-navi svg { flex: none; width: 1.125rem; height: 1.125rem; color: rgba(107, 107, 102, 0.8); transition: color 0.15s var(--ease); }
+.ob-navi:hover svg, .ob-navi.is-on svg { color: var(--ink-1); }
+.ob-navi .ob-new { margin-left: auto; padding: 0.1875rem 0.4375rem; border-radius: 0.375rem; background: var(--accent); color: var(--on-accent); font: 600 0.6875rem/1 var(--font); letter-spacing: 0; }
+.ob-navi .ob-count { margin-left: auto; }
+.ob-side-gap { flex: 1; }
+
+.ob-side-budget { display: grid; gap: 0.375rem; margin: 0 0 var(--s2); padding: var(--s4); border: 1px solid rgba(10, 10, 9, 0.07); border-radius: 1rem; background: var(--surface); box-shadow: var(--p-float); color: inherit; text-decoration: none; transition: transform 0.2s var(--ease); }
+.ob-side-budget:hover { transform: translateY(-1px); }
+.ob-side-budget:focus-visible { outline: 0; box-shadow: var(--p-ring), var(--p-float); }
+.ob-side-budget-top { display: flex; align-items: center; justify-content: space-between; color: var(--ink-3); font: var(--t-label); }
+.ob-side-budget-top > span { color: var(--ink-4); font-weight: 400; }
+.ob-side-budget-l { display: inline-flex; align-items: center; gap: 0.375rem; }
+.ob-side-budget-top em { padding: 0.125rem 0.375rem; border-radius: 0.3125rem; background: var(--surface-2); color: var(--ink-2); font-style: normal; }
+.ob-side-budget b { color: var(--ink-1); font: 600 1.5rem/1.05 var(--font); letter-spacing: -0.035em; font-variant-numeric: tabular-nums; }
+.ob-side-budget b small { margin-left: 0.25rem; color: var(--ink-3); font: 400 0.8125rem/1 var(--font); letter-spacing: var(--tr-mid); }
+.ob-side-budget > small { color: var(--ink-3); font: var(--t-label); font-weight: 400; }
+.ob-meter { height: 0.3125rem; margin: 0.375rem 0 0.125rem; border-radius: var(--r-pill); background: var(--surface-2); box-shadow: inset 0 0 0 1px rgba(10, 10, 9, 0.04); overflow: hidden; }
+.ob-meter span { display: block; height: 100%; border-radius: inherit; background: var(--ink-1); }   /* what is spent: empty on day one */
+
+.ob-me { position: relative; display: flex; align-items: center; gap: 0.625rem; width: 100%; padding: var(--s2); border: 0; border-radius: 0.75rem; background: none; font: inherit; text-align: left; cursor: pointer; transition: background 0.15s var(--ease); }
+.ob-me:hover, .ob-me[aria-expanded="true"] { background: rgba(10, 10, 9, 0.045); }
+.ob-me:focus-visible { outline: 0; box-shadow: var(--p-ring); }
+.ob-me-av { flex: none; display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: linear-gradient(180deg, #2c2c29 0%, #0b0b0a 100%); color: var(--accent); font: 600 0.875rem/1 var(--font); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16); }
+.ob-me-t { flex: 1; min-width: 0; }
+.ob-me b { display: block; overflow: hidden; color: var(--ink-1); font: 500 0.875rem/1.25 var(--font); white-space: nowrap; text-overflow: ellipsis; }
+.ob-me small { display: block; overflow: hidden; color: var(--ink-4); font: var(--t-label); font-weight: 400; white-space: nowrap; text-overflow: ellipsis; }
+.ob-me-dots { flex: none; display: flex; gap: 0.1875rem; padding-right: 0.25rem; }
+.ob-me-dots i { width: 0.1875rem; height: 0.1875rem; border-radius: 50%; background: var(--ink-4); }
+
+.ob-menu { position: absolute; left: var(--s3); right: var(--s3); bottom: 4rem; z-index: 50; display: none; padding: 0.375rem; border: 1px solid rgba(10, 10, 9, 0.08); border-radius: 1rem; background: var(--surface, #fff); box-shadow: var(--p-lift); }
+.ob-menu.is-open { display: block; animation: ob-menu-in 0.2s var(--ease); }   /* solid from the first frame: it slides, it never fades */
+@keyframes ob-menu-in { from { transform: translateY(0.375rem); } to { transform: none; } }
+.ob-menu-ext { display: inline-flex; margin-left: auto; color: var(--ink-4); }
+.ob-menu a .ob-menu-ext svg { width: 0.875rem; height: 0.875rem; color: var(--ink-4); transform: rotate(-45deg); }
+.ob-menu-who { display: grid; gap: 0.125rem; padding: 0.625rem 0.75rem 0.75rem; }
+.ob-menu-who b { overflow: hidden; color: var(--ink-1); font: 500 0.875rem/1.25 var(--font); white-space: nowrap; text-overflow: ellipsis; }
+.ob-menu-who small { overflow: hidden; color: var(--ink-4); font: var(--t-label); font-weight: 400; white-space: nowrap; text-overflow: ellipsis; }
+.ob-menu a, .ob-menu button { display: flex; align-items: center; gap: 0.625rem; width: 100%; height: 2.25rem; padding: 0 0.75rem; border: 0; border-radius: 0.625rem; background: none; color: var(--ink-2); font: 500 0.875rem/1 var(--font); letter-spacing: var(--tr-mid); text-decoration: none; cursor: pointer; }
+.ob-menu a svg, .ob-menu button svg { flex: none; width: 1rem; height: 1rem; color: var(--ink-2); }
+.ob-menu a:hover, .ob-menu button:hover, .ob-menu a:focus-visible, .ob-menu button:focus-visible { outline: 0; background: var(--surface-2); color: var(--ink-1); }
+.ob-menu a:hover svg, .ob-menu button:hover svg { color: var(--ink-1); }
+.ob-menu hr { margin: 0.375rem 0.25rem; border: 0; border-top: 1px solid var(--line); }
+
+/* ---- the page frame ------------------------------------------------------ */
+.ob-main { min-width: 0; padding: var(--s12) var(--s10) var(--s24); }
+.ob-main-in { width: min(67.5rem, 100%); margin: 0 auto; }
+.ob-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--s4) var(--s8); margin-bottom: var(--s10); }
+.ob-head h1 { margin: 0; color: var(--ink-1); font: var(--t-p-title); letter-spacing: var(--tr-display); text-wrap: balance; }
+.ob-head p { max-width: 40rem; margin: var(--s3) 0 0; color: var(--ink-3); font: 400 1.0625rem/1.5 var(--font); letter-spacing: var(--tr-mid); text-wrap: pretty; }
+.ob-head-act { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); }
+.ob-sect { margin-top: var(--s12); }
+.ob-sect-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--s2) var(--s6); margin-bottom: var(--s5); }
+.ob-sect-head h2 { display: flex; align-items: center; gap: 0.5rem; margin: 0; color: var(--ink-1); font: 500 1.3125rem/1.25 var(--font); letter-spacing: -0.02em; }
+.ob-sect-head a, .ob-sect-head span { color: var(--ink-3); font: 400 0.8125rem/1.4 var(--font); text-decoration: none; }
+.ob-sect-head h2 span { color: inherit; font: inherit; }
+.ob-sect-head h2 .ob-count { color: #fff; font: 600 0.6875rem/1 var(--font); }
+.ob-sect-head a { color: var(--ink-3); font-weight: 500; text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 0.1875rem; transition: color 0.15s var(--ease), text-decoration-color 0.15s var(--ease); }
+.ob-sect-head a:hover { color: var(--ink-1); text-decoration-color: var(--ink-1); }
+
+/* ---- BlueAI's prompt bar (Home, Studio) ----------------------------------- */
+.ob-prompt { position: relative; padding: var(--s3) var(--s3) var(--s4); border: 1px solid rgba(10, 10, 9, 0.12); border-radius: var(--p-r); background: var(--surface); box-shadow: var(--p-float); transition: border-color 0.2s var(--ease), box-shadow 0.3s var(--ease); }
+.ob-prompt:focus-within { border-color: #9ccf12; box-shadow: 0 0 0 0.3125rem rgba(198, 244, 50, 0.24), inset 0 1px 0 #fff, 0 1.875rem 3.5rem -1.375rem rgba(10, 10, 9, 0.34); }
+.ob-prompt-row { display: flex; align-items: center; gap: var(--s3); }
+.ob-prompt-row input { flex: 1; min-width: 0; height: 2.75rem; border: 0; outline: 0; background: none; color: var(--ink-1); font: 400 1.125rem/1.3 var(--font); letter-spacing: var(--tr-mid); }
+.ob-prompt-row input::placeholder { color: var(--ink-4); }
+.ob-prompt-send { flex: none; display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border: 0; border-radius: 50%; background: linear-gradient(180deg, #2c2c29 0%, #0b0b0a 100%); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 0.5rem 1rem -0.5rem rgba(10, 10, 9, 0.5); cursor: pointer; transition: transform 0.15s var(--ease); }
+.ob-prompt-send:hover { transform: translateY(-1px); }
+.ob-prompt-send:active { transform: scale(0.94); }
+.ob-prompt-send:focus-visible { outline: 0; box-shadow: var(--p-ring); }
+.ob-prompt .ob-agent { width: 2.5rem; height: 2.5rem; background: none; box-shadow: none; color: var(--ink-1); }
+.ob-prompt:not(.has-text) .ob-prompt-send { opacity: 0.3; box-shadow: none; }
+.ob-prompt-send { transition: transform 0.15s var(--ease), opacity 0.15s var(--ease); }
+.ob-prompt-chips { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s3); padding-left: calc(2.5rem + var(--s3)); }
+.ob-prompt-chips button { height: 1.875rem; padding: 0 0.75rem; border: 1px solid var(--line); border-radius: var(--r-pill); background: var(--surface-2); color: var(--ink-2); font: 500 0.8125rem/1 var(--font); letter-spacing: var(--tr-mid); cursor: pointer; transition: border-color 0.15s var(--ease), background 0.15s var(--ease), color 0.15s var(--ease); }
+.ob-prompt-chips button:hover { border-color: var(--line-2); background: var(--surface); color: var(--ink-1); }
+.ob-prompt-chips button:focus-visible { outline: 0; box-shadow: var(--p-ring); }
+
+/* ---- video cards (Home, Studio, Radar) ------------------------------------ */
+.ob-vgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr)); gap: var(--s6) var(--s5); }
+.ob-vcard { display: grid; align-content: start; gap: 0.375rem; padding: 0; border: 0; background: none; font: inherit; text-align: left; cursor: pointer; }
+.ob-vcard .ob-phone { width: 100%; margin-bottom: 0.375rem; border-radius: 1rem; box-shadow: 0 1px 0.125rem rgba(10, 10, 9, 0.08), 0 1rem 1.75rem -1.125rem rgba(10, 10, 9, 0.45); transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease); }
+.ob-vcard:hover .ob-phone { box-shadow: 0 1px 0.125rem rgba(10, 10, 9, 0.08), 0 1.5rem 2.5rem -1.25rem rgba(10, 10, 9, 0.5); }
+.ob-vcard:focus-visible { outline: 0; }
+.ob-vcard:focus-visible .ob-phone { box-shadow: var(--p-ring); }
+.ob-vcard b { color: var(--ink-1); font: 500 0.9375rem/1.35 var(--font); letter-spacing: var(--tr-mid); text-wrap: pretty; }
+.ob-vcard small { color: var(--ink-4); font: var(--t-small); }
+.ob-vcard .ob-phone + .ob-vstat { margin-top: 0.125rem; }
+/* a video's status: a line beside the video, never a badge on it */
+.ob-vstat { display: inline-flex; align-items: center; gap: 0.4375rem; color: var(--ink-3); font: 500 0.8125rem/1.2 var(--font); letter-spacing: var(--tr-mid); }
+.ob-vstat::before { content: ""; flex: none; box-sizing: border-box; width: 0.4375rem; height: 0.4375rem; border-radius: 50%; background: var(--ink-4); }
+.ob-vstat--approve { color: var(--ink-1); }
+.ob-vstat--approve::before { background: var(--accent); box-shadow: 0 0 0 1px rgba(63, 106, 0, 0.4); }
+/* one dot per state: volt for your yes, a pulsing volt ring while creators post, solid ink when live, hollow while making */
+.ob-vstat--live::before { background: var(--ink-1); }
+.ob-vstat--posting { position: relative; color: var(--ink-2); }
+.ob-vstat--posting::before { background: none; box-shadow: inset 0 0 0 2px #8fbf0e; }
+.ob-vstat--posting::after { content: ""; position: absolute; left: 0; top: 50%; width: 0.4375rem; height: 0.4375rem; margin-top: -0.21875rem; border-radius: 50%; box-shadow: 0 0 0 1.5px #9ccf12; animation: ob-ping 1.8s var(--ease) infinite; }
+@keyframes ob-ping { from { opacity: 0.5; transform: scale(1); } to { opacity: 0; transform: scale(2.4); } }
+.ob-vstat--making::before { background: none; box-shadow: inset 0 0 0 1.5px var(--ink-4); }
+.ob-vviews { color: var(--ink-1); font-weight: 500; white-space: nowrap; }
+.ob-vstat--live::before { background: #3f8f12; box-shadow: 0 0 0 1px rgba(63, 143, 18, 0.25); }   /* live: a filled green, the clearest of the four */
+
+/* ---- shared surfaces: panels, tiles, tabs, empty states -------------------- */
+.ob-empty { padding: var(--s10) var(--s8); border: 1px dashed var(--line-2); border-radius: var(--p-r); background: rgba(255, 255, 255, 0.5); color: var(--ink-3); font: var(--t-body); text-align: center; }
+.ob-panel { position: relative; padding: var(--s6); border: 1px solid var(--line); border-radius: var(--p-r); background: var(--surface); box-shadow: inset 0 1px 0 #fff, var(--shadow-1); }
+.ob-panel h3 { margin: 0 0 var(--s2); color: var(--ink-1); font: var(--t-h3); letter-spacing: -0.02em; }
+.ob-panel p { margin: 0; color: var(--ink-3); }
+.ob-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s4); }
+.ob-cols--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ob-kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--s3); }
+.ob-kpi { padding: var(--s5); border: 1px solid var(--line); border-radius: var(--p-r); background: var(--surface); box-shadow: inset 0 1px 0 #fff, var(--shadow-1); }
+.ob-kpi small { color: var(--ink-3); font: var(--t-small); font-weight: 500; }
+.ob-kpi b { display: block; margin-top: 0.5rem; color: var(--ink-1); font: 600 1.75rem/1.05 var(--font); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.ob-tabs { display: inline-flex; gap: 0.125rem; margin-bottom: var(--s6); padding: 0.1875rem; border: 1px solid var(--line); border-radius: var(--r-pill); background: var(--surface-2); }
+.ob-tabs button { height: 2rem; padding: 0 var(--s4); border: 0; border-radius: var(--r-pill); background: none; color: var(--ink-3); font: 500 0.8125rem/1 var(--font); letter-spacing: var(--tr-mid); cursor: pointer; transition: color 0.15s var(--ease), background 0.15s var(--ease); }
+.ob-tabs button:hover { color: var(--ink-1); }
+.ob-tabs button:focus-visible { outline: 0; box-shadow: var(--p-ring); }
+.ob-tabs button[aria-pressed="true"] { background: var(--surface); color: var(--ink-1); box-shadow: inset 0 1px 0 #fff, 0 1px 0.125rem rgba(10, 10, 9, 0.08), 0 0.25rem 0.625rem -0.375rem rgba(10, 10, 9, 0.3); }
+
+/* ---- Home --------------------------------------------------------------- */
+/* waiting for your yes: the one lit panel on the page */
+.ob-needs { position: relative; display: grid; overflow: hidden; border: 1px solid var(--line); border-radius: var(--p-r); background: var(--p-glow), var(--surface); box-shadow: var(--p-float); }
+.ob-needs::before { content: ""; position: absolute; top: 0; left: 18%; right: 18%; height: 1.5px; background: var(--p-rim); pointer-events: none; }
+/* each waiting video is a card: a 9:16 poster to watch from, Approve as the one filled button */
+.ob-needs:not(.ob-needs--empty) { grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); gap: var(--s2); padding: var(--s3); }
+.ob-need { display: grid; grid-template-columns: 6rem minmax(0, 1fr); gap: var(--s5); padding: var(--s3); border-radius: 1rem; transition: background 0.15s var(--ease); }
+@media (hover: hover) { .ob-need:hover { background: rgba(10, 10, 9, 0.025); } }   /* a tap on a phone never leaves it lit */
+.ob-need .ob-phone { width: 6rem; border-radius: 0.75rem; box-shadow: 0 1px 0.125rem rgba(10, 10, 9, 0.1), 0 0.75rem 1.25rem -0.75rem rgba(10, 10, 9, 0.5); }
+.ob-need-t { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; padding: 0.25rem 0; }
+.ob-need-t .ob-vstat { margin-bottom: 0.5rem; }
+.ob-need b { display: block; color: var(--ink-1); font: 500 1.0625rem/1.3 var(--font); letter-spacing: -0.01em; text-wrap: pretty; }
+.ob-need small { display: block; margin-top: 0.375rem; color: var(--ink-3); font: var(--t-small); }
+.ob-need-act { display: flex; align-items: center; gap: var(--s1); margin-top: var(--s4); }
+.ob-need-act .ob-btn--ghost { padding: 0 0.625rem; white-space: nowrap; }
+.ob-need-soon { margin-top: auto; padding-top: var(--s4); color: var(--ink-3); font: var(--t-small); }
+.ob-needs--empty { grid-template-columns: auto 1fr; align-items: center; gap: var(--s4); padding: var(--s6); }
+.ob-needs--empty .ob-yes { width: 2.25rem; height: 2.25rem; }
+.ob-needs--empty .ob-yes svg { width: 1.125rem; height: 1.125rem; }
+.ob-needs--empty b { display: block; color: var(--ink-1); font: 500 1.0625rem/1.3 var(--font); letter-spacing: var(--tr-mid); }
+.ob-needs--empty small { display: block; margin-top: 0.25rem; color: var(--ink-3); font: var(--t-small); }
+
+/* recent videos, winning formats, rivals: one row of poster cards each */
+.ob-home-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: stretch; gap: var(--s6) var(--s5); }
+.ob-pcard { display: flex; flex-direction: column; gap: 0.375rem; min-width: 0; height: 100%; }
+.ob-pcard .ob-phone { width: 100%; margin-bottom: 0.375rem; border-radius: 1rem; box-shadow: 0 1px 0.125rem rgba(10, 10, 9, 0.08), 0 1rem 1.75rem -1.125rem rgba(10, 10, 9, 0.45); }
+.ob-pcard b { display: -webkit-box; min-height: 2.7em; overflow: hidden; color: var(--ink-1); font: 500 0.9375rem/1.35 var(--font); letter-spacing: var(--tr-mid); -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.ob-pcard small { overflow: hidden; color: var(--ink-4); font: var(--t-small); white-space: nowrap; text-overflow: ellipsis; }
+.ob-pcard .ob-btn { align-self: flex-start; margin-top: auto; }
+.ob-pcard > small:last-of-type { margin-bottom: 0.5rem; }
+
+@media (max-width: 1100px) { .ob-home-row { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 10.5rem; overflow-x: auto; padding-bottom: var(--s2); scrollbar-width: none; } }
+@media (max-width: 1000px) {
+  .ob-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ob-cols--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Home: what is being made, on its own slim line above the videos that need you */
+.ob-mk-line { grid-column: 1 / -1; display: grid; gap: var(--s1); }
+.ob-mk-i { display: flex; align-items: center; gap: var(--s3); padding: var(--s3) var(--s4); border-radius: 0.875rem; background: rgba(10, 10, 9, 0.03); }
+.ob-mk-i > span:nth-child(2) { flex: 1; min-width: 0; }
+.ob-mk-i b { display: block; color: var(--ink-1); font: 500 0.9375rem/1.35 var(--font); letter-spacing: var(--tr-mid); }
+.ob-mk-i small { display: block; color: var(--ink-3); font: var(--t-small); }
+.ob-mk-spark { flex: none; display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--surface); color: var(--ink-1); box-shadow: inset 0 0 0 1px var(--line); }
+.ob-mk-i .ob-mk-bar { position: relative; left: auto; right: auto; bottom: auto; flex: none; width: 5rem; }
+.ob-needs--empty.has-making { grid-template-columns: auto 1fr; row-gap: var(--s4); }
+.ob-pcard .ob-pcard-views { margin-top: -0.125rem; color: var(--ink-3); }
+.ob-pcard-views strong { color: var(--ink-1); font-weight: 600; font-variant-numeric: tabular-nums; }
+@media (max-width: 820px) {
+  .ob-mk-i .ob-mk-bar { display: none; }
+}
+
+/* ---- phones: the rail becomes a top bar ----------------------------------- */
+@media (max-width: 820px) {
+  .ob-app { grid-template-columns: 1fr; }
+  .ob-side { position: sticky; top: 0; z-index: 40; display: grid; grid-template-columns: 1fr auto; grid-template-areas: "logo me"; align-items: center; gap: 0; height: auto; padding: var(--s3) var(--s4) var(--s2); border-right: 0; border-bottom: 1px solid var(--line); background: rgba(247, 247, 244, 0.97); }
+  .ob-side .ob-logo { grid-area: logo; padding: 0; }
+  /* the nav becomes a bottom tab bar: all six fit, nothing is cut off */
+  .ob-side-nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0; padding: 0.25rem 0.25rem calc(0.25rem + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: var(--bg); }
+  .ob-navi { flex-direction: column; justify-content: center; gap: 0.3125rem; height: 3.25rem; padding: 0; border: 0; font: 500 0.6875rem/1 var(--font); letter-spacing: 0; }
+  .ob-navi.is-on { border-color: transparent; background: none; box-shadow: none; }
+  .ob-navi:hover { background: none; }
+  .ob-navi .ob-count { position: absolute; top: 0.3125rem; left: calc(50% + 0.375rem); min-width: 1rem; height: 1rem; padding: 0 0.25rem; font-size: 0.625rem; }
+  .ob-navi .ob-new { position: absolute; top: 0.5rem; left: calc(50% + 0.5rem); width: 0.4375rem; height: 0.4375rem; padding: 0; border-radius: 50%; font-size: 0; }
+  .ob-side-gap, .ob-side-budget { display: none; }
+  .ob-me { grid-area: me; width: auto; padding: 0.25rem; border-radius: 50%; }
+  .ob-me-t, .ob-me-dots { display: none; }
+  .ob-menu { top: 3.25rem; right: var(--s4); bottom: auto; left: auto; width: min(16rem, calc(100vw - 2rem)); }
+  .ob-main { padding: var(--s8) var(--s4) calc(3.75rem + env(safe-area-inset-bottom) + var(--s6)); }
+  .ob-app { background: none; }
+  .ob-head { margin-bottom: var(--s8); }
+  .ob-cols, .ob-cols--3, .ob-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ob-vgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s5) var(--s3); }
+  .ob-prompt-chips { padding-left: 0; }
+  .ob-home-row { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 42%; margin: 0 calc(var(--s4) * -1); padding: 0 var(--s4) var(--s2); overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 var(--s4); scrollbar-width: none; }
+  .ob-home-row > * { scroll-snap-align: start; }
+  .ob-needs:not(.ob-needs--empty) { grid-template-columns: 1fr; padding: var(--s2); }
+  .ob-need { grid-template-columns: 5rem minmax(0, 1fr); gap: var(--s4); }
+  .ob-need .ob-phone { width: 5rem; }
+  .ob-sect-head > span { flex-basis: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-menu.is-open, .ob-vstat--posting::after { animation: none; }
+  .ob-vcard .ob-phone, .ob-side-budget, .ob-prompt-send { transition: none; }
+  .ob-vcard:hover .ob-phone, .ob-side-budget:hover { transform: none; }
+}

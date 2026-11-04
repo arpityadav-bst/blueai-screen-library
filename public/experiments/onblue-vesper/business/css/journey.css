@@ -1,0 +1,81 @@
+/* How it works: ONE SHORT'S JOURNEY (js/journey.js). The words scroll on the
+   left; the stage stays pinned on the right: a 1010 x 760 scene, scaled by
+   --oj-s to the room from its column out to the screen's right edge
+   (js/journey.js fit()). The stage carries at-N (this step) and gt-N
+   (every step before it). Type follows the hero: one ink headline on the
+   title scale with the halftone accent on its key words, body in ink-3. */
+
+.oj { padding: clamp(5.5rem, 10vw, 8.5rem) 0 0; }   /* the site rhythm */
+.oj-in { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: var(--s12); }
+/* the section's headline sits centred above it, set like the second section's statement */
+/* the section's headline sits centred above it, set like the second section's statement */
+.oj-title { max-width: 70rem; margin: 0 auto var(--s8); color: var(--ink-1); font: var(--t-statement); letter-spacing: var(--tr-display); text-align: center; text-wrap: balance; }
+
+/* the words: six blocks that scroll by, the one in the middle in full ink */
+.oj-step { display: flex; align-items: center; min-height: 78vh; }
+/* NO GAP UNDER THE HEADLINE (Appy): the phone starts right under it and pins
+   once it reaches the screen's middle; the first and last steps are the stage's
+   own height (--oj-h, from js/journey.js), so their words sit on the phone's
+   middle line where the section begins and where it ends */
+.oj-step:first-child, .oj-step:last-child { min-height: var(--oj-h, 100vh); }
+.oj-step > div { opacity: 0.22; transform: translateY(0.5rem); transition: opacity 0.3s var(--ease), transform 0.3s var(--ease); }
+.oj-step.is-now > div { opacity: 1; transform: none; }
+.oj-step h3 { margin: 0; color: var(--ink-1); font: var(--t-title); letter-spacing: var(--tr-display); }
+.oj-step p { max-width: 26.875rem; margin: var(--s4) 0 0; color: var(--ink-3); font: var(--t-lede); }
+
+/* the stage, pinned */
+.oj-side { position: relative; }
+.oj-pin { position: sticky; top: calc((100vh - var(--oj-h, 100vh)) / 2); display: flex; align-items: center; }
+.oj-stage-box { flex: none; }   /* width, height and left margin set by js/journey.js fit() */
+/* a soft volt glow behind the phone (a static gradient) */
+.oj-stage::before { content: ""; position: absolute; left: 50%; top: 50%; width: 560px; height: 560px; margin: -280px 0 0 -280px; border-radius: 50%; background: radial-gradient(circle, rgba(198, 244, 50, 0.2) 0%, rgba(198, 244, 50, 0.07) 40%, rgba(198, 244, 50, 0) 70%); pointer-events: none; }
+.oj-stage { position: relative; width: 1010px; height: 760px; transform: scale(var(--oj-s, 1)); transform-origin: 0 0; }
+.oj-fact, .oj-rival, .oj-chip, .oj-node, .oj-res, .oj-var, .oj-phone { position: absolute; left: 50%; top: 50%; }
+
+/* the phone: a real-looking handset, turning a little with each step */
+/* Apple's iPhone 18 Pro frame (.ob-iphone, css/parts.css), turning a little
+   with each step; the shadow sits on the device's own rounded outline */
+.oj-phone { z-index: 3; width: 296px; height: auto; margin: -303px 0 0 -148px;
+  transform: scale(1.15) rotate(-3deg); transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); }
+/* NO 3D ROTATION (Appy saw a white plate behind the frame): a phone turned in
+   perspective makes Chrome draw its screen layers apart from the frame, and the
+   only fixes are masks. A flat tilt and slide per step can't do that. */
+/* drawn at 1.15x (a bigger phone, same screen layout); the size never changes
+   between steps, so the wires always meet its edge */
+.at-2 .oj-phone { transform: scale(1.15) rotate(2deg); }
+.at-3 .oj-phone { transform: scale(1.15) rotate(-1.5deg); }
+.at-4 .oj-phone { transform: scale(1.15); }
+.at-5 .oj-phone { transform: scale(1.15) rotate(-1deg); }
+.at-6 .oj-phone { transform: scale(1.15) rotate(1.5deg); }
+/* the phone's UI is in the DARK theme (Appy): the site's dark tokens, set on
+   the screen, so every inner screen follows */
+.oj-glass { --bg: #0b0b0a; --surface: #151513; --surface-2: #1e1e1b; --line: rgba(255, 255, 255, 0.08); --line-2: rgba(255, 255, 255, 0.15);
+  --ink-1: #f2f2ec; --ink-2: #d2d2ca; --ink-3: #a2a29a; --ink-4: #6e6e68; background: var(--bg); }
+.oj-glare { position: absolute; inset: 0; z-index: 5; background: linear-gradient(118deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.05) 28%, rgba(255, 255, 255, 0) 42%); pointer-events: none; }
+
+.oj-screen { position: absolute; inset: 0; opacity: 0; transition: opacity 0.3s ease; }
+.oj-screen small { display: block; color: var(--ink-4); font: 500 12px/1.3 var(--font); }
+.at-1 .oj-site, .at-2 .oj-list, .at-3 .oj-formats, .at-4 .oj-make, .at-4 .oj-film, .at-5 .oj-post, .at-6 .oj-stats { opacity: 1; }
+.at-4 .oj-film { transition-delay: 1.7s; }
+.oj-film { width: 100%; height: 100%; object-fit: cover; background: #0b0b0a; }
+
+/* step 1: the visitor's own homepage (live screenshot; a drawn page until it lands) */
+/* step 1: the site as BlueAI reads it, a clean card (logo, title, share image,
+   description) with what it has read ticking on underneath */
+.oj-site { overflow: hidden; background: var(--bg); }
+.oj-card { padding: 50px 14px 14px; }
+.oj-bar { display: flex; align-items: center; gap: 7px; padding: 7px 9px; border-radius: 10px; background: var(--surface-2); color: var(--ink-3); font: 500 11.5px/1 var(--font); white-space: nowrap; overflow: hidden; }
+.oj-bar i { display: grid; place-items: center; flex: none; width: 18px; height: 18px; overflow: hidden; border-radius: 5px; color: #fff; font: 700 10px/1 var(--font); font-style: normal; }
+.oj-bar i img { width: 100%; height: 100%; object-fit: cover; }
+.oj-og { position: relative; height: 128px; margin-top: 12px; overflow: hidden; border-radius: 14px; }
+.oj-og img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.6s ease; }
+.oj-og img.is-ready { opacity: 1; }
+.oj-brand { display: block; margin-top: 14px; color: var(--ink-1); font: 700 21px/1.15 var(--font); letter-spacing: -0.03em; }
+.oj-desc { margin: 6px 0 0; color: var(--ink-3); font: 400 12.5px/1.45 var(--font); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.oj-read { display: grid; gap: 6px; margin-top: 14px; }
+.oj-read span { display: flex; align-items: center; gap: 7px; padding: 8px 10px; border-radius: 9px; background: var(--surface-2); color: var(--ink-1); font: 500 12px/1 var(--font); opacity: 0; transform: translateY(6px); transition: opacity 0.3s ease, transform 0.3s var(--ease); }
+.oj-read svg { flex: none; padding: 2px; border-radius: 50%; background: var(--accent); color: var(--on-accent); }
+.at-1 .oj-read span { opacity: 1; transform: none; transition-delay: var(--d); }
+.oj-scan { position: absolute; z-index: 2; left: 0; right: 0; top: -60px; height: 60px; background: linear-gradient(180deg, rgba(198, 244, 50, 0), rgba(198, 244, 50, 0.55) 72%, rgba(198, 244, 50, 0)); }
+.at-1 .oj-scan { animation: oj-scan 2.4s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+@keyframes oj-scan { to { transform: translateY(580px); } }

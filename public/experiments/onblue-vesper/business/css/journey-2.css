@@ -1,0 +1,127 @@
+/* How it works, part 2: the phone's inner screens, and everything that flies
+   round the phone. Each flying piece sits on the phone's centre, hidden and
+   small, and travels out to its own --x / --y (set in js/journey.js) when its
+   step arrives. TIMING RULE: the stagger (--d) applies on the way IN only;
+   leaving, everything goes at once with no wait, so a step never lags the
+   scroll. Card WIDTHS here are the ones js/journey.js places by, so every
+   wire lands on its card's edge: change one, change both. */
+
+/* inner screens (they start under the island) */
+.oj-list, .oj-formats, .oj-make, .oj-post, .oj-stats { padding: 50px 16px 16px; background: var(--bg); }
+.oj-make ol { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+/* step 2: the rivals' Shorts, as thumbnails */
+.oj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.oj-grid span { position: relative; height: 128px; overflow: hidden; border-radius: 11px; opacity: 0; transform: scale(0.92); transition: opacity 0.25s ease, transform 0.35s var(--ease); }
+.oj-grid img { width: 100%; height: 100%; object-fit: cover; }
+.oj-grid em { position: absolute; top: 6px; left: 6px; padding: 2px 6px; border-radius: 5px; background: rgba(10, 10, 9, 0.62); color: #fff; font: 600 10px/1.3 var(--font); font-style: normal; }
+.oj-grid b { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 7px 6px; background: linear-gradient(180deg, rgba(10, 10, 9, 0), rgba(10, 10, 9, 0.7)); color: #fff; font: 600 10.5px/1.2 var(--font); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.at-2 .oj-grid span { opacity: 1; transform: none; transition-delay: var(--d); }
+/* step 3: each winning format as a row of its Shorts, the leader in volt */
+.oj-formats ul { display: grid; gap: 12px; margin: 10px 0 0; padding: 0; list-style: none; }
+.oj-formats li { padding: 8px; border-radius: 12px; background: var(--surface-2); opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.35s var(--ease); }
+.oj-formats li span { display: flex; align-items: center; justify-content: space-between; margin: 0 2px 7px; }
+.oj-formats li b { color: var(--ink-1); font: 600 12.5px/1.2 var(--font); }
+.oj-formats li em { color: var(--ink-3); font: 600 11px/1 var(--font); font-style: normal; }
+.oj-formats li.is-top { background: #262622; box-shadow: 0 0 0 2px var(--accent), 0 0 0 6px rgba(198, 244, 50, 0.22); }
+.oj-formats li.is-top em { padding: 3px 7px; border-radius: 5px; background: var(--accent); color: var(--on-accent); }
+.oj-formats li div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+.oj-formats li img { width: 100%; height: 70px; border-radius: 7px; object-fit: cover; }
+.at-3 .oj-formats li { opacity: 1; transform: none; transition-delay: var(--d); }
+.oj-make ol { margin: 10px 0 20px; }
+.oj-make li { padding: 10px; border-radius: 10px; background: var(--surface-2); color: var(--ink-1); font: 500 13px/1.35 var(--font); opacity: 0; transform: translateY(6px); transition: opacity 0.25s ease, transform 0.3s var(--ease); }
+.at-4 .oj-make li { opacity: 1; transform: none; transition-delay: var(--d); }
+.oj-make li b { display: block; margin-bottom: 2px; color: var(--ink-3); font: 500 11px/1.2 var(--font); }
+.oj-prog { height: 8px; margin-top: 8px; overflow: hidden; border-radius: 4px; background: var(--surface-2); }
+.oj-prog i { display: block; height: 100%; background: var(--ink-1); transform-origin: 0 50%; transform: scaleX(0); }
+.at-4 .oj-prog i { transform: scaleX(1); transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1) 0.6s; }
+
+/* the flyers: glassy white cards with a soft lift; in 0.55s, out 0.3s */
+.oj-fact, .oj-chip, .oj-node, .oj-res { position: absolute; z-index: 4; border: 1px solid rgba(10, 10, 9, 0.08); background: rgba(255, 255, 255, 0.94); box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(10, 10, 9, 0.05), 0 26px 44px -24px rgba(10, 10, 9, 0.35); opacity: 0; transform: translate(-50%, -50%) scale(0.7); transition: transform 0.3s ease, opacity 0.2s ease; }
+.at-1 .oj-fact, .at-3 .oj-chip, .at-5 .oj-node, .at-6 .oj-res { opacity: 1; transform: translate(calc(var(--x) - 50%), calc(var(--y) - 50%)); transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.25, 1.06) var(--d), opacity 0.25s ease var(--d); }
+
+/* step 1: what BlueAI pulled from the site, with an icon and a slow float (260 wide) */
+.oj-fact { display: flex; align-items: flex-start; gap: 12px; width: 260px; padding: 16px 18px; border-radius: 18px; }
+.oj-fact i { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: var(--accent); color: var(--on-accent); }
+.oj-fact small { display: block; color: var(--ink-4); font: 500 13.5px/1 var(--font); }
+.oj-fact b { display: block; margin-top: 7px; color: var(--ink-1); font: 500 18px/1.3 var(--font); letter-spacing: -0.015em; }
+.at-1 .oj-fact { animation: oj-bob 5s ease-in-out infinite; animation-delay: var(--b); }
+@keyframes oj-bob { 50% { translate: 0 -4px; } }
+
+/* the wires: lines drawing themselves from under the phone to each card's edge */
+.oj-wires { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.oj-wires g { opacity: 0; transition: opacity 0.2s ease; }
+.at-1 .w-1, .at-2 .w-2, .at-3 .w-3, .at-5 .w-5, .at-6 .w-6 { opacity: 1; }
+.oj-wires path { fill: none; stroke: rgba(10, 10, 9, 0.28); stroke-width: 1.5; stroke-dasharray: 0 1; }
+.oj-wires circle { fill: var(--accent); stroke: rgba(10, 10, 9, 0.5); stroke-width: 1; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.at-1 .w-1 path, .at-2 .w-2 path, .at-3 .w-3 path, .at-5 .w-5 path, .at-6 .w-6 path { animation: oj-wire 0.45s ease-out var(--d) both; }
+.at-1 .w-1 circle, .at-2 .w-2 circle, .at-3 .w-3 circle, .at-5 .w-5 circle, .at-6 .w-6 circle { animation: oj-dot 0.3s cubic-bezier(0.2, 1.5, 0.4, 1) var(--d) both; }
+@keyframes oj-wire { from { stroke-dasharray: 0 1; } to { stroke-dasharray: 1 0; } }
+@keyframes oj-dot { from { opacity: 0; transform: scale(0.2); } to { opacity: 1; transform: none; } }
+
+/* step 2: the rivals' Shorts fan out (124 wide) */
+.oj-rival { z-index: 2; width: 124px; margin: -122px 0 0 -62px; opacity: 0; transform: scale(0.6); transition: transform 0.3s ease, opacity 0.2s ease; }
+.oj-rival img { display: block; width: 124px; height: 220px; border-radius: 15px; object-fit: cover; box-shadow: 0 18px 34px -18px rgba(10, 10, 9, 0.5); }
+.oj-rival b { display: block; margin-top: 8px; color: var(--ink-1); font: 600 14px/1.2 var(--font); text-align: center; white-space: nowrap; }
+.oj-rival span { position: absolute; top: 9px; left: 50%; padding: 3px 8px; border-radius: 6px; background: rgba(10, 10, 9, 0.6); color: #fff; font: 600 12px/1.2 var(--font); white-space: nowrap; transform: translateX(-50%); }
+.at-2 .oj-rival { opacity: 1; transform: translate(var(--x), var(--y)) rotate(var(--r)); transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.25, 1.04) var(--d), opacity 0.25s ease var(--d); }
+
+/* step 3: the formats land, the leader in volt (236 wide) */
+.oj-chip { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 236px; padding: 14px 16px; border-radius: 16px; white-space: nowrap; }
+.oj-chip b { overflow: hidden; color: var(--ink-1); font: 600 18px/1 var(--font); letter-spacing: -0.01em; text-overflow: ellipsis; }
+.oj-chip span { flex: none; padding: 5px 8px; border-radius: 7px; background: var(--surface-2); color: var(--ink-2); font: 600 14px/1 var(--font); }
+.oj-chip.is-top { border-color: rgba(120, 160, 0, 0.45); box-shadow: 0 0 0 5px rgba(198, 244, 50, 0.25), 0 22px 40px -22px rgba(10, 10, 9, 0.35); }
+.oj-chip.is-top span { background: var(--accent); color: var(--on-accent); }
+
+/* step 5: a network of creators; each lights up Live as its line arrives (200 wide) */
+.oj-node { display: flex; align-items: center; gap: 10px; width: 200px; padding: 10px 12px; border-radius: 16px; }
+.oj-node .oj-av { flex: none; width: 40px; height: 40px; overflow: hidden; border-radius: 50%; }
+.oj-node .oj-av img { width: 100%; height: 100%; object-fit: cover; }
+.oj-node .oj-av i { display: grid; place-items: center; width: 100%; height: 100%; color: #fff; font: 700 15px/1 var(--font); font-style: normal; }
+.oj-node b { display: block; color: var(--ink-1); font: 600 14px/1.2 var(--font); }
+.oj-node small { display: block; margin-top: 3px; color: var(--ink-4); font: 500 12px/1.2 var(--font); }
+.oj-node em { margin-left: auto; padding: 4px 8px; border-radius: 6px; background: var(--accent); color: var(--on-accent); font: 700 11px/1.2 var(--font); font-style: normal; opacity: 0; transform: scale(0.6); transition: opacity 0.2s ease, transform 0.2s ease; }
+.at-5 .oj-node em { opacity: 1; transform: none; transition: opacity 0.25s ease calc(var(--d) + 0.35s), transform 0.35s cubic-bezier(0.2, 1.5, 0.4, 1) calc(var(--d) + 0.35s); }
+
+/* the phone while posting: channels going from queued to Live */
+.oj-post-n { display: block; margin: 4px 0 12px; color: var(--ink-1); font: 700 22px/1.15 var(--font); letter-spacing: -0.02em; }
+.oj-post ol { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.oj-post li { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 10px; background: var(--surface-2); font: 600 12px/1 var(--font); }
+.oj-post li b { flex: 1; color: var(--ink-1); font-weight: 600; }
+.oj-post li span { flex: none; width: 54px; height: 5px; overflow: hidden; border-radius: 3px; background: rgba(255, 255, 255, 0.12); }
+.oj-post li span i { display: block; height: 100%; background: var(--ink-1); transform-origin: 0 50%; transform: scaleX(0); }
+.oj-post li em { padding: 3px 6px; border-radius: 5px; background: var(--accent); color: var(--on-accent); font: 700 10px/1.2 var(--font); font-style: normal; opacity: 0; }
+.at-5 .oj-post li span i { transform: scaleX(1); transition: transform 0.4s ease var(--d); }
+.at-5 .oj-post li em { opacity: 1; transition: opacity 0.2s ease calc(var(--d) + 0.4s); }
+
+/* step 6: results on the left (one wins, one stalls, 204 wide), new takes on the right (92 wide) */
+.oj-res { display: flex; align-items: center; gap: 12px; width: 204px; padding: 9px; border-radius: 16px; }
+.oj-res img { flex: none; width: 60px; height: 106px; border-radius: 9px; object-fit: cover; }
+.oj-res small { display: block; color: var(--ink-4); font: 500 12px/1 var(--font); }
+.oj-res b { display: block; margin: 6px 0 7px; color: var(--ink-1); font: 700 19px/1 var(--font); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.oj-res em { display: inline-block; padding: 4px 8px; border-radius: 6px; background: var(--surface-2); color: var(--ink-2); font: 700 11px/1.2 var(--font); font-style: normal; }
+.oj-res.is-win { box-shadow: 0 0 0 2px var(--accent), 0 0 0 7px rgba(198, 244, 50, 0.22), 0 22px 40px -24px rgba(10, 10, 9, 0.35); }
+.oj-res.is-win em { background: var(--accent); color: var(--on-accent); }
+.at-6 .oj-res.is-cut { opacity: 0.45; }
+.oj-var { z-index: 4; width: 92px; opacity: 0; transform: translate(-50%, -50%) translateX(-60px) scale(0.6); transition: transform 0.3s ease, opacity 0.2s ease; }
+.oj-var img { display: block; width: 92px; height: 164px; border-radius: 12px; object-fit: cover; box-shadow: 0 0 0 2px var(--accent), 0 18px 32px -18px rgba(10, 10, 9, 0.45); }
+.oj-var em { position: absolute; left: 50%; bottom: 8px; padding: 3px 8px; border-radius: 6px; background: var(--accent); color: var(--on-accent); font: 700 11px/1.2 var(--font); font-style: normal; white-space: nowrap; transform: translateX(-50%); }
+.at-6 .oj-var { opacity: 1; transform: translate(calc(var(--x) - 50%), calc(var(--y) - 50%)); transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.25, 1.06) var(--d), opacity 0.25s ease var(--d); }
+
+/* the phone reading the results: views climbing, the week's bars growing */
+.oj-stats b[data-oj-total] { display: block; margin: 4px 0 14px; color: var(--ink-1); font: 700 32px/1 var(--font); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.oj-chart { display: flex; align-items: flex-end; gap: 6px; height: 150px; padding-bottom: 6px; border-bottom: 1px solid var(--line-2); }
+.oj-chart i { flex: 1; height: var(--h); border-radius: 4px 4px 1px 1px; background: var(--accent); transform-origin: bottom; transform: scaleY(0); }
+.at-6 .oj-chart i { transform: scaleY(1); transition: transform 0.6s var(--ease) var(--d); }
+.oj-stats p { margin: 14px 0 0; padding: 10px; border-radius: 10px; background: var(--surface-2); color: var(--ink-2); font: 500 12px/1.4 var(--font); }
+.oj-stats p span { display: inline-block; margin-right: 6px; padding: 2px 6px; border-radius: 5px; background: var(--accent); color: var(--on-accent); font-weight: 700; }
+
+@media (max-width: 900px) {
+  .oj-in { grid-template-columns: 1fr; gap: 0; }
+  .oj-side { order: -1; position: sticky; top: 4rem; z-index: 3; background: var(--bg); }
+  .oj-pin { position: static; height: auto; padding: var(--s3) 0; }
+  .oj-step, .oj-step:first-child, .oj-step:last-child { min-height: 60vh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .oj-step > div, .oj-rival, .oj-chip, .oj-fact, .oj-node, .oj-res, .oj-var, .oj-screen, .oj-phone, .oj-formats li, .oj-grid span, .oj-read span, .oj-make li, .oj-prog i { transition: none !important; }
+  .at-1 .oj-scan, .at-1 .oj-fact { animation: none; }
+}

@@ -1,0 +1,153 @@
+/* THE PRODUCT FINISH (2026-11-04): the homepage's language carried into the
+   agent run (run.html) and the signed-in app (app/*.html). Linked LAST on those
+   pages, after base.css, parts.css and the page's own sheets, so it owns the
+   shared selectors below. The homepage never loads it.
+
+   HOW TO USE IT (for the run, shell and page work):
+   Tokens (on :root, new names only; base.css values are untouched)
+     --p-r            1.25rem   the panel radius (the homepage's face-off/meter)
+     --p-float        glassy floating card shadow: white inset top edge + long soft drop
+     --p-lift         the same, one step higher (hover, menus, the tour card)
+     --p-glow         volt top glow, a background layer for the ONE panel that matters
+     --p-rim          the 1.5px volt rim line gradient (use as a background)
+     --p-ring         the focus halo (volt), for anything focusable
+     --t-p-title      page title     500, tight, ink-1 (use with --tr-display)
+     --t-p-h2         section title  500 1.25rem
+     --t-p-figure     big number     600, tabular
+   Headings (no eyebrows: never a small uppercase kicker above a heading)
+     .ob-p-head      flex row: title block left, actions or a note right
+     .ob-p-title     the page's h1     .ob-p-lede   the line under it (ink-3)
+     .ob-p-sect      a section's head row (h2 + note), .ob-p-h2 its title,
+     .ob-p-note      the quiet note on the right of a section head (ink-4)
+     .ob-p-figure    a big figure (budget, views); <small> inside is the unit
+     Put .ob-tone on ONE key word of a page title at most, never on a section h2.
+   Surfaces
+     .ob-card            white panel, hairline, 1.25rem, inset top light
+     .ob-card--float     the glassy floating card (menus, tour, proof cards)
+     .ob-card--lit       + volt top glow and rim line: one per screen, the panel that matters
+     .ob-card--quiet     surface-2 fill, no shadow (secondary groups)
+     .ob-rim             add the rim line to any positioned panel (::before)
+   Marks
+     .ob-yes             the face-off's volt yes dot; put OB.icon('check') inside
+     .ob-yes--sm         1.125rem version for lists and rows
+     .ob-no              the hollow ring (not yet / off)
+     .ob-live            a small volt "live" tag with a breathing dot
+     .ob-count           a small ink count badge (side nav, tabs)
+   Controls (shared, restyled here; do not restyle them in page sheets)
+     .ob-btn  .ob-btn--ink  .ob-btn--accent  .ob-btn--sm  + new .ob-btn--ghost
+     .ob-chip  .ob-chip--on  .ob-chip--soon  + new .ob-chip--volt
+     .ob-input  .ob-pick  .ob-x  .ob-modal  (in parts.css, the dialog block)
+     .ob-edit (editable card), .ob-toast, .ob-agent (ink with a volt spark)
+   Rules: Geist only, 500 for UI text, 600 only for figures; volt sparingly;
+   motion is transform and opacity only (no blur, filter, mask or blend). */
+
+:root {
+  --p-r: 1.25rem;
+  --p-float: inset 0 1px 0 #fff, 0 1px 0.125rem rgba(10, 10, 9, 0.05), 0 1.625rem 2.75rem -1.5rem rgba(10, 10, 9, 0.35);
+  --p-lift: inset 0 1px 0 #fff, 0 1px 0.125rem rgba(10, 10, 9, 0.06), 0 2.25rem 4rem -1.75rem rgba(10, 10, 9, 0.42);
+  --p-glow: radial-gradient(ellipse 60% 55% at 50% 0%, rgba(198, 244, 50, 0.14), rgba(198, 244, 50, 0) 75%);
+  --p-rim: linear-gradient(90deg, rgba(198, 244, 50, 0), #c6f432 30%, #9ccf12 50%, #c6f432 70%, rgba(198, 244, 50, 0));
+  --p-ring: 0 0 0 0.25rem rgba(198, 244, 50, 0.45);
+  --t-p-title: 500 clamp(1.75rem, 2.4vw, 2.375rem)/1.1 var(--font);
+  --t-p-h2: 500 1.25rem/1.25 var(--font);
+  --t-p-figure: 600 clamp(2rem, 2.6vw, 2.75rem)/1 var(--font);
+}
+
+/* ---- headings ------------------------------------------------------------ */
+.ob-p-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--s4) var(--s8); }
+.ob-p-title { margin: 0; color: var(--ink-1); font: var(--t-p-title); letter-spacing: var(--tr-display); text-wrap: balance; }
+.ob-p-lede { margin: var(--s3) 0 0; max-width: 40rem; color: var(--ink-3); font: 400 1.0625rem/1.5 var(--font); letter-spacing: var(--tr-mid); text-wrap: pretty; }
+.ob-p-sect { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--s2) var(--s6); margin: var(--s12) 0 var(--s5); }
+.ob-p-h2 { margin: 0; color: var(--ink-1); font: var(--t-p-h2); letter-spacing: -0.02em; }
+.ob-p-note { color: var(--ink-4); font: var(--t-small); }
+.ob-p-figure { color: var(--ink-1); font: var(--t-p-figure); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.ob-p-figure small { margin-left: 0.25rem; color: var(--ink-3); font: 400 1rem/1 var(--font); letter-spacing: var(--tr-mid); }
+
+/* ---- surfaces ------------------------------------------------------------ */
+.ob-card { position: relative; padding: var(--s6); border: 1px solid var(--line); border-radius: var(--p-r); background: var(--surface); box-shadow: inset 0 1px 0 #fff, var(--shadow-1); }
+.ob-card--float { border-color: rgba(10, 10, 9, 0.08); background: rgba(255, 255, 255, 0.96); box-shadow: var(--p-float); }
+.ob-card--lit { overflow: hidden; background: var(--p-glow), var(--surface); }
+.ob-card--quiet { background: var(--surface-2); box-shadow: none; }
+.ob-rim, .ob-card--lit { position: relative; }
+.ob-rim::before, .ob-card--lit::before { content: ""; position: absolute; top: 0; left: 18%; right: 18%; height: 1.5px; background: var(--p-rim); pointer-events: none; }
+a.ob-card, button.ob-card { color: inherit; text-align: left; text-decoration: none; cursor: pointer; transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease); }
+a.ob-card:hover, button.ob-card:hover { transform: translateY(-2px); box-shadow: var(--p-float); }
+
+/* ---- marks --------------------------------------------------------------- */
+.ob-yes, .ob-no { flex: none; display: inline-grid; place-items: center; width: 1.375rem; height: 1.375rem; border-radius: 50%; vertical-align: middle; }
+.ob-yes { background: var(--accent); color: var(--on-accent); }
+.ob-yes svg { display: block; width: 0.875rem; height: 0.875rem; }
+.ob-yes svg path, .ob-toast svg path { stroke-width: 3.2; }
+.ob-yes--sm { width: 1.125rem; height: 1.125rem; }
+.ob-yes--sm svg { width: 0.75rem; height: 0.75rem; }
+.ob-no { border: 1.5px solid var(--line-2); }
+.ob-live { display: inline-flex; align-items: center; gap: 0.375rem; height: 1.375rem; padding: 0 0.5rem; border-radius: 0.375rem; background: var(--accent); color: var(--on-accent); font: var(--t-label); font-weight: 600; }
+.ob-live::before { content: ""; width: 0.375rem; height: 0.375rem; border-radius: 50%; background: currentColor; animation: ob-breathe 1.8s ease-in-out infinite; }
+@keyframes ob-breathe { 50% { opacity: 0.35; transform: scale(0.7); } }
+.ob-count { display: inline-grid; place-items: center; min-width: 1.25rem; height: 1.25rem; padding: 0 0.375rem; border-radius: var(--r-pill); background: var(--ink-1); color: #fff; font: 600 0.6875rem/1 var(--font); font-variant-numeric: tabular-nums; }
+
+/* ---- the agent: ink, with a volt spark (was a blue orb) ------------------- */
+.ob-agent { background: linear-gradient(180deg, #2c2c29 0%, #0b0b0a 100%); color: var(--accent); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 0 0 1px rgba(10, 10, 9, 0.06), 0 0.25rem 0.625rem -0.25rem rgba(10, 10, 9, 0.35); }   /* the onBlue mark in volt on ink, a tight shadow, not a glow */
+.ob-agent svg { width: 56%; height: 56%; }
+/* the accent word at product sizes (Appy): titles here are too small for the
+   halftone's dots to read, so it becomes a smooth ink-to-volt fade; the dots
+   stay on the homepage's display sizes */
+.ob-tone { background: linear-gradient(180deg, var(--ink-1) 0%, var(--ink-1) 42%, #8fbf12 70%, #c6f432 88%); -webkit-background-clip: text; background-clip: text; padding-bottom: 0.12em; }
+.ob-dark .ob-tone { background: linear-gradient(180deg, #f2f2ec 0%, #f2f2ec 42%, #c6f432 78%); -webkit-background-clip: text; background-clip: text; }
+
+/* ---- buttons ------------------------------------------------------------- */
+.ob-btn { border-radius: 0.5rem; box-shadow: inset 0 1px 0 #fff, var(--shadow-1); }
+.ob-btn:hover { border-color: var(--ink-4); transform: translateY(-1px); }
+.ob-btn:active { transform: translateY(0) scale(0.98); }
+.ob-btn:focus-visible { outline: 0; box-shadow: var(--p-ring); }
+.ob-btn svg { flex: none; }
+.ob-btn--ink { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -0.125rem 0 rgba(0, 0, 0, 0.4), 0 1px 0.125rem rgba(10, 10, 9, 0.24), 0 0.5rem 1rem -0.5rem rgba(10, 10, 9, 0.5); }
+.ob-btn--ink:focus-visible { box-shadow: var(--p-ring), inset 0 1px 0 rgba(255, 255, 255, 0.16); }
+.ob-btn--accent { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0.5rem 1rem -0.625rem rgba(80, 110, 0, 0.6); }
+.ob-btn--ghost { border-color: transparent; background: none; box-shadow: none; color: var(--ink-2); }
+.ob-btn--ghost:hover { border-color: transparent; background: var(--surface-2); color: var(--ink-1); transform: none; }
+.ob-btn[disabled], .ob-btn[aria-disabled="true"] { opacity: 0.45; pointer-events: none; }
+
+/* ---- chips ----------------------------------------------------------------- */
+.ob-chip { height: 1.875rem; padding: 0 0.75rem; box-shadow: inset 0 1px 0 #fff, var(--shadow-1); color: var(--ink-2); font-weight: 500; letter-spacing: var(--tr-mid); }
+.ob-chip [data-ico], .ob-chip svg { display: flex; flex: none; }
+.ob-chip--on { color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14); }
+.ob-chip--soon { border-style: dashed; background: none; box-shadow: none; color: var(--ink-4); }
+.ob-chip--volt { border-color: transparent; background: var(--accent); color: var(--on-accent); box-shadow: none; }
+button.ob-chip { cursor: pointer; transition: border-color 0.15s var(--ease), color 0.15s var(--ease); }
+button.ob-chip:hover { border-color: var(--ink-4); color: var(--ink-1); }
+button.ob-chip--on:hover { border-color: transparent; color: #fff; }
+
+/* ---- the editable card (run brand step, app brand page) -------------------- */
+.ob-edit { border-radius: var(--p-r); box-shadow: inset 0 1px 0 #fff, var(--shadow-1); transition: border-color 0.15s var(--ease), box-shadow 0.2s var(--ease); }
+.ob-edit label { color: var(--ink-3); font: var(--t-small); font-weight: 500; }
+.ob-edit:hover { border-color: var(--line-2); }
+.ob-edit:focus-within { border-color: #9ccf12; box-shadow: 0 0 0 0.3125rem rgba(198, 244, 50, 0.24), 0 0.75rem 1.5rem -1rem rgba(10, 10, 9, 0.3); }
+/* the card says it can be edited: a quiet "Edit" at the end of its label row */
+.ob-edit { cursor: text; }
+.ob-edit label { display: flex; align-items: baseline; }
+.ob-edit label::after { content: "Edit"; margin-left: auto; padding-left: var(--s3); color: var(--ink-3); font: var(--t-label); font-weight: 500; text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 0.1875rem; transition: opacity 0.15s var(--ease); }
+.ob-edit:hover label::after { color: var(--ink-1); text-decoration-color: var(--ink-3); }
+.ob-edit:focus-within label::after { opacity: 0; }
+/* after an edit lands: a short "Saved" in the same spot */
+.ob-edit.is-saved label::after { content: "Saved"; opacity: 1; color: #3f6a00; text-decoration: none; }
+
+/* ---- picks: the chosen one grows by its volt dot, with a real gap to the label */
+.ob-pick[aria-pressed="true"] { padding-left: 0.875rem; }
+.ob-pick[aria-pressed="true"]::before { margin-right: -0.0625rem; }
+/* touch: a tapped pill keeps no leftover hover border */
+@media (hover: none) { .ob-pick:not([aria-pressed="true"]):hover { border-color: var(--line-2); color: var(--ink-2); } }
+
+/* ---- the toast: an ink pill with the yes dot, springing up ------------------ */
+.ob-toast { gap: 0.625rem; min-height: 2.75rem; padding: 0.5rem 1.125rem 0.5rem 0.5rem; background: linear-gradient(180deg, #2c2c29 0%, #0b0b0a 100%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 1.25rem 2.5rem -1rem rgba(10, 10, 9, 0.55); letter-spacing: var(--tr-mid); transform: translate(-50%, 0.75rem) scale(0.96); transition: opacity 0.2s var(--ease), transform 0.4s cubic-bezier(0.2, 1.2, 0.35, 1); }
+.ob-toast.is-on { transform: translate(-50%, 0) scale(1); }
+.ob-toast svg { flex: none; box-sizing: content-box; width: 0.875rem; height: 0.875rem; padding: 0.25rem; border-radius: 50%; background: var(--accent); color: var(--on-accent); }
+
+/* ---- the range: an ink track filled in volt is set per page with --p ------- */
+.ob-range { accent-color: var(--ink-1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-live::before { animation: none; }
+  .ob-btn, .ob-toast, a.ob-card, button.ob-card, .ob-edit { transition: none; }
+  .ob-btn:hover, a.ob-card:hover, button.ob-card:hover { transform: none; }
+}

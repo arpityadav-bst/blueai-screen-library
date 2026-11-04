@@ -1,0 +1,129 @@
+/* The agent run, part 2 (run.html, linked right after run.css): step 5's
+   videos, step 6's plan, the toast, the sign-up, and every breakpoint (they
+   override part 1, so they load after it). */
+
+/* step 5: the first videos */
+.ob-vids { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: var(--s5); }
+.ob-vid { display: grid; grid-template-rows: auto 1fr auto; gap: var(--s3); }
+.ob-vid-txt { display: grid; align-content: start; gap: 0.25rem; }
+.ob-vid-txt small { color: var(--ink-4); font: var(--t-small); font-weight: 500; }
+.ob-vid .ob-phone { width: 100%; border-radius: var(--p-r); box-shadow: var(--p-float); }
+.ob-vid b { color: var(--ink-1); font: 500 0.9688rem/1.35 var(--font); text-wrap: balance; }
+/* a Short's corner badge (play + length), clear of the burnt-in captions */
+.ob-vid-len { position: absolute; top: 0.5rem; right: 0.5rem; z-index: 1; display: inline-flex; align-items: center; gap: 0.25rem; height: 1.375rem; padding: 0 0.4375rem; border-radius: var(--r-pill); background: rgba(10, 10, 9, 0.62); color: #fff; font: 600 0.6875rem/1 var(--font); font-variant-numeric: tabular-nums; transition: opacity 0.2s var(--ease); }
+.ob-vid-making { position: absolute; left: 0; right: 0; top: calc(50% + 1.375rem); color: #fff; font: var(--t-label); font-weight: 500; text-align: center; opacity: 0; transition: opacity 0.2s var(--ease); pointer-events: none; }
+.ob-vid.is-making .ob-vid-making { opacity: 1; }
+.ob-vid.is-making .ob-vid-len { opacity: 0; }
+.ob-vid-foot { display: flex; align-items: center; padding-top: var(--s3); border-top: 1px solid var(--line); }
+.ob-vid-foot .ob-btn { flex: none; white-space: nowrap; }
+.ob-vid .ob-phone::after { content: ""; position: absolute; top: 50%; left: 50%; width: 1.75rem; height: 1.75rem; margin: -0.875rem 0 0 -0.875rem; border: 2.5px solid rgba(255, 255, 255, 0.28); border-top-color: #fff; border-radius: 50%; opacity: 0; transition: opacity 0.2s var(--ease); animation: ob-spin 0.8s linear infinite; pointer-events: none; }
+.ob-vid .ob-phone video { transition: opacity 0.25s var(--ease); }
+.ob-vid.is-making .ob-phone video { opacity: 0.1; }
+.ob-vid.is-making .ob-phone::after { opacity: 1; }
+
+/* step 6: the plan, the one lit panel of the run */
+.ob-planbox { position: relative; overflow: hidden; padding: var(--s8); border: 1px solid rgba(10, 10, 9, 0.08); border-radius: var(--p-r); background: var(--p-glow), var(--surface); box-shadow: var(--p-float); }
+.ob-planbox::before { content: ""; position: absolute; top: 0; left: 18%; right: 18%; height: 1.5px; background: var(--p-rim); pointer-events: none; }
+.ob-planbox .ob-slider-out { font: var(--t-p-figure); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.ob-planbox .ob-hint { margin-top: var(--s2); color: var(--ink-3); }
+.ob-planbox .ob-range { -webkit-appearance: none; appearance: none; height: 1.5rem; margin: var(--s6) 0 var(--s1); background: none; cursor: pointer; }
+.ob-planbox .ob-range::-webkit-slider-runnable-track { height: 0.375rem; border-radius: var(--r-pill); background: linear-gradient(90deg, var(--ink-1) var(--p, 8%), rgba(10, 10, 9, 0.12) var(--p, 8%)); }
+.ob-planbox .ob-range::-moz-range-track { height: 0.375rem; border-radius: var(--r-pill); background: linear-gradient(90deg, var(--ink-1) var(--p, 8%), rgba(10, 10, 9, 0.12) var(--p, 8%)); }
+.ob-planbox .ob-range::-webkit-slider-thumb { -webkit-appearance: none; width: 1.375rem; height: 1.375rem; margin-top: -0.5rem; border: 0.25rem solid #fff; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 1px var(--line-2), 0 0.375rem 0.75rem -0.25rem rgba(10, 10, 9, 0.4); transition: transform 0.15s var(--ease); }
+.ob-planbox .ob-range::-moz-range-thumb { width: 0.875rem; height: 0.875rem; border: 0.25rem solid #fff; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 1px var(--line-2), 0 0.375rem 0.75rem -0.25rem rgba(10, 10, 9, 0.4); }
+.ob-planbox .ob-range:active::-webkit-slider-thumb { transform: scale(1.1); }
+.ob-planbox .ob-range:focus-visible { outline: 0; }
+.ob-planbox .ob-range:focus-visible::-webkit-slider-thumb { box-shadow: var(--p-ring), 0 0 0 1px var(--line-2); }
+.ob-planbox .ob-promise { display: flex; align-items: flex-start; gap: var(--s3); margin-top: var(--s6); padding: var(--s5) 0 0; border-top: 1px solid var(--line); border-radius: 0; background: none; color: var(--ink-2); font: 500 0.9688rem/1.5 var(--font); }
+.ob-planbox .ob-promise .ob-yes { margin-top: 0.0625rem; }
+.ob-planrows { display: grid; gap: var(--s3); margin: var(--s6) 0 0; }
+.ob-planrows > div { display: grid; grid-template-columns: 5.5rem 1fr; align-items: start; gap: var(--s3); }
+.ob-planrows dt { padding-top: 0.375rem; color: var(--ink-3); font: var(--t-small); font-weight: 500; }
+.ob-planrows dd { display: flex; flex-wrap: wrap; gap: var(--s2); margin: 0; }
+.ob-planrows-note { flex-basis: 100%; color: var(--ink-3); font: var(--t-small); }
+/* read-only plan values are plain ink; only Posts on is drawn as pills */
+.ob-planrows-v { padding-top: 0.3125rem; color: var(--ink-1); font: 500 0.9375rem/1.4 var(--font); text-wrap: pretty; }
+.ob-planrows-v .ob-guess { margin-left: var(--s1); }
+.ob-planbox .ob-chip--on svg path { fill: var(--ink-1); }
+.ob-planbox .ob-chip--soon { border-style: solid; border-color: var(--line-2); background: var(--surface-2); color: var(--ink-2); }
+.ob-mailrow { margin-top: var(--s8); padding-top: var(--s6); border-top: 1px solid var(--line); }
+.ob-mailrow p { margin: 0 0 var(--s3); color: var(--ink-3); font: var(--t-small); }
+.ob-mailrow .ob-add { max-width: 26rem; }
+.ob-mailrow .ob-add .ob-input { height: 2.25rem; font-size: 0.875rem; }
+.ob-sent { display: flex; align-items: center; gap: var(--s2); }
+.ob-sent b { color: var(--ink-1); font-weight: 500; }
+.ob-sent .ob-link { margin-left: var(--s2); font-size: 0.8125rem; }
+
+/* toasts: bottom of the main column; run.js scrolls a covered button clear */
+.ob-toast { left: calc(50% + 9.375rem); bottom: 1.25rem; max-width: calc(100% - 2rem); }
+
+/* sign-up after the run */
+.ob-signup .ob-btn { width: 100%; margin-top: var(--s3); }
+.ob-modal { background: rgba(11, 11, 10, 0.62); }
+.ob-signup-label { display: block; margin: var(--s4) 0 var(--s2); color: var(--ink-2); font: var(--t-small); font-weight: 500; }
+.ob-signup-err { display: flex; margin: var(--s2) 0 0; color: #a3341f; font: var(--t-small); font-weight: 500; }
+.ob-signup .ob-input.is-bad { border-color: #c8432b; box-shadow: 0 0 0 0.25rem rgba(200, 67, 43, 0.14); }
+.ob-signup [hidden] { display: none; }
+.ob-modal .ob-signup-note { margin-top: var(--s4); color: var(--ink-3); font: var(--t-small); text-align: center; }
+.ob-stage .ob-edit textarea { min-height: 0; overflow: hidden; }
+.ob-guess { margin-left: var(--s2); padding: 0.0625rem 0.375rem; border: 1px dashed rgba(10, 10, 9, 0.3); border-radius: 0.375rem; color: var(--ink-3); font: var(--t-label); font-style: normal; }
+.ob-upnext { margin: var(--s5) 0 0; color: var(--ink-3); font: var(--t-small); text-wrap: pretty; }
+.ob-upnext b { color: var(--ink-2); font-weight: 500; }
+.ob-or { display: flex; align-items: center; gap: var(--s3); margin: var(--s5) 0 var(--s2); color: var(--ink-4); font: var(--t-label); }
+.ob-or::before, .ob-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+@media (max-width: 1340px) { .ob-stepper li:not(.is-now) span { display: none; } .ob-stepper li:not(.is-now) { padding: 0 0.375rem; } }
+@media (max-width: 1000px) { .ob-stepper { grid-column: 2; } }
+@media (max-width: 860px) {
+  .ob-runbar { grid-template-columns: minmax(0, 1fr) auto; row-gap: var(--s2); height: auto; padding: var(--s3) var(--s4) var(--s3); }
+  .ob-runbar .ob-logo { grid-column: 1; grid-row: 1; justify-self: start; }
+  .ob-runbar-end { grid-column: 2; grid-row: 1; }
+  .ob-runbar-end .ob-btn { min-height: 2.75rem; }
+  .ob-stepper { grid-column: 1 / -1; grid-row: 2; gap: 0.25rem; }
+  .ob-stepper li, .ob-stepper li.is-now, .ob-stepper li.is-done:hover { flex: 1; height: 0.25rem; padding: 0; background: var(--line-2); box-shadow: none; }
+  .ob-stepper li.is-done, .ob-stepper li.is-done:hover { background: var(--accent); }
+  .ob-stepper li.is-now { background: var(--ink-1); }
+  .ob-stepper li i, .ob-stepper li span, .ob-stepper li.is-now span { display: none; }
+  .ob-runbar-now { grid-column: 1 / -1; grid-row: 3; display: block; margin: 0; color: var(--ink-3); font: var(--t-small); }
+  .ob-runbar-now b { color: var(--ink-1); font-weight: 500; }
+  .ob-run-body { grid-template-columns: minmax(0, 1fr); background: none; }
+  /* the brand, the facts count and the fold on one compact row */
+  .ob-knows { position: static; display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 0 var(--s3); height: auto; overflow: visible; padding: var(--s2) var(--s4); border-bottom: 1px solid var(--line); }
+  .ob-facts-wrap::before, .ob-facts-wrap::after { display: none; }
+  .ob-knows-head { flex: 1; min-width: 0; }
+  .ob-knows-head > span:last-child { min-width: 0; }
+  .ob-knows-head b { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 0.9375rem; }
+  .ob-knows-fav { width: 2.25rem; height: 2.25rem; font-size: 1rem; }
+  .ob-facts-wrap { flex-basis: 100%; margin-bottom: var(--s3); }
+  .ob-knows-label { flex: none; justify-content: flex-start; gap: var(--s2); width: auto; min-height: 2.75rem; margin: 0; font-size: 0.8125rem; white-space: nowrap; pointer-events: auto; cursor: pointer; }
+  .ob-knows-label::after { content: ""; width: 0.5rem; height: 0.5rem; margin: -0.25rem 0 0 var(--s1); border: solid var(--ink-3); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); transition: transform 0.2s var(--ease); }
+  .ob-knows.is-open .ob-knows-label::after { margin-top: 0.25rem; transform: rotate(-135deg); }
+  .ob-knows:not(.is-open) .ob-facts-wrap { display: none; }
+  .ob-modal { place-items: end center; padding: 0; }
+  .ob-modal .ob-modal-box { width: 100%; border-radius: 1.25rem 1.25rem 0 0; padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+  .ob-modal .ob-signup .ob-agent { display: none; }
+  .ob-modal .ob-signup h3 { margin-top: 0; padding-right: 2.5rem; }
+  .ob-stage { padding: var(--s8) var(--s4) var(--s12); }
+  .ob-next > .ob-btn--ink { width: 100%; justify-content: center; }
+  .ob-win { gap: var(--s4); padding: var(--s5); }
+  .ob-win-media { width: 4.5rem; }
+  .ob-toast { left: 50%; bottom: 1rem; }
+  .ob-say .ob-agent { width: 2rem; height: 2rem; }
+  .ob-workbox, .ob-aside, .ob-out { margin-left: 0; }
+  .ob-aside.ob-proofcard { gap: var(--s4); padding: var(--s5); }
+  .ob-tiles3, .ob-tiles2 { grid-template-columns: 1fr; }
+  .ob-planrows > div { grid-template-columns: 1fr; gap: var(--s2); }
+  .ob-mailrow .ob-add { max-width: none; }
+  .ob-vids { grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: 72%; margin: 0 calc(var(--s4) * -1); padding: 0 var(--s4) var(--s2); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .ob-vid { scroll-snap-align: start; }
+  .ob-stage .ob-hbar { grid-template-columns: 6rem 1fr 2rem; }
+  .ob-planbox { padding: var(--s6) var(--s5); }
+  .ob-mailrow .ob-add { flex-wrap: wrap; }
+  .ob-mailrow .ob-add .ob-input { flex-basis: 100%; }
+  .ob-mailrow .ob-add .ob-btn { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ob-say, .ob-workbox, .ob-aside, .ob-out, .ob-fact.is-new { animation: none; }
+  .ob-workbar span, .ob-stage .ob-angle, .ob-tick { transition: none; }
+  .ob-work li.is-now i, .ob-checking, .ob-vid .ob-phone::after { animation: none; }
+}

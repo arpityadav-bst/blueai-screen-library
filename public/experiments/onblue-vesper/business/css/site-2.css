@@ -1,0 +1,72 @@
+/* The website, part 2: the result, extras, divider, comparison, pricing, FAQ,
+   final CTA, footer, and the no-website dialog. */
+
+/* one real result, Fastlane's shape: the story on the left with the CTA at
+   the proof, the actual Short on the right with its count, the five days under it */
+.ob-result { display: grid; grid-template-columns: minmax(0, 33.75rem) 18.75rem; justify-content: center; gap: 7.5rem; align-items: center; }
+.ob-result-h { max-width: 13ch; margin: 0; color: var(--ink-1); font: var(--t-title); letter-spacing: var(--tr-display); }
+.ob-result-say { max-width: 27.5rem; margin: var(--s4) 0 0; color: var(--ink-3); font: var(--t-lede); }
+.ob-result-cta { margin-top: var(--s8); }
+.ob-result-who { margin-top: var(--s5); color: var(--ink-3); font: var(--t-small); }
+/* a very subtle 3D turn: the phone and its card face the copy a little, the
+   card floating a touch in front; transforms only, nothing animates */
+.ob-result-side { position: relative; width: 18.75rem; }
+.ob-result-phone, .ob-result-days { transform: rotate(-3deg); }   /* flat tilt only, see journey.css */
+.ob-result-days { transform: rotate(-3deg); }
+.ob-result-phone { width: 100%; }   /* Apple's frame and its own shadow: .ob-iphone */
+.ob-result-phone video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ob-result-count { position: absolute; top: 9%; right: 8%; display: inline-flex; align-items: center; gap: 0.375rem; height: 1.75rem; padding: 0 0.625rem; border-radius: 0.375rem; background: rgba(10, 10, 9, 0.6); color: #fff; font: 600 0.8125rem/1 var(--font); }
+.ob-result-count svg { color: #ff0033; }
+/* the five days ride on the phone's lower-left edge, so the right column is
+   only as tall as the phone and the two columns centre on each other */
+.ob-result-days { position: absolute; left: -6rem; bottom: 2.5rem; width: 14.375rem; padding: 0.75rem 0.875rem 0.625rem; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); box-shadow: var(--shadow-2); }
+.ob-result-days b { display: block; margin-bottom: 0.25rem; color: var(--ink-1); font: 600 0.8125rem/1.2 var(--font); }
+.ob-bars { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.375rem; align-items: end; height: 4.5rem; padding-top: 1.125rem; border-bottom: 1px solid var(--line-2); }
+.ob-bar { position: relative; border-radius: 0.25rem 0.25rem 0 0; background: var(--accent); transform-origin: bottom; transform: scaleY(0); transition: transform 0.9s var(--ease); }
+.ob-bars.is-in .ob-bar { transform: scaleY(1); }
+.ob-bar span { position: absolute; left: 0; right: 0; top: -1.0625rem; color: var(--ink-1); font: var(--t-label); text-align: center; }
+.ob-bars-x { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.375rem; padding-top: 0.375rem; color: var(--ink-4); font: var(--t-label); text-align: center; }
+
+
+/* the gradient divider: a soft accent glow with a halftone, static */
+
+/* the comparison table */
+
+/* pricing */
+/* (the budget meter lives in css/pricing.css) */
+
+/* FAQ */
+/* the FAQ: the question sits left (pinned while you read), the answers right
+   as cards; one open at a time, its number in volt, a volt rule down its edge,
+   the answer sliding open */
+.ob-qa { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: var(--s16); align-items: start; }
+.ob-qa-head { position: sticky; top: 7rem; }
+.ob-qa-head h2 { margin: 0; color: var(--ink-1); font: var(--t-title); letter-spacing: var(--tr-display); }
+.ob-qa-head p { max-width: 22rem; margin: var(--s4) 0 var(--s6); color: var(--ink-3); font: var(--t-lede); }
+.ob-faq { display: grid; gap: 0.625rem; }
+.ob-qa-item { overflow: hidden; border: 1px solid var(--line); border-radius: 1rem; background: var(--surface); transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
+.ob-qa-item.is-open { border-color: rgba(198, 244, 50, 0.25); background: var(--surface-2); box-shadow: inset 0.1875rem 0 0 var(--accent); }
+.ob-qa-item button { display: flex; align-items: center; gap: var(--s4); width: 100%; padding: 1.125rem 1.25rem; border: 0; background: none; color: var(--ink-1); font: var(--t-h3); font-size: 1.0625rem; text-align: left; cursor: pointer; }
+.ob-qa-item em { flex: none; color: var(--ink-4); font: 600 0.8125rem/1 var(--font); font-style: normal; font-variant-numeric: tabular-nums; transition: color 0.3s ease; }
+.ob-qa-item.is-open em { color: var(--accent); }
+.ob-qa-item button span { flex: 1; }
+.ob-qa-item i { flex: none; display: grid; place-items: center; width: 1.875rem; height: 1.875rem; border-radius: 50%; background: var(--surface-2); color: var(--ink-2); transition: transform 0.35s var(--ease), background 0.3s ease, color 0.3s ease; }
+.ob-qa-item.is-open i { background: var(--accent); color: var(--on-accent); transform: rotate(45deg); }
+.ob-qa-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s var(--ease); }
+.ob-qa-item.is-open .ob-qa-a { grid-template-rows: 1fr; }
+.ob-qa-a > div { overflow: hidden; }
+.ob-qa-a p { margin: 0; padding: 0 1.25rem 1.25rem 3.75rem; color: var(--ink-3); font: var(--t-body); }
+@media (max-width: 900px) { .ob-qa { grid-template-columns: 1fr; gap: var(--s8); } .ob-qa-head { position: static; } }
+
+/* final CTA */
+
+/* footer */
+
+
+@media (max-width: 900px) {
+  .ob-result { grid-template-columns: 1fr; }
+  .ob-result { gap: var(--s10); }
+  .ob-result-side { justify-self: center; width: min(18.75rem, 100%); }
+  .ob-result-days { position: static; width: 100%; margin-top: var(--s4); }
+  .ob-result-phone, .ob-result-days { transform: none; }
+}

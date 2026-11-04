@@ -1,0 +1,36 @@
+/* How it works, part 3 (Appy: the phone screens read bleak and empty): each
+   screen now carries what its step actually produced, so none ends half way
+   down an empty phone. Dark phone UI tokens come from .oj-glass. */
+
+/* step 1: the brand's colours and voice, read off the site */
+.oj-look { display: grid; grid-template-columns: auto 1fr; gap: 6px; margin-top: 8px; }
+.oj-look > span { padding: 9px 10px; border-radius: 9px; background: var(--surface-2); opacity: 0; transform: translateY(6px); transition: opacity 0.3s ease, transform 0.3s var(--ease); }
+.at-1 .oj-look > span { opacity: 1; transform: none; transition-delay: 0.95s; }
+.at-1 .oj-look > span + span { transition-delay: 1.15s; }
+.oj-look small { display: block; margin-bottom: 6px; color: var(--ink-4); font: 500 10.5px/1 var(--font); }
+.oj-look i { display: flex; gap: 4px; }
+.oj-look u { display: block; width: 16px; height: 16px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); }
+.oj-look b { display: block; color: var(--ink-1); font: 500 12px/1.3 var(--font); }
+
+/* step 4: the three drafts, each poster arriving as it is made */
+.oj-drafts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
+.oj-drafts span { min-width: 0; opacity: 0.18; transition: opacity 0.4s ease; }
+.at-4 .oj-drafts span { opacity: 1; transition-delay: var(--d); }
+.oj-drafts img { display: block; width: 100%; aspect-ratio: 9 / 16; border-radius: 9px; object-fit: cover; }
+.oj-make .oj-drafts small { margin-top: 6px; color: var(--ink-3); font: 500 10.5px/1.2 var(--font); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* step 5: all eight channels, each with its creator's face */
+.oj-post ol { gap: 6px; }
+.oj-post li { padding: 7px 10px 7px 7px; }
+.oj-post li .oj-pav { flex: none; width: 26px; height: 26px; overflow: hidden; border-radius: 50%; background: none; }
+.oj-pav img, .oj-pav i { display: grid; place-items: center; width: 100%; height: 100%; object-fit: cover; color: #fff; font: 700 11px/1 var(--font); font-style: normal; }
+.oj-post li b small { display: block; margin-top: 2px; color: var(--ink-4); font: 500 10px/1 var(--font); }
+
+/* step 6: the three videos behind the total, matching the cards outside */
+.oj-top { display: grid; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; }
+.oj-top li { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 10px; padding: 6px 10px 6px 6px; border-radius: 10px; background: var(--surface-2); opacity: 0; transform: translateY(6px); transition: opacity 0.3s ease, transform 0.3s var(--ease); }
+.at-6 .oj-top li { opacity: 1; transform: none; transition-delay: var(--d); }
+.oj-top img { width: 30px; height: 53px; border-radius: 6px; object-fit: cover; }
+.oj-top b { color: var(--ink-1); font: 600 12px/1 var(--font); }
+.oj-top span { color: var(--ink-2); font: 600 12px/1 var(--font); font-variant-numeric: tabular-nums; }
+.oj-top li:first-child { box-shadow: inset 0 0 0 1.5px var(--accent); }
