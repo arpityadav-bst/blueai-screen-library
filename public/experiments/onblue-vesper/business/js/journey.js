@@ -81,6 +81,11 @@
   // wire ends on the card's inner edge
   function spots(list, w) { return list.map(function (p) { return { x: p[0] * (PH + GAP + w / 2), y: p[1], edge: p[0] * (PH + GAP), s: p[0] }; }); }
   function at(list, i) { return '--x:' + list[i].x + 'px;--y:' + list[i].y + 'px'; }
+  // THE PHONE SCENE (700 and below, css/journey-3.css): a 350 x 400 portrait
+  // scene, the phone left of centre and at most two cards beside it; each card
+  // carries this second spot (--px / --py) for it
+  var PW = 350, PHH = 400, PC = [[82, -56], [82, 62]], PR = [[42, -14], [124, 18]];
+  function ph(list, i) { var p = list[Math.min(i, list.length - 1)]; return ';--px:' + p[0] + 'px;--py:' + p[1] + 'px'; }
 
   function build(r, live) {
     var pal = PAL[r.category] || PAL['Apps and software'], made = OB.film(r.videos[0].film), h = OB.hash(r.site || r.brand);
@@ -93,22 +98,22 @@
     // the way IN only; leaving, everything goes together with no wait
     var FACTS = spots([[-1, -190], [1, -70], [-1, 150], [1, 210]], 260);
     var facts = [['Sells', r.sell, 'brand'], ['Buyers', r.buyers, 'users'], ['Category', r.category, 'studio'], ['Competitors', r.rivals.length + ' found', 'radar']].map(function (f, i) {
-      return '<div class="oj-fact" style="' + at(FACTS, i) + ';--d:' + (120 + i * 90) + 'ms;--b:' + (i * 0.7) + 's"><i>' + OB.icon(f[2], 18) + '</i><span><small>' + f[0] + '</small><b>' + e(f[1]) + '</b></span></div>';
+      return '<div class="oj-fact" style="' + at(FACTS, i) + ph(PC, i) + ';--d:' + (120 + i * 90) + 'ms;--b:' + (i * 0.7) + 's"><i>' + OB.icon(f[2], 18) + '</i><span><small>' + f[0] + '</small><b>' + e(f[1]) + '</b></span></div>';
     }).join('');
     var RIV = spots([[-1, -150], [-1, 165], [1, -150], [1, 165]], 124);
     var rivals = r.rivals.slice(0, 4).map(function (x, i) {
       var f = OB.film(OB.filmFor(r.formats[i % r.formats.length].name, h + i));
-      return '<div class="oj-rival" style="' + at(RIV, i) + ';--r:' + (RIV[i].s * 4) + 'deg;--d:' + (60 + i * 70) + 'ms"><img src="' + f.poster + '" alt=""><span>' + x.videos + ' Shorts</span><b>' + e(x.name) + '</b></div>';
+      return '<div class="oj-rival" style="' + at(RIV, i) + ph(PR, i) + ';--r:' + (RIV[i].s * 4) + 'deg;--d:' + (60 + i * 70) + 'ms"><img src="' + f.poster + '" alt=""><span>' + x.videos + ' Shorts</span><b>' + e(x.name) + '</b></div>';
     }).join('');
     var CH = spots([[-1, -180], [1, -100], [-1, 110], [1, 190]], 236);
     var chips = r.formats.slice(0, 4).map(function (f, i) {
-      return '<div class="oj-chip' + (i === 0 ? ' is-top' : '') + '" style="' + at(CH, i) + ';--d:' + (60 + i * 80) + 'ms"><b>' + e(f.name) + '</b><span>' + f.share + '%</span></div>';
+      return '<div class="oj-chip' + (i === 0 ? ' is-top' : '') + '" style="' + at(CH, i) + ph(PC, i) + ';--d:' + (60 + i * 80) + 'ms"><b>' + e(f.name) + '</b><span>' + f.share + '%</span></div>';
     }).join('');
     // step 5: a network of creators, four each side, lighting up Live in turn
     var NODES = spots([[-1, -225], [-1, -75], [-1, 75], [-1, 225], [1, -225], [1, -75], [1, 75], [1, 225]], 200);
     var nodes = NODES.map(function (p, i) {
       var c = CREATORS[i], ava = i < 5 ? '<img src="img/avatars/creator-' + (i + 1) + '.jpg" alt="">' : '<i style="background:' + pal[i % 4] + '">' + c[0].charAt(1).toUpperCase() + '</i>';
-      return '<div class="oj-node" style="' + at(NODES, i) + ';--d:' + (100 + i * 110) + 'ms"><span class="oj-av">' + ava + '</span><span><b>' + c[0] + '</b><small>' + c[1] + ' subscribers</small></span><em>Live</em></div>';
+      return '<div class="oj-node" style="' + at(NODES, i) + ph(PC, i) + ';--d:' + (100 + i * 110) + 'ms"><span class="oj-av">' + ava + '</span><span><b>' + c[0] + '</b><small>' + c[1] + ' subscribers</small></span><em>Live</em></div>';
     }).join('');
     var posting = CREATORS.map(function (c, i) {   // all 8 the screen promises, each with its face
       var av = i < 5 ? '<img src="img/avatars/creator-' + (i + 1) + '.jpg" alt="">' : '<i style="background:' + pal[i % 4] + '">' + c[0].charAt(1).toUpperCase() + '</i>';
@@ -117,7 +122,7 @@
     // step 6: three results (one wins, one stalls) and three new takes on the winner
     var RES = spots([[-1, -210], [-1, 0], [-1, 210]], 204), VARS = spots([[1, -210], [1, 0], [1, 210]], 92), RV = [4100, 18400, 900];
     var results = RES.map(function (p, i) {
-      return '<div class="oj-res' + (i === 1 ? ' is-win' : '') + (i === 2 ? ' is-cut' : '') + '" style="' + at(RES, i) + ';--d:' + (80 + i * 90) + 'ms"><img src="' + OB.film(h + 3 + i * 5).poster + '" alt=""><span><small>Day 3</small><b data-v="' + RV[i] + '">0</b><em>' + (i === 1 ? 'Winner' : i === 2 ? 'Stalled' : 'Steady') + '</em></span></div>';
+      return '<div class="oj-res' + (i === 1 ? ' is-win' : '') + (i === 2 ? ' is-cut' : '') + '" style="' + at(RES, i) + ph(PC, i) + ';--d:' + (80 + i * 90) + 'ms"><img src="' + OB.film(h + 3 + i * 5).poster + '" alt=""><span><small>Day 3</small><b data-v="' + RV[i] + '">0</b><em>' + (i === 1 ? 'Winner' : i === 2 ? 'Stalled' : 'Steady') + '</em></span></div>';
     }).join('');
     var takes = VARS.map(function (p, i) {
       return '<div class="oj-var" style="' + at(VARS, i) + ';--d:' + (500 + i * 110) + 'ms"><img src="' + OB.film(h + 14 + i * 3).poster + '" alt=""><em>Var 0' + (i + 1) + '</em></div>';
@@ -180,6 +185,8 @@
   }
   function tick() {
     var mid = window.innerHeight / 2, best = 0, bestD = Infinity;
+    // on the phone the stage pins above the words: the middle is the room under it
+    if (sec.classList.contains('oj-ph')) { mid = (Math.max(0, box.getBoundingClientRect().bottom) + window.innerHeight) / 2; }
     stepsEl.querySelectorAll('.oj-step').forEach(function (s, i) {
       var r = s.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - mid);
       if (d < bestD) { bestD = d; best = i; }
@@ -203,15 +210,19 @@
   // right of the screen, and the screen's height (under the header pill); on a
   // phone, the column's width and half the screen's height
   function fit() {
-    var r = box.parentNode.getBoundingClientRect(), small = window.matchMedia('(max-width: 900px)').matches;
-    var room = small ? r.width : window.innerWidth - r.left - 64, tall = small ? window.innerHeight * 0.5 : window.innerHeight - 88;
+    var r = box.parentNode.getBoundingClientRect(), small = window.matchMedia('(max-width: 900px)').matches, phone = window.matchMedia('(max-width: 700px)').matches;
+    sec.classList.toggle('oj-ph', phone);
+    var w = phone ? PW : W, hh = phone ? PHH : H;
+    // on a small screen the room is the column, never more than the screen
+    var room = small ? Math.min(r.width, document.documentElement.clientWidth - 40) : window.innerWidth - r.left - 64;
+    var tall = phone ? window.innerHeight * 0.46 : small ? window.innerHeight * 0.5 : window.innerHeight - 88;
     // 85% of the room it could take (Appy: the full fit read too large)
-    var s = Math.max(0.3, Math.min(room / W, tall / H, 1.4) * (small ? 1 : 0.85));
+    var s = Math.max(0.3, Math.min(room / w, tall / hh, phone ? 1 : 1.4) * (small ? 1 : 0.85));
     box.style.setProperty('--oj-s', String(s));
-    box.style.width = Math.round(W * s) + 'px'; box.style.height = Math.round(H * s) + 'px';
-    sec.style.setProperty('--oj-h', Math.round(H * s) + 'px');   // the stage's height: the pin and the first and last steps use it
-    // a little left of centre in its room (Appy), nearer the words
-    box.style.marginLeft = Math.max(0, Math.round((room - W * s) * 0.25)) + 'px';
+    box.style.width = Math.round(w * s) + 'px'; box.style.height = Math.round(hh * s) + 'px';
+    sec.style.setProperty('--oj-h', Math.round(hh * s) + 'px');   // the stage's height: the pin and the first and last steps use it
+    // a little left of centre in its room (Appy), nearer the words; centred on a phone
+    box.style.marginLeft = Math.max(0, Math.round((room - w * s) * (phone ? 0.5 : 0.25))) + 'px';
   }
 
   // MAGNETIC STEPS: when the scrolling stops inside the section, the nearest
@@ -221,8 +232,9 @@
   // scroll to rest, then eases in over ~0.7s; any wheel, touch or key from the
   // reader lets go at once
   var settleT, glide = 0, reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var touch = window.matchMedia('(hover: none) and (pointer: coarse), (max-width: 900px)');   // native scroll only on touch and phones
   function magnet() {
-    if (glide || reduce) { return; }
+    if (glide || reduce || touch.matches) { return; }
     var mid = window.innerHeight / 2, sr = sec.getBoundingClientRect(), bd = Infinity;
     if (sr.top > mid || sr.bottom < mid) { return; }
     stepsEl.querySelectorAll('.oj-step').forEach(function (s) {

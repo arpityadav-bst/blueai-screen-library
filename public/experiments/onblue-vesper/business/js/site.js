@@ -43,6 +43,17 @@
   };
   window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
 
+  // the phone bar's burger and its popover (header.css, 900 and below): a tap
+  // outside, Escape, any row, or widening past 900 closes it
+  var burger = document.querySelector('[data-burger]'), menu = document.querySelector('[data-nav-menu]');
+  if (burger && menu) {
+    var shut = function () { menu.classList.remove('is-open'); burger.setAttribute('aria-expanded', 'false'); };
+    burger.addEventListener('click', function () { var on = !menu.classList.contains('is-open'); menu.classList.toggle('is-open', on); burger.setAttribute('aria-expanded', String(on)); });
+    document.addEventListener('click', function (e) { if (!burger.contains(e.target) && (!menu.contains(e.target) || e.target.closest('.ob-nav-row'))) { shut(); } });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { shut(); } });
+    window.matchMedia('(min-width: 901px)').addEventListener('change', shut);
+  }
+
   // every "Get my free report" button takes you to the hero field
   document.querySelectorAll('[data-to-field]').forEach(function (b) {
     b.addEventListener('click', function () {
@@ -96,6 +107,7 @@
         var b = OB.report.brand(v);
         var img = new Image();
         img.alt = ''; img.onerror = function () { fav.innerHTML = OB.icon('globe', 20); };
+        img.onload = function () { if (img.naturalWidth < 32) { fav.innerHTML = OB.icon('globe', 20); } };   // Google's tiny default globe blurs: our crisp one
         img.src = 'https://www.google.com/s2/favicons?domain=' + encodeURIComponent(b.host) + '&sz=64';
         fav.innerHTML = ''; fav.appendChild(img);
         if (name) { name.innerHTML = 'BlueAI will read <b>' + OB.esc(b.host) + '</b> and build your free report.'; }
@@ -127,6 +139,12 @@
   document.querySelectorAll('[data-nosite]').forEach(function (b) { b.addEventListener('click', open); });
   modal.addEventListener('click', function (e) { if (e.target === modal || e.target.closest('[data-close]')) { close(); } });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { close(); } });
+  // touch: keep the bottom sheet above the keyboard (iOS does not resize the page)
+  if (window.visualViewport && window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
+    var vv = window.visualViewport;
+    var lift = function () { modal.style.bottom = modal.classList.contains('is-open') ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) + 'px' : ''; };
+    vv.addEventListener('resize', lift); vv.addEventListener('scroll', lift);
+  }
   modal.querySelectorAll('[data-where] .ob-pick').forEach(function (p) {
     p.addEventListener('click', function () {
       modal.querySelectorAll('[data-where] .ob-pick').forEach(function (q) { q.setAttribute('aria-pressed', String(q === p)); });
@@ -137,4 +155,11 @@
     var f = e.target, where = modal.querySelector('[data-where] [aria-pressed="true"]');
     go({ sell: f.sell.value.trim(), buyers: f.buyers.value.trim(), where: where ? where.textContent : 'United States' });
   });
+
+  // back from the run by any route (the logo, "Done for now"), with a report and no
+  // account yet: the hero's quiet line offers the report back instead of "No website?"
+  var rep = OB.report.get(), alt = document.querySelector('.ob-hero-alt');
+  if (alt && rep && !OB.store('onblue-app-stage')) {
+    alt.innerHTML = 'Welcome back. <a class="ob-link" href="run.html?resume=1">Continue your report' + (rep.brand === 'Your brand' ? '' : ' for ' + OB.esc(rep.brand)) + '</a>';
+  }
 })();

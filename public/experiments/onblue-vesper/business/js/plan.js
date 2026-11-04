@@ -37,7 +37,7 @@
       '<div class="ob-pl-key"><span><i class="is-spent"></i><b data-spent></b> spent</span><span><i class="is-on"></i><b data-left></b> left</span><span><i></i>Room to raise your budget</span><span class="ob-pl-unit">Each dot is 2,500 US views</span></div>' +
       '<ul class="ob-pl-terms"><li>' + yes() + 'No setup fee</li><li>' + yes() + 'No retainer</li><li>' + yes() + 'Charged only for views that happen</li></ul></section>' +
 
-      '<section' + (paused ? ' class="ob-pl-dim"' : '') + '>' + sect('Angles BlueAI goes after', paused ? 'These apply when you resume posting' : 'Click an angle to turn it on or off') + '<div class="ob-pg-grid2">' +
+      '<section' + (paused ? ' class="ob-pl-dim"' : '') + '>' + sect('Angles BlueAI goes after', paused ? 'These apply when you resume posting' : (window.matchMedia('(hover: none)').matches ? 'Tap' : 'Click') + ' an angle to turn it on or off') + '<div class="ob-pg-grid2">' +
       r.angles.map(function (a, i) {
         return '<div class="ob-pa' + (a.on ? '' : ' is-off') + '" data-angle="' + i + '" role="checkbox" tabindex="0" aria-checked="' + a.on + '">' +
           '<span class="ob-pa-mark">' + OB.icon('check') + '</span><span class="ob-pa-off">Off</span><small>' + e(a.who) + '</small><b>' + e(a.say) + '</b><span class="ob-chip">' + e(a.format) + '</span></div>';
@@ -45,7 +45,7 @@
 
       '<section' + (paused ? ' class="ob-pl-dim"' : '') + '>' + sect('Pace and rules') +
       '<div class="ob-card ob-pl-pacecard"><div><h3 class="ob-pg-h3">New videos a week</h3><p class="ob-pg-p">How many BlueAI makes for you each week.</p></div><div class="ob-picks ob-pl-pace" data-pace>' +
-      [3, 5, 7, 10].map(function (n) { return '<button class="ob-pick" type="button" aria-pressed="' + (st.perWeek === n) + '" data-n="' + n + '">' + n + ' a week</button>'; }).join('') + '</div></div>' +
+      [3, 5, 7, 10].map(function (n) { return '<button class="ob-pick" type="button" aria-pressed="' + (st.perWeek === n) + '" data-n="' + n + '" aria-label="' + n + ' a week">' + n + '<span class="ob-pl-aw"> a week</span></button>'; }).join('') + '</div></div>' +
       '<ul class="ob-card ob-pl-rules">' +
       '<li>' + yes() + '<div><b>You approve every video</b><span>Always on. Nothing posts without your yes.</span></div></li>' +
       '<li>' + yes() + '<div><b>' + (r.where === 'Worldwide' ? 'Buyers worldwide' : 'Buyers in ' + (r.where === 'United States' ? 'the United States' : r.where === 'UK' ? 'the UK' : e(r.where))) + '</b><span>Creators are matched to audiences where your buyers are. ' + (r.where === 'United States' ? 'You pay for US views.' : 'Views are billed in the US only for now.') + '</span></div></li>' +

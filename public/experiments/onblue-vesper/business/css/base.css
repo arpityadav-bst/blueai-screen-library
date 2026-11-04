@@ -142,3 +142,11 @@ html { font-size: clamp(16px, 0.8333vw, 40px); }
 .ob-dock-bar button[aria-pressed="true"] { background: rgba(255, 255, 255, 0.16); color: #fff; }
 
 @media (prefers-reduced-motion: reduce) { .ob-btn { transition: none; } }
+
+/* THE PHONE (desktop untouched): the page never scrolls sideways, a 20px
+   content gutter, and a 32px head-to-content gap */
+@media (max-width: 900px) { html, .ob-page { overflow-x: clip; } }
+@media (max-width: 700px) {
+  :root { --head-gap: 2rem; }
+  .ob-wrap { width: min(var(--wrap), calc(100% - 2.5rem - env(safe-area-inset-left) - env(safe-area-inset-right))); }
+}

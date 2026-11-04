@@ -24,7 +24,7 @@
   // smaller frames; a tall one gets fewer, bigger ones. Same look, always fits.
   var hero = arc.closest('.ob-hero'), nav = document.querySelector('.ob-nav'), allCards = arc.querySelectorAll('.ob-cyl-card');
   function fitRing() {
-    var vw = window.innerWidth, vh = window.innerHeight, hdr = nav ? nav.offsetHeight : 72;
+    var vw = document.documentElement.clientWidth, vh = window.innerHeight, hdr = nav ? nav.offsetHeight : 72;
     var rem = parseFloat(getComputedStyle(document.documentElement).fontSize) / 16, gap = 24.79 * rem;   // the site scales by rem above 1920px
     document.documentElement.style.setProperty('--hdr', hdr + 'px');
     var cs = getComputedStyle(hero), heroH = Math.max(560 * rem, vh - hdr);
@@ -35,6 +35,9 @@
     // keeps the spare height as air around the words
     var R = 0.7 * vw, cap = 0.85 * Math.min(vw < 820 ? 0.48 * vw : 0.2 * vw, avail / 1.248), n = 9, w = 0;
     for (n = 9; n <= 40; n++) { w = 2 * R * Math.sin(Math.PI / n) - gap; if (w <= cap) { break; } }
+    // a phone (620 wide or less) keeps the ring 3D with fixed steps: 40deg (9
+    // frames, about three across) on a tall phone, 30deg (12) on the rest
+    if (vw <= 620) { n = vh >= 780 ? 9 : 12; }
     n = Math.min(n, 40); w = Math.max(60, 2 * R * Math.sin(Math.PI / n) - gap);
     hero.style.setProperty('--ring-w', w.toFixed(2) + 'px');
     hero.style.setProperty('--ring-step', (360 / n).toFixed(4) + 'deg');

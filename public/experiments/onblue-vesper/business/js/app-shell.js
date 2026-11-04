@@ -64,7 +64,8 @@
     var t = document.querySelector('.ob-toast'); if (t) { t.style.bottom = ''; }
     toast(msg); t = document.querySelector('.ob-toast');
     var b = t.getBoundingClientRect(), top = Infinity;
-    Array.prototype.forEach.call(document.querySelectorAll('.ob-btn, .ob-prompt-send, button[data-approve]'), function (x) {
+    var sel = '.ob-btn, .ob-prompt-send, button[data-approve]' + (window.matchMedia('(max-width: 820px)').matches ? ', .ob-br-drop, .ob-pick, .ob-x' : '');   // phones: every tappable control counts
+    Array.prototype.forEach.call(document.querySelectorAll(sel), function (x) {
       var q = x.getBoundingClientRect();
       if (q.width && q.bottom > b.top - 8 && q.top < b.bottom + 8 && q.right > b.left && q.left < b.right) { top = Math.min(top, q.top); }
     });

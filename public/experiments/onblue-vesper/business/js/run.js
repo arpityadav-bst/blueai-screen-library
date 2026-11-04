@@ -47,7 +47,12 @@
       var br = b.getBoundingClientRect();
       return br.bottom > tr.top - 24 && br.top < tr.bottom + 12 && br.right > tr.left && br.left < tr.right;
     });
-    if (hit) { t.style.top = (bar.getBoundingClientRect().bottom + 12) + 'px'; t.style.bottom = 'auto'; }
+    if (!hit) { return; }
+    // on a phone the brand row sits under the bar: drop in under it, so the
+    // toast never covers the "What BlueAI knows" toggle (once it scrolls away, under the bar)
+    var top = bar.getBoundingClientRect().bottom, kb = knows.getBoundingClientRect().bottom;
+    if (window.innerWidth <= 860 && kb > top && kb < window.innerHeight / 2) { top = kb; }
+    t.style.top = (top + 12) + 'px'; t.style.bottom = 'auto';
   }
   // the bar lifts off the page once it scrolls, so nothing reads as cut under it
   window.addEventListener('scroll', function () { bar.classList.toggle('is-scrolled', window.scrollY > 4); }, { passive: true });
@@ -60,7 +65,9 @@
     var mark = r.site ? '<img alt="" src="https://www.google.com/s2/favicons?domain=' + encodeURIComponent(r.site) + '&sz=128">' : r.brand === 'Your brand' ? OB.icon('brand', 20) : e(r.initial);
     head.innerHTML = '<span class="ob-knows-fav">' + mark + '</span><span><b>' + e(r.brand) + '</b><small>' + (r.site ? e(r.site) : 'No website' + (catKnown ? ' &middot; ' + e(r.category) : '')) + '</small></span>';
     var img = head.querySelector('img');
-    if (img) { img.onerror = function () { img.parentNode.textContent = r.initial; }; }
+    // no icon, or only a tiny one (Google's 16px default globe for unknown sites, stretched
+    // and blurry): the brand's initial instead (Appy: "why the favicons so blurry?")
+    if (img) { img.onerror = function () { img.parentNode.textContent = r.initial; }; img.onload = function () { if (img.naturalWidth < 32 && img.parentNode) { img.parentNode.textContent = r.initial; } }; }
   }
   renderHead();
 
@@ -105,13 +112,15 @@
   function renderStepper() {
     stepper.innerHTML = STEPS.map(function (s, i) {
       var ok = i < done && i !== at;
-      return '<li class="' + (i === at ? 'is-now' : i < done ? 'is-done' : '') + '"' + (i === at ? ' aria-current="step"' : '') + (ok ? ' title="Back to ' + e(s.label) + '"' : '') +
+      return '<li class="' + (i === at ? 'is-now' : i < done ? 'is-done' : '') + '"' + (i === at ? ' aria-current="step"' : '') + (ok ? ' title="Back to ' + e(s.label) + '" aria-label="Go to step ' + (i + 1) + ': ' + e(s.label) + '"' : '') +
         '><i>' + (ok ? OB.icon('check', 12) : i + 1) + '</i><span>' + e(s.label) + '</span></li>';
     }).join('');
     if (stepnow) { stepnow.innerHTML = '<b>' + e(STEPS[at].label) + '</b> &middot; step ' + (at + 1) + ' of ' + STEPS.length; }
-    // the bar's save keeps its slot (nothing shifts) but shows from the first
-    // result; on the plan the page's own button leads, so it shows only once saved
-    saveBtn.style.visibility = saved || (done && at !== STEPS.length - 1) ? '' : 'hidden';
+    // the bar's save keeps its slot (nothing shifts) and fades in from step 3,
+    // "What wins", the first thing worth an email (Appy: on step 1 there is
+    // nothing to save yet); once reached it stays to the last step, the plan
+    // included (Appy), and when going back
+    saveBtn.classList.toggle('is-hidden', !(saved || Math.max(at, done - 1) >= 2));   // done counts a step once its result shows, so step 2's list made it 2: the step reached is done - 1
     saveBtn.disabled = saved;
     saveBtn.innerHTML = saved ? OB.icon('check', 14) + 'Saved' : 'Save my report';
   }
@@ -245,7 +254,14 @@
     var target = suIn.value ? suGo : suIn;
     if (window.innerWidth > 860 || suIn.value) { window.setTimeout(function () { target.focus({ preventScroll: true }); }, 60); }
   }
-  function closeSignup() { modal.classList.remove('is-open'); }
+  function closeSignup() { modal.classList.remove('is-open'); modal.style.bottom = ''; }
+  // iOS keeps the layout viewport under the keyboard: lift the phone's bottom
+  // sheet to sit on top of it (Android resizes, see the viewport meta)
+  var vv = window.visualViewport;
+  if (vv) {
+    var lift = function () { modal.style.bottom = modal.classList.contains('is-open') && window.innerWidth <= 860 ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) + 'px' : ''; };
+    vv.addEventListener('resize', lift); vv.addEventListener('scroll', lift);
+  }
   document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') { closeSignup(); } });
   modal.addEventListener('click', function (ev) { if (ev.target === modal || ev.target.closest('[data-close]')) { closeSignup(); } });
   function finish(email) {
@@ -261,7 +277,10 @@
     window.location.href = 'app/home.html?welcome=1';
   }
   api.signup = function (mode) { if (saved && mode === 'start') { suMode = 'start'; finish(r.email); } else { openSignup(mode); } };
-  google.addEventListener('click', function () { openSignup(suMode, true); });
+  // Google's own chooser in a popup (js/google.js); the in-page form only if the popup is blocked
+  google.addEventListener('click', function () {
+    OB.google(r.email || r.mailed || '', function (email) { if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { finish(email); } }, function () { openSignup(suMode, true); });
+  });
   suIn.addEventListener('input', function () { err(''); });
   modal.querySelector('[data-email-form]').addEventListener('submit', function (ev) {
     ev.preventDefault();

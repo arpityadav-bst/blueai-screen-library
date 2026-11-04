@@ -70,3 +70,22 @@
   .ob-result-days { position: static; width: 100%; margin-top: var(--s4); }
   .ob-result-phone, .ob-result-days { transform: none; }
 }
+/* THE PHONE (700 and below): copy, then the proof, then the CTA. The proof
+   keeps the desktop's composition (the bar card over the phone's lower left,
+   both tilted) at a size that leaves room for the copy */
+@media (max-width: 700px) {
+  .ob-result { gap: 0; }
+  .ob-result-copy { display: contents; }
+  .ob-result-h { order: 1; font-size: 1.875rem; }
+  .ob-result-say { order: 2; font-size: 1rem; text-wrap: pretty; }
+  .ob-result-side { order: 3; width: min(19rem, 100%); margin-top: 1.5rem; }
+  .ob-result-cta { order: 4; justify-self: start; margin-top: 1.5rem; }
+  .ob-result-who { order: 5; margin-top: 0.75rem; }
+  .ob-result-phone { width: 13.5rem; margin-left: auto; transform: rotate(-3deg); }
+  .ob-result-days { position: absolute; left: 0; bottom: 1.5rem; width: 12rem; margin: 0; transform: rotate(-3deg); }
+  .ob-bars-x { font-size: 0.6875rem; }
+  .ob-qa-head h2 { font-size: 1.875rem; }
+  .ob-qa-head p { margin-bottom: 0; font-size: 1rem; }
+  .ob-qa-head .ob-btn { display: none; }   /* the close owns the CTA */
+  .ob-qa-a p { padding: 0 1.25rem 1.25rem 3.3125rem; }   /* in line with the question text */
+}

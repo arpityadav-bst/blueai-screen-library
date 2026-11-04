@@ -103,11 +103,11 @@
 .ob-rd-figs > div { display: grid; align-content: start; gap: 0.5rem; }
 .ob-rd-figs > div + div { padding-left: var(--s6); border-left: 1px solid var(--line); }
 .ob-rd-figs > div > small { color: var(--ink-3); font: var(--t-small); }
-.ob-rd-say { display: flex; align-items: flex-start; gap: 0.75rem; margin: auto 0 0; padding-top: var(--s5); border-top: 1px solid var(--line); color: var(--ink-2); font: var(--t-small); }
+.ob-rd-say { display: flex; align-items: center; gap: 0.75rem; margin: auto 0 0; padding-top: var(--s5); border-top: 1px solid var(--line); color: var(--ink-2); font: var(--t-small); }
 .ob-rd-figs + .ob-rd-say { margin-top: var(--s6); }
 .ob-rd-say .ob-agent { width: 1.75rem; height: 1.75rem; }
 .ob-rd-say .ob-agent svg { width: 0.875rem; height: 0.875rem; }
-.ob-rd-say span { padding-top: 0.25rem; }
+/* the badge centres on the words (Appy: a top-aligned badge nudged by padding sat between line 1 and the middle) */
 .ob-pg section > .ob-rd-tabs { margin-top: var(--s12); }
 .ob-pg .ob-rd-sect { margin-top: var(--s8); }
 .ob-rd-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s4); }

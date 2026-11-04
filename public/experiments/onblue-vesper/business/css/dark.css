@@ -30,3 +30,5 @@
 .ob-dark .ob-field input::placeholder { color: #9a9a94; }
 .ob-dark .ob-field .ob-btn--ink { background: linear-gradient(180deg, #2c2c29 0%, #0b0b0a 100%); color: #fff; }
 .ob-dark .ob-chip--on { color: #0b0b0a; }
+/* THE PHONE: related dark bands (the face-off, pricing, the FAQ) meet at half the 76 band */
+@media (max-width: 700px) { .ob-dark + .ob-dark.ob-sec { padding-top: 2.375rem; } }

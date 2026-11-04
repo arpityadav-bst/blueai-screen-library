@@ -22,6 +22,28 @@
     });
     return r.videos;
   }
+  // a phone swipes the Shorts sideways: the dots under the row say which one is
+  // in view and jump to any of them (shown at 860 and below, run-2.css)
+  function dots(out) {
+    var row = out.querySelector('.ob-vids'), box = out.querySelector('[data-dots]'), rest = 0;
+    if (!row || !box) { return; }
+    var pad = function () { return parseFloat(getComputedStyle(row).scrollPaddingLeft) || 0; };
+    var off = function (c) { return c.getBoundingClientRect().left - row.getBoundingClientRect().left - pad(); };
+    var mark = function (k) { Array.prototype.forEach.call(box.children, function (d, j) { if (j === k) { d.setAttribute('aria-current', 'true'); } else { d.removeAttribute('aria-current'); } }); };
+    box.addEventListener('click', function (ev) {
+      var k = Array.prototype.indexOf.call(box.children, ev.target.closest('button')); if (k < 0) { return; }
+      row.scrollBy({ left: off(row.children[k]), behavior: 'smooth' }); mark(k);
+    });
+    // a swipe counts once the row rests
+    row.addEventListener('scroll', function () {
+      window.clearTimeout(rest);
+      rest = window.setTimeout(function () {
+        var best = 0;
+        Array.prototype.forEach.call(row.children, function (c, j) { if (Math.abs(off(c)) < Math.abs(off(row.children[best]))) { best = j; } });
+        mark(best);
+      }, 120);
+    }, { passive: true });
+  }
   // another clip of the same format, when the library has one
   function nextFilm(v) {
     var hits = [];
@@ -77,11 +99,14 @@
           // a Short's corner badge: play mark and length, clear of the burnt-in captions
           return '<div class="ob-vid"><div class="ob-phone">' + OB.videoTag(f) + '<span class="ob-vid-len">' + OB.icon('play', 11) + '0:' + (24 + OB.hash(v.title) % 9) + '</span><span class="ob-vid-making">Making a new take</span></div><div class="ob-vid-txt"><small>' + e(v.format) + '</small><b>' + nb(v.title) +
             '</b></div><div class="ob-vid-foot"><button class="ob-btn ob-btn--sm" type="button" data-take="' + i + '">' + OB.icon('redo', 15) + 'New take</button></div></div>';
-        }).join('') + '</div>';
+        }).join('') + '</div>' + (vs.length > 1 ? '<div class="ob-dots" data-dots>' + vs.map(function (v, i) {
+          return '<button type="button" aria-label="Short ' + (i + 1) + ' of ' + vs.length + '"' + (i ? '' : ' aria-current="true"') + '></button>';
+        }).join('') + '</div>' : '');
       },
       bind: function (out, r, api) {
         OB.watchFilms(out);
         api.save();
+        dots(out);
         out.addEventListener('click', function (ev) {
           var b = ev.target.closest('[data-take]'); if (!b || b.disabled) { return; }
           var v = r.videos[+b.getAttribute('data-take')], card = b.closest('.ob-vid');
@@ -111,14 +136,15 @@
       result: function (r, api) {
         var vs = onAngles(r);
         // the audience you confirmed in step 1, where they are, and a guessed market says so
-        var aud = '<span class="ob-planrows-v">' + e(r.buyers) + (us(r) ? ' in the US' : ', in the US for now') + (K.marketGuess(r) ? ' <em class="ob-guess">my guess</em>' : '') + '</span>' +
+        // the last word and the tag wrap together, so the tag is never alone
+        var aud = '<span class="ob-planrows-v">' + e(r.buyers) + (us(r) ? ' in the <span class="ob-nw">US' : ', in the US for <span class="ob-nw">now') + (K.marketGuess(r) ? ' <em class="ob-guess">my guess</em>' : '') + '</span></span>' +
           (us(r) ? '' : '<span class="ob-planrows-note">You said your buyers are in ' + e(where(r)) + '. Views are billed in the US only for now, so BlueAI starts with US buyers and adds ' + e(where(r)) + ' when it opens.</span>');
         return '<div class="ob-planbox"><div class="ob-slider-out" data-amount></div>' +
           '<div class="ob-hint" data-say></div><input class="ob-range" type="range" min="100" max="5000" step="50" value="' + r.budget + '" aria-label="Budget in dollars" data-budget>' +
           '<div class="ob-range-x"><span>$100</span><span>$5,000</span></div>' +
           '<dl class="ob-planrows"><div><dt>Shorts</dt><dd><span class="ob-planrows-v">' + shorts(vs.length) + ' made</span><span class="ob-planrows-note">One each for ' + e(list(vs.map(function (a) { return a.who.toLowerCase(); }))) + '.</span></dd></div>' +
           (r.goal ? '<div><dt>Aims at</dt><dd><span class="ob-planrows-v">' + e(r.goal) + '</span></dd></div>' : '') +
-          '<div><dt>Posts on</dt><dd><span class="ob-chip ob-chip--on">' + OB.icon('youtube', 16) + 'YouTube Shorts</span><span class="ob-chip ob-chip--soon">TikTok &middot; soon</span><span class="ob-chip ob-chip--soon">Instagram &middot; soon</span></dd></div>' +
+          '<div><dt>Posts on</dt><dd><span class="ob-chip ob-chip--on">' + OB.icon('youtube', 16) + 'YouTube Shorts</span><span class="ob-chip ob-chip--soon">TikTok &middot; soon</span><span class="ob-chip ob-chip--soon">Instagram &middot; soon</span><span class="ob-planrows-note ob-soon-line">TikTok and Instagram soon</span></dd></div>' +
           '<div><dt>Audience</dt><dd>' + aud + '</dd></div></dl>' +
           '<div class="ob-promise"><span class="ob-yes ob-yes--sm">' + OB.icon('check', 12) + '</span><span>You pay only for US views that happen. If a video doesn\'t land, it costs you nothing.</span></div></div>' +
           '<div class="ob-next"><button class="ob-btn ob-btn--ink" type="button" data-signup>' + (api && api.saved() ? 'Start with this plan ' : 'Save my report and start ') + OB.icon('arrow', 16) + '</button></div>' +
@@ -139,9 +165,16 @@
         var mail = function () {
           // saved already: a quiet confirmation, no second ask under the CTA
           if (api.saved()) { row.innerHTML = '<p class="ob-sent"><span class="ob-yes ob-yes--sm">' + OB.icon('check', 12) + '</span>Report saved to <b>' + e(r.email) + '</b></p>'; return; }
+          // emailed: say where it is and how to come back, and turn the CTA into one
+          // row of two choices: start now, or done for now (back to the homepage,
+          // whose hero then offers "Continue your report")
+          var later = out.querySelector('[data-later]');
+          if (later) { later.remove(); }
           if (r.mailed) {
-            row.innerHTML = '<p class="ob-sent"><span class="ob-yes ob-yes--sm">' + OB.icon('check', 12) + '</span>Sent to <b>' + e(r.mailed) + '</b><button class="ob-link" type="button" data-change>Change</button></p>';
+            row.innerHTML = '<p class="ob-sent"><span class="ob-yes ob-yes--sm">' + OB.icon('check', 12) + '</span>Sent to <b>' + e(r.mailed) + '</b><button class="ob-link" type="button" data-change>Change</button></p>' +
+              '<p class="ob-sent-say">Your report is in your inbox. Open it any time to pick up right here, at your plan.</p>';
             row.querySelector('[data-change]').addEventListener('click', function () { r.mailed = ''; api.save(); mail(); });
+            out.querySelector('.ob-next').insertAdjacentHTML('beforeend', '<a class="ob-btn ob-later" href="./" data-later>Done for now, back to onBlue</a>');
             return;
           }
           row.innerHTML = '<p>Not ready yet? Get the report by email.</p><form class="ob-add" data-mail><input class="ob-input" type="email" placeholder="you@yourbrand.com" aria-label="Email" required value="' + e(r.email || '') + '"><button class="ob-btn ob-btn--sm" type="submit">' + OB.icon('mail', 15) + 'Email it to me</button></form>';

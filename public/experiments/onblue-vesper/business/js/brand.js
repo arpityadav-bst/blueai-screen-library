@@ -42,7 +42,7 @@
     return '<select class="ob-br-sel" data-f="' + key + '">' + (none && !r[key] ? '<option value="" selected>' + none + '</option>' : '') + opts.join('') + '</select>';
   }
   function edit(x, cls) {
-    return '<div class="ob-edit' + (cls || '') + '"><label for="ob-b-' + x[0] + '">' + x[1] + '<span class="ob-br-pen">' + PEN + 'Edit</span><span class="ob-br-saves">Saves when you click away</span></label>' +
+    return '<div class="ob-edit' + (cls || '') + '"><label for="ob-b-' + x[0] + '">' + x[1] + '<span class="ob-br-pen">' + PEN + 'Edit</span><span class="ob-br-saves">Saves when you ' + (window.matchMedia('(hover: none)').matches ? 'tap' : 'click') + ' away</span></label>' +
       '<textarea id="ob-b-' + x[0] + '" rows="1" data-k="' + x[0] + '">' + e(r[x[0]]) + '</textarea></div>';
   }
   function header() {
@@ -76,7 +76,7 @@
       var bad = function () { var b = document.createElement('span'); b.className = 'ob-br-ext'; b.textContent = img.getAttribute('data-ext'); img.replaceWith(b); };
       if (img.complete && !img.naturalWidth) { bad(); } else { img.addEventListener('error', bad); }
     });
-    var lg = main.querySelector('[data-logo]'); if (lg) { lg.addEventListener('error', function () { lg.parentNode.textContent = r.initial || r.brand.charAt(0); }); }
+    var lg = main.querySelector('[data-logo]'); if (lg) { var ini = function () { if (lg.parentNode) { lg.parentNode.textContent = r.initial || r.brand.charAt(0); } }; lg.addEventListener('error', ini); lg.addEventListener('load', function () { if (lg.naturalWidth < 32) { ini(); } }); if (lg.complete && lg.naturalWidth && lg.naturalWidth < 32) { ini(); } }   // a tiny icon (Google's default globe) would blur: the initial instead
     main.querySelectorAll('[data-f]').forEach(function (sel) {
       sel.addEventListener('change', function () { r[sel.getAttribute('data-f')] = sel.value; A.saveReport(); OB.toast('Saved. New videos will use it.'); });
     });
@@ -85,7 +85,8 @@
       list.forEach(function (x) { r.fileSizes[x.name] = x.size; if (/^image\//.test(x.type) && window.URL) { thumbs[x.name] = URL.createObjectURL(x); } });
       r.files = r.files.concat(names); A.saveReport(); render(true); OB.toast('Added ' + names.length + ' file' + (names.length === 1 ? '' : 's'));
     });
-    if (scrollFiles) { var fl = main.querySelector('[data-filelist]'); if (fl) { fl.scrollIntoView({ block: 'center', behavior: 'smooth' }); } }
+    // phones scroll at once, so the toast measures the settled page and never lands on Add more
+    if (scrollFiles) { var fl = main.querySelector('[data-filelist]'); if (fl) { fl.scrollIntoView({ block: 'center', behavior: window.matchMedia('(max-width: 820px)').matches ? 'auto' : 'smooth' }); } }
   }
 
   main.addEventListener('submit', function (ev) {

@@ -104,3 +104,24 @@
 .ob-nav.on-dark .ob-logo { color: var(--accent); transition: color 0.3s ease; }
 .ob-nav.on-dark #ob-logo-glint stop:nth-child(1), .ob-nav.on-dark #ob-logo-glint stop:nth-child(2) { stop-color: #0b0b0a; }
 .ob-nav.on-dark #ob-logo-glint stop:nth-child(3) { stop-color: #c6f432; }
+
+/* THE PHONE BAR (900 and below, MOBILE-RULES 4): two things, the wordmark and
+   a burger (44 hit area, 18px bars, no box). Its menu is a popover under it:
+   44 rows, the CTA last and full width. No scrim, no scroll lock; a tap
+   outside closes it (js/site.js). Hidden above 900, so the desktop bar is as it was. */
+.ob-burger, .ob-nav-menu { display: none; }
+@media (max-width: 900px) {
+  .ob-nav-end { display: none; }
+  .ob-burger { grid-column: 3; justify-self: end; display: grid; place-content: center; gap: 0.3125rem; width: 2.75rem; height: 2.75rem; margin-right: -0.75rem; padding: 0; border: 0; background: none; cursor: pointer; }
+  .ob-nav.is-stuck .ob-burger { margin-right: -0.25rem; }
+  .ob-burger i { display: block; width: 1.125rem; height: 1.5px; border-radius: 1px; background: var(--ink-1); transition: transform 0.2s var(--ease), background 0.3s ease; }
+  .ob-burger[aria-expanded="true"] i:first-child { transform: translateY(0.1875rem) rotate(45deg); }
+  .ob-burger[aria-expanded="true"] i:last-child { transform: translateY(-0.1875rem) rotate(-45deg); }
+  .ob-nav.on-dark .ob-burger i { background: #f2f2ec; }
+  .ob-nav-menu { position: absolute; top: calc(100% + 0.5rem); right: 0; z-index: 2; display: grid; gap: 0.25rem; width: min(16.5rem, 100vw - 2.5rem); padding: 0.5rem; border: 1px solid var(--line); border-radius: 0.875rem; background: var(--surface); box-shadow: var(--shadow-3); opacity: 0; visibility: hidden; transform: translateY(0.5rem); transition: opacity 0.2s var(--ease), transform 0.2s var(--ease), visibility 0s linear 0.2s; }
+  .ob-nav-menu.is-open { opacity: 1; visibility: visible; transform: none; transition: opacity 0.2s var(--ease), transform 0.2s var(--ease); }
+  .ob-nav-row { display: flex; align-items: center; height: 2.75rem; padding: 0 0.75rem; border-radius: 0.5625rem; color: var(--ink-1); font: 500 0.9375rem/1 var(--font); letter-spacing: -0.01em; text-decoration: none; }
+  a.ob-nav-row:hover { background: var(--surface-2); }
+  .ob-btn.ob-nav-row { justify-content: center; width: 100%; margin-top: 0.25rem; color: #fff; }
+}
+@media (prefers-reduced-motion: reduce) { .ob-nav-menu, .ob-burger i { transition: none !important; } }

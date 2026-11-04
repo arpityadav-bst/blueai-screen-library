@@ -72,7 +72,8 @@
       voice: ['How you sound', r.voice, d + ' ' + g], edge: ['Your edge', r.edge, d + ' ' + g], cat: ['Category', r.category] };
   }
   function marketLine(r) {
-    return 'Selling to buyers in <b>' + e(r.where) + '</b>' + (marketGuess(r) ? ' <em class="ob-guess">my guess</em>' : '') + '<button class="ob-link" type="button" data-market>Change</button>';
+    // the place, the tag and Change wrap as one group on a phone (run-2.css)
+    return 'Selling to buyers in <span class="ob-market-v"><b>' + e(r.where) + '</b>' + (marketGuess(r) ? ' <em class="ob-guess">my guess</em>' : '') + '<button class="ob-link" type="button" data-market>Change</button></span>';
   }
 
   OB.STEPS = [
@@ -168,9 +169,10 @@
         // ranked by how much they post, the way the checklist said; one you added
         // waits at the foot while it is checked, then takes its place in the rank
         r.rivals.sort(function (a, b) { return (a.checking ? 1 : 0) - (b.checking ? 1 : 0) || b.videos - a.videos; });
-        return '<div class="ob-rows" data-rows>' + r.rivals.map(function (x, i) {
+        // a phone says "in 6 months" once, above the list, not in every row
+        return '<p class="ob-rows-cap">Shorts posted in the last 6 months</p><div class="ob-rows" data-rows>' + r.rivals.map(function (x, i) {
           var sub = x.checking ? '<span class="ob-checking"></span>checking their Shorts&hellip;'
-            : x.est ? 'about ' + x.videos + ' Shorts in 6 months, my estimate' : x.videos + ' Shorts in 6 months';
+            : x.est ? 'about ' + x.videos + ' Shorts<span class="ob-6m"> in 6 months</span>, my estimate' : x.videos + ' Shorts<span class="ob-6m"> in 6 months</span>';
           return '<div class="ob-row' + (x.on ? '' : ' is-off') + (x.checking ? ' is-checking' : '') + '" data-i="' + i + '" role="checkbox" tabindex="0" aria-checked="' + x.on + '">' +
             '<span class="ob-row-av" style="--h:' + (OB.hash(x.name) % 360) + '" aria-hidden="true">' + e(x.name.charAt(0).toUpperCase()) + '</span>' +
             '<span class="ob-row-main"><b>' + e(x.name) + '</b><small>' + e(x.site) + ' &middot; ' + sub + '</small></span><em class="ob-row-drop">Dropped</em>' + tick() + '</div>';
@@ -236,6 +238,8 @@
         var you = r.brand === 'Your brand' ? 'You' : r.brand + ' (you)';
         var mine = r.today === 'Every week' ? hbar(you, '~26', Math.max(max, 26), 'is-you', 26) : r.today === 'Sometimes' ? hbar(you, 'a few', max, 'is-you', Math.min(6, max))
           : r.today === 'Not yet' ? hbar(you, '0', max, 'is-you', 0) : '';
+        // a phone labels your own row "You", so it never wraps (run-2.css)
+        mine = mine.replace('<span>' + e(you) + '</span>', '<span><span class="ob-you-l">' + e(you) + '</span><span class="ob-you-s">You</span></span>');
         var est = estimated(r) ? 'about ' : '';
         return '<div class="ob-card ob-card--lit ob-win">' + (fi >= 0 ? '<span class="ob-win-media">' + OB.videoTag(OB.film(fi)) + '</span>' : '') +
           '<div><span class="ob-chip ob-chip--volt">Winning format</span><b class="ob-win-fig">' + top.share + '%<small>of views</small></b><p><b>' + e(top.name) + '.</b> ' +

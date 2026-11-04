@@ -1,0 +1,89 @@
+/* Radar's competitor manager (js/radar-manage.js): one card under the head, a
+   list with on/off switches, an add field, and BlueAI's "find more". Same row
+   language as the report's step 2 (tinted initial, name, site and count). */
+.rd-man { margin: calc(var(--s4) * -1) 0 var(--s10); }
+.rd-m { padding: var(--s6); }
+.rd-m-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s4); }
+.rd-m-list { display: grid; margin: var(--s5) 0 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.rd-m-row:last-child { border-bottom: 0; }
+.rd-m-row { display: flex; align-items: center; gap: var(--s4); min-height: 3.75rem; padding: 0.5rem 0; border-bottom: 1px solid var(--line); }
+.rd-m-av { flex: none; display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: var(--r-md); background: hsl(var(--h, 40) 32% 93%); color: hsl(var(--h, 40) 30% 28%); font: 600 0.9375rem/1 var(--font); box-shadow: inset 0 0 0 1px rgba(10, 10, 9, 0.04); }
+.rd-m-t { display: grid; gap: 0.1875rem; flex: 1; min-width: 0; }
+.rd-m-t b { overflow: hidden; color: var(--ink-1); font: 500 0.9375rem/1.25 var(--font); white-space: nowrap; text-overflow: ellipsis; }
+.rd-m-t small { overflow: hidden; color: var(--ink-3); font: var(--t-small); white-space: nowrap; text-overflow: ellipsis; }
+.rd-m-row.is-off .rd-m-av, .rd-m-row.is-off .rd-m-t { opacity: 0.45; transition: opacity 0.2s ease; }
+
+/* the switch: ink when Radar watches, a quiet track when it does not; the
+   button is the full 44 tap, the drawn track sits inside it */
+.rd-sw { flex: none; position: relative; display: grid; place-items: center; width: 3.25rem; height: 2.75rem; margin-right: -0.375rem; padding: 0; border: 0; background: none; cursor: pointer; }
+.rd-sw i { position: relative; display: block; width: 2.5rem; height: 1.5rem; border-radius: 999px; background: rgba(10, 10, 9, 0.14); transition: background-color 0.2s ease; }
+.rd-sw i::after { content: ""; position: absolute; top: 0.1875rem; left: 0.1875rem; width: 1.125rem; height: 1.125rem; border-radius: 50%; background: #fff; box-shadow: 0 1px 0.1875rem rgba(10, 10, 9, 0.25); transition: transform 0.25s var(--ease); }
+.rd-sw[aria-checked="true"] i { background: var(--ink-1); }
+.rd-sw[aria-checked="true"] i::after { transform: translateX(1rem); box-shadow: 0 0 0 0.1875rem var(--accent) inset, 0 1px 0.1875rem rgba(10, 10, 9, 0.25); }
+.rd-sw:disabled { cursor: default; opacity: 0.4; }
+.rd-sw:focus-visible { outline: 0; }
+.rd-sw:focus-visible i { box-shadow: var(--p-ring); }
+
+.rd-m-add { display: flex; gap: var(--s2); margin-top: var(--s5); }
+.rd-m-add .ob-input { flex: 1; min-width: 0; }
+.rd-m-add .ob-btn { flex: none; height: 2.75rem; }
+.rd-m-more { margin-top: var(--s6); }
+.rd-m-cap { margin: 0; color: var(--ink-3); font: var(--t-small); }
+/* BlueAI's finds: a tinted panel with the agent's mark, the suggestions as white cards */
+.rd-m-found { padding: var(--s5); border-radius: 1rem; background: radial-gradient(ellipse 70% 120% at 0% 0%, rgba(198, 244, 50, 0.14), rgba(198, 244, 50, 0) 70%), var(--surface-2); }
+.rd-m-found-h { display: flex; align-items: center; gap: 0.75rem; }
+.rd-m-found-h .ob-agent { flex: none; width: 1.75rem; height: 1.75rem; }
+.rd-m-found-h .ob-agent svg { width: 0.875rem; height: 0.875rem; }
+.rd-m-found-h p { flex: 1; min-width: 0; margin: 0; color: var(--ink-3); font: var(--t-small); }
+.rd-m-found-h p b { color: var(--ink-1); font-weight: 500; }
+.rd-m-found-h .ob-link { flex: none; font: 500 0.8125rem/1.3 var(--font); }
+.rd-m-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s3); margin: var(--s4) 0 0; padding: 0; list-style: none; }
+.rd-m-card { display: flex; align-items: center; gap: var(--s3); padding: 0.75rem 0.75rem 0.75rem 0.875rem; border: 1px solid rgba(10, 10, 9, 0.06); border-radius: 0.875rem; background: var(--surface); box-shadow: 0 1px 0.125rem rgba(10, 10, 9, 0.04); }
+.rd-m-card .ob-btn { flex: none; }
+.rd-m-none { margin-bottom: var(--s4); }
+.rd-m-finding { display: flex; align-items: center; margin: 0; color: var(--ink-3); font: var(--t-small); }
+.rd-m-check { flex: none; display: inline-block; width: 0.75rem; height: 0.75rem; margin-right: 0.5rem; vertical-align: -0.0625rem; border: 2px solid rgba(10, 10, 9, 0.12); border-top-color: var(--ink-1); border-radius: 50%; animation: rd-spin 0.8s linear infinite; }
+@keyframes rd-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .rd-m-check { animation: none; } .rd-sw i, .rd-sw i::after { transition: none; } }
+
+/* the head's one control: what Radar watches, and the way to change it (Appy:
+   the status tag beside a separate button read as two buttons saying one thing) */
+.rd-watch { gap: 0.5rem; }
+.rd-watch i { flex: none; width: 0.4375rem; height: 0.4375rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 0.1875rem rgba(198, 244, 50, 0.22); }
+.rd-watch span { align-self: stretch; display: flex; align-items: center; margin-left: 0.25rem; padding-left: 0.75rem; border-left: 1px solid var(--line-2); color: var(--ink-3); }
+.rd-watch:hover span { color: var(--ink-1); }
+
+/* the empty state's two ways in */
+.rd-empty-act { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s3); }
+
+/* THE PHONE: the panel runs the 20 gutter, the add field stacks over a full
+   width button, "Done" and "Find more" are 44 tall and full width */
+@media (max-width: 700px) {
+  .rd-man { margin: calc(var(--s2) * -1) 0 var(--s8); }
+  .rd-m { padding: var(--s5) var(--s4); }
+  .rd-m-head { flex-direction: column; align-items: stretch; }
+  .rd-m-head .ob-btn { order: 2; height: 2.75rem; justify-content: center; }
+  .rd-m-add { flex-wrap: wrap; }
+  .rd-m-add .ob-input { flex-basis: 100%; }
+  .rd-m-add .ob-btn, .rd-m-find { width: 100%; justify-content: center; }
+  .rd-m-find { height: 2.75rem; }
+  .rd-m-found { padding: var(--s4); }
+  .rd-m-cards { grid-template-columns: 1fr; }
+  .rd-m-card .ob-btn { height: 2.75rem; }
+  .rd-m-found-h .ob-link { display: inline-flex; align-items: center; min-height: 2.75rem; margin: -0.75rem 0; }
+  .rd-empty-act { flex-direction: column; align-items: stretch; }
+  .rd-empty-act .ob-btn { justify-content: center; }
+}
+
+/* Radar's formats card (Appy: "can be improved further"): the winning formats
+   your plan makes get a volt dot, a BlueAI line says what that means, and the
+   card's spare height sits above the figures, not as a hole under them */
+.rd-mine { display: inline-block; width: 0.4375rem; height: 0.4375rem; margin-left: 0.5rem; vertical-align: 0.125rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 0.1875rem rgba(198, 244, 50, 0.25); }
+.ob-rd-week .ob-rd-figs { margin-top: auto; padding-top: var(--s6); }
+.ob-rd-week .rd-plan-say { margin-top: var(--s5); }
+
+/* BlueAI's small asides on Radar wear the LIGHT mark (Appy: the ink badge took
+   too much attention for a side note): the mark in ink on a soft volt tint, no
+   shadow; the ink badge stays for the run's step headings, where BlueAI leads */
+.ob-rd-say .ob-agent, .rd-m-found-h .ob-agent { width: 1.5rem; height: 1.5rem; background: rgba(198, 244, 50, 0.28); color: var(--ink-1); box-shadow: none; }
+.ob-rd-say .ob-agent svg, .rd-m-found-h .ob-agent svg { width: 0.75rem; height: 0.75rem; }

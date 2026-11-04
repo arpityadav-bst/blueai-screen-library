@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
 <title>onBlue for business: short videos that win</title>
 <meta name="description" content="Type your website. BlueAI learns your brand, finds what wins in your category, makes the videos, and real creators post them. $8 per 1,000 US views.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,6 +33,12 @@
     <div class="ob-nav-end">
       <a class="ob-nav-signin" href="app/signin.html">Sign in</a>
       <button class="ob-nav-cta" type="button" data-to-field>Start free</button>
+    </div>
+    <!-- the phone bar (900 and below, css/header.css): the wordmark and this burger; its popover holds Sign in and the CTA -->
+    <button class="ob-burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="ob-nav-menu" data-burger><i></i><i></i></button>
+    <div class="ob-nav-menu" id="ob-nav-menu" data-nav-menu>
+      <a class="ob-nav-row" href="app/signin.html">Sign in</a>
+      <button class="ob-btn ob-btn--ink ob-nav-row" type="button" data-to-field>Get my free report</button>
     </div>
   </div>
 </header>
@@ -255,6 +261,7 @@
 <script src="js/ob.js"></script>
 <script src="js/report.js"></script>
 <script src="js/site.js"></script>
+<script src="js/demo-switch.js"></script>
 <script src="js/next-word.js"></script>
 <script src="js/site-parts.js"></script>
 <script src="js/ring.js"></script>

@@ -48,3 +48,5 @@
 @media (prefers-reduced-motion: reduce) {
   .ob-hero .ob-field, .ob-hero .ob-field:focus-within, .ob-hero .ob-field:focus-within::after, .ob-hero .ob-field:focus-within .ob-field-ico { animation: none; transition: none; transform: none; }
 }
+/* touch: the lift without the scale, so the halo stays inside the 20px gutter */
+@media (max-width: 700px) and (hover: none) and (pointer: coarse) { .ob-hero .ob-field:focus-within { transform: translateY(-0.1875rem); } }

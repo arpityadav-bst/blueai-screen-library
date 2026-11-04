@@ -15,14 +15,16 @@
   function low(s) { return s ? s.charAt(0).toLowerCase() + s.slice(1) : ''; }
   function same(a, b) { return String(a).toLowerCase() === String(b).toLowerCase(); }
   function angles() { return r.angles.filter(function (a) { return a.on !== false; }); }
-  function rivals() { return P.has(2) ? r.rivals.filter(function (x) { return x.on; }).slice(0, 5) : []; }
+  function rivals() { return P.has(2) ? r.rivals.filter(function (x) { return x.on && !x.checking; }).slice(0, 5) : []; }
   function meta(v) { return e(v.format) + (v.angle ? ' &middot; for ' + e(low(v.angle)) : ''); }
   var nb = OB.ui.nb;
+  function phone() { return window.matchMedia('(max-width: 700px)').matches; }
+  function fit(t) { if (t && t.tagName === 'TEXTAREA') { t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight, 92) + 'px'; } }
 
   // the count is the page's one toned word, kept on one line with its noun
   function head(n) {
     var hi = hello() + (r.name ? ', ' + e(r.name) : '');
-    var h1 = n ? '<span class="ob-tone">' + (n === 1 ? 'One&nbsp;video' : n + '&nbsp;videos') + '</span> ' + (n === 1 ? 'is' : 'are') + ' waiting for your yes' : hi;
+    var h1 = n ? '<span class="ob-tone">' + (n === 1 ? 'One&nbsp;video' : n + '&nbsp;videos') + '</span> ' + '<span class="ob-nw">' + (n === 1 ? 'is' : 'are') + ' waiting</span> for your yes' : hi;
     var sub = n ? hi + '. BlueAI is making videos for ' + e(r.brand) + '.' :
       P.finished ? 'BlueAI is making videos for ' + e(r.brand) + '. Nothing needs you right now.' : 'Your free report for ' + e(r.brand) + ' is saved, ' + P.done + ' of ' + P.total + ' steps done.';
     return '<div class="ob-head"><div><h1>' + h1 + '</h1><p>' + sub + '</p></div></div>';
@@ -47,7 +49,9 @@
   }
   function prompt() {
     return '<form class="ob-prompt ob-prompt--home" data-prompt data-tour="prompt"><div class="ob-prompt-row">' + OB.agent() +
-      '<input placeholder="' + (window.innerWidth < 640 ? 'Ask BlueAI for a video' : 'What should BlueAI make for ' + e(r.brand) + '?') + '" aria-label="Ask BlueAI">' +
+      // phones get a field that grows to three lines, so a filled chip reads in full
+      (phone() ? '<textarea rows="1" placeholder="Ask BlueAI for a video" aria-label="Ask BlueAI"></textarea>' :
+        '<input placeholder="' + (window.innerWidth < 640 ? 'Ask BlueAI for a video' : 'What should BlueAI make for ' + e(r.brand) + '?') + '" aria-label="Ask BlueAI">') +
       '<button class="ob-prompt-send" type="submit" aria-label="Send">' + OB.icon('send', 18) + '</button></div>' +
       '<div class="ob-prompt-chips">' + chips().map(function (c) { return '<button type="button" data-chip>' + e(c) + '</button>'; }).join('') + '</div></form>';
   }
@@ -97,7 +101,7 @@
         return '<div class="ob-fmt' + (i ? '' : ' is-top') + '"><span class="ob-fmt-rank">' + (i + 1) + '</span><b>' + e(f.name) + '</b>' +
           '<span class="ob-fmt-share"><strong>' + f.share + '%</strong> of views</span><span class="ob-fmt-bar"><i style="width:' + f.share + '%"></i></span>' +
           '<small class="ob-fmt-tag' + (mine.length ? ' is-used' : '') + '">' + tag + '</small>' +
-          '<button class="ob-btn ob-btn--sm" type="button" data-format="' + i + '">' + OB.icon('plus', 15) + (mine.length ? 'Make another' : 'Make one') + '</button></div>';
+          '<button class="ob-btn ob-btn--sm" type="button" data-format="' + i + '" aria-label="' + (mine.length ? 'Make another ' : 'Make one: ') + e(f.name) + '">' + OB.icon('plus', 15) + (mine.length ? 'Make another' : 'Make one') + '</button></div>';
       }).join('') + '</div></section>';
   }
 
@@ -108,7 +112,7 @@
       var s = A.shorts(x).filter(function (q) { return !used[q.film]; })[0]; if (!s) { return; }
       used[s.film] = true;
       cards.push('<div class="ob-pcard"><span class="ob-phone">' + OB.videoTag(OB.film(s.film)) + '</span><b>' + nb(s.title) + '</b>' +
-        '<small class="ob-pcard-meta">' + e(x.name) + ' &middot; ' + e(s.format) + '</small><small class="ob-pcard-views"><strong>' + OB.short(s.views) + '</strong>&nbsp;views</small>' +
+        '<small class="ob-pcard-meta">' + e(x.name) + '<span class="ob-pcard-fm"> &middot; ' + e(s.format) + '</span></small><small class="ob-pcard-views"><strong>' + OB.short(s.views) + '</strong>&nbsp;views</small>' +
         '<button class="ob-btn ob-btn--sm" type="button" data-remix="' + i + '" data-title="' + e(s.title) + '" data-fm="' + e(s.format) + '" data-film="' + s.film + '" data-rival="' + e(x.name) + '" aria-label="Remix ' + e(x.name) + '\'s Short for ' + e(r.brand) + '">' + OB.icon('spark', 15) + 'Remix</button></div>');
     });
     if (!cards.length) { return ''; }
@@ -129,15 +133,21 @@
 
   main.addEventListener('submit', function (ev) {
     ev.preventDefault();
-    var inp = ev.target.querySelector('input'), v = inp.value.trim();
+    var inp = ev.target.querySelector('input, textarea'), v = inp.value.trim();
     if (!v) { inp.focus(); return; }
     made(A.make(v.charAt(0).toUpperCase() + v.slice(1)));
   });
-  main.addEventListener('input', function (ev) { var f = ev.target.closest('[data-prompt]'); if (f) { f.classList.toggle('has-text', !!ev.target.value.trim()); } });
+  main.addEventListener('input', function (ev) { var f = ev.target.closest('[data-prompt]'); if (f) { f.classList.toggle('has-text', !!ev.target.value.trim()); fit(ev.target); } });
+  // the phone's field is a textarea: Enter still sends, Shift+Enter is a new line
+  main.addEventListener('keydown', function (ev) {
+    if (ev.key !== 'Enter' || ev.shiftKey || ev.isComposing || ev.target.tagName !== 'TEXTAREA') { return; }
+    var f = ev.target.closest('[data-prompt]'); if (!f) { return; }
+    ev.preventDefault(); if (f.requestSubmit) { f.requestSubmit(); } else { f.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); }
+  });
   main.addEventListener('click', function (ev) {
     var t = ev.target;
     var chip = t.closest('[data-chip]');
-    if (chip) { var inp = main.querySelector('[data-prompt] input'); inp.value = chip.textContent; inp.closest('form').classList.add('has-text'); inp.focus(); return; }
+    if (chip) { var inp = main.querySelector('[data-prompt] input, [data-prompt] textarea'); inp.value = chip.textContent; inp.closest('form').classList.add('has-text'); fit(inp); inp.focus(); return; }
     var w = t.closest('[data-watch]'); if (w) { A.watched(w.getAttribute('data-watch')); return; }
     var ap = t.closest('[data-approve]');
     if (ap) { A.approve(ap.getAttribute('data-approve')); OB.toast(A.st.paused ? 'Approved. It goes out when you resume posting.' : 'Approved. Creators start posting it today.'); render(); OB.ui.side(); return; }

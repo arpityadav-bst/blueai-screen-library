@@ -29,4 +29,16 @@
 .cmp-words small { margin-top: 0.25rem; color: var(--ink-3); font: 400 0.8125rem/1.2 var(--font); white-space: nowrap; }
 .is-in .cmp-row { opacity: 1; transform: none; transition: opacity 0.4s ease var(--d), transform 0.5s var(--ease) var(--d); }
 
-@media (max-width: 700px) { .cmp-row { grid-template-columns: 44% 28% 28%; padding: 0.625rem 0.875rem; font-size: 0.875rem; } .cmp-lit { left: 44%; width: 28%; } .cmp-words small { white-space: normal; } }
+/* THE PHONE: still one table, never a sideways scroll. The rival tabs are one
+   2 x 2 control of 44 taps; labels get the room, and the marks sit on each
+   label's first line; the "no" ring is brighter so it reads as a state */
+@media (max-width: 700px) {
+  .cmp-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .cmp-tabs button { height: 2.75rem; padding: 0 0.5rem; font-size: 0.875rem; }
+  .cmp-row { grid-template-columns: 52% 24% 24%; align-items: start; padding: 0.75rem 0.875rem; font-size: 0.875rem; }
+  .cmp-row > span:not(:first-child) { padding-top: 0.0625rem; }
+  .cmp-head { align-items: center; }
+  .cmp-lit { left: 52%; width: 24%; }
+  .cmp-words small { white-space: normal; }
+  .cmp-n { border-color: rgba(255, 255, 255, 0.32); }
+}

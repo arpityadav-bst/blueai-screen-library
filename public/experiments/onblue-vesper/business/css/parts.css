@@ -49,6 +49,19 @@ textarea.ob-input { height: auto; min-height: 6rem; padding: var(--s3) var(--s4)
 .ob-modal .ob-input, .ob-modal .ob-btn { height: 3rem; }
 .ob-modal .ob-btn--ink { width: 100%; margin-top: var(--s6); }
 @media (max-width: 560px) { .ob-modal-box { padding: 2rem 1.25rem 1.5rem; } .ob-modal h3 { font-size: 1.5rem; } }
+/* THE PHONE (700 and below): every dialog is one bottom sheet, the same on
+   the homepage and the run; the close and the picks are 44 taps, the picks a
+   2 x 2 grid. Touch fields are 16px so iOS never zooms. */
+@media (max-width: 700px) {
+  .ob-modal { place-items: end center; padding: 0; }
+  .ob-modal-box { width: 100%; max-height: 86dvh; overflow-y: auto; border-radius: 1.25rem 1.25rem 0 0; padding: 1.75rem 1.25rem max(1.5rem, env(safe-area-inset-bottom)); }
+  .ob-modal .ob-agent { display: none; }
+  .ob-modal h3 { margin-top: 0; padding-right: 2.75rem; }
+  .ob-x { top: 1.25rem; right: 0.75rem; width: 2.75rem; height: 2.75rem; }
+  .ob-modal .ob-picks { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .ob-modal .ob-pick { justify-content: center; height: 2.75rem; }
+}
+@media (hover: none) and (pointer: coarse) { .ob-input { font-size: 1rem; } }
 @media (prefers-reduced-motion: reduce) { .ob-modal, .ob-modal-box, .ob-input, .ob-pick { transition: none; } .ob-modal-box { transform: none; } }
 
 /* the toast: one short line, bottom centre */

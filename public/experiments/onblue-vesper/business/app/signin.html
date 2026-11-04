@@ -42,6 +42,18 @@
   .si-alt a:hover { text-decoration-color: var(--ink-1); }
   .si-foot { color: var(--ink-4); font: var(--t-label); text-align: center; }
   @media (max-width: 480px) { .si-card { padding: var(--s8) var(--s5) var(--s6); } .si-card h1 { font-size: 1.75rem; } }
+  /* phones (2026-11-05): the dynamic viewport, the 20px gutter, the card close under the header so the
+     keyboard never covers the field, a 44 tap area on the way back, 16px input text (no iOS zoom), and
+     "no account yet" said calmly: it is not a typing mistake, so no red */
+  @media (max-width: 700px) {
+    .si { min-height: 100dvh; }
+    .si-top a:not(.ob-logo) { display: inline-flex; align-items: center; min-height: 2.75rem; margin-right: -0.25rem; padding: 0 0.25rem; }
+    .si-card .ob-input { font-size: 1rem; }
+    .si-card .ob-input.is-err.is-none { border-color: var(--line-2); box-shadow: inset 0 1px 0.125rem rgba(10, 10, 9, 0.04); }
+    .si-card .ob-input.is-err.is-none:focus { border-color: #9ccf12; box-shadow: 0 0 0 0.3125rem rgba(198, 244, 50, 0.24), 0 0.75rem 1.5rem -1rem rgba(10, 10, 9, 0.3); }
+    .si-msg.is-none svg { color: var(--ink-3); }
+  }
+  @media (max-width: 480px) { .si { padding: var(--s4) 1.25rem; } .si-main { padding-top: var(--s10); } }
 </style>
 </head>
 <body class="ob-page">
@@ -71,6 +83,7 @@
 </div>
 <script src="../js/ob.js"></script>
 <script src="../js/report.js"></script>
+<script src="../js/google.js"></script>
 <script>
 (function () {
   'use strict';
@@ -90,10 +103,12 @@
     window.location.href = 'home.html';
   }
   // the line under the card ("New to onBlue? Get your free report first") carries the way in, so a message never repeats it
+  // bad === 'none': a well-formed email with no account; phones show it calmly (the is-none hooks)
   function say(html, bad, where) {
     msg.innerHTML = ''; gmsg.innerHTML = '';
     if (html) { (where || msg).innerHTML = OB.icon('close', 16) + '<span>' + html + '</span>'; }
     input.classList.toggle('is-err', !!bad);
+    input.classList.toggle('is-none', bad === 'none'); msg.classList.toggle('is-none', bad === 'none');
   }
   function none(email) {
     var r = OB.report.get();
@@ -103,10 +118,15 @@
   }
 
   input.addEventListener('input', function () { say(''); });
+  // Google's own chooser in a popup (js/google.js): the account picked there signs in
+  // if a report was saved with it; blocked popup: the account this browser knows, as before
   document.querySelector('[data-google]').addEventListener('click', function () {
-    var r = account();
-    if (r) { finish(r); return; }
-    say(none(''), false, gmsg);
+    var known = account();
+    OB.google(known ? known.email : '', function (email) {
+      email = email.toLowerCase(); var r = account();
+      if (r && r.email.toLowerCase() === email) { finish(r); return; }
+      say(none(email), false, gmsg);
+    }, function () { var r = account(); if (r) { finish(r); return; } say(none(''), false, gmsg); });
   });
   document.querySelector('[data-email]').addEventListener('submit', function (ev) {
     ev.preventDefault();
@@ -114,7 +134,7 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { say('That doesn\'t look like an email yet.', true); input.focus(); return; }
     var r = account();
     if (r && r.email.toLowerCase() === email) { finish(r); return; }
-    say(none(email), true); input.focus();
+    say(none(email), 'none'); input.focus();
   });
 })();
 </script>

@@ -67,18 +67,29 @@
   function place() {
     if (!ring) { return; }
     var t = target(); if (!t) { end(); return; }
-    var b = box(t), PAD = t.closest('.ob-side') ? 2 : 12;
+    // a tab in the phone's bottom bar: the ring sits inside the bar, never past the screen edge
+    var nav = document.querySelector('.ob-side-nav'), fixedBar = nav && window.getComputedStyle(nav).position === 'fixed';
+    var inBar = fixedBar && t.closest('.ob-side-nav');
+    var b = box(t), PAD = inBar ? 0 : t.closest('.ob-side') ? 2 : 12;
     var rad = parseFloat(window.getComputedStyle(t).borderTopLeftRadius) || 10;
-    ring.style.width = (b.width + PAD * 2) + 'px';
-    ring.style.height = (b.height + PAD * 2) + 'px';
-    ring.style.borderRadius = (rad + PAD) + 'px';
-    ring.style.transform = 'translate(' + (b.left - PAD) + 'px,' + (b.top - PAD) + 'px)';
+    var vp = view(), x0 = b.left - PAD, y0 = b.top - PAD, x1 = b.right + PAD, y1 = b.bottom + PAD;
+    if (phone()) { x0 = Math.max(4, x0); x1 = Math.min(vp.w - 4, x1); y1 = Math.min(window.innerHeight - 4, y1); }
+    ring.style.width = (x1 - x0) + 'px';
+    ring.style.height = (y1 - y0) + 'px';
+    ring.style.borderRadius = (inBar ? 12 : rad + PAD) + 'px';
+    ring.style.transform = 'translate(' + x0 + 'px,' + y0 + 'px)';
 
-    var vp = view();
     tip.classList.remove('is-right', 'is-below', 'is-above');
-    if (phone()) { // docked: at the bottom, or at the top when the target is the bottom tab bar
+    if (phone()) { // docked: right above the tab bar (caret on the ringed tab when the bar is the target), or at the top for a low target
       tip.classList.add('is-docked'); tip.style.left = '';
-      var bar = document.querySelector('.ob-side-nav'), barH = bar && window.getComputedStyle(bar).position === 'fixed' ? bar.offsetHeight : 0;
+      var barH = fixedBar ? nav.offsetHeight : 0;
+      if (inBar) {
+        tip.style.top = Math.max(vp.top + 12, vp.top + vp.h - barH - tip.offsetHeight - 12) + 'px';
+        tip.classList.add('is-above');
+        var tl = tip.getBoundingClientRect().left;
+        tip.style.setProperty('--cx', Math.max(20, Math.min(tip.offsetWidth - 20, b.left + b.width / 2 - tl)) + 'px');
+        return;
+      }
       var low = b.top > vp.top + vp.h / 2;
       tip.style.top = (low ? vp.top + 72 : Math.max(vp.top + 12, vp.top + vp.h - barH - tip.offsetHeight - 12)) + 'px';
       return;

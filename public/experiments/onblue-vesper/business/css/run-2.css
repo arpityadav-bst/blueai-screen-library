@@ -53,6 +53,7 @@
 .ob-sent { display: flex; align-items: center; gap: var(--s2); }
 .ob-sent b { color: var(--ink-1); font-weight: 500; }
 .ob-sent .ob-link { margin-left: var(--s2); font-size: 0.8125rem; }
+.ob-mailrow .ob-sent-say { margin: var(--s2) 0 0; color: var(--ink-3); font: var(--t-small); }
 
 /* toasts: bottom of the main column; run.js scrolls a covered button clear */
 .ob-toast { left: calc(50% + 9.375rem); bottom: 1.25rem; max-width: calc(100% - 2rem); }
@@ -71,6 +72,9 @@
 .ob-upnext b { color: var(--ink-2); font-weight: 500; }
 .ob-or { display: flex; align-items: center; gap: var(--s3); margin: var(--s5) 0 var(--s2); color: var(--ink-4); font: var(--t-label); }
 .ob-or::before, .ob-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+/* phone-only pieces (shown in the queries below); on desktop they take no room */
+.ob-market-v { display: contents; }
+.ob-rows-cap, .ob-you-s, .ob-soon-line, .ob-dots { display: none; }
 
 @media (max-width: 1340px) { .ob-stepper li:not(.is-now) span { display: none; } .ob-stepper li:not(.is-now) { padding: 0 0.375rem; } }
 @media (max-width: 1000px) { .ob-stepper { grid-column: 2; } }
@@ -86,13 +90,16 @@
   .ob-stepper li i, .ob-stepper li span, .ob-stepper li.is-now span { display: none; }
   .ob-runbar-now { grid-column: 1 / -1; grid-row: 3; display: block; margin: 0; color: var(--ink-3); font: var(--t-small); }
   .ob-runbar-now b { color: var(--ink-1); font-weight: 500; }
-  .ob-run-body { grid-template-columns: minmax(0, 1fr); background: none; }
+  .ob-run { min-height: 100dvh; }
+  /* rows start at the top: a short working step no longer opens a band under the brand row */
+  .ob-run-body { grid-template-columns: minmax(0, 1fr); align-content: start; background: none; }
   /* the brand, the facts count and the fold on one compact row */
   .ob-knows { position: static; display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 0 var(--s3); height: auto; overflow: visible; padding: var(--s2) var(--s4); border-bottom: 1px solid var(--line); }
   .ob-facts-wrap::before, .ob-facts-wrap::after { display: none; }
   .ob-knows-head { flex: 1; min-width: 0; }
   .ob-knows-head > span:last-child { min-width: 0; }
   .ob-knows-head b { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 0.9375rem; }
+  .ob-knows-head small { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
   .ob-knows-fav { width: 2.25rem; height: 2.25rem; font-size: 1rem; }
   .ob-facts-wrap { flex-basis: 100%; margin-bottom: var(--s3); }
   .ob-knows-label { flex: none; justify-content: flex-start; gap: var(--s2); width: auto; min-height: 2.75rem; margin: 0; font-size: 0.8125rem; white-space: nowrap; pointer-events: auto; cursor: pointer; }
@@ -100,9 +107,10 @@
   .ob-knows.is-open .ob-knows-label::after { margin-top: 0.25rem; transform: rotate(-135deg); }
   .ob-knows:not(.is-open) .ob-facts-wrap { display: none; }
   .ob-modal { place-items: end center; padding: 0; }
-  .ob-modal .ob-modal-box { width: 100%; border-radius: 1.25rem 1.25rem 0 0; padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+  .ob-modal .ob-modal-box { width: 100%; max-height: 86dvh; overflow-y: auto; border-radius: 1.25rem 1.25rem 0 0; padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
   .ob-modal .ob-signup .ob-agent { display: none; }
-  .ob-modal .ob-signup h3 { margin-top: 0; padding-right: 2.5rem; }
+  .ob-modal .ob-signup h3 { margin-top: 0; padding-right: 2.75rem; }
+  .ob-modal .ob-x { width: 2.75rem; height: 2.75rem; top: 1.25rem; right: 0.75rem; }
   .ob-stage { padding: var(--s8) var(--s4) var(--s12); }
   .ob-next > .ob-btn--ink { width: 100%; justify-content: center; }
   .ob-win { gap: var(--s4); padding: var(--s5); }
@@ -112,18 +120,81 @@
   .ob-workbox, .ob-aside, .ob-out { margin-left: 0; }
   .ob-aside.ob-proofcard { gap: var(--s4); padding: var(--s5); }
   .ob-tiles3, .ob-tiles2 { grid-template-columns: 1fr; }
-  .ob-planrows > div { grid-template-columns: 1fr; gap: var(--s2); }
+  .ob-planrows { gap: var(--s5); }
+  .ob-planrows > div { grid-template-columns: 1fr; gap: 0.25rem; }
+  .ob-planrows dt, .ob-planrows-v { padding-top: 0; }
+  .ob-nw { white-space: nowrap; }
+  .ob-market-v { display: inline-flex; align-items: center; gap: var(--s2); white-space: nowrap; }
   .ob-mailrow .ob-add { max-width: none; }
-  .ob-vids { grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: 72%; margin: 0 calc(var(--s4) * -1); padding: 0 var(--s4) var(--s2); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  /* the Shorts swipe: the first card rests on the gutter, the next one peeks off the edge */
+  .ob-vids { grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: 72%; margin: 0 calc(var(--s4) * -1); padding: 0 var(--s4) var(--s2); overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--s4); scrollbar-width: none; }
+  .ob-vids::-webkit-scrollbar { display: none; }
   .ob-vid { scroll-snap-align: start; }
-  .ob-stage .ob-hbar { grid-template-columns: 6rem 1fr 2rem; }
+  .ob-dots { display: flex; justify-content: center; }
+  .ob-dots button { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; padding: 0; border: 0; border-radius: 50%; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .ob-dots button::before { content: ""; width: 0.5rem; height: 0.5rem; border-radius: var(--r-pill); background: var(--line-2); transition: background 0.2s var(--ease); }
+  .ob-dots button[aria-current="true"]::before { width: 1.25rem; background: var(--ink-1); }
+  .ob-dots button:focus-visible { outline: 0; box-shadow: var(--p-ring); }
+  .ob-stage .ob-hbar { grid-template-columns: 6.5rem minmax(0, 1fr) 2.5rem; }
+  .ob-stage .ob-hbar > span:first-child { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .ob-stage .ob-hbar b { white-space: nowrap; }
+  .ob-you-l { display: none; }
+  .ob-you-s { display: inline; }
   .ob-planbox { padding: var(--s6) var(--s5); }
   .ob-mailrow .ob-add { flex-wrap: wrap; }
   .ob-mailrow .ob-add .ob-input { flex-basis: 100%; }
   .ob-mailrow .ob-add .ob-btn { width: 100%; }
+}
+@media (max-width: 700px) {
+  .ob-runbar { row-gap: 0.375rem; padding: var(--s2) var(--s4); }
+  /* the stepper keeps its 4px bars, but each finished step is a 44px tap */
+  .ob-stepper li, .ob-stepper li.is-now, .ob-stepper li.is-done, .ob-stepper li.is-done:hover { position: relative; height: 2.75rem; margin: -0.75rem 0 -1.75rem; background: none; -webkit-tap-highlight-color: transparent; }
+  .ob-stepper li::before { content: ""; position: absolute; left: 0; right: 0; top: 0.75rem; height: 0.25rem; border-radius: 2px; background: var(--line-2); }
+  .ob-stepper li.is-done::before { background: var(--accent); }
+  .ob-stepper li.is-now::before { background: var(--ink-1); }
+  .ob-stage { padding-inline: max(20px, env(safe-area-inset-left)) max(20px, env(safe-area-inset-right)); }
+  .ob-knows { padding-inline: 20px; }
+  .ob-vids { margin-inline: -20px; padding-inline: 20px; scroll-padding-inline: 20px; }
+  /* the agent mark sits above the heading: one left edge, full-width ledes */
+  .ob-say { flex-direction: column; gap: var(--s3); }
+  .ob-say .ob-agent { width: 1.75rem; height: 1.75rem; margin-top: 0; }
+  .ob-say p { font-size: 1.03125rem; }
+  .ob-aside .ob-picks { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s2); }
+  .ob-aside .ob-pick { height: 2.75rem; justify-content: center; }
+  .ob-aside .ob-pick:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .ob-aside-skip { display: inline-flex; align-items: center; min-height: 2.75rem; margin: var(--s2) 0 calc(var(--s2) * -1) calc(var(--s2) * -1); padding: 0 var(--s2); color: var(--ink-3); }
+  .ob-market { row-gap: 0; }
+  .ob-market .ob-link, .ob-sent .ob-link { display: inline-flex; align-items: center; min-height: 2.75rem; margin: -0.75rem 0 -0.75rem calc(var(--s2) * -1); padding: 0 var(--s2); }
+  .ob-sent .ob-link { margin-left: 0; }
+  .ob-rows-cap { display: block; margin: 0 0 var(--s3); color: var(--ink-3); font: var(--t-small); }
+  .ob-6m { display: none; }
+  .ob-row-drop, .ob-row.is-off .ob-row-drop { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .ob-row-main small { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .ob-stat { grid-template-columns: auto 1fr; align-items: baseline; column-gap: var(--s4); padding: var(--s4) var(--s5); }
+  .ob-tiles3 { gap: var(--s4); margin-top: var(--s4); }
+  .ob-out .ob-panel { margin-top: var(--s4); }
+  .ob-vid-foot .ob-btn { height: 2.75rem; padding: 0 var(--s5); }
+  .ob-mailrow .ob-add .ob-input, .ob-mailrow .ob-add .ob-btn { height: 2.75rem; }
+  .ob-planbox .ob-chip--soon { display: none; }
+  .ob-planbox .ob-soon-line { display: block; }
+}
+@media (max-width: 560px) { .ob-say p { font-size: 1rem; line-height: 1.5; } }
+/* touch: 16px fields so iOS never zooms on focus, no grey tap flash, a 44px slider */
+@media (hover: none) and (pointer: coarse) {
+  .ob-input, .ob-mailrow .ob-add .ob-input, .ob-stage .ob-edit textarea { font-size: 1rem; }
+  .ob-pick, .ob-row, .ob-link, .ob-btn { -webkit-tap-highlight-color: transparent; }
+}
+@media (max-width: 860px) and (hover: none) and (pointer: coarse) {
+  .ob-planbox .ob-range { height: 2.75rem; margin: 0.875rem 0 -0.375rem; }
+  .ob-planbox .ob-range::-webkit-slider-thumb { width: 1.75rem; height: 1.75rem; margin-top: -0.6875rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ob-say, .ob-workbox, .ob-aside, .ob-out, .ob-fact.is-new { animation: none; }
   .ob-workbar span, .ob-stage .ob-angle, .ob-tick { transition: none; }
   .ob-work li.is-now i, .ob-checking, .ob-vid .ob-phone::after { animation: none; }
 }
+/* step 6, emailed: "start now" and "done for now" as one row of two choices;
+   on a phone they stack, both full width, the ink one first */
+@media (max-width: 700px) { .ob-next > .ob-later { width: 100%; height: 2.75rem; justify-content: center; } }
+/* the phone: the link keeps its words, at a 44 tap */
+@media (max-width: 700px) { .ob-runbar-exit { min-height: 2.75rem; } }

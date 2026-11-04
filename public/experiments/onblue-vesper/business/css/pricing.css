@@ -44,3 +44,21 @@
   .ob-meter-dots { gap: 0.125rem; }
   .ob-terms { grid-template-columns: 1fr; gap: var(--s3); }
 }
+
+/* THE PHONE: a 44 slider (the track is drawn on the track pseudo-elements, the
+   thumb 28), a field of about 32 columns so each dot reads as one, and the
+   platforms as status, not switches: the live one outlined with a volt dot,
+   the coming ones as quiet text on one line under it */
+@media (max-width: 700px) {
+  .ob-meter .ob-range { height: 2.75rem; margin: 1.75rem 0 0.25rem; background: none; }
+  .ob-meter .ob-range::-webkit-slider-runnable-track { height: 0.375rem; border-radius: 999px; background: linear-gradient(90deg, var(--accent) var(--p, 8%), rgba(255, 255, 255, 0.12) var(--p, 8%)); }
+  .ob-meter .ob-range::-moz-range-track { height: 0.375rem; border-radius: 999px; background: linear-gradient(90deg, var(--accent) var(--p, 8%), rgba(255, 255, 255, 0.12) var(--p, 8%)); }
+  .ob-meter .ob-range::-webkit-slider-thumb { width: 1.75rem; height: 1.75rem; margin-top: -0.6875rem; }
+  .ob-meter .ob-range::-moz-range-thumb { width: 1.75rem; height: 1.75rem; }
+  .ob-meter-dots { grid-template-rows: repeat(20, auto); gap: 0.1875rem; }
+  .ob-price-foot .ob-plats { display: grid; grid-template-columns: auto auto; justify-content: start; gap: 0.5rem 0.75rem; }
+  .ob-dark .ob-price-foot .ob-chip--on { grid-column: 1 / -1; justify-self: start; height: 2rem; border: 1px solid var(--line-2); background: none; color: var(--ink-1); font-size: 0.8125rem; }
+  .ob-price-foot .ob-chip--on::before { content: ""; flex: none; width: 0.375rem; height: 0.375rem; border-radius: 50%; background: var(--accent); }
+  .ob-price-foot .ob-chip--soon { height: 2rem; padding: 0; border: 0; background: none; font-size: 0.8125rem; }
+}
+@media (max-width: 560px) { .ob-meter-eq { font-size: 1.125rem; text-wrap: balance; } }

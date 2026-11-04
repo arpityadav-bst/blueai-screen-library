@@ -14,8 +14,13 @@
 .ob-runbar-end { position: relative; z-index: 3; grid-column: 3; grid-row: 1; display: flex; justify-content: flex-end; }
 .ob-runbar { transition: box-shadow 0.2s var(--ease); }
 .ob-runbar.is-scrolled { box-shadow: 0 0.875rem 1.5rem -1.25rem rgba(10, 10, 9, 0.32); }
-.ob-runbar-end .ob-btn { gap: 0.375rem; }
+.ob-runbar-end .ob-btn { gap: 0.375rem; transition: transform 0.15s var(--ease), background 0.15s var(--ease), border-color 0.15s var(--ease), opacity 0.4s ease; }
+.ob-runbar-end .ob-btn.is-hidden { visibility: hidden; opacity: 0; transition: none; }
 .ob-runbar-end [hidden] { display: none; }
+/* the way out, on every step (Appy): quiet, after the save; the report stays saved and the homepage offers it back */
+.ob-runbar-end { align-items: center; gap: var(--s4); }
+.ob-runbar-exit { display: inline-flex; align-items: center; min-height: 2.25rem; padding: 0 0.25rem; color: var(--ink-3); font-size: 0.8125rem; white-space: nowrap; }   /* the site's quiet link, like "Skip for now" (Appy: an x read like a dialog's close) */
+.ob-runbar-exit:hover { color: var(--ink-1); }
 .ob-runbar-end .ob-btn[disabled] { opacity: 1; color: var(--ink-3); box-shadow: none; }
 .ob-runbar-end .ob-btn svg path { stroke-width: 3; }
 .ob-runbar-now { display: none; }
@@ -36,7 +41,9 @@
 .ob-knows { position: sticky; top: 4rem; align-self: start; display: flex; flex-direction: column; height: calc(100vh - 4rem); overflow: hidden; padding: var(--s8) var(--s6); }
 .ob-knows-head { flex: none; display: flex; align-items: center; gap: var(--s3); }
 .ob-knows-fav { flex: none; display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: var(--r-md); background: linear-gradient(180deg, #2c2c29 0%, #0b0b0a 100%); color: #fff; font: 600 1.125rem/1 var(--font); overflow: hidden; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 0 0 1px var(--line), var(--shadow-1); }
-.ob-knows-fav img { width: 100%; height: 100%; object-fit: cover; background: #fff; }
+.ob-knows-fav img { width: 100%; height: 100%; object-fit: contain; }
+/* a real logo is its own container (Appy: apple.com's circle sat in our tile, two containers): the tile steps back */
+.ob-knows-fav:has(img) { background: none; box-shadow: none; border-radius: 0; }
 .ob-knows-head b { display: block; color: var(--ink-1); font: 500 1rem/1.25 var(--font); letter-spacing: -0.02em; }
 .ob-knows-head small { color: var(--ink-3); font: var(--t-small); }
 .ob-knows-label { flex: none; display: flex; align-items: center; justify-content: space-between; width: 100%; margin: var(--s8) 0 var(--s3); padding: 0; border: 0; background: none; color: var(--ink-1); font: 500 0.875rem/1.3 var(--font); text-align: left; pointer-events: none; }
@@ -190,3 +197,12 @@
 .ob-upnext b { white-space: nowrap; }
 
 /* steps 5 and 6, the sign-up and the phone layout: run-2.css */
+/* the subtle word before leaving (js/run-exit.js): a small card under "Back to site" */
+.ob-exit-pop { position: absolute; top: calc(100% + 0.625rem); right: 0; width: min(18.5rem, calc(100vw - 2rem)); padding: var(--s4); border: 1px solid rgba(10, 10, 9, 0.08); border-radius: 0.875rem; background: #fff; box-shadow: var(--p-lift); color: var(--ink-3); font: var(--t-small); animation: ob-exit-in 0.18s var(--ease); }
+.ob-exit-pop b { display: block; color: var(--ink-1); font-weight: 500; }
+.ob-exit-pop p { margin: 0.25rem 0 0; }
+.ob-exit-act { display: flex; align-items: center; gap: var(--s4); margin-top: var(--s4); }
+.ob-exit-act .ob-link { font-size: 0.8125rem; }
+@keyframes ob-exit-in { from { opacity: 0; transform: translateY(-0.25rem); } }
+@media (prefers-reduced-motion: reduce) { .ob-exit-pop { animation: none; } }
+@media (max-width: 700px) { .ob-exit-act .ob-btn { height: 2.75rem; } .ob-exit-act .ob-link { display: inline-flex; align-items: center; min-height: 2.75rem; } }
