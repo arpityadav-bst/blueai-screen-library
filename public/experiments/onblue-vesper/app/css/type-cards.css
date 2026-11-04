@@ -1,7 +1,7 @@
 /* The two campaign type cards (type-cards.js), shown in the type picker
    (css/type-picker.css). Each card SHOWS its deal above the words, on the
-   start card's dark sky in miniature (css/sky.css): ink, a faint white dot
-   field, clouds of ink drifting across it (the dots are gone wherever one
+   start card's dark sky in miniature (css/sky.css): ink, a faint white star
+   field, clouds of ink drifting across it (the stars are gone wherever one
    passes), a charcoal lift over both, then the films. The start card opens this picker, so
    the two read as one piece. The rows line up across the two cards
    (subgrid), so the facts divider sits at one height in both. */
@@ -68,7 +68,7 @@
   overflow: hidden;
   border-radius: calc(var(--r-md) - 1px) calc(var(--r-md) - 1px) 0 0;
   background:
-    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.16) 1px, transparent 1.5px) 0 0 / 16px 16px,
+    var(--sky-star) 0 0 / 22px 22px,
     var(--ink);
 }
 /* the clouds, of the art's own ink: two art widths of one repeating tile, slid left one width and looped */

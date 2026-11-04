@@ -4,12 +4,12 @@
    are; this picks which of his screens to show and adjusts it from outside:
    - in review: his dashboard's in-review campaign screen (campaign.html,
      #view-campaign), carrying this campaign's own name and setup;
-   - one of the six samples: his dashboard's report for that same sample (they
+   - an engagement sample: his dashboard's report for that same sample (they
      share their references with the app's samples);
    - any other video engagement campaign: his engagement sample report in the
      same state (live, completed, under target);
-   - any other video growth campaign: his detailed growth report
-     (campaign-report/index.html).
+   - any other video growth campaign, a sample too: his detailed growth report
+     (campaign-report/index.html), so every growth campaign opens one design.
    His header, footer, list and dev dock are hidden, his page ground gives way
    to the content area's tone, and every way back leaves for the app's list. */
 (function () {
@@ -26,7 +26,7 @@
   if (c && window.onblueSideLists && D.isSample(c)) { window.onblueSideLists.sawSample(); if (A.refreshSide) { A.refreshSide(); } }
   var route = !c ? { page: 'report' }
     : c.status === 'review' ? { page: 'dash', own: c.kind === 'engagement' ? 'mine-boost' : 'mine-films' }
-    : HIS[c.id] ? { page: 'dash', open: HIS[c.id] }
+    : HIS[c.id] && c.kind === 'engagement' ? { page: 'dash', open: HIS[c.id] }
     : c.kind === 'engagement' ? { page: 'dash', open: ENGAGE[c.status] || 'spring' }
     : { page: 'report' };
   frame.src = route.page === 'dash' ? '../campaign.html' : '../campaign-report/index.html';

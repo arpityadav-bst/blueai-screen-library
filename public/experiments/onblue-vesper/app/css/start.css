@@ -9,8 +9,6 @@
    glow, and the solid button inverts so it still reads as the one action. */
 .start-card {
   --sky: var(--ink);
-  /* a dot carries less ink than a line, so it takes more light to be seen */
-  --sky-dot: rgba(255, 255, 255, 0.16);
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(340px, 48%);

@@ -1,11 +1,11 @@
-/* The start card's sky (Appy's pick, final): a quiet dot field on the card,
+/* The start card's sky (Appy's pick, final): a quiet star field on the card,
    and large soft clouds of the card's own ground (--sky, css/start.css)
-   drifting across above it, so the dots disappear wherever a cloud passes. The sky itself is never drawn.
+   drifting across above it, so the stars disappear wherever a cloud passes. The sky itself is never drawn.
    PURE CSS BACKGROUNDS AND ONE TRANSFORM ANIMATION: no canvas, mask, filter
    or blur, any of which caps Chrome at 30fps on some Macs. The new campaign
-   type cards carry the same sky in miniature, still on a grid (css/type-cards.css). */
+   type cards carry the same sky in miniature, (css/type-cards.css). */
 
-/* the dots: strongest on the right where the films fan out, gone before the copy */
+/* the stars: strongest on the right where the films fan out, gone before the copy */
 .start-card::before {
   content: "";
   position: absolute;
@@ -13,7 +13,7 @@
   z-index: 0;
   background:
     linear-gradient(270deg, transparent 10%, var(--sky) 80%),
-    radial-gradient(circle at 1px 1px, var(--sky-dot) 1px, transparent 1.5px) 0 0 / 16px 16px;
+    var(--sky-star) 0 0 / 22px 22px;
   pointer-events: none;
 }
 
