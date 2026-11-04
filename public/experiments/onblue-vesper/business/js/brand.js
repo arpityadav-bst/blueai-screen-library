@@ -21,13 +21,16 @@
   function hint(key) {
     var have = r[key].map(function (x) { return x.toLowerCase(); });
     var left = EX[key].filter(function (x) { return have.indexOf(x.toLowerCase()) < 0; });
+    if (left.length && phone()) { return 'e.g. ' + (SHORT[left[0]] || left[0].toLowerCase()); }   // phones: 24 characters or fewer, never cut mid-word
     return left.length ? 'Like: ' + left[0].charAt(0).toLowerCase() + left[0].slice(1) : 'Add a rule';
   }
+  var SHORT = { 'Say the brand name out loud': 'say the brand name', 'Use real customers when we can': 'use real customers', 'No jokes about competitors': 'no jabs at rivals' };
+  function phone() { return window.matchMedia('(max-width: 700px)').matches; }
   function rules(key, title) {
     var mark = key === 'always' ? '<span class="ob-yes ob-yes--sm">' + OB.icon('check') + '</span>' : '<span class="ob-br-not" aria-hidden="true"></span>';
     return '<div class="ob-card ob-br-rules"><h3 class="ob-pg-h3">' + title + '</h3><ul>' + (r[key].length ? r[key].map(function (x, i) {
       return '<li>' + mark + '<span>' + e(x) + '</span><button class="ob-x" type="button" aria-label="Remove" data-del="' + key + ':' + i + '">' + OB.icon('close', 14) + '</button></li>';
-    }).join('') : '<li class="ob-br-none">No rules yet</li>') + '</ul><form class="ob-add" data-rule="' + key + '"><input class="ob-input" placeholder="' + e(hint(key)) + '" aria-label="' + title + '"><button class="ob-btn" type="submit">' + OB.icon('plus', 15) + 'Add</button></form></div>';
+    }).join('') : '<li class="ob-br-none">No rules yet</li>') + '</ul><form class="ob-add" data-rule="' + key + '"><input class="ob-input" placeholder="' + e(hint(key)) + '" aria-label="' + title + '"><button class="ob-btn" type="submit" aria-label="Add ' + (key === 'always' ? 'an Always' : 'a Never') + ' rule">' + OB.icon('plus', 15) + 'Add</button></form></div>';
   }
   function split(n) { var m = /^(.*)\.([a-z0-9]{1,4})$/i.exec(n); return m ? [m[1], m[2].toUpperCase()] : [n, 'FILE']; }
   function files() {
@@ -42,7 +45,7 @@
     return '<select class="ob-br-sel" data-f="' + key + '">' + (none && !r[key] ? '<option value="" selected>' + none + '</option>' : '') + opts.join('') + '</select>';
   }
   function edit(x, cls) {
-    return '<div class="ob-edit' + (cls || '') + '"><label for="ob-b-' + x[0] + '">' + x[1] + '<span class="ob-br-pen">' + PEN + 'Edit</span><span class="ob-br-saves">Saves when you ' + (window.matchMedia('(hover: none)').matches ? 'tap' : 'click') + ' away</span></label>' +
+    return '<div class="ob-edit' + (cls || '') + '"><label for="ob-b-' + x[0] + '">' + x[1] + '<span class="ob-br-pen">' + PEN + 'Edit</span><span class="ob-br-saves">' + (window.matchMedia('(hover: none), (pointer: coarse), (max-width: 700px)').matches ? 'Saves on its own' : 'Saves when you click away') + '</span></label>' +
       '<textarea id="ob-b-' + x[0] + '" rows="1" data-k="' + x[0] + '">' + e(r[x[0]]) + '</textarea></div>';
   }
   function header() {
@@ -83,7 +86,8 @@
     main.querySelector('[data-files]').addEventListener('change', function (ev) {
       var list = Array.prototype.slice.call(ev.target.files), names = list.map(function (x) { return x.name; });
       list.forEach(function (x) { r.fileSizes[x.name] = x.size; if (/^image\//.test(x.type) && window.URL) { thumbs[x.name] = URL.createObjectURL(x); } });
-      r.files = r.files.concat(names); A.saveReport(); render(true); OB.toast('Added ' + names.length + ' file' + (names.length === 1 ? '' : 's'));
+      r.files = r.files.concat(names); A.saveReport(); render(true);
+      if (!phone()) { OB.toast('Added ' + names.length + ' file' + (names.length === 1 ? '' : 's')); }   // phones: the new rows are the confirmation, no toast over them
     });
     // phones scroll at once, so the toast measures the settled page and never lands on Add more
     if (scrollFiles) { var fl = main.querySelector('[data-filelist]'); if (fl) { fl.scrollIntoView({ block: 'center', behavior: window.matchMedia('(max-width: 820px)').matches ? 'auto' : 'smooth' }); } }
@@ -105,6 +109,11 @@
     if (df) { r.files.splice(+df.getAttribute('data-delfile'), 1); A.saveReport(); render(); return; }
     var d = ev.target.closest('[data-del]'); if (!d) { return; }
     var p = d.getAttribute('data-del').split(':'); r[p[0]].splice(+p[1], 1); A.saveReport(); render();
+  });
+  // touch: the first tap into a fact puts the caret at its end, never mid-word (a second tap places it)
+  main.addEventListener('focusin', function (ev) {
+    var t = ev.target;
+    if (t.tagName === 'TEXTAREA' && t.closest('.ob-edit') && window.matchMedia('(hover: none) and (pointer: coarse)').matches) { window.setTimeout(function () { t.setSelectionRange(t.value.length, t.value.length); }, 0); }
   });
   main.addEventListener('keydown', function (ev) {
     if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.classList && ev.target.classList.contains('ob-br-drop')) { ev.preventDefault(); ev.target.querySelector('input').click(); }

@@ -40,12 +40,38 @@
    under it. The scene is its own 350 x 400 portrait (js/journey.js fit() adds
    .oj-ph): the phone left of centre, at most two cards beside it at near 1:1
    type, no wires; the phone's screen already carries the rest. */
+/* step 4's callout on the phone (js/journey.js); there is no room for it on desktop */
+.oj-done { display: none; }
 @media (max-width: 700px) {
-  .oj { padding-top: 4.75rem; }
+  .oj { padding: 4.75rem 0; }   /* 76 + the wall's 76: the 152 join every other section has */
   .oj-title { margin-bottom: 1.5rem; }
-  .oj-step, .oj-step:first-child { min-height: 44svh; padding: 1.5rem 0; }
+  /* the words sit at the top of a shorter box, so the active step lands just
+     under the stage and the next heading peeks below it */
+  .oj-step, .oj-step:first-child { min-height: 30svh; align-items: flex-start; padding: 1.5rem 0; }
+  /* the stage lets go when the last step's words sit just under it (its margin;
+     the words column pulls back up by the same, so nothing moves); the last
+     step ends at its words, so the next heading is the 152 join away */
   .oj-step:last-child { min-height: 0; padding-bottom: 0; }
-  .oj-step h3 { font-size: 1.5rem; line-height: 1.15; }
+  .oj-side { margin-bottom: max(20svh, 10.5rem); }
+  .oj-in > div:first-child { margin-top: calc(-1 * max(20svh, 10.5rem)); }
+  .oj-step h3 { font-size: 1.5rem; line-height: 1.15; text-wrap: balance; }
+  .oj-ph .oj-step.is-past > div { opacity: 0; }   /* no half line of an old step at the stage's edge */
+  /* the pinned stage: words dissolve into its bottom edge instead of being
+     sliced, and once it is pinned a band of page colour covers the strip above
+     it, round the floating header pill (static gradients, no mask) */
+  /* full bleed, so the clip that holds the scene falls on the screen's edge, not
+     through the phone's shadow at the 20 gutter; the fade starts inside the box
+     and rises from clear, so it softens the shadow instead of slicing it */
+  .oj-side { margin-inline: -1.25rem; padding-inline: 1.25rem; }
+  .oj-pin { overflow-x: visible; }   /* only the full-bleed .oj-side clips, so no seam at the 20 gutter */
+  .oj-side::after { content: ""; position: absolute; left: 0; right: 0; top: calc(100% - 1.5rem); height: 3rem; background: linear-gradient(rgba(247, 247, 244, 0), var(--bg) 50%, rgba(247, 247, 244, 0)); pointer-events: none; }
+  .oj-ph .oj-phone::before { bottom: -5%; }   /* the shadow ends inside the stage */
+  .oj-ph .oj-stage { opacity: var(--oj-out, 1); }   /* fades as it slides under the header (js/journey.js) */
+  .oj-post li .oj-pav i { display: grid; place-items: center; transform: none; }   /* the initial centred, not a sliver at the edge */
+  /* step 1: the share-image slot shows the first video's still until (or unless) the live one lands */
+  .oj-ph .oj-og::before { content: ""; position: absolute; inset: 0; background: var(--og) center / cover no-repeat; }
+  .oj-ph .oj-og img { position: relative; z-index: 1; }
+  .oj-pinned .oj-side::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 4rem; background: var(--bg); pointer-events: none; }
   .oj-step p { margin-top: 0.5rem; font-size: 0.9375rem; }
   .oj-ph .oj-stage { width: 350px; height: 400px; }
   .oj-ph .oj-stage::before { left: calc(50% - 70px); width: 300px; height: 300px; margin: -150px 0 0 -150px; }
@@ -58,14 +84,17 @@
   .oj-ph .at-6 .oj-phone { transform: scale(0.6) rotate(1.5deg); }
   .oj-ph .at-1 .oj-fact, .oj-ph .at-3 .oj-chip, .oj-ph .at-5 .oj-node, .oj-ph .at-6 .oj-res { transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)); }
   .oj-ph .at-2 .oj-rival { transform: translate(var(--px), var(--py)) rotate(var(--r)); }
-  .oj-ph .oj-fact, .oj-ph .oj-chip, .oj-ph .oj-node, .oj-ph .oj-res { width: 156px; padding: 10px 12px; border-radius: 14px; }
+  /* 168 wide at a centre 86 right of the scene's: the cluster's right margin matches the phone's left */
+  .oj-ph .oj-fact, .oj-ph .oj-chip, .oj-ph .oj-node, .oj-ph .oj-res { width: 168px; padding: 10px 12px; border-radius: 14px; }
+  .oj-ph .oj-look > span { min-width: 0; }
+  .oj-ph .oj-look b { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }   /* the voice stays one line inside the screen */
   .oj-ph .oj-fact { gap: 8px; }
   .oj-ph .oj-fact i { width: 28px; height: 28px; border-radius: 8px; }
   .oj-ph .oj-fact i svg { width: 16px; height: 16px; }
   .oj-ph .oj-fact small, .oj-ph .oj-node small, .oj-ph .oj-res small { font-size: 12px; }
   .oj-ph .oj-fact b { display: -webkit-box; margin-top: 4px; overflow: hidden; font-size: 13px; line-height: 1.3; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
   .oj-ph .oj-chip { gap: 8px; }
-  .oj-ph .oj-chip b { font-size: 13px; }
+  .oj-ph .oj-chip b { font-size: 13px; line-height: 1.2; white-space: normal; }   /* "Photoreal story" wraps, never "Photoreal st..." */
   .oj-ph .oj-chip span { padding: 4px 6px; font-size: 12px; }
   .oj-ph .oj-node { gap: 8px; padding: 8px 10px; }
   .oj-ph .oj-node .oj-av { width: 32px; height: 32px; }
@@ -78,4 +107,22 @@
   .oj-ph .oj-rival img { width: 72px; height: 128px; border-radius: 10px; }
   .oj-ph .oj-rival b { margin-top: 6px; overflow: hidden; font-size: 12px; text-overflow: ellipsis; }
   .oj-ph .oj-rival span { top: 6px; padding: 2px 6px; font-size: 11px; }
+  /* step 4: one callout beside the phone, like every other step */
+  .oj-ph .oj-done { position: absolute; left: 50%; top: 50%; z-index: 4; display: flex; align-items: center; gap: 10px; width: 168px; padding: 8px; border: 1px solid rgba(10, 10, 9, 0.08); border-radius: 14px; background: rgba(255, 255, 255, 0.94); box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(10, 10, 9, 0.05), 0 26px 44px -24px rgba(10, 10, 9, 0.35); opacity: 0; transform: translate(-50%, -50%) scale(0.7); transition: transform 0.3s ease, opacity 0.2s ease; }
+  .oj-ph .at-4 .oj-done { opacity: 1; transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)); transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.25, 1.06) var(--d), opacity 0.25s ease var(--d); }
+  .oj-ph .oj-done img { flex: none; width: 40px; height: 71px; border-radius: 7px; object-fit: cover; }
+  .oj-ph .oj-done small { display: block; color: var(--ink-4); font: 500 12px/1.2 var(--font); }
+  .oj-ph .oj-done b { display: block; margin: 4px 0 5px; color: var(--ink-1); font: 700 15px/1 var(--font); letter-spacing: -0.02em; }
+  .oj-ph .oj-done em { display: inline-block; padding: 4px 8px; border-radius: 6px; background: var(--accent); color: var(--on-accent); font: 700 11px/1.2 var(--font); font-style: normal; }
 }
+/* tall phones: the room the shorter steps free goes to the phone, so its screen
+   headlines read (scale 0.66; js/journey.js gives the stage half the screen) */
+@media (max-width: 700px) and (min-height: 780px) {
+  .oj-ph .oj-phone { transform: scale(0.66) rotate(-3deg); }
+  .oj-ph .at-2 .oj-phone { transform: scale(0.66) rotate(2deg); }
+  .oj-ph .at-3 .oj-phone { transform: scale(0.66) rotate(-1.5deg); }
+  .oj-ph .at-4 .oj-phone { transform: scale(0.66); }
+  .oj-ph .at-5 .oj-phone { transform: scale(0.66) rotate(-1deg); }
+  .oj-ph .at-6 .oj-phone { transform: scale(0.66) rotate(1.5deg); }
+}
+@media (prefers-reduced-motion: reduce) { .oj-done { transition: none !important; } }

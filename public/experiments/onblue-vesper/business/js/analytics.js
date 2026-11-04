@@ -20,9 +20,12 @@
         '<rect x="' + x + '" y="' + (H - ho) + '" width="' + bw + '" height="' + ho + '" rx="4" fill="var(--an-old)"/>' +
         '<rect x="' + x + '" y="' + (H - ho - hf) + '" width="' + bw + '" height="' + Math.max(0, hf - 2) + '" rx="4" fill="var(--an-new)"/></g>';
     }).join('');
+    // phones: every third day counted back from today, and Today ends on its bar's right edge (app-phone-2.css)
+    var ph = window.matchMedia('(max-width: 700px)').matches;
     var labels = days.map(function (d, i) {
-      var last = i === n - 1;
-      return (i % 2 && !last) || (!last && n - 1 - i < 2) ? '' : '<span' + (last ? ' class="is-today"' : '') + ' style="left:' + ((i * (bw + gap) + bw / 2) / W * 100) + '%">' + (last ? 'Today' : d.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })) + '</span>';
+      var last = i === n - 1, skip = ph ? (n - 1 - i) % 3 !== 0 : (i % 2 && !last) || (!last && n - 1 - i < 2);
+      var at = ph && last ? i * (bw + gap) + bw : i * (bw + gap) + bw / 2;
+      return skip ? '' : '<span' + (last ? ' class="is-today"' : '') + ' style="left:' + (at / W * 100) + '%">' + (last ? 'Today' : d.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })) + '</span>';
     }).join('');
     return '<div class="ob-chart ob-an-chart"><div class="ob-an-grid" aria-hidden="true"><span><i>' + OB.short(top) + '</i></span><span><i>' + OB.short(top / 2) + '</i></span><span><i>0</i></span></div>' +
       '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" role="img" aria-label="Daily US views">' + bars +
@@ -71,12 +74,25 @@
           '</td><td><span class="ob-an-v"><span>' + OB.fmt(vw) + '</span><i><b style="width:' + Math.round(vw / top * 100) + '%"></b></i></span></td><td>$' + OB.fmt(cost[i]) + '</td></tr>';
       }).join('') + '</tbody><tfoot><tr><td>Total</td><td></td><td>' + OB.fmt(k.views) + '</td><td>$' + OB.fmt(Math.round(k.spent)) + '</td></tr></tfoot></table></div></section>';
 
-    var tip = main.querySelector('[data-tip]'), box = main.querySelector('.ob-chart');
-    main.querySelectorAll('[data-day]').forEach(function (g) {
+    var tip = main.querySelector('[data-tip]'), box = main.querySelector('.ob-chart'), gs = main.querySelectorAll('[data-day]'), cur = null;
+    // touch: the finger covers the column, so the picked day is written into the subtitle (no box over the bars, app-phone-2.css)
+    var note = main.querySelector('.ob-an-head .ob-p-note'), noteTxt = note.textContent, coarse = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    // touch: the whole plot is the target; a thumb scrubs across it and the nearest day shows
+    if (window.matchMedia('(hover: none) and (pointer: coarse), (max-width: 700px)').matches) {
+      var svg = box.querySelector('svg');
+      var near = function (ev) {
+        var s = svg.getBoundingClientRect(), i = Math.max(0, Math.min(gs.length - 1, Math.floor((ev.clientX - s.left) / s.width * gs.length)));
+        if (gs[i] !== cur) { if (cur) { cur.dispatchEvent(new Event('mouseleave')); } cur = gs[i]; cur.dispatchEvent(new Event('mouseenter')); }
+      };
+      svg.addEventListener('pointerdown', near); svg.addEventListener('pointermove', near);
+      document.addEventListener('pointerdown', function (ev) { if (cur && !svg.contains(ev.target)) { cur.dispatchEvent(new Event('mouseleave')); cur = null; } });
+    }
+    gs.forEach(function (g) {
       g.addEventListener('mouseenter', function () {
         var d = days[+g.getAttribute('data-day')], b = g.getBoundingClientRect(), c = box.getBoundingClientRect();
         tip.innerHTML = '<b>' + d.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + '</b>' + OB.fmt(d.total) + ' views<br><small>' + OB.fmt(d.fresh) + ' new, ' + OB.fmt(d.old) + ' older</small>';
         tip.hidden = false;
+        if (coarse) { note.textContent = d.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + ' · ' + OB.fmt(d.total) + ' views · ' + OB.fmt(d.fresh) + ' new'; }   // one line at 360, so the card never jumps
         // sit just above the hovered bar; a bar too tall for that gets the tip beside it, never over the legend
         var bt = Infinity; g.querySelectorAll('rect').forEach(function (x, j) { var q = x.getBoundingClientRect(); if (j && q.height > 0) { bt = Math.min(bt, q.top); } });
         if (bt === Infinity) { bt = b.bottom; }
@@ -85,7 +101,7 @@
         else { tip.style.left = (mid + b.width / 2 + 8 + W < c.width ? mid + b.width / 2 + 8 : mid - b.width / 2 - 8 - W) + 'px'; tip.style.top = '0px'; }
         box.classList.add('is-hover'); g.classList.add('is-on');
       });
-      g.addEventListener('mouseleave', function () { tip.hidden = true; box.classList.remove('is-hover'); g.classList.remove('is-on'); });
+      g.addEventListener('mouseleave', function () { tip.hidden = true; box.classList.remove('is-hover'); g.classList.remove('is-on'); if (coarse) { note.textContent = noteTxt; } });
     });
   }
 

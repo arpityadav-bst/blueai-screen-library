@@ -24,7 +24,7 @@
   // the count is the page's one toned word, kept on one line with its noun
   function head(n) {
     var hi = hello() + (r.name ? ', ' + e(r.name) : '');
-    var h1 = n ? '<span class="ob-tone">' + (n === 1 ? 'One&nbsp;video' : n + '&nbsp;videos') + '</span> ' + '<span class="ob-nw">' + (n === 1 ? 'is' : 'are') + ' waiting</span> for your yes' : hi;
+    var h1 = n ? '<span class="ob-tone">' + (n === 1 ? 'One&nbsp;video' : n + '&nbsp;videos') + '</span> ' + '<span class="ob-nw">' + (n === 1 ? 'is' : 'are') + ' waiting</span> <span class="ob-nw">for your yes</span>' : hi;   // phones: breaks as "waiting / for your yes"
     var sub = n ? hi + '. BlueAI is making videos for ' + e(r.brand) + '.' :
       P.finished ? 'BlueAI is making videos for ' + e(r.brand) + '. Nothing needs you right now.' : 'Your free report for ' + e(r.brand) + ' is saved, ' + P.done + ' of ' + P.total + ' steps done.';
     return '<div class="ob-head"><div><h1>' + h1 + '</h1><p>' + sub + '</p></div></div>';
@@ -66,10 +66,12 @@
       '<a class="ob-btn ob-btn--sm ob-btn--ghost" href="studio.html#' + v.id + '" data-watch="' + v.id + '">Watch first</a></div></div></div>';
   }
   // videos still being made sit on their own slim line above the ones that need you
-  function making(list) {
+  // (phones, beside other rows: a poster frame in the rows' thumb column, so it reads as a video on its way)
+  function making(list, frame) {
     if (!list.length) { return ''; }
     return '<div class="ob-mk-line">' + list.map(function (v) {
-      return '<div class="ob-mk-i"><span class="ob-mk-spark" aria-hidden="true">' + OB.icon('spark', 14) + '</span><span><b>Making \u201c' + nb(v.title) + '\u201d</b><small>' + e(v.format) + '. It waits here for your yes when it\'s ready.</small></span>' +
+      var art = frame ? OB.ui.making(0) : '<span class="ob-mk-spark" aria-hidden="true">' + OB.icon('spark', 14) + '</span>';
+      return '<div class="ob-mk-i">' + art + '<span><b>Making \u201c' + nb(v.title) + '\u201d</b><small>' + (frame ? '<span class="ob-mk-dot" aria-hidden="true"></span>' : '') + e(v.format) + (phone() ? ' &middot; waits for your yes' : '. It waits here for your yes when it\'s ready.') + '</small></span>' +
         '<span class="ob-mk-bar"><i></i></span></div>';
     }).join('') + '</div>';
   }
@@ -77,7 +79,7 @@
     var empty = P.has(5) ? '<b>You\'re all caught up.</b><small>Ask BlueAI for a new video below. It waits here for you before it posts.</small>' :
       '<b>Your first videos come next.</b><small>Finish your report and BlueAI makes three. They wait here for your yes before anything posts.</small>';
     var mk = list.filter(function (v) { return v.status === 'making'; }), ready = list.filter(function (v) { return v.status !== 'making'; });
-    var body = ready.length ? '<div class="ob-needs">' + making(mk) + ready.map(need).join('') + '</div>' :
+    var body = ready.length ? '<div class="ob-needs">' + making(mk, phone()) + ready.map(need).join('') + '</div>' :
       '<div class="ob-needs ob-needs--empty' + (mk.length ? ' has-making' : '') + '">' + making(mk) + '<span class="ob-yes">' + OB.icon('check') + '</span><div>' + empty + '</div></div>';
     return '<section class="ob-sect ob-sect--first" data-tour="needs"><div class="ob-sect-head"><h2>Needs your yes</h2><span>Nothing posts until you approve it</span></div>' + body + '</section>';
   }
@@ -116,7 +118,26 @@
         '<button class="ob-btn ob-btn--sm" type="button" data-remix="' + i + '" data-title="' + e(s.title) + '" data-fm="' + e(s.format) + '" data-film="' + s.film + '" data-rival="' + e(x.name) + '" aria-label="Remix ' + e(x.name) + '\'s Short for ' + e(r.brand) + '">' + OB.icon('spark', 15) + 'Remix</button></div>');
     });
     if (!cards.length) { return ''; }
-    return '<section class="ob-sect"><div class="ob-sect-head"><h2>Remix a competitor</h2><a href="radar.html">Open Radar</a></div><div class="ob-home-row">' + cards.join('') + '</div></section>';
+    // phones: a swipe row, so a row of dots says where you are and takes you to any poster
+    var dots = phone() && cards.length > 2 ? '<div class="ob-row-dots" data-rowdots>' + cards.map(function (_, i) { return '<button type="button" aria-label="Show poster ' + (i + 1) + ' of ' + cards.length + '"' + (i ? '' : ' aria-current="true"') + ' data-dot="' + i + '"><i></i></button>'; }).join('') + '</div>' : '';
+    return '<section class="ob-sect"><div class="ob-sect-head"><h2>Remix a competitor</h2><a href="radar.html">Open Radar</a></div><div class="ob-home-row">' + cards.join('') + '</div>' + dots + '</section>';
+  }
+  // the dot follows the row once it rests (about 120ms); at the end of the row the last dot is on
+  function rowDots() {
+    var d = main.querySelector('[data-rowdots]'); if (!d) { return; }
+    var row = d.previousElementSibling, bs = d.querySelectorAll('button'), t = 0;
+    var mark = function () {
+      var c = row.children, at = 0;
+      for (var i = 0; i < c.length; i++) { if (c[i].offsetLeft - c[0].offsetLeft <= row.scrollLeft + 4) { at = i; } }
+      if (row.scrollLeft + row.clientWidth >= row.scrollWidth - 4) { at = c.length - 1; }
+      bs.forEach(function (b, i) { if (i === at) { b.setAttribute('aria-current', 'true'); } else { b.removeAttribute('aria-current'); } });
+    };
+    row.addEventListener('scroll', function () { window.clearTimeout(t); t = window.setTimeout(mark, 120); }, { passive: true });
+    d.addEventListener('click', function (ev) {
+      var b = ev.target.closest('[data-dot]'); if (!b) { return; }
+      var c = row.children[+b.getAttribute('data-dot')];
+      row.scrollTo({ left: c.offsetLeft - row.children[0].offsetLeft, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    });
   }
 
   function render() {
@@ -126,10 +147,10 @@
     var rest = vs.filter(function (v) { return v.status === 'posting' || v.status === 'live'; }).sort(function (a, b) { return rank(b) - rank(a); }).slice(0, 5);
     used = {}; list.concat(rest).forEach(function (v) { if (v.status !== 'making') { used[v.film] = true; } });
     main.innerHTML = head(wait.length) + resume() + needs(list, wait.length) + prompt() + recent(rest) + formats() + remixes();
-    OB.ui.films(main);
+    OB.ui.films(main); rowDots();
   }
 
-  function made(v) { OB.toast('Making \u201c' + v.title + '\u201d. It\'ll wait for your yes when it\'s ready.'); render(); OB.ui.side(); }
+  function made(v) { OB.toast(OB.ui.ph('Making \u201c' + v.title + '\u201d. It\'ll wait for your yes when it\'s ready.', 'Making it. It waits for your yes.')); render(); OB.ui.side(); }
 
   main.addEventListener('submit', function (ev) {
     ev.preventDefault();
@@ -137,7 +158,9 @@
     if (!v) { inp.focus(); return; }
     made(A.make(v.charAt(0).toUpperCase() + v.slice(1)));
   });
-  main.addEventListener('input', function (ev) { var f = ev.target.closest('[data-prompt]'); if (f) { f.classList.toggle('has-text', !!ev.target.value.trim()); fit(ev.target); } });
+  // the suggestion already in the field is marked, so phones can hide it (app-phone-2.css)
+  function picked(f, v) { f.querySelectorAll('[data-chip]').forEach(function (c) { c.classList.toggle('is-picked', c.textContent === v); }); }
+  main.addEventListener('input', function (ev) { var f = ev.target.closest('[data-prompt]'); if (f) { f.classList.toggle('has-text', !!ev.target.value.trim()); fit(ev.target); picked(f, ev.target.value.trim()); } });
   // the phone's field is a textarea: Enter still sends, Shift+Enter is a new line
   main.addEventListener('keydown', function (ev) {
     if (ev.key !== 'Enter' || ev.shiftKey || ev.isComposing || ev.target.tagName !== 'TEXTAREA') { return; }
@@ -147,10 +170,10 @@
   main.addEventListener('click', function (ev) {
     var t = ev.target;
     var chip = t.closest('[data-chip]');
-    if (chip) { var inp = main.querySelector('[data-prompt] input, [data-prompt] textarea'); inp.value = chip.textContent; inp.closest('form').classList.add('has-text'); fit(inp); inp.focus(); return; }
+    if (chip) { var inp = main.querySelector('[data-prompt] input, [data-prompt] textarea'); inp.value = chip.textContent; inp.closest('form').classList.add('has-text'); fit(inp); picked(inp.closest('form'), inp.value); inp.focus(); return; }
     var w = t.closest('[data-watch]'); if (w) { A.watched(w.getAttribute('data-watch')); return; }
     var ap = t.closest('[data-approve]');
-    if (ap) { A.approve(ap.getAttribute('data-approve')); OB.toast(A.st.paused ? 'Approved. It goes out when you resume posting.' : 'Approved. Creators start posting it today.'); render(); OB.ui.side(); return; }
+    if (ap) { A.approve(ap.getAttribute('data-approve')); OB.toast(A.st.paused ? OB.ui.ph('Approved. It goes out when you resume posting.', 'Approved. Posts when you resume.') : OB.ui.ph('Approved. Creators start posting it today.', 'Approved. Creators post it today.')); render(); OB.ui.side(); return; }
     var fm = t.closest('[data-format]');
     if (fm) { var f = r.formats[+fm.getAttribute('data-format')]; made(A.make(f.name + ' for ' + r.brand, f.name)); return; }
     var rx = t.closest('[data-remix]');
@@ -166,7 +189,7 @@
   var q = window.location.search, fresh = /welcome=1/.test(q), replay = /tour=1/.test(q);
   if (fresh || replay) { window.history.replaceState(null, '', 'home.html'); }
   if (fresh) {
-    OB.toast(P.finished ? 'Your report is saved.' : 'Your report is saved. Pick it up where you left off.');
+    OB.toast(P.finished ? 'Your report is saved.' : OB.ui.ph('Your report is saved. Pick it up where you left off.', 'Saved. Pick up where you left off.'));
   }
   if (OB.tour && (replay || (fresh && !OB.store('onblue-tour-done')))) { window.setTimeout(function () { OB.tour.start(); }, fresh ? 2200 : 400); }
 })();

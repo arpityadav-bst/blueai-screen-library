@@ -55,10 +55,15 @@
   .ob-meter .ob-range::-moz-range-track { height: 0.375rem; border-radius: 999px; background: linear-gradient(90deg, var(--accent) var(--p, 8%), rgba(255, 255, 255, 0.12) var(--p, 8%)); }
   .ob-meter .ob-range::-webkit-slider-thumb { width: 1.75rem; height: 1.75rem; margin-top: -0.6875rem; }
   .ob-meter .ob-range::-moz-range-thumb { width: 1.75rem; height: 1.75rem; }
-  .ob-meter-dots { grid-template-rows: repeat(20, auto); gap: 0.1875rem; }
+  .ob-meter-dots { grid-template-rows: repeat(25, auto); gap: 0.1875rem; }   /* 625 = 25 x 25: no ragged last column */
+  #pricing .ob-h2 { margin-left: 0; text-align: left; }   /* reads as one left-aligned block with its meter, like the FAQ under it */
+  #pricing .ob-h2 .ob-tone { white-space: nowrap; }   /* "US views" never splits */
+  .ob-pledge span { display: block; }   /* two lines, one sentence each */
   .ob-price-foot .ob-plats { display: grid; grid-template-columns: auto auto; justify-content: start; gap: 0.5rem 0.75rem; }
   .ob-dark .ob-price-foot .ob-chip--on { grid-column: 1 / -1; justify-self: start; height: 2rem; border: 1px solid var(--line-2); background: none; color: var(--ink-1); font-size: 0.8125rem; }
-  .ob-price-foot .ob-chip--on::before { content: ""; flex: none; width: 0.375rem; height: 0.375rem; border-radius: 50%; background: var(--accent); }
+  /* one marker: the YouTube glyph in its own red with a white play mark */
+  .ob-price-foot .ob-chip--on svg rect { fill: #ff0033; }
+  .ob-price-foot .ob-chip--on svg path { fill: #fff; }
   .ob-price-foot .ob-chip--soon { height: 2rem; padding: 0; border: 0; background: none; font-size: 0.8125rem; }
 }
 @media (max-width: 560px) { .ob-meter-eq { font-size: 1.125rem; text-wrap: balance; } }

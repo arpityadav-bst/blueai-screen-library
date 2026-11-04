@@ -10,7 +10,9 @@
 
   // ---- Radar --------------------------------------------------------------
   var RIVALS = [
-    ['Crumb & Co', [6, 9, 13, 10, 3, 15], ['1.2M', '640K', '410K', '220K', '180K', '96K']],
+    // Crumb & Co opens on the price counter, the very Short the Remix tile
+    // remixes (its "Remixed for you" is the deal reveal, so it is not a rival's here)
+    ['Crumb & Co', [13, 9, 20, 10, 3, 15], ['1.2M', '640K', '410K', '220K', '180K', '96K']],
     ['Daily Grind', [0, 12, 7, 18, 4, 16], ['880K', '510K', '330K', '260K', '140K', '72K']],
     ['Corner Table', [2, 14, 5, 19, 11, 8], ['1.6M', '720K', '450K', '300K', '210K', '120K']],
     ['Brew Theory', [17, 1, 21, 6, 23, 13], ['540K', '390K', '280K', '190K', '110K', '64K']]
@@ -59,6 +61,26 @@
   }
   function start() { if (running || !phones.length) { return; } running = true; cycle(); }
   function stop() { running = false; timers.forEach(window.clearTimeout); timers = []; }
+
+  // ---- the phone's swipe row (css/bento.css): dots that follow the track, and move it
+  var track = bt.querySelector('[data-bt-track]'), dotsEl = bt.querySelector('[data-bt-dots]');
+  if (track && dotsEl) {
+    var cards = Array.prototype.slice.call(track.children);
+    dotsEl.innerHTML = cards.map(function (c, i) {
+      return '<button type="button" aria-label="Show ' + OB.esc(c.querySelector('h3').textContent) + '" aria-current="' + (i === 0) + '"></button>';
+    }).join('');
+    var dots = Array.prototype.slice.call(dotsEl.children), restT;
+    var mark = function () {
+      var w = cards.length > 1 ? cards[1].offsetLeft - cards[0].offsetLeft : 1, n = Math.max(0, Math.min(cards.length - 1, Math.round(track.scrollLeft / w)));
+      dots.forEach(function (d, i) { d.setAttribute('aria-current', String(i === n)); });
+    };
+    // counted once the track rests (about 120ms), not mid-swipe
+    track.addEventListener('scroll', function () { window.clearTimeout(restT); restT = window.setTimeout(mark, 120); }, { passive: true });
+    dotsEl.addEventListener('click', function (e) {
+      var i = dots.indexOf(e.target.closest('button'));
+      if (i >= 0) { track.scrollTo({ left: cards[i].offsetLeft - cards[0].offsetLeft, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }
+    });
+  }
 
   function inView(on) { bt.classList.toggle('is-in', on); if (on) { start(); } else { stop(); } }
   if (!('IntersectionObserver' in window)) { inView(true); return; }

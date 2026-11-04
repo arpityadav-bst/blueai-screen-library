@@ -77,15 +77,20 @@
   .ob-result { gap: 0; }
   .ob-result-copy { display: contents; }
   .ob-result-h { order: 1; font-size: 1.875rem; }
-  .ob-result-say { order: 2; font-size: 1rem; text-wrap: pretty; }
+  .ob-result-say { order: 2; font-size: 1rem; text-wrap: balance; }   /* no two-word "on onBlue." tail */
   .ob-result-side { order: 3; width: min(19rem, 100%); margin-top: 1.5rem; }
   .ob-result-cta { order: 4; justify-self: start; margin-top: 1.5rem; }
-  .ob-result-who { order: 5; margin-top: 0.75rem; }
+  .ob-result-who { order: 5; margin-top: 0.75rem; text-wrap: pretty; }
   .ob-result-phone { width: 13.5rem; margin-left: auto; transform: rotate(-3deg); }
-  .ob-result-days { position: absolute; left: 0; bottom: 1.5rem; width: 12rem; margin: 0; transform: rotate(-3deg); }
-  .ob-bars-x { font-size: 0.6875rem; }
+  .ob-result-days { position: absolute; left: 0; bottom: 1.5rem; width: 13rem; margin: 0; transform: rotate(-3deg); }
+  .ob-bars, .ob-bars-x { gap: 0.25rem; }
+  .ob-bars-x { font-size: 0.75rem; }   /* the title says "first 5 days": just the day's number, at the 12 meta floor */
+  .ob-dw { display: none; }
+  #faq.ob-sec { padding-bottom: 2.375rem; }   /* 38 + the close's 56: no double band of black before the spark */
   .ob-qa-head h2 { font-size: 1.875rem; }
   .ob-qa-head p { margin-bottom: 0; font-size: 1rem; }
   .ob-qa-head .ob-btn { display: none; }   /* the close owns the CTA */
-  .ob-qa-a p { padding: 0 1.25rem 1.25rem 3.3125rem; }   /* in line with the question text */
+  .ob-qa-a p { padding: 0 1.25rem 1.25rem 3.3125rem; text-wrap: pretty; }   /* in line with the question text, no one-word last line */
 }
+/* small phones: the result's CTA matches the hero's, full width (MOBILE-RULES 1) */
+@media (max-width: 560px) { .ob-result-cta { justify-self: stretch; width: 100%; height: 3rem; justify-content: center; } }

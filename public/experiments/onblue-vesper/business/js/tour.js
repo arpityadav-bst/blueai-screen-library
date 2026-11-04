@@ -70,28 +70,31 @@
     // a tab in the phone's bottom bar: the ring sits inside the bar, never past the screen edge
     var nav = document.querySelector('.ob-side-nav'), fixedBar = nav && window.getComputedStyle(nav).position === 'fixed';
     var inBar = fixedBar && t.closest('.ob-side-nav');
-    var b = box(t), PAD = inBar ? 0 : t.closest('.ob-side') ? 2 : 12;
+    // phones: a section's own card is ringed on its edge, an item inside a card 6px out (so both meet the
+    // card edge); a tab-bar ring sits 4px inside its tabs; every ring (and its 2px line) clears the screen by 8px
+    var b = box(t), PAD = inBar ? -4 : t.closest('.ob-side') ? 2 : phone() ? (t.hasAttribute('data-tour') ? 0 : 6) : 12;
     var rad = parseFloat(window.getComputedStyle(t).borderTopLeftRadius) || 10;
     var vp = view(), x0 = b.left - PAD, y0 = b.top - PAD, x1 = b.right + PAD, y1 = b.bottom + PAD;
-    if (phone()) { x0 = Math.max(4, x0); x1 = Math.min(vp.w - 4, x1); y1 = Math.min(window.innerHeight - 4, y1); }
+    if (phone()) { x0 = Math.max(10, x0); x1 = Math.min(vp.w - 10, x1); y1 = Math.min(window.innerHeight - 10, y1); }
     ring.style.width = (x1 - x0) + 'px';
     ring.style.height = (y1 - y0) + 'px';
     ring.style.borderRadius = (inBar ? 12 : rad + PAD) + 'px';
     ring.style.transform = 'translate(' + x0 + 'px,' + y0 + 'px)';
 
-    tip.classList.remove('is-right', 'is-below', 'is-above');
+    tip.classList.remove('is-right', 'is-below', 'is-above', 'is-onbar');
     if (phone()) { // docked: right above the tab bar (caret on the ringed tab when the bar is the target), or at the top for a low target
       tip.classList.add('is-docked'); tip.style.left = '';
       var barH = fixedBar ? nav.offsetHeight : 0;
       if (inBar) {
         tip.style.top = Math.max(vp.top + 12, vp.top + vp.h - barH - tip.offsetHeight - 12) + 'px';
-        tip.classList.add('is-above');
+        tip.classList.add('is-above', 'is-onbar');   // is-onbar: a plain band fills the gap to the bar, so no page text peeks through it
         var tl = tip.getBoundingClientRect().left;
-        tip.style.setProperty('--cx', Math.max(20, Math.min(tip.offsetWidth - 20, b.left + b.width / 2 - tl)) + 'px');
+        tip.style.setProperty('--cx', Math.max(28, Math.min(tip.offsetWidth - 28, b.left + b.width / 2 - tl)) + 'px');   // clear of the card's rounded corner
         return;
       }
       var low = b.top > vp.top + vp.h / 2;
       tip.style.top = (low ? vp.top + 72 : Math.max(vp.top + 12, vp.top + vp.h - barH - tip.offsetHeight - 12)) + 'px';
+      if (!low && barH) { tip.classList.add('is-onbar'); }
       return;
     }
     tip.classList.remove('is-docked');
@@ -120,7 +123,8 @@
     var nav = el.closest('.ob-side-nav');
     if (nav && nav.scrollWidth > nav.clientWidth) { nav.scrollLeft = Math.max(0, el.offsetLeft - nav.clientWidth / 2 + el.offsetWidth / 2); }
     var b = el.getBoundingClientRect(), room = phone() ? view().h - 220 : view().h - 40;
-    if (!el.closest(".ob-side") && (b.top < 72 || b.top > room * 0.6)) { window.scrollBy(0, b.top - (phone() ? 120 : 96)); }
+    // phones: the target lands 20px under the 64px header, so nothing of the card before it peeks out
+    if (!el.closest(".ob-side") && (b.top < 72 || b.top > room * 0.6)) { window.scrollBy(0, b.top - (phone() ? 84 : 96)); }
     var last = at === TIPS.length - 1;
     var dots = TIPS.map(function (_, i) { return '<i' + (i === at ? ' class="is-on"' : i < at ? ' class="is-past"' : '') + '></i>'; }).join('');
     tip.innerHTML = '<b class="ob-tip-t">' + OB.esc(t[1]) + '</b><p>' + OB.esc(t[2]) + '</p>' +

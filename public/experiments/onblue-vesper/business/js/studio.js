@@ -27,10 +27,12 @@
     var count = function (k) { return A.st.videos.filter(inTab(k)).length; };
     var n = count('approve');
     // what needs you leads; asking for a new video comes after
-    var lead = n && tab !== 'approve' ? '<div class="ob-st-wait"><span class="ob-st-n">' + n + '</span><span><b>' + (n === 1 ? 'One video is' : n + ' videos are') + ' waiting for your yes.</b> Watch, then approve or ask for a change.</span>' +
+    var ph = window.matchMedia('(max-width: 700px)').matches, onAp = tab === 'approve';
+    var lead = n && !onAp && !ph ? '<div class="ob-st-wait"><span class="ob-st-n">' + n + '</span><span><b>' + (n === 1 ? 'One video is' : n + ' videos are') + ' waiting for your yes.</b> Watch, then approve or ask for a change.</span>' +
       '<button class="ob-btn ob-btn--sm ob-btn--ink" type="button" data-tab="approve">Review ' + (n === 1 ? 'it' : 'them') + '</button></div>' : '';
+    // phones: no waiting card; the "Needs your yes" filter and the tab badge carry the count, so the grid starts higher
     var oldTabs = main.querySelector('.ob-st-tabs'), sl = oldTabs ? oldTabs.scrollLeft : 0;   // the phone's swipe strip keeps its place
-    main.innerHTML = '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Studio</h1><p class="ob-p-lede">Every video BlueAI made for ' + e(r.brand) + '. Open one to approve it or ask for a change.</p></div></header>' + lead +
+    main.innerHTML = '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Studio</h1><p class="ob-p-lede">Every video BlueAI made for ' + e(r.brand) + '.' + (ph ? '' : ' Open one to approve it or ask for a change.') + '</p></div></header>' + lead +
       '<form class="ob-prompt ob-st-prompt" data-new><div class="ob-prompt-row">' + OB.agent() + '<input placeholder="' + (window.matchMedia('(max-width: 700px)').matches ? 'Ask for a new video' : 'Ask for a new video, like another ' + e(r.formats[0].name.toLowerCase())) + '" aria-label="Ask for a new video">' +
       '<button class="ob-prompt-send" type="submit" aria-label="Send">' + OB.icon('send', 18) + '</button></div></form>' +
       '<div class="ob-st-tabs" role="group" aria-label="Filter videos">' + TABS.map(function (t) {   // all five, always; an empty one is dimmed
@@ -38,7 +40,7 @@
         return '<button type="button" data-tab="' + t[0] + '" aria-pressed="' + (t[0] === tab) + '"' + (c ? '' : ' class="is-zero"') + '>' + t[1] + '<span>' + c + '</span></button>';
       }).join('') + '</div>' +
       (vs.length ? '<div class="ob-vgrid ob-st-grid">' + vs.map(OB.ui.vcard).join('') + '</div>' : empty());
-    var tabs = main.querySelector('.ob-st-tabs'); if (tabs) { tabs.scrollLeft = sl; }
+    var tabs = main.querySelector('.ob-st-tabs'); if (tabs) { tabs.scrollLeft = sl; if (ph) { OB.ui.reveal(tabs); } }
     OB.ui.films(main);
   }
 
@@ -77,7 +79,7 @@
     var art = v.status === 'making' ? OB.ui.making(0, v.format) : '<div class="ob-phone">' + OB.videoTag(OB.film(v.film)) + '</div>';
     var ang = r.angles.filter(function (a) { return a.who === v.angle; })[0], angOff = ang && ang.on === false, nx = next(id), waiting = A.kpis().waiting;
     drawer.innerHTML = '<div class="ob-drawer-box" role="dialog" aria-modal="true" aria-label="' + e(v.title) + '"><button class="ob-x" type="button" aria-label="Close" data-close>' + OB.icon('close', 18) + '</button>' +
-      '<div class="ob-drawer-grid"><div class="ob-dr-art">' + art + '<span class="ob-dr-len" data-len>' + lenText(LEN) + '</span></div><div class="ob-dr-body">' + OB.ui.status(v) +
+      '<span class="ob-dr-bar-t" aria-hidden="true">' + OB.ui.nb(v.title) + '</span><div class="ob-drawer-grid"><div class="ob-dr-art">' + art + '<span class="ob-dr-len" data-len>' + lenText(LEN) + '</span></div><div class="ob-dr-body">' + OB.ui.status(v) +
       '<h2>' + OB.ui.nb(v.title) + '</h2><p class="ob-dr-meta"><span>' + e(v.format) + '</span><span>For ' + e(low(v.angle)) + '</span><span>' + OB.icon('youtube', 14) + 'YouTube Shorts</span></p>' +
       (live ? '<div class="ob-card ob-card--lit ob-dr-kpis"><div><small>US views</small><span class="ob-p-figure">' + OB.fmt(views) + '</span></div><div><small>Cost</small><span class="ob-p-figure">$' + OB.fmt(views / 1000 * OB.RATE) + '</span></div></div>' : '') +
       (angOff && v.status === 'approve' ? '<p class="ob-dr-help">' + e(v.angle) + ' is turned off on Plan. This one still waits for your yes; nothing new is made for them.</p>' : '') +
@@ -101,6 +103,11 @@
       });
     }
     OB.watchFilms(drawer);
+    // phones: once the video scrolls under the top bar, the bar names the video you are looking at
+    var bx = drawer.querySelector('.ob-drawer-box'), artEl = drawer.querySelector('.ob-dr-art');
+    if (bx && artEl && window.IntersectionObserver && window.matchMedia('(max-width: 820px)').matches) {
+      new window.IntersectionObserver(function (es) { bx.classList.toggle('is-past', !es[0].isIntersecting); }, { root: bx, rootMargin: '-56px 0px 0px 0px' }).observe(artEl);
+    }
     if (window.location.hash !== '#' + id) { window.history.replaceState(null, '', '#' + id); }
   }
   function close() {
@@ -118,7 +125,7 @@
     ev.preventDefault();
     var inp = ev.target.querySelector('input'), q = inp.value.trim(); if (!q) { inp.focus(); return; }
     var nv = A.make(q.charAt(0).toUpperCase() + q.slice(1)); tab = 'all'; render(); OB.ui.side();
-    OB.toast('Making \u201c' + nv.title + '\u201d. It\'ll wait for your yes when it\'s ready.');
+    OB.toast(OB.ui.ph('Making \u201c' + nv.title + '\u201d. It\'ll wait for your yes when it\'s ready.', 'Making it. It waits for your yes.'));
   });
   drawer.addEventListener('input', function (ev) {
     var f = ev.target.closest('[data-improve]'); if (f) { f.querySelector('button').disabled = !ev.target.value.trim(); }   // stays secondary: Approve is the one filled button
@@ -131,7 +138,12 @@
       // phones: the drawer keeps its scroll place, and a toast says it went through
       var ph = window.matchMedia('(max-width: 820px)').matches, bx = drawer.querySelector('.ob-drawer-box'), sc = bx ? bx.scrollTop : 0;
       A.approve(ap.getAttribute('data-approve')); open(ap.getAttribute('data-approve')); render(); OB.ui.side();
-      if (ph) { bx = drawer.querySelector('.ob-drawer-box'); if (bx) { bx.scrollTop = sc; } OB.toast(A.st.paused ? 'Approved. It goes out when you resume posting.' : 'Approved. Creators start posting it today.'); }
+      // the inline note already says it went through; a toast (at the bottom) only when that note is off screen
+      if (ph) {
+        bx = drawer.querySelector('.ob-drawer-box'); if (bx) { bx.scrollTop = sc; }
+        var nt = drawer.querySelector('.ob-dr-note'), nb = nt && nt.getBoundingClientRect();
+        if (!nb || nb.bottom < 56 || nb.top > window.innerHeight) { OB.toast(A.st.paused ? OB.ui.ph('Approved. It goes out when you resume posting.', 'Approved. Posts when you resume.') : OB.ui.ph('Approved. Creators start posting it today.', 'Approved. Creators post it today.')); }
+      }
       return;
     }
     var un = ev.target.closest('[data-unpost]');
@@ -140,7 +152,7 @@
   drawer.addEventListener('submit', function (ev) {
     ev.preventDefault();
     var id = ev.target.getAttribute('data-improve'), q = ev.target.querySelector('input').value.trim(); if (!q) { return; }
-    A.improve(id); OB.toast('Remade with your note: ' + q); open(id); render(); OB.ui.side();
+    A.improve(id); OB.toast(OB.ui.ph('Remade with your note: ' + q, 'Remade with your note.')); open(id); render(); OB.ui.side();
   });
   document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && drawer.classList.contains('is-open')) { close(); } });
   document.addEventListener('ob:videos', function () { render(); OB.ui.side(); var h = window.location.hash.slice(1); if (h && drawer.classList.contains('is-open')) { open(h); } });

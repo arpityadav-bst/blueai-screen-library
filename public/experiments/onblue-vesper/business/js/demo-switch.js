@@ -9,19 +9,23 @@
   var OB = window.OB;
   var SITE = 'northline-coffee.com', EMAIL = 'sam@northline-coffee.com';
 
-  var css = '.ob-demo{position:fixed;left:max(1rem,env(safe-area-inset-left));bottom:max(1rem,env(safe-area-inset-bottom));z-index:90;font:500 0.8125rem/1.3 var(--font)}' +
+  var css = '.ob-demo{position:fixed;left:max(1rem,env(safe-area-inset-left));bottom:max(1rem,env(safe-area-inset-bottom) + 0.5rem);z-index:90;font:500 0.8125rem/1.3 var(--font)}' +
     /* at rest: tiny and dim, so it never competes with the page; full on hover, focus or open */
     '.ob-demo-pill{position:relative;display:inline-flex;align-items:center;gap:0.3125rem;height:1.375rem;padding:0 0.5rem;border:1px solid rgba(255,255,255,0.12);border-radius:999px;background:#0b0b0a;color:#f2f2ec;font:500 0.6875rem/1 var(--font);cursor:pointer;opacity:0.18;transition:opacity 0.2s ease}' +
     '.ob-demo-pill::before{content:"";width:0.3125rem;height:0.3125rem;border-radius:50%;background:#c6f432}' +
     '.ob-demo-pill::after{content:"";position:absolute;inset:-0.75rem}' +
-    '.ob-demo:hover .ob-demo-pill,.ob-demo-pill:focus-visible,.ob-demo.is-open .ob-demo-pill{opacity:1;outline:0}' +
+    /* hover only where there is a real pointer: on touch :hover sticks after a tap */
+    '@media (hover:hover) and (pointer:fine){.ob-demo:hover .ob-demo-pill{opacity:1;outline:0}}' +
+    '.ob-demo-pill:focus-visible,.ob-demo.is-open .ob-demo-pill{opacity:1;outline:0}' +
     '.ob-demo-menu{position:absolute;left:0;bottom:calc(100% + 0.625rem);width:16.5rem;padding:0.5rem;border:1px solid rgba(10,10,9,0.08);border-radius:0.875rem;background:#fff;box-shadow:0 1.25rem 2.5rem -1rem rgba(10,10,9,0.35);opacity:0;transform:translateY(0.5rem);pointer-events:none;transition:opacity 0.2s ease,transform 0.2s ease}' +
     '.ob-demo.is-open .ob-demo-menu{opacity:1;transform:none;pointer-events:auto}' +
     '.ob-demo-menu p{margin:0;padding:0.5rem 0.625rem 0.375rem;color:#77776f;font:400 0.75rem/1.4 var(--font)}' +
     '.ob-demo-menu button{display:grid;gap:0.125rem;width:100%;padding:0.625rem;border:0;border-radius:0.5625rem;background:none;color:#0a0a09;font:500 0.875rem/1.25 var(--font);text-align:left;cursor:pointer}' +
     '.ob-demo-menu button small{color:#77776f;font:400 0.75rem/1.3 var(--font)}' +
     '.ob-demo-menu button:hover,.ob-demo-menu button:focus-visible{outline:0;background:#f3f3ee}' +
-    '@media (max-width:700px){.ob-demo-menu button{min-height:2.75rem}}' +
+    /* the phone: bottom-right, clear of the left-aligned copy and controls; the intro set apart from Day 1 */
+    '@media (max-width:700px){.ob-demo{left:auto;right:max(1rem,env(safe-area-inset-right))}.ob-demo-menu{left:auto;right:0}.ob-demo-menu button{min-height:2.75rem}.ob-demo-menu button:active{background:#f3f3ee}' +
+    '.ob-demo-menu p{margin-bottom:0.375rem;padding-bottom:0.625rem;border-bottom:1px solid rgba(10,10,9,0.08)}}' +
     '@media (prefers-reduced-motion:reduce){.ob-demo-menu,.ob-demo-pill{transition:none}}';
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 

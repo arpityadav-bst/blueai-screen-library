@@ -48,6 +48,9 @@
       return br.bottom > tr.top - 24 && br.top < tr.bottom + 12 && br.right > tr.left && br.left < tr.right;
     });
     if (!hit) { return; }
+    // phone (docked full width at the foot): lift it just above the highest control it would cover
+    var hi = window.innerHeight; stage.querySelectorAll('button, input, a, textarea').forEach(function (b) { var br = b.getBoundingClientRect(); if (br.bottom > tr.top - 24 && br.top < tr.bottom + 12) { hi = Math.min(hi, br.top); } });
+    if (window.innerWidth <= 700 && hi - 12 - tr.height > bar.getBoundingClientRect().bottom + 12) { t.style.bottom = (window.innerHeight - hi + 12) + 'px'; return; }
     // on a phone the brand row sits under the bar: drop in under it, so the
     // toast never covers the "What BlueAI knows" toggle (once it scrolls away, under the bar)
     var top = bar.getBoundingClientRect().bottom, kb = knows.getBoundingClientRect().bottom;
@@ -63,7 +66,7 @@
   var head = document.querySelector('[data-knows-head]'), catKnown = false;
   function renderHead() {
     var mark = r.site ? '<img alt="" src="https://www.google.com/s2/favicons?domain=' + encodeURIComponent(r.site) + '&sz=128">' : r.brand === 'Your brand' ? OB.icon('brand', 20) : e(r.initial);
-    head.innerHTML = '<span class="ob-knows-fav">' + mark + '</span><span><b>' + e(r.brand) + '</b><small>' + (r.site ? e(r.site) : 'No website' + (catKnown ? ' &middot; ' + e(r.category) : '')) + '</small></span>';
+    head.innerHTML = '<span class="ob-knows-fav">' + mark + '</span><span><b>' + e(r.brand) + '</b><small' + (r.site ? '' : ' class="is-nosite"') + '>' + (r.site ? e(r.site) : catKnown ? '<span class="ob-nosite-l">No website &middot; </span>' + e(r.category) : 'No website') + '</small></span>';
     var img = head.querySelector('img');
     // no icon, or only a tiny one (Google's 16px default globe for unknown sites, stretched
     // and blurry): the brand's initial instead (Appy: "why the favicons so blurry?")
@@ -122,7 +125,7 @@
     // included (Appy), and when going back
     saveBtn.classList.toggle('is-hidden', !(saved || Math.max(at, done - 1) >= 2));   // done counts a step once its result shows, so step 2's list made it 2: the step reached is done - 1
     saveBtn.disabled = saved;
-    saveBtn.innerHTML = saved ? OB.icon('check', 14) + 'Saved' : 'Save my report';
+    saveBtn.innerHTML = saved ? OB.icon('check', 14) + 'Saved' : '<span>Save <span class="ob-save-my">my </span>report</span>';   // 380 and below drops "my" (run-3.css)
   }
 
   function aside(a, step) {
@@ -154,7 +157,7 @@
     };
     var el = box.querySelector('[data-ask]');
     if (a.kind === 'text') {
-      el.querySelector('input').focus({ preventScroll: true });
+      if (window.innerWidth > 860) { el.querySelector('input').focus({ preventScroll: true }); }   // a phone rests until tapped (no keyboard over the checklist)
       el.addEventListener('submit', function (ev) { ev.preventDefault(); answer(el.querySelector('input').value.trim()); });
     } else {
       el.addEventListener('click', function (ev) { var p = ev.target.closest('.ob-pick'); if (p) { p.setAttribute('aria-pressed', 'true'); window.setTimeout(function () { answer(p.textContent); }, 220); } });

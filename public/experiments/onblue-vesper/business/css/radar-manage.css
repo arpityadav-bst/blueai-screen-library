@@ -56,23 +56,57 @@
 /* the empty state's two ways in */
 .rd-empty-act { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s3); }
 
+/* phone-only parts (shown in the query below): the head's "6 months" line, and
+   Scan again as a full button under BlueAI's finds */
+.rd-m-ph, .rd-m-rescan { display: none; }
+
 /* THE PHONE: the panel runs the 20 gutter, the add field stacks over a full
-   width button, "Done" and "Find more" are 44 tall and full width */
+   width button, "Find more" is 44 tall and full width; "Done" is a 44 tall
+   text button at the head's top right, like a sheet's */
 @media (max-width: 700px) {
   .rd-man { margin: calc(var(--s2) * -1) 0 var(--s8); }
   .rd-m { padding: var(--s5) var(--s4); }
-  .rd-m-head { flex-direction: column; align-items: stretch; }
-  .rd-m-head .ob-btn { order: 2; height: 2.75rem; justify-content: center; }
+  .rd-m-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: var(--s3); }
+  .rd-m-head > div { display: contents; }
+  .rd-m-head .ob-pg-p { grid-column: 1 / -1; }
+  .rd-m-head [data-close] { grid-column: 2; grid-row: 1; height: 2.75rem; margin: -0.625rem -0.5rem -0.625rem 0; padding: 0 0.5rem; border: 0; background: none; box-shadow: none; color: var(--ink-1); font-weight: 500; }
+  .rd-m-ph { display: inline; }
+  /* each row's meta reads in full: the site and the count, nothing cut */
+  .rd-m-long { display: none; }
+  .rd-m-row.is-checking .rd-m-dom { display: none; }
+  /* a switched-off row keeps its name readable; the switch carries the state */
+  .rd-m-row.is-off .rd-m-t { opacity: 1; }
+  .rd-m-row.is-off .rd-m-t b { color: var(--ink-2); }
   .rd-m-add { flex-wrap: wrap; }
   .rd-m-add .ob-input { flex-basis: 100%; }
   .rd-m-add .ob-btn, .rd-m-find { width: 100%; justify-content: center; }
   .rd-m-find { height: 2.75rem; }
-  .rd-m-found { padding: var(--s4); }
-  .rd-m-cards { grid-template-columns: 1fr; }
-  .rd-m-card .ob-btn { height: 2.75rem; }
-  .rd-m-found-h .ob-link { display: inline-flex; align-items: center; min-height: 2.75rem; margin: -0.75rem 0; }
+  .rd-m-finding.rd-m-none { margin-bottom: var(--s3); }
+  /* BlueAI's finds: hairline rows like the list above, not cards in a tray in a card */
+  .rd-m-found { padding: 1rem 0.875rem; }
+  .rd-m-found-h .ob-link { display: none; }
+  .rd-m-cards { grid-template-columns: 1fr; gap: 0; margin-top: var(--s3); }
+  .rd-m-card { padding: 0.625rem 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; box-shadow: none; }
+  .rd-m-card .ob-btn { height: 2.75rem; padding: 0 0.875rem; }
+  .rd-m-card small { display: -webkit-box; white-space: normal; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .rd-m-rescan { display: flex; margin-top: var(--s3); }
   .rd-empty-act { flex-direction: column; align-items: stretch; }
   .rd-empty-act .ob-btn { justify-content: center; }
+  /* round 4: while the manager is open, its Done is the one close; the head's Manage steps aside */
+  .ob-pg-head [data-manage][aria-expanded="true"] { display: none; }
+  /* Radar's formats: both formats in your plan wear the same volt dot (the top bar's ink no longer reaches it) */
+  .ob-rd-bar.is-top .rd-mine { background: var(--accent); }
+  /* the competitor list never repeats the Short already shown as the best one above */
+  .ob-rd-list .ob-rd-short.is-lead { display: none; }
+}
+
+/* round 4, small phones: BlueAI's finds run as a band the panel's full inner width (no tray inside
+   the card), and every found row reads name / site / count at one height, the site cut, never wrapped */
+@media (max-width: 560px) {
+  .rd-m-found { margin: 0 calc(var(--s4) * -1); padding: 1rem var(--s4); border-radius: 0; }
+  .rd-m-card small { display: grid; white-space: nowrap; -webkit-line-clamp: unset; }
+  .rd-m-card .rd-m-sep { display: none; }
+  .rd-m-site, .rd-m-n { overflow: hidden; text-overflow: ellipsis; }
 }
 
 /* Radar's formats card (Appy: "can be improved further"): the winning formats

@@ -94,9 +94,10 @@
 @media (min-width: 901px) and (max-height: 850px) { .ob-nav { --header-y: 14px; } }
 @media (min-width: 901px) and (max-height: 720px) { .ob-nav { --nav-h: 30px; --btn-h: 30px; } }
 @media (max-width: 900px) {
-  .ob-nav { --logo: 1.25rem; --header-y: 1rem; --header-x: 1.125rem; }
+  .ob-nav { --logo: 1.25rem; --header-y: 1rem; --header-x: 1.125rem; padding-left: max(var(--header-x), 1.25rem, env(safe-area-inset-left)); padding-right: max(var(--header-x), 1.25rem, env(safe-area-inset-right)); }
   .ob-nav-signin { display: none; }
 }
+@media (max-width: 560px) { .ob-nav { --header-x: 1rem; } }   /* MOBILE-RULES 3; the 1.25rem floor keeps the gutter at 20 */
 
 /* OVER THE DARK (js/site.js adds .on-dark while a dark section is under the
    pill): the logo turns volt, and the shine passing through the spark turns
@@ -118,6 +119,10 @@
   .ob-burger[aria-expanded="true"] i:first-child { transform: translateY(0.1875rem) rotate(45deg); }
   .ob-burger[aria-expanded="true"] i:last-child { transform: translateY(-0.1875rem) rotate(-45deg); }
   .ob-nav.on-dark .ob-burger i { background: #f2f2ec; }
+  /* over the dark bottom the glass gets an opaque dark base under the same
+     blur, so the white closing field scrolling under it can never wash out the
+     burger or the volt wordmark */
+  .ob-nav.is-stuck.on-dark .ob-nav-in { border-color: rgba(255, 255, 255, 0.12); background: linear-gradient(180deg, rgba(40, 40, 37, 0.86) 0%, rgba(22, 22, 20, 0.86) 100%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 0 0 0.5px rgba(0, 0, 0, 0.4), 0 0.875rem 2.125rem -0.875rem rgba(0, 0, 0, 0.6); }
   .ob-nav-menu { position: absolute; top: calc(100% + 0.5rem); right: 0; z-index: 2; display: grid; gap: 0.25rem; width: min(16.5rem, 100vw - 2.5rem); padding: 0.5rem; border: 1px solid var(--line); border-radius: 0.875rem; background: var(--surface); box-shadow: var(--shadow-3); opacity: 0; visibility: hidden; transform: translateY(0.5rem); transition: opacity 0.2s var(--ease), transform 0.2s var(--ease), visibility 0s linear 0.2s; }
   .ob-nav-menu.is-open { opacity: 1; visibility: visible; transform: none; transition: opacity 0.2s var(--ease), transform 0.2s var(--ease); }
   .ob-nav-row { display: flex; align-items: center; height: 2.75rem; padding: 0 0.75rem; border-radius: 0.5625rem; color: var(--ink-1); font: 500 0.9375rem/1 var(--font); letter-spacing: -0.01em; text-decoration: none; }

@@ -60,17 +60,22 @@
   // above that button (it no longer jumps to the top, where it covered the
   // page heading)
   var toast = OB.toast;
+  // phones: one home on every page, 12px above the tab bar (app-phone.css), never over the heading.
+  // It takes no taps and is gone in 2.4s, so passing over a button is a glance, not a block.
+  // Inside the Studio drawer it sits above the sticky footer.
   OB.toast = function (msg) {
     var t = document.querySelector('.ob-toast'); if (t) { t.style.bottom = ''; }
     toast(msg); t = document.querySelector('.ob-toast');
+    if (window.matchMedia('(max-width: 820px)').matches) { return; }
     var b = t.getBoundingClientRect(), top = Infinity;
-    var sel = '.ob-btn, .ob-prompt-send, button[data-approve]' + (window.matchMedia('(max-width: 820px)').matches ? ', .ob-br-drop, .ob-pick, .ob-x' : '');   // phones: every tappable control counts
-    Array.prototype.forEach.call(document.querySelectorAll(sel), function (x) {
+    Array.prototype.forEach.call(document.querySelectorAll('.ob-btn, .ob-prompt-send, button[data-approve]'), function (x) {
       var q = x.getBoundingClientRect();
       if (q.width && q.bottom > b.top - 8 && q.top < b.bottom + 8 && q.right > b.left && q.left < b.right) { top = Math.min(top, q.top); }
     });
     if (top < Infinity) { t.style.bottom = Math.round(window.innerHeight - top + 12) + 'px'; }
   };
+  // phones say a toast in one line at 360 (about 34 characters); the longer line stays on desktop
+  function ph(long, short) { return window.matchMedia('(max-width: 700px)').matches ? short : long; }
   function menuOpen(on) {
     var menu = sideEl.querySelector('[data-menu]'), me = sideEl.querySelector('[data-me]');
     menu.classList.toggle('is-open', on); me.setAttribute('aria-expanded', on ? 'true' : 'false');
@@ -120,12 +125,20 @@
   // the status sits beside the video, never on it (burnt-in captions collide)
   function status(v) { return '<span class="ob-vstat ob-vstat--' + v.status + '">' + A.STATUS[v.status] + '</span>'; }
   function vcard(v) {
-    return '<button class="ob-vcard" type="button" data-video="' + v.id + '">' + thumb(v) + status(v) + '<b>' + nb(v.title) + '</b><small>' +
-      e(v.format) + (v.status === 'live' ? ' &middot; <span class="ob-vviews">' + OB.short(A.views(v)) + '&nbsp;views</span>' : '') + '</small></button>';
+    // phones: a number keeps its unit ("3 am") on one line in the 2-up grid
+    var ti = window.matchMedia('(max-width: 700px)').matches ? nb(v.title).replace(/(\d) (am|pm|sec|min|K|M)\b/gi, '$1 $2') : nb(v.title);
+    return '<button class="ob-vcard" type="button" data-video="' + v.id + '">' + thumb(v) + status(v) + '<b>' + ti + '</b><small>' +
+      e(v.format) + (v.status === 'live' ? '<span class="ob-vsep"> &middot; </span><span class="ob-vviews">' + OB.short(A.views(v)) + '&nbsp;views</span>' : '') + '</small></button>';
+  }
+  // phones: a swipe strip of filters keeps the pressed one fully inside its 20px edges
+  function reveal(strip) {
+    var p = strip.querySelector('[aria-pressed="true"]'); if (!p) { return; }
+    var s = strip.getBoundingClientRect(), b = p.getBoundingClientRect(), pad = 20;
+    if (b.right > s.right - pad) { strip.scrollLeft += b.right - s.right + pad; } else if (b.left < s.left + pad) { strip.scrollLeft -= s.left + pad - b.left; }
   }
   function head(title, sub, act) {
     return '<div class="ob-head"><div><h1>' + e(title) + '</h1>' + (sub ? '<p>' + e(sub) + '</p>' : '') + '</div>' + (act ? '<div class="ob-head-act">' + act + '</div>' : '') + '</div>';
   }
 
-  OB.ui = { vcard: vcard, status: status, head: head, side: renderSide, who: who, films: films, making: making, thumb: thumb, nb: nb };
+  OB.ui = { vcard: vcard, status: status, head: head, side: renderSide, who: who, films: films, making: making, thumb: thumb, nb: nb, reveal: reveal, ph: ph };
 })();

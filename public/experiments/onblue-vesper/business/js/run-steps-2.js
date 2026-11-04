@@ -129,7 +129,7 @@
       asks: function (r) { return [K.proof('$8', 'per 1,000 US views: the rate your budget buys.' + (us(r) ? '' : ' Views are billed in the US for now.'))]; },
       // the line explains the number: what the budget does for the Shorts you kept
       done: function (r) {
-        var n = onAngles(r).length, each = n > 1 ? 'each of your ' + n + ' Shorts' : 'your Short';
+        var n = onAngles(r).length, each = n > 1 ? 'each of your ' + n + (window.matchMedia('(max-width: 700px)').matches ? '\u00a0' : ' ') + 'Shorts' : 'your Short';
         var sub = r.budget === 500 ? 'I started you at $500 so ' + each + ' gets a fair test. Move it to suit you.' : '$' + OB.fmt(r.budget) + ' in total' + (n > 1 ? ', shared across your ' + n + ' Shorts' : ', for your Short') + '. Move it any time.';
         return [r.name ? 'Your plan, ' + r.name : 'Your plan', sub, 'plan'];
       },
@@ -137,7 +137,7 @@
         var vs = onAngles(r);
         // the audience you confirmed in step 1, where they are, and a guessed market says so
         // the last word and the tag wrap together, so the tag is never alone
-        var aud = '<span class="ob-planrows-v">' + e(r.buyers) + (us(r) ? ' in the <span class="ob-nw">US' : ', in the US for <span class="ob-nw">now') + (K.marketGuess(r) ? ' <em class="ob-guess">my guess</em>' : '') + '</span></span>' +
+        var aud = '<span class="ob-planrows-v ob-aud">' + e(r.buyers).replace(/(\d+) to (\d+)/g, '<span class="ob-nwp">$1 to $2</span>') + (us(r) ? ' <span class="ob-nw">in the US' : ', in the US for <span class="ob-nw">now') + (K.marketGuess(r) ? ' <em class="ob-guess">my guess</em>' : '') + '</span></span>' +
           (us(r) ? '' : '<span class="ob-planrows-note">You said your buyers are in ' + e(where(r)) + '. Views are billed in the US only for now, so BlueAI starts with US buyers and adds ' + e(where(r)) + ' when it opens.</span>');
         return '<div class="ob-planbox"><div class="ob-slider-out" data-amount></div>' +
           '<div class="ob-hint" data-say></div><input class="ob-range" type="range" min="100" max="5000" step="50" value="' + r.budget + '" aria-label="Budget in dollars" data-budget>' +

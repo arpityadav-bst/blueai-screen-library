@@ -22,11 +22,26 @@
   var mark = document.querySelector('[data-foot-mark]');
   var word = mark && mark.querySelector('.ob-foot-word');
 
+  // TOUCH has no cursor to follow: once the word has risen, the volt light runs
+  // across it once, left to right, then the word rests engraved as Appy chose
+  function sweep() {
+    if (!word || !window.matchMedia('(hover: none) and (pointer: coarse)').matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
+    window.setTimeout(function () {
+      var t0 = performance.now();
+      (function step(now) {
+        var k = Math.min(1, (now - t0) / 1600), ease = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2, r = word.getBoundingClientRect();
+        word.style.setProperty('--mx', ((-0.2 + 1.4 * ease) * r.width) + 'px');
+        word.style.setProperty('--my', (0.6 * r.height) + 'px');
+        if (k < 1) { window.requestAnimationFrame(step); } else { word.style.setProperty('--mx', '-999px'); }
+      })(t0);
+    }, 1200);   // after the 1.2s rise
+  }
+
   if ('IntersectionObserver' in window) {
     if (films) { new IntersectionObserver(function (es) { films.classList.toggle('is-in', es[0].isIntersecting); }).observe(films); }
     if (mark) {
       new IntersectionObserver(function (es, io) {
-        if (es[0].isIntersecting) { mark.classList.add('is-up'); io.disconnect(); }
+        if (es[0].isIntersecting) { mark.classList.add('is-up'); io.disconnect(); sweep(); }
       }, { threshold: 0.3 }).observe(mark);
     }
   } else {

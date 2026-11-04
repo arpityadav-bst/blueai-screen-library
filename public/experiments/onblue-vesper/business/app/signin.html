@@ -52,8 +52,23 @@
     .si-card .ob-input.is-err.is-none { border-color: var(--line-2); box-shadow: inset 0 1px 0.125rem rgba(10, 10, 9, 0.04); }
     .si-card .ob-input.is-err.is-none:focus { border-color: #9ccf12; box-shadow: 0 0 0 0.3125rem rgba(198, 244, 50, 0.24), 0 0.75rem 1.5rem -1rem rgba(10, 10, 9, 0.3); }
     .si-msg.is-none svg { color: var(--ink-3); }
+    /* round 2: both messages at the small size (the card's lede rule outranked the Google one), the
+       way in for new users gets its own line and a 44 tap height without moving the text */
+    .si-card .si-msg { font: var(--t-small); }
+    .si-alt { text-wrap: pretty; }
+    .si-alt-2 { display: block; margin-top: 0.25rem; }
+    .si-alt a { padding: 0.75rem 0; margin: -0.75rem 0; }
+    /* round 3: the address drops whole to its own line, and "no account yet" carries the way in (44 tall) */
+    .si-em { display: inline-block; max-width: 100%; overflow-wrap: anywhere; }   /* drops whole; splits only if longer than a line */
+    .si-msg a { padding: 0.75rem 0; margin: -0.75rem 0; }
+    /* round 4: the link drops whole to its own line, and while "no account yet" carries it, the footer
+       line does not repeat it (one way in on the card) */
+    .si-msg a { white-space: nowrap; }
+    .si-card:has(.si-msg.is-none:not(:empty)) .si-alt { display: none; }
   }
-  @media (max-width: 480px) { .si { padding: var(--s4) 1.25rem; } .si-main { padding-top: var(--s10); } }
+  @media (max-width: 480px) { .si { padding: var(--s4) 1.25rem; } .si-main { padding-top: var(--s10); } .si-card { padding-left: 1.125rem; padding-right: 1.125rem; } }
+  /* round 4, the emergency tier: a 16px page gutter and 16px inside the card, so the fields stay wide at 360 */
+  @media (max-width: 380px) { .si { padding-left: 1rem; padding-right: 1rem; } .si-card { padding-left: 1rem; padding-right: 1rem; } }
 </style>
 </head>
 <body class="ob-page">
@@ -76,7 +91,7 @@
         <p class="si-msg" role="status" aria-live="polite" data-msg></p>
         <button class="ob-btn ob-btn--ink" type="submit">Continue with email</button>
       </form>
-      <p class="si-alt">New to onBlue? <a href="../">Get your free report first</a>. It takes about a minute, and you sign up only if you want to keep it.</p>
+      <p class="si-alt">New to onBlue? <a href="../">Get your free report first</a>. <span class="si-alt-2">It takes about a minute, and you sign up only if you want to keep it.</span></p>
     </div>
   </main>
   <p class="si-foot">A design prototype. No password is stored.</p>
@@ -104,17 +119,22 @@
   }
   // the line under the card ("New to onBlue? Get your free report first") carries the way in, so a message never repeats it
   // bad === 'none': a well-formed email with no account; phones show it calmly (the is-none hooks)
+  // phones: "no account yet" (by email or by Google) wears an info mark, not an X that reads as dismiss
+  var INFO = '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="7.6" r="1.3" fill="currentColor"/></svg>';
   function say(html, bad, where) {
     msg.innerHTML = ''; gmsg.innerHTML = '';
-    if (html) { (where || msg).innerHTML = OB.icon('close', 16) + '<span>' + html + '</span>'; }
+    var calm = bad === 'none' || where === gmsg, ph = window.matchMedia('(max-width: 700px)').matches;
+    if (html) { (where || msg).innerHTML = (calm && ph ? INFO : OB.icon('close', 16)) + '<span>' + html + '</span>'; }
     input.classList.toggle('is-err', !!bad);
-    input.classList.toggle('is-none', bad === 'none'); msg.classList.toggle('is-none', bad === 'none');
+    input.classList.toggle('is-none', bad === 'none'); msg.classList.toggle('is-none', bad === 'none'); gmsg.classList.toggle('is-none', !!html && where === gmsg);
   }
   function none(email) {
     var r = OB.report.get();
     // a report this browser emailed but never saved: send them back to it, not to a new one
     if (r && email && String(r.email || '').toLowerCase() === email) { return 'You have a free report for ' + OB.esc(r.brand) + ', but no account yet. <a href="../run.html?resume=1">Open your report</a> and save it to sign up.'; }
-    return email ? 'No onBlue account for ' + OB.esc(email) + ' yet.' : 'No onBlue account is linked to that Google account yet.';
+    // phones: the address never splits at its hyphen, and the next step sits in the message itself
+    var ph = window.matchMedia('(max-width: 700px)').matches, way = ph ? ' <a href="../">Get your free report first</a>.' : '';
+    return (email ? 'No onBlue account for <span class="si-em">' + OB.esc(email) + '</span> yet.' : 'No onBlue account is linked to that Google account yet.') + way;
   }
 
   input.addEventListener('input', function () { say(''); });

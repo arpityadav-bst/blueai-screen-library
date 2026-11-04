@@ -206,3 +206,5 @@
 @keyframes ob-exit-in { from { opacity: 0; transform: translateY(-0.25rem); } }
 @media (prefers-reduced-motion: reduce) { .ob-exit-pop { animation: none; } }
 @media (max-width: 700px) { .ob-exit-act .ob-btn { height: 2.75rem; } .ob-exit-act .ob-link { display: inline-flex; align-items: center; min-height: 2.75rem; } }
+/* phone: the card hangs from the whole bar (sticky, so it is the frame) and spans the gutter, no word sliced behind it */
+@media (max-width: 700px) { .ob-runbar-end { position: static; } .ob-exit-pop { z-index: 5; top: calc(100% + 0.5rem); left: 20px; right: 20px; width: auto; } }

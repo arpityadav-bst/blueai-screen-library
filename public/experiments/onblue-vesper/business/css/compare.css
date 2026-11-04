@@ -35,10 +35,21 @@
 @media (max-width: 700px) {
   .cmp-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
   .cmp-tabs button { height: 2.75rem; padding: 0 0.5rem; font-size: 0.875rem; }
-  .cmp-row { grid-template-columns: 52% 24% 24%; align-items: start; padding: 0.75rem 0.875rem; font-size: 0.875rem; }
+  .cmp-row { grid-template-columns: 52% 24% 24%; align-items: start; padding: 0.75rem; font-size: 0.875rem; }
+  .cmp-row > span:first-child { padding-right: 0.5rem; }   /* the label gets back 12px, so rows wrap less */
   .cmp-row > span:not(:first-child) { padding-top: 0.0625rem; }
   .cmp-head { align-items: center; }
   .cmp-lit { left: 52%; width: 24%; }
-  .cmp-words small { white-space: normal; }
+  .cmp-words small { white-space: normal; font-size: 0.75rem; text-wrap: balance; }   /* "per 1,000 / US views", no lone "views" */
+  .cmp-key { justify-content: center; gap: 0.75rem; margin: 0.75rem 0 0; color: var(--ink-3); font: 400 0.75rem/1 var(--font); }
+  .cmp-key span { display: inline-flex; align-items: center; gap: 0.375rem; }
   .cmp-n { border-color: rgba(255, 255, 255, 0.32); }
+  /* the rival's name and word answers fit a 24% column at 360 ("UGC marketplaces") */
+  .cmp-head > span:last-child { font-size: 0.8125rem; line-height: 1.15; text-wrap: balance; -webkit-hyphens: auto; hyphens: auto; overflow-wrap: anywhere; }
+  .cmp-words b { font-size: 0.875rem; }
+  /* the word rows line their label and the rival up with onBlue's big first line */
+  .cmp-words > span:first-child, .cmp-words > span:last-child { padding-top: 0.25rem; }
 }
+/* the marks' key is a phone aid only (js/compare.js); the desktop table keeps its own read */
+.cmp-key { display: none; }
+@media (max-width: 700px) { .cmp-key { display: flex; } }

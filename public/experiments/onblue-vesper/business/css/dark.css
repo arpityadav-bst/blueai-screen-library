@@ -31,4 +31,8 @@
 .ob-dark .ob-field .ob-btn--ink { background: linear-gradient(180deg, #2c2c29 0%, #0b0b0a 100%); color: #fff; }
 .ob-dark .ob-chip--on { color: #0b0b0a; }
 /* THE PHONE: related dark bands (the face-off, pricing, the FAQ) meet at half the 76 band */
-@media (max-width: 700px) { .ob-dark + .ob-dark.ob-sec { padding-top: 2.375rem; } }
+@media (max-width: 700px) {
+  .ob-dark + .ob-dark.ob-sec { padding-top: 2.375rem; }
+  .ob-dark.ob-sec:has(+ .ob-dark.ob-sec) { padding-bottom: 2.375rem; }   /* both sides halve: 38 + 38 = the 76 join */
+  .ob-horizon { height: 6rem; }   /* a shorter lead-in to the dark; the volt line and glow stay */
+}

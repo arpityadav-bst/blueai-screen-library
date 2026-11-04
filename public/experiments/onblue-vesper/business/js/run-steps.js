@@ -45,6 +45,7 @@
   // guess until you set it; facts carry the flag ('guess') and the column marks it
   function marketGuess(r) { return !!r.site && !r.whereSet; }
   function rank(list) { return list.slice().sort(function (a, b) { return b.videos - a.videos; }); }
+  function phone() { return window.matchMedia('(max-width: 700px)').matches; }
   OB.runKit = { hbar: hbar, proof: proof, nm: nm, poss: poss, head: head, tick: tick, onRivals: onRivals, syncRivals: syncRivals, nextLabel: nextLabel, share: share, marketGuess: marketGuess };
 
   var GOALS = ['More views', 'More sales', 'Launching something', 'Growing a channel'];
@@ -73,7 +74,7 @@
   }
   function marketLine(r) {
     // the place, the tag and Change wrap as one group on a phone (run-2.css)
-    return 'Selling to buyers in <span class="ob-market-v"><b>' + e(r.where) + '</b>' + (marketGuess(r) ? ' <em class="ob-guess">my guess</em>' : '') + '<button class="ob-link" type="button" data-market>Change</button></span>';
+    return (phone() ? 'Buyers in' : 'Selling to buyers in') + ' <span class="ob-market-v"><b>' + e(r.where) + '</b>' + (marketGuess(r) ? ' <em class="ob-guess">my guess</em>' : '') + '<button class="ob-link" type="button" data-market>Change</button></span>';
   }
 
   OB.STEPS = [
@@ -172,11 +173,11 @@
         // a phone says "in 6 months" once, above the list, not in every row
         return '<p class="ob-rows-cap">Shorts posted in the last 6 months</p><div class="ob-rows" data-rows>' + r.rivals.map(function (x, i) {
           var sub = x.checking ? '<span class="ob-checking"></span>checking their Shorts&hellip;'
-            : x.est ? 'about ' + x.videos + ' Shorts<span class="ob-6m"> in 6 months</span>, my estimate' : x.videos + ' Shorts<span class="ob-6m"> in 6 months</span>';
-          return '<div class="ob-row' + (x.on ? '' : ' is-off') + (x.checking ? ' is-checking' : '') + '" data-i="' + i + '" role="checkbox" tabindex="0" aria-checked="' + x.on + '">' +
+            : x.est ? (phone() ? '~' + x.videos + ' Shorts <em class="ob-guess">my guess</em>' : 'about ' + x.videos + ' Shorts<span class="ob-6m"> in 6 months</span>, my estimate') : x.videos + ' Shorts<span class="ob-6m"> in 6 months</span>';
+          return '<div class="ob-row' + (x.on ? '' : ' is-off') + (x.checking ? ' is-checking' : '') + (x.est ? ' is-est' : '') + '" data-i="' + i + '" role="checkbox" tabindex="0" aria-checked="' + x.on + '">' +
             '<span class="ob-row-av" style="--h:' + (OB.hash(x.name) % 360) + '" aria-hidden="true">' + e(x.name.charAt(0).toUpperCase()) + '</span>' +
             '<span class="ob-row-main"><b>' + e(x.name) + '</b><small>' + e(x.site) + ' &middot; ' + sub + '</small></span><em class="ob-row-drop">Dropped</em>' + tick() + '</div>';
-        }).join('') + '</div><form class="ob-add" data-add><input class="ob-input" placeholder="Add a competitor, like rival.com" aria-label="Add a competitor"><button class="ob-btn" type="submit">' + OB.icon('plus', 16) + 'Add</button></form>';
+        }).join('') + '</div><form class="ob-add" data-add><input class="ob-input" placeholder="' + (window.matchMedia('(max-width: 700px)').matches ? 'Add one, like rival.com' : 'Add a competitor, like rival.com') + '" aria-label="Add a competitor"><button class="ob-btn" type="submit">' + OB.icon('plus', 16) + 'Add</button></form>';
       },
       bind: function (out, r, api) {
         // while a site is checked the button stays ink with a spinner, so it reads busy, not broken
@@ -220,7 +221,7 @@
     {
       key: 'wins', label: 'What wins', next: 'Next: my angles',
       say: function (r) { return ['Studying what wins in ' + r.category.toLowerCase(), 'Going through every Short your competitors posted.']; },
-      work: ['Collecting their Shorts', 'Sorting them by format', 'Finding the ones that kept getting views', 'Measuring which formats get the views'],
+      work: ['Collecting their Shorts', 'Sorting them by format', window.matchMedia('(max-width: 700px)').matches ? 'Finding the ones that kept going' : 'Finding the ones that kept getting views', 'Measuring which formats get the views'],
       // the wait shows what this step works through, not a claim about results
       asks: function (r) { syncRivals(r); return [proof((estimated(r) ? '~' : '') + r.rivalsTotal, 'Shorts from your competitors, sorted by format and ranked on views, not likes.')]; },
       done: function (r) {
@@ -241,10 +242,12 @@
         // a phone labels your own row "You", so it never wraps (run-2.css)
         mine = mine.replace('<span>' + e(you) + '</span>', '<span><span class="ob-you-l">' + e(you) + '</span><span class="ob-you-s">You</span></span>');
         var est = estimated(r) ? 'about ' : '';
+        // a phone binds the line's last three words, so no word sits alone under the thumb
+        var def = e(DEF[top.name] || 'The format that pulled the most views for your competitors.'); if (phone()) { def = def.replace(/ (\S+) (\S+)$/, '\u00a0$1\u00a0$2'); }
         return '<div class="ob-card ob-card--lit ob-win">' + (fi >= 0 ? '<span class="ob-win-media">' + OB.videoTag(OB.film(fi)) + '</span>' : '') +
           '<div><span class="ob-chip ob-chip--volt">Winning format</span><b class="ob-win-fig">' + top.share + '%<small>of views</small></b><p><b>' + e(top.name) + '.</b> ' +
-          e(DEF[top.name] || 'The format that pulled the most views for your competitors.') + '</p></div></div>' +
-          '<div class="ob-panel">' + head('What wins in ' + r.category.toLowerCase(), 'Share of views, ' + est + r.rivalsTotal + ' Shorts') + '<div class="ob-hbars ob-hbars--rank">' +
+          def + '</p></div></div>' +
+          '<div class="ob-panel">' + (phone() ? head('Share of views by format', est + r.rivalsTotal + ' Shorts') : head('What wins in ' + r.category.toLowerCase(), 'Share of views, ' + est + r.rivalsTotal + ' Shorts')) + '<div class="ob-hbars ob-hbars--rank">' +
           r.formats.map(function (f, i) { return hbar(f.name, f.share + '%', top.share, i ? '' : 'is-top', f.share); }).join('') + '</div></div>' +
           '<div class="ob-tiles3 ob-tiles2"><div class="ob-stat"><b>' + (est ? 'About ' : '') + r.perMonth + '</b><span>Shorts a month from your ' + on.length + ' competitor' + (on.length === 1 ? '' : 's') + '</span></div>' +
           '<div class="ob-stat"><b>' + r.longest.days + ' days</b><span>How long ' + e(r.longest.rival) + '\'s best ' + e(top.name) + ' Short kept pulling new views</span></div></div>' +

@@ -9,13 +9,18 @@
   document.querySelectorAll('[data-agent]').forEach(function (n) { n.outerHTML = OB.agent(); });
   document.querySelectorAll('[data-ico-agent]').forEach(function (n) { n.innerHTML = OB.icon('spark'); });
 
-  // the wall: two rows, each doubled so the drift loops seamlessly
+  // the wall: two rows, each doubled so the drift loops seamlessly. On a phone
+  // it skips the one film whose poster has a white frame baked in (app-data.js
+  // keeps it out of the app for the same reason); desktop keeps its wall as is
   var wall = document.querySelector('[data-wall]');
   if (wall) {
+    var skip = window.matchMedia('(max-width: 700px)').matches ? { 'storm-chaser-night-drive': 1 } : {};
     var row = function (from, cls) {
       var tiles = '';
-      for (var i = 0; i < 12; i++) {
-        var f = OB.film(from + i);
+      for (var i = 0, k = from; i < 12; k++) {
+        var f = OB.film(k);
+        if (skip[f.id]) { continue; }
+        i++;
         tiles += '<div class="ob-tile">' + OB.videoTag(f) + '<span class="ob-phone-tag">' + OB.esc(f.label) + '</span></div>';
       }
       return '<div class="ob-wall-row ' + cls + '">' + tiles + tiles + '</div>';
@@ -55,13 +60,15 @@
   }
 
   // every "Get my free report" button takes you to the hero field
-  document.querySelectorAll('[data-to-field]').forEach(function (b) {
-    b.addEventListener('click', function () {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      var inp = document.querySelector('[data-site-input]');
-      window.setTimeout(function () { if (inp) { inp.focus({ preventScroll: true }); } }, 450);
-    });
-  });
+  function toField() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    var inp = document.querySelector('[data-site-input]');
+    window.setTimeout(function () { if (inp) { inp.focus({ preventScroll: true }); } }, 450);
+  }
+  document.querySelectorAll('[data-to-field]').forEach(function (b) { b.addEventListener('click', toField); });
+  // on a phone the bento's report field looks like an input, so a tap on it does what one would
+  var btField = document.querySelector('.bt-report .bt-field'), phoneQ = window.matchMedia('(max-width: 700px)');
+  if (btField) { btField.addEventListener('click', function () { if (phoneQ.matches) { toField(); } }); }
 
   var ALERT = '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style="display:inline;vertical-align:-0.125em;margin-right:0.375rem"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7.5v5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="16.6" r="1.3" fill="currentColor"/></svg>';
   function looksLikeSite(v) { return /^[a-z0-9-]+(\.[a-z0-9-]+)+/i.test(v.replace(/^https?:\/\//i, '').replace(/^www\./i, '')); }
@@ -92,9 +99,11 @@
     // volt focus ring (field-focus.css), cleared the moment it holds a website
     var bad = function (on) {
       err = on;
+      form.classList.toggle('is-bad', on);   // the phone's resting volt ring steps aside (field-focus.css)
       form.style.borderColor = on ? '#c8432b' : '';
       form.style.background = on ? '#fff' : '';
-      form.style.boxShadow = on ? '0 0 0 0.3125rem rgba(200, 67, 43, 0.14)' : '';
+      // the phone's halo is 4px, so it stays 16px or more from the screen's edges
+      form.style.boxShadow = on ? '0 0 0 ' + (window.matchMedia('(max-width: 700px)').matches ? '0.25rem' : '0.3125rem') + ' rgba(200, 67, 43, 0.14)' : '';
     };
     fav.innerHTML = OB.icon('globe', 20);
     inp.addEventListener('input', function () {

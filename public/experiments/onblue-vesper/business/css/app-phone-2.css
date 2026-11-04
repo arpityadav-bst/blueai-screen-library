@@ -1,0 +1,188 @@
+/* The dashboard on a phone, round 2 (2026-11-05, the second blind review).
+   Linked last on every app page, after app-phone.css. Every rule sits inside
+   a phone or touch query, so the desktop layout does not move. Motion stays
+   transform and opacity; no blur, mask, blend or filter. */
+
+/* the drawer's bar title exists only in the phone bar below */
+.ob-dr-bar-t { display: none; }
+
+@media (max-width: 820px) {
+  /* Studio drawer: a solid bar behind the close, so content scrolls under an edge, not under a floating X */
+  .ob-pg-dr .ob-drawer-box::before { content: ""; position: fixed; top: 0; right: 0; z-index: 2; width: min(760px, 100%); height: calc(3.5rem + env(safe-area-inset-top)); border-bottom: 1px solid var(--line); background: var(--surface); }
+  .ob-pg-dr .ob-drawer-box { padding-top: calc(3.5rem + env(safe-area-inset-top) + var(--s5)); }
+  .ob-pg-dr .ob-x { top: calc(0.375rem + env(safe-area-inset-top)); right: 1.25rem; }
+  /* once the video scrolls under that bar, the bar names it (studio.js sets is-past) */
+  .ob-pg-dr .ob-dr-bar-t { position: fixed; top: env(safe-area-inset-top); left: calc(100% - min(760px, 100%) + 1.25rem); right: 4.5rem; z-index: 3; display: block; overflow: hidden; color: var(--ink-1); font: 500 0.9375rem/3.5rem var(--font); letter-spacing: var(--tr-mid); white-space: nowrap; text-overflow: ellipsis; opacity: 0; transition: opacity 0.2s var(--ease); pointer-events: none; }
+  .ob-pg-dr .ob-drawer-box.is-past .ob-dr-bar-t { opacity: 1; }
+  /* its toast sits above the sticky footer (3.25rem button + its padding), never over the title */
+  body.has-drawer .ob-toast { top: auto; bottom: calc(5.5rem + env(safe-area-inset-bottom)); }
+
+  /* the tab bar: labels at 12, the Studio count at 11 */
+  .ob-navi { font-size: 0.75rem; }
+  .ob-navi .ob-count { min-width: 1.125rem; height: 1.125rem; font-size: 0.6875rem; }
+  /* the page you are on: a quiet pill behind its icon; the bar keeps 8px (or the safe area) at its sides */
+  .ob-side-nav { padding-left: max(0.5rem, env(safe-area-inset-left)); padding-right: max(0.5rem, env(safe-area-inset-right)); }
+  .ob-navi { isolation: isolate; }
+  .ob-navi.is-on::before { content: ""; position: absolute; top: calc(50% - 1.40625rem); left: 50%; z-index: -1; width: 3.25rem; height: 1.75rem; margin-left: -1.625rem; border-radius: 999px; background: rgba(10, 10, 9, 0.06); }
+
+  /* text links that navigate get a 44 tap height without moving the text */
+  .ob-sect-head a { display: inline-flex; align-items: center; min-height: 2.75rem; margin: -0.75rem -0.25rem; padding: 0 0.25rem; }
+  .ob-rd-done { min-height: 2.75rem; }
+}
+
+@media (max-width: 700px) {
+  .ob-sect-head h2 { text-wrap: balance; }
+
+  /* Home prompt: the three suggestions stack (a strip inside a card could only cut them mid-word) */
+  .ob-prompt-chips { flex-wrap: wrap; overflow: visible; margin: var(--s3) 0 0; padding: 0; gap: var(--s2); }
+  .ob-prompt-chips button { height: auto; min-height: 2.75rem; max-width: 100%; padding-block: 0.5rem; white-space: normal; line-height: 1.3; text-align: left; }
+
+  /* Home "Remix a competitor": where you are in the swipe row (6px dots, 44 taps) */
+  .ob-row-dots { display: flex; justify-content: center; margin-top: var(--s1); }
+  .ob-row-dots button { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; padding: 0; border: 0; background: none; cursor: pointer; }
+  .ob-row-dots i { width: 0.375rem; height: 0.375rem; border-radius: var(--r-pill); background: var(--line-2); transition: transform 0.2s var(--ease), background-color 0.2s var(--ease); }
+  .ob-row-dots [aria-current] i { background: var(--ink-1); transform: scale(1.33); }
+  .ob-row-dots button:focus-visible { outline: 0; }
+  .ob-row-dots button:focus-visible i { box-shadow: var(--p-ring); }
+
+  /* Plan head: the status is a quiet line over the button (Posting or Paused), never a second box */
+  body[data-page="plan"] .ob-pg-act { flex-wrap: wrap; row-gap: var(--s2); }
+  body[data-page="plan"] .ob-pg-act .ob-ap-tag { height: auto; padding: 0; border: 0; background: none; box-shadow: none; color: var(--ink-2); font: 500 0.8125rem/1.3 var(--font); }
+  body[data-page="plan"] .ob-pg-act .ob-btn { flex: 1 0 100%; }
+  /* Plan budget: the slider close under its line, five rows of dots */
+  .ob-pg .ob-pl-range { margin-top: 0.25rem; }
+  .ob-pl-dots { grid-template-rows: repeat(5, auto); gap: 0.375rem 0; margin-top: 1.25rem; }
+  /* Plan angles: the title takes the full width; only the label row clears the mark */
+  .ob-pa { padding: 1.25rem; }
+  .ob-pa > small { padding-right: 3.5rem; }
+
+  /* Radar lead: the label runs over the poster, the reasons read as a list, not as buttons */
+  .ob-rd-hero-t > small { grid-column: 1 / -1; grid-row: 1; margin-bottom: 0.75rem; text-wrap: balance; }
+  .ob-rd-hero > .ob-phone { grid-row: 2 / 5; }
+  .ob-rd-hero-t > b { grid-row: 2; }
+  .ob-rd-hero-by { grid-row: 3; }
+  .ob-rd-hero .ob-rd-views { grid-row: 4; }
+  .ob-rd-why ul { flex-direction: column; gap: var(--s2); }
+  .ob-rd-why li { align-items: flex-start; height: auto; min-height: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; font: 400 0.875rem/1.4 var(--font); }
+  .ob-rd-why li::before { flex: none; margin-top: 0.4375rem; }
+
+  .ob-vcard b { text-wrap: balance; }
+
+  /* Analytics: Today ends on its bar's right edge, never past the card */
+  .ob-chart-x .is-today { transform: translateX(-100%); }
+
+  /* Brand: the four facts as one card of hairline rows, on the profile card's 20px inner edge */
+  .ob-br-facts { gap: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--p-r); background: var(--surface); box-shadow: inset 0 1px 0 #fff, var(--shadow-1); }
+  .ob-pg .ob-br-facts .ob-edit { padding: 1rem 1.25rem; border: 0; border-radius: 0; background: none; box-shadow: none; }
+  .ob-br-facts .ob-edit + .ob-edit { border-top: 1px solid var(--line); }
+  .ob-br-facts .ob-edit:focus-within { background: rgba(198, 244, 50, 0.08); box-shadow: inset 3px 0 0 #9ccf12; }
+
+  /* the tour's card docked on the tab bar: a plain band fills the gap, so no page text peeks through it */
+  .ob-tip.is-onbar::before { content: ""; position: absolute; top: calc(100% + 1px); left: calc(-1.25rem - 1px); right: calc(-1.25rem - 1px); height: 0.75rem; background: linear-gradient(rgba(10, 10, 9, 0.62), rgba(10, 10, 9, 0.62)), var(--bg); pointer-events: none; }
+}
+
+/* round 3 (2026-11-05, the third blind review) */
+@media (max-width: 700px) {
+  /* Your videos: the views get their own line (no dangling dot), and every card in a row ends on one edge */
+  .ob-vsep { display: none; }
+  .ob-vcard .ob-vviews { display: block; margin-top: 0.125rem; color: var(--ink-1); }
+  .ob-home-row:has(.ob-vviews) .ob-vcard small, .ob-vgrid:has(.ob-vviews) .ob-vcard small { display: block; min-height: 3em; min-height: 2lh; }
+
+  /* Home prompt: a 20px sparkle on the first text line, the text 42px in; the picked suggestion leaves the list */
+  .ob-prompt--home .ob-prompt-row { gap: 0.625rem; }
+  .ob-prompt--home .ob-prompt-row > .ob-agent { flex: none; width: 1.25rem; height: 1.25rem; align-self: flex-start; margin-top: 0.75rem; }
+  .ob-prompt--home .ob-prompt-row > .ob-agent svg { width: 100%; height: 100%; }
+  .ob-prompt-chips button.is-picked { display: none; }
+
+  /* Home: a video being made sits on the rows' own columns: an 80x142 poster frame with the spark
+     (home.js, round 4), the text beside it with the hollow "making" dot */
+  .ob-needs:not(.ob-needs--empty) .ob-mk-i { gap: var(--s4); padding: var(--s3); border-radius: 0; background: none; }
+  .ob-needs:not(.ob-needs--empty) .ob-mk-i > .ob-phone--making { width: 5rem; border-radius: 0.75rem; }
+  .ob-mk-dot { display: inline-block; width: 0.4375rem; height: 0.4375rem; margin-right: 0.4375rem; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--ink-4); vertical-align: 0.0625rem; }
+
+  /* app pages: the head sits 28px over its content; section titles at 17 */
+  .ob-pg .ob-pg-head { margin-bottom: 1.75rem; }
+  .ob-pg .ob-p-h2 { font-size: 1.0625rem; line-height: 1.3; }
+
+  /* empty states: 40px of air, the line breaks evenly; Analytics' day one drops its pace note */
+  .ob-pg .ob-pg-empty { padding: 2.5rem var(--s5); }
+  .ob-pg-empty p { text-wrap: balance; }
+  .ob-an-empty .ob-an-pace { display: none; }
+
+  /* Plan: no lone word under the budget; "left" dots clearly darker than "room to raise";
+     "Where it posts" wears the same 22px ring as the checks; the soon chips readable */
+  .ob-pl-sub { text-wrap: pretty; }
+  .ob-pl-dots i.is-on, .ob-pl-key i.is-on { background: rgba(10, 10, 9, 0.42); }
+  .ob-pl-where { border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--line-2); color: var(--ink-1); }
+  .ob-pl-where svg { width: 0.75rem; height: 0.75rem; }
+  .ob-chip--soon { color: var(--ink-3); }
+
+  /* Brand profile: three facts in tighter rows */
+  .ob-pg .ob-br-head { gap: var(--s5); }
+  .ob-br-strip > div { padding: 0.75rem 0; }
+  .ob-br-strip dd { margin-top: 0.25rem; }
+
+  /* the tour's caret: only its outside half draws, so a shadow behind the card never shows a diamond */
+  .ob-tip.is-above::after { clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+  .ob-tip.is-below::after { clip-path: polygon(0 0, 100% 0, 0 100%); }
+  .ob-tip.is-right::after { clip-path: polygon(0 0, 100% 100%, 0 100%); }
+}
+
+/* round 4 (2026-11-05, the fourth blind review) */
+@media (max-width: 820px) {
+  /* Studio drawer: a tight poster shadow, so nothing smudges under the bar once it scrolls past */
+  .ob-pg-dr .ob-dr-art .ob-phone { box-shadow: 0 0.75rem 1.5rem -0.75rem rgba(10, 10, 9, 0.35); }
+}
+@media (max-width: 700px) {
+  /* Plan head while posting: the status left, a compact Pause right, one 44 row (paused keeps the full-width Resume) */
+  body[data-page="plan"] .ob-pg-act:not(:has(.ob-btn--ink)) { flex-wrap: nowrap; justify-content: space-between; }
+  body[data-page="plan"] .ob-pg-act .ob-btn:not(.ob-btn--ink) { flex: none; width: auto; height: 2.75rem; padding: 0 var(--s4); }
+
+  /* Radar's Short cards: the 16px inner edge, a 88px poster, so the row keeps its height */
+  .ob-rd-short { grid-template-columns: 5.5rem minmax(0, 1fr); gap: var(--s4); padding: 1rem; }
+
+  /* Studio prompt: Home's 20px sparkle with the text 42px in, an even 12px pad around the 44 send */
+  .ob-prompt.ob-st-prompt { padding: 0.75rem 0.75rem 0.75rem 1rem; }
+  .ob-st-prompt .ob-prompt-row { gap: 0.625rem; }
+  .ob-st-prompt .ob-prompt-row > .ob-agent { flex: none; width: 1.25rem; height: 1.25rem; }
+  .ob-st-prompt .ob-prompt-row > .ob-agent svg { width: 100%; height: 100%; }
+
+  /* the Posting dot: no ping ring hanging past the 20px gutter */
+  .ob-vstat--posting::after { display: none; }
+
+  /* Brand: the rule cards on the same 20px inner edge, rules break evenly */
+  .ob-pg .ob-br-rules { padding: 1.25rem; }
+  .ob-br-rules li > span:nth-child(2) { text-wrap: balance; }
+  /* the facts card draws its hairlines inset 20px, like the profile card above it */
+  .ob-br-facts .ob-edit + .ob-edit { position: relative; border-top: 0; }
+  .ob-br-facts .ob-edit + .ob-edit::before { content: ""; position: absolute; top: 0; left: 1.25rem; right: 1.25rem; border-top: 1px solid var(--line); }
+  /* Add more after files: full width under the rows, one straight edge */
+  .ob-pg .ob-br-drop.is-compact { display: flex; justify-content: center; width: 100%; min-height: 3.25rem; padding: 0.375rem 1rem; border-radius: 0.875rem; }
+}
+@media (hover: none) and (pointer: coarse) {
+  /* Analytics: the picked day is written into the chart's subtitle (analytics.js), no box over the bars */
+  .ob-an-chart .ob-chart-tip { display: none; }
+}
+
+@media (max-width: 560px) {
+  /* Brand rules: Add is the + alone, so the example in the field reads in full */
+  .ob-pg .ob-br-rules .ob-add .ob-btn { flex: none; justify-content: center; width: 2.75rem; height: 2.75rem; padding: 0; gap: 0; font-size: 0; }
+  /* Studio drawer: Stop posting spans the stack like every other action, still the quiet style */
+  .ob-pg-dr .ob-dr-stopbox { justify-items: stretch; gap: var(--s2); }
+  .ob-pg-dr .ob-dr-stopbox .ob-btn { width: 100%; height: 2.75rem; justify-content: center; }
+}
+
+@media (max-width: 380px) {
+  /* Home: Approve and Watch first fit the card's text column exactly at 360 */
+  .ob-need-act .ob-btn--sm { padding: 0 0.75rem; }
+  .ob-need-act .ob-btn--ghost { padding: 0 0.5rem; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  /* Analytics: a sideways drag scrubs the chart, an up-down drag still scrolls the page */
+  .ob-an-chart svg { touch-action: pan-y; }
+}
+
+@media (max-width: 700px) and (prefers-reduced-motion: reduce) {
+  .ob-row-dots i { transition: none; }
+}

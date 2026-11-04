@@ -122,7 +122,7 @@
   .oj-side { order: -1; position: sticky; top: 4rem; z-index: 3; background: var(--bg); }
   .oj-side, .oj-pin { min-width: 0; overflow-x: clip; }
   .oj-pin { position: static; height: auto; padding: var(--s3) 0; }
-  .oj-step, .oj-step:first-child, .oj-step:last-child { min-height: 60vh; }
+  .oj-step, .oj-step:first-child, .oj-step:last-child { min-height: 60svh; }
 }
 @media (prefers-reduced-motion: reduce) {
   .oj-step > div, .oj-rival, .oj-chip, .oj-fact, .oj-node, .oj-res, .oj-var, .oj-screen, .oj-phone, .oj-formats li, .oj-grid span, .oj-read span, .oj-make li, .oj-prog i { transition: none !important; }

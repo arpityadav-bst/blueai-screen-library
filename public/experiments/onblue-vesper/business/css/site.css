@@ -111,10 +111,17 @@
   .ob-hero h1 { font-size: 2.25rem; text-wrap: balance; }
   .ob-hero-alt { font-size: 0.875rem; }
   .ob-hero-alt .ob-link { display: inline-flex; align-items: center; min-height: 2.75rem; margin: -0.75rem 0; padding: 0 0.25rem; font-size: 0.875rem; }
-  .ob-field-name { text-wrap: balance; }
+  /* "Continue your report for <brand>": one piece, a 44 tap, a long brand ends in an ellipsis */
+  .ob-hero-alt a.ob-link { display: block; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; line-height: 2.75rem; }
+  .ob-hero-sub span { display: block; }   /* one sentence per line, never a lone "it." */
+  .ob-field-name { font-size: 0.875rem; text-wrap: balance; }   /* the error line matches the no-website line (14) */
+  .ob-field-name .ob-link { padding: 0.75rem 0.25rem; margin: -0.75rem -0.25rem; }   /* "start without one": a 44 tap, the wrap unmoved */
+  .ob-cred { text-wrap: balance; }
+  .ob-cred br { display: none; }
+  .ob-cred-l { display: block; text-wrap: balance; }   /* one sentence per block, each balanced: no lone "post them." */
   .ob-close .ob-field input, .ob-close .ob-field .ob-btn { height: 2.75rem; }
   .ob-sec { padding: 4.75rem 0; }
-  .ob-cred-sec { padding: 3.5rem 0 4.75rem; }
+  .ob-cred-sec { padding: 3.5rem 0 2.375rem; }   /* the related join (38 + the loop's 76), not a void before "One loop." */
   .ob-crowd-row { margin-bottom: 1.5rem; padding: 0; }
   .ob-crowd { flex-direction: column; gap: 0.625rem; font-size: 0.875rem; text-align: center; }
   .ob-crowd > span:last-child { max-width: 24ch; }
@@ -122,16 +129,27 @@
   .ob-cred-cta .ob-btn { height: 3rem; padding: 0 1.5rem; font-size: 0.9375rem; }
   .ob-h2 { font-size: 1.875rem; }
   .ob-lede { font-size: 1rem; }
+  .ob-center .ob-lede { text-wrap: balance; }   /* three even lines, no short "in your voice." */
   .ob-wall { margin-top: 2rem; }
-  .ob-wall::before, .ob-wall::after { width: 2rem; }   /* still overlays, never a mask */
-  .ob-tile { width: 9.25rem; }
+  .ob-wall::before, .ob-wall::after { width: 1.5rem; }   /* still overlays, never a mask */
+  .ob-nw { white-space: nowrap; }   /* "short video," never splits over the break */
+  main > section, .ob-foot { overflow-x: clip; }   /* shadows and tilts end at the screen's edge, inside their own band, not the root */
+  .ob-tile { width: clamp(8rem, calc((100svh - 21rem) / 2 * 0.5625), 9.25rem); }   /* heading + wall on one screen */
 }
+/* in-page anchors (footer, menu) land their heading under the floating pill */
+@media (max-width: 900px) { .ob-sec[id], .ob-close[id], .oj[id] { scroll-margin-top: 4.5rem; } }
 @media (max-width: 560px) {
   .ob-field { flex-wrap: wrap; border-radius: var(--r-lg); padding: 0.5rem; }
   .ob-field .ob-btn { width: 100%; }
   .ob-hero h1 { font-size: 2.125rem; }
   .ob-hero .ob-field input { height: 3rem; }
   .ob-hero .ob-field .ob-btn { height: 3.25rem; font-size: 0.9375rem; }   /* the hero CTA: 52 */
+  .ob-close .ob-field input { height: 3rem; }
+  .ob-close .ob-field .ob-btn { height: 3.25rem; font-size: 0.9375rem; }   /* the last ask matches the first */
+  /* the wrapped button sits centred in its slab: an even 8 round it; the globe keeps its indent */
+  .ob-hero .ob-field, .ob-close .ob-field { padding: 0.5rem; }
+  .ob-hero .ob-field-ico, .ob-close .ob-field-ico { margin-left: 0.5rem; }
+  .ob-hero-alt { flex-wrap: wrap; column-gap: 0.375rem; row-gap: 0; }   /* "Welcome back." and its link wrap as whole pieces */
 }
 /* touch: 16px in every field, so iOS never zooms on focus */
 @media (hover: none) and (pointer: coarse) { .ob-hero .ob-field input, .ob-close .ob-field input { font-size: 1rem; } }

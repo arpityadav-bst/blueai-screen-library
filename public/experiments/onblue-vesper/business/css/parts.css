@@ -53,8 +53,8 @@ textarea.ob-input { height: auto; min-height: 6rem; padding: var(--s3) var(--s4)
    the homepage and the run; the close and the picks are 44 taps, the picks a
    2 x 2 grid. Touch fields are 16px so iOS never zooms. */
 @media (max-width: 700px) {
-  .ob-modal { place-items: end center; padding: 0; }
-  .ob-modal-box { width: 100%; max-height: 86dvh; overflow-y: auto; border-radius: 1.25rem 1.25rem 0 0; padding: 1.75rem 1.25rem max(1.5rem, env(safe-area-inset-bottom)); }
+  .ob-modal { place-items: end center; padding: 0; background: rgba(11, 11, 10, 0.56); }   /* one scrim for every sheet (run-2.css matches) */
+  .ob-modal-box { width: 100%; max-height: 86dvh; overflow-y: auto; border-width: 1px 0 0; border-radius: 1.25rem 1.25rem 0 0; padding: 1.75rem 1.25rem max(1.5rem, env(safe-area-inset-bottom)); }   /* no side hairlines on the screen edges */
   .ob-modal .ob-agent { display: none; }
   .ob-modal h3 { margin-top: 0; padding-right: 2.75rem; }
   .ob-x { top: 1.25rem; right: 0.75rem; width: 2.75rem; height: 2.75rem; }

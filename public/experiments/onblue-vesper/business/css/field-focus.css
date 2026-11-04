@@ -50,3 +50,16 @@
 }
 /* touch: the lift without the scale, so the halo stays inside the 20px gutter */
 @media (max-width: 700px) and (hover: none) and (pointer: coarse) { .ob-hero .ob-field:focus-within { transform: translateY(-0.1875rem); } }
+/* THE PHONE: the chase still runs, but it does not REST on the conic, whose
+   0/360deg seam draws a hairline gap on the left edge. Once the chase ends, the
+   ripple ring (::after, already there) settles in as a solid 2px volt ring over
+   the border. In the error state (.is-bad, js/site.js) the red edge shows instead. */
+@keyframes ob-ring-on { to { opacity: 1; transform: none; border-color: #9ccf12; } }
+/* the ripple and the halo stay 16px or more from the screen's edges (4px past the field) */
+@keyframes ob-field-ripple-ph { from { opacity: 0.9; transform: scale(1); } to { opacity: 0; transform: scale(1.02, 1.3); } }
+@media (max-width: 700px) {
+  .ob-hero .ob-field:focus-within::after { animation: ob-field-ripple-ph 0.9s cubic-bezier(0.2, 0.7, 0.3, 1) both, ob-ring-on 0s 1.1s forwards; }
+  .ob-hero .ob-field:focus-within { box-shadow: 0 0 0 0.25rem rgba(198, 244, 50, 0.24), 0 1px 0.125rem rgba(10, 10, 9, 0.06), 0 1.875rem 3.5rem -1.375rem rgba(10, 10, 9, 0.34); }
+  .ob-hero .ob-field.is-bad::after { display: none; }
+}
+@media (max-width: 700px) and (prefers-reduced-motion: reduce) { .ob-hero .ob-field:focus-within::after { opacity: 1; border-color: #9ccf12; } }

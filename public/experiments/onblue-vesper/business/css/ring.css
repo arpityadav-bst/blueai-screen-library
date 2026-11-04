@@ -67,5 +67,24 @@
   100% { filter: blur(0.375rem) drop-shadow(-0.4375rem 0 0 rgba(255, 36, 36, 0.8)) drop-shadow(0.4375rem 0 0 rgba(0, 224, 255, 0.8)); }
 }
 
+/* THE PHONE: the focus falloff without the red/cyan split, whose cyan half
+   read as a stray off-palette rim on the side-on frames (same clock, same blur) */
+@keyframes ob-cyl-blur {
+  0%, 12% { filter: blur(0.375rem); }
+  20% { filter: blur(0.3rem); }
+  26% { filter: blur(0.2188rem); }
+  32% { filter: blur(0.1437rem); }
+  36% { filter: blur(1.2px); }
+  41% { filter: blur(0.45px); }
+  47%, 53% { filter: blur(0px); }
+  59% { filter: blur(0.45px); }
+  64% { filter: blur(1.2px); }
+  68% { filter: blur(0.1437rem); }
+  74% { filter: blur(0.2188rem); }
+  80% { filter: blur(0.3rem); }
+  88%, 100% { filter: blur(0.375rem); }
+}
+@media (max-width: 700px) { .ob-cyl-shot { animation-name: ob-cyl-blur; } }
+
 /* frame size and slot count are fitted to the screen by js/ring.js (fitRing) */
 @media (prefers-reduced-motion: reduce) { .ob-cyl-stage { animation: none; } }

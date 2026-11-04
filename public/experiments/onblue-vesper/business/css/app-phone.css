@@ -14,6 +14,8 @@
   .ob-menu a, .ob-menu button { height: 2.75rem; font-size: 0.9375rem; }
   .ob-menu-demo div { gap: var(--s2); }
   .ob-menu .ob-menu-demo button { height: 2.75rem; padding: 0 0.875rem; }
+  /* round 4: Reset is the third pill of the row, not a stray link at the far end */
+  .ob-menu .ob-menu-demo .ob-menu-reset { margin-left: 0; border-color: var(--line); text-decoration: none; }
 
   /* 44 is the floor: every small button (Approve, Watch first, Remix, tour Next and Skip) */
   .ob-btn--sm { height: 2.75rem; padding: 0 var(--s4); }
@@ -21,8 +23,9 @@
   .ob-prompt-send { width: 2.75rem; height: 2.75rem; }
   .ob-input { font-size: 1rem; }   /* 16px: iOS never zooms on focus */
 
-  /* toasts: a real width (the half-viewport cap came from left:50%), centred, one or two lines */
-  .ob-toast, body.has-drawer .ob-toast { left: var(--s4); right: var(--s4); width: fit-content; max-width: calc(100% - 2rem); margin-inline: auto; transform: translateY(0.75rem) scale(0.96); }
+  /* toasts: one home on every page, on the 20px gutter, 12px above the tab bar (3.75rem); it takes
+     no taps and leaves in 2.4s, so it never jumps up onto the page heading (round 4) */
+  .ob-toast, body.has-drawer .ob-toast { left: 1.25rem; right: 1.25rem; bottom: calc(4.5rem + env(safe-area-inset-bottom)); width: fit-content; max-width: none; margin-inline: auto; text-wrap: pretty; transform: translateY(0.75rem) scale(0.96); }
   .ob-toast.is-on, body.has-drawer .ob-toast.is-on { transform: none; }
 
   /* Plan: a thumb-sized slider */
@@ -32,7 +35,7 @@
 
   /* Brand: remove buttons at 44, the icon stays where it was */
   .ob-pg .ob-br-rules .ob-x, .ob-pg .ob-br-files .ob-x { width: 2.75rem; height: 2.75rem; margin-right: -0.375rem; }
-  .ob-br-rules li > span:nth-child(2) { text-wrap: pretty; }
+  .ob-br-rules li { gap: var(--s2); }   /* the rule text runs right up to the X, no early wrap */
 
   /* Studio drawer: the close stays on screen while you scroll, at 44 */
   .ob-pg-dr .ob-x { position: fixed; top: calc(0.75rem + env(safe-area-inset-top)); right: 0.75rem; z-index: 3; width: 2.75rem; height: 2.75rem; }
@@ -77,16 +80,21 @@
   .ob-fmt .ob-btn, .ob-fmt-tag + .ob-btn { grid-area: btn; justify-self: end; width: 2.75rem; height: 2.75rem; margin: 0; padding: 0; gap: 0; border-radius: 50%; font-size: 0; }
 
   /* Radar and Studio filters: one swipe strip of 44 tabs, bleeding to the screen edge */
-  .ob-rd-tabs, .ob-st-tabs { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scrollbar-width: none; margin-left: -1.25rem; margin-right: -1.25rem; padding: 0.125rem 1.25rem 0.375rem; scroll-padding-inline: 1.25rem; scroll-snap-type: x mandatory; }
+  /* proximity snap, so a picked chip at the end stays fully in view (app-shell.js reveal); the bottom
+     padding leaves room for the pressed chip's shadow, the negative margin keeps the layout where it was */
+  .ob-rd-tabs, .ob-st-tabs { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scrollbar-width: none; margin-left: -1.25rem; margin-right: -1.25rem; padding: 0.125rem 1.25rem 0.875rem; scroll-padding-inline: 1.25rem; scroll-snap-type: x proximity; }
   .ob-rd-tabs::-webkit-scrollbar, .ob-st-tabs::-webkit-scrollbar { display: none; }
+  .ob-rd-tabs { margin-bottom: -0.5rem; }
+  .ob-st-tabs { margin-bottom: calc(var(--s6) - 0.5rem); }
   .ob-rd-tabs button, .ob-st-tabs button { flex: none; height: 2.75rem; scroll-snap-align: start; }
+  .ob-rd-tabs button:last-child, .ob-st-tabs button:last-child { scroll-snap-align: end; }
 
   /* Radar's lead: poster top left with the title beside it, the reasons and the CTA full width */
-  .ob-card.ob-rd-hero { grid-template-columns: 6.5rem minmax(0, 1fr); grid-template-rows: auto auto auto 1fr; gap: 0 var(--s4); padding: var(--s5) var(--s4); }
+  .ob-card.ob-rd-hero { grid-template-columns: 5.5rem minmax(0, 1fr); grid-template-rows: auto auto auto 1fr; gap: 0 var(--s4); padding: var(--s5); }
   .ob-rd-hero-t { display: contents; }
   .ob-rd-hero > .ob-phone { grid-column: 1; grid-row: 1 / 5; align-self: start; }
   .ob-rd-hero-t > small, .ob-rd-hero-t > b, .ob-rd-hero-by, .ob-rd-hero .ob-rd-views { grid-column: 2; }
-  .ob-rd-hero .ob-rd-views { align-self: end; }
+  .ob-rd-hero .ob-rd-views { align-self: start; }   /* the stat follows the meta, no hole above it */
   .ob-rd-hero .ob-rd-why, .ob-rd-hero .ob-rd-say, .ob-rd-hero [data-hero] { grid-column: 1 / -1; }
   .ob-rd-hero .ob-rd-say { width: auto; }
   .ob-rd-why li { height: auto; min-height: 2rem; padding: 0.375rem 0.75rem; line-height: 1.3; }
@@ -109,9 +117,7 @@
   .ob-p-sect { row-gap: 0.25rem; }
   .ob-p-sect .ob-p-note { flex-basis: 100%; }
 
-  /* Studio: the waiting card's button spans it; the empty state's button is 44 */
-  .ob-st-wait { padding: var(--s4); }
-  .ob-st-wait .ob-btn { flex: 1 0 100%; height: 2.75rem; justify-content: center; }
+  /* Studio: the empty state's button is 44 */
   .ob-st-empty .ob-btn { min-height: 2.75rem; padding: 0 var(--s5); }
 
   /* Brand: the profile card closes on its padding, not a stray hairline */
@@ -146,7 +152,7 @@
 
 @media (max-width: 560px) {
   /* Studio drawer: the change request stacks as one deliberate form */
-  .ob-pg-dr .ob-dr-ask .ob-add { flex-direction: column; gap: var(--s2); }
+  .ob-pg-dr .ob-dr-ask .ob-add { flex-direction: column; gap: var(--s3); }
   .ob-pg-dr .ob-dr-ask .ob-add .ob-input { flex: none; }
   .ob-pg-dr .ob-dr-ask .ob-add .ob-btn { width: 100%; height: 2.75rem; }
   .ob-dr-script li { grid-template-columns: 3.25rem minmax(0, 1fr); gap: var(--s3); padding: 0.875rem var(--s4); }

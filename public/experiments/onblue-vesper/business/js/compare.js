@@ -31,7 +31,9 @@
     face.innerHTML = '<div class="cmp-tabs" role="tablist">' + C.COLS.slice(1).map(function (c, i) {
       return '<button type="button" role="tab" aria-selected="' + (i + 1 === rival) + '" data-rival="' + (i + 1) + '">' + e(c) + '</button>';
     }).join('') + '</div><div class="cmp-panel"><span class="cmp-lit" aria-hidden="true"></span>' +
-      '<div class="cmp-row cmp-head"><span></span><span class="us"><em>onBlue</em></span><span>' + e(C.COLS[rival]) + '</span></div>' + rows + '</div>';
+      '<div class="cmp-row cmp-head"><span></span><span class="us"><em>onBlue</em></span><span>' + e(C.COLS[rival]) + '</span></div>' + rows + '</div>' +
+      // what the three marks mean (shown on phones only, css/compare.css)
+      '<p class="cmp-key" aria-hidden="true">' + ['y', 'p', 'n'].map(function (v) { return '<span>' + sym(v) + ({ y: 'Yes', p: 'Partly', n: 'No' })[v] + '</span>'; }).join('') + '</p>';
   }
   if (face) {
     face.addEventListener('click', function (ev) {

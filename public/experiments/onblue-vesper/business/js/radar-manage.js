@@ -20,7 +20,7 @@
     'Home and gifts': ['Paper & Pine', 'Clay Days', 'Small Batch Co', 'Warm Corner', 'Linen & Light', 'Gift Theory', 'Hearth & Hue', 'Kiln House', 'Wildflower Goods'],
     'Apps and software': ['Tidy', 'Focusly', 'Quill', 'Pocket Plan', 'Nudge', 'Clearday', 'Stackwise', 'Doable', 'Inkpad']
   };
-  var el, onChange, open = false, finding = false, found = null, seen = {};
+  var el, onChange, onClose, open = false, finding = false, found = null, seen = {};
 
   function on() { return r.rivals.filter(function (x) { return x.on && !x.checking; }); }
   // every number that hangs off the list stays true to what is switched on
@@ -35,18 +35,19 @@
     return r.rivals.some(function (x) { return x.name.toLowerCase() === name.toLowerCase() || x.site === site; });
   }
   function count(x) {
-    return x.checking ? '<span class="rd-m-check"></span>Checking their Shorts&hellip;' : (x.est ? 'About ' : '') + x.videos + ' Shorts in 6 months' + (x.est ? ', my estimate' : '');
+    // phones drop the .rd-m-long parts ("in 6 months" is said once, in the panel's head)
+    return x.checking ? '<span class="rd-m-check"></span>Checking their Shorts&hellip;' : (x.est ? '<span class="rd-m-long">About </span>' : '') + x.videos + ' Shorts<span class="rd-m-long"> in 6 months' + (x.est ? ', my estimate' : '') + '</span>';
   }
   function av(name) { return '<span class="rd-m-av" style="--h:' + (OB.hash(name) % 360) + '" aria-hidden="true">' + e(name.charAt(0).toUpperCase()) + '</span>'; }
 
   function rows() {
     return r.rivals.map(function (x, i) {
-      return '<li class="rd-m-row' + (x.on ? '' : ' is-off') + '">' + av(x.name) + '<span class="rd-m-t"><b>' + e(x.name) + '</b><small>' + e(x.site) + ' &middot; ' + count(x) + '</small></span>' +
+      return '<li class="rd-m-row' + (x.on ? '' : ' is-off') + (x.checking ? ' is-checking' : '') + '">' + av(x.name) + '<span class="rd-m-t"><b>' + e(x.name) + '</b><small><span class="rd-m-dom">' + e(x.site) + ' &middot; </span>' + count(x) + '</small></span>' +
         '<button class="rd-sw" type="button" role="switch" aria-checked="' + !!x.on + '" aria-label="Watch ' + e(x.name) + '" data-sw="' + i + '"' + (x.checking ? ' disabled' : '') + '><i></i></button></li>';
     }).join('');
   }
   // every scan can run again: each brings brands not on your list and not shown before
-  function scanBtn(label) { return '<button class="ob-btn ob-btn--sm rd-m-find" type="button" data-find>' + OB.icon('radar', 15) + label + '</button>'; }
+  function scanBtn(label, cls) { return '<button class="ob-btn ob-btn--sm rd-m-find' + (cls || '') + '" type="button" data-find>' + OB.icon('radar', 15) + label + '</button>'; }
   function finds() {
     if (finding) { return '<p class="rd-m-finding"><span class="rd-m-check"></span>Looking across ' + e(r.category.toLowerCase()) + ' for brands that sell to the same buyers&hellip;</p>'; }
     if (!found) { return scanBtn('Find more competitors'); }
@@ -57,17 +58,17 @@
     // more of the list you already watch (Appy)
     return '<div class="rd-m-found"><div class="rd-m-found-h">' + OB.agent() + '<p><b>BlueAI found ' + left.length + ' more</b> selling to ' + e(r.buyers.charAt(0).toLowerCase() + r.buyers.slice(1)) + '</p><button class="ob-link" type="button" data-find>Scan again</button></div>' +
       '<ul class="rd-m-cards">' + left.map(function (x) {
-        return '<li class="rd-m-card">' + av(x.name) + '<span class="rd-m-t"><b>' + e(x.name) + '</b><small>' + e(x.site) + ' &middot; about ' + x.videos + ' Shorts in 6 months</small></span>' +
+        return '<li class="rd-m-card">' + av(x.name) + '<span class="rd-m-t"><b>' + e(x.name) + '</b><small><span class="rd-m-site">' + e(x.site) + '</span><span class="rd-m-sep"> &middot; </span><span class="rd-m-n"><span class="rd-m-long">about </span>' + x.videos + ' Shorts<span class="rd-m-long"> in 6 months</span></span></small></span>' +
           '<button class="ob-btn ob-btn--sm" type="button" data-take="' + e(x.name) + '" aria-label="Add ' + e(x.name) + '">' + OB.icon('plus', 15) + 'Add</button></li>';
-      }).join('') + '</ul></div>';
+      }).join('') + '</ul>' + scanBtn('Scan again', ' rd-m-rescan') + '</div>';   // phones: Scan again as the same button as everywhere else
   }
   function draw() {
     if (!open) { el.innerHTML = ''; el.hidden = true; return; }
     el.hidden = false;
-    el.innerHTML = '<div class="ob-card rd-m"><div class="rd-m-head"><div><h2 class="ob-pg-h3">Your competitors</h2><p class="ob-pg-p">Switch one off and Radar stops watching it. Its Shorts leave Radar and your home.</p></div>' +
+    el.innerHTML = '<div class="ob-card rd-m"><div class="rd-m-head"><div><h2 class="ob-pg-h3">Your competitors</h2><p class="ob-pg-p">Switch one off and Radar stops watching it. Its Shorts leave Radar and your home.<span class="rd-m-ph"> Shorts are counted over the last 6 months.</span></p></div>' +
       '<button class="ob-btn ob-btn--sm" type="button" data-close>Done</button></div>' +
       '<ul class="rd-m-list">' + rows() + '</ul>' +
-      '<form class="rd-m-add" data-add><input class="ob-input" placeholder="Website or YouTube handle, like rival.com or @rival" aria-label="Add a competitor by website or YouTube handle"><button class="ob-btn ob-btn--sm" type="submit">' + OB.icon('plus', 15) + 'Add</button></form>' +
+      '<form class="rd-m-add" data-add><input class="ob-input" placeholder="' + (window.matchMedia('(max-width: 700px)').matches ? 'rival.com or @rival' : 'Website or YouTube handle, like rival.com or @rival') + '" aria-label="Add a competitor by website or YouTube handle"><button class="ob-btn ob-btn--sm" type="submit">' + OB.icon('plus', 15) + 'Add</button></form>' +
       '<div class="rd-m-more" data-more>' + finds() + '</div></div>';
   }
   // a site or a handle: "@crumb.co" and "crumbandco.com" both become a name
@@ -91,7 +92,7 @@
   function bind() {
     el.addEventListener('click', function (ev) {
       var t = ev.target;
-      if (t.closest('[data-close]')) { open = false; draw(); return; }
+      if (t.closest('[data-close]')) { open = false; draw(); if (onClose) { onClose(); } return; }
       var sw = t.closest('[data-sw]');
       if (sw) { var x = r.rivals[+sw.getAttribute('data-sw')]; x.on = !x.on; sync(); draw(); el.querySelector('[data-sw="' + sw.getAttribute('data-sw') + '"]').focus(); return; }
       if (t.closest('[data-find]')) { find(); return; }
@@ -99,7 +100,7 @@
       if (tk) {
         var f = found.filter(function (q) { return q.name === tk.getAttribute('data-take'); })[0];
         add({ name: f.name, site: f.site, videos: f.videos, views: f.views, on: true, added: true, est: true });
-        OB.toast(f.name + ' added. Radar watches it from today.');
+        OB.toast(OB.ui.ph(f.name + ' added. Radar watches it from today.', f.name + ' added to Radar.'));
       }
     });
     el.addEventListener('submit', function (ev) {
@@ -107,7 +108,7 @@
       var inp = el.querySelector('[data-add] input'), v = inp.value.trim();
       if (!v) { inp.focus(); return; }
       var p = parse(v);
-      if (!p.name) { OB.toast('That doesn\'t look like a website or a handle yet'); return; }
+      if (!p.name) { OB.toast(OB.ui.ph('That doesn\'t look like a website or a handle yet', 'That\'s not a website or handle yet')); return; }
       if (has(p.name, p.site)) { OB.toast(p.name + ' is already on your list'); return; }
       add({ name: p.name, site: p.site, videos: 0, views: 0, on: true, added: true, checking: true });
       el.querySelector('[data-add] input').focus();
@@ -128,17 +129,19 @@
     }, 1600);
   }
 
-  OB.radarManage = function (node, cb) {
-    el = node; onChange = cb;
+  OB.radarManage = function (node, cb, closed) {
+    el = node; onChange = cb; onClose = closed;
     // a check left half-way (the page was closed during it) finishes now
     r.rivals.forEach(function (x) { if (x.checking) { var n = 12 + (OB.hash(x.site) % 25); x.checking = false; x.est = true; x.videos = n; x.views = n * 30000; } });
     bind(); draw();
     return {
       open: function (doFind) {
         open = true; draw(); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-        if (doFind && !finding) { find(); } else if (!doFind) { el.querySelector('[data-add] input').focus({ preventScroll: true }); }
+        // touch: no focus on open, so no keyboard covers the list you came to see; tapping the field (or Add) focuses it
+        if (doFind && !finding) { find(); } else if (!doFind && !window.matchMedia('(hover: none) and (pointer: coarse)').matches) { el.querySelector('[data-add] input').focus({ preventScroll: true }); }
       },
-      count: function () { return on().length; }
+      count: function () { return on().length; },
+      isOpen: function () { return open; }
     };
   };
 })();

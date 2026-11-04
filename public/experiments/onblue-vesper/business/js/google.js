@@ -19,6 +19,7 @@
     '.ob-gbar button{display:grid;place-items:center;width:2.75rem;height:2.5rem;border:0;border-radius:0.5rem;background:none;color:#444746;cursor:pointer}' +
     '.ob-gbar button:hover,.ob-gbar button:focus-visible{outline:0;background:#e9eaec}' +
     '.ob-gwin iframe{flex:1;width:100%;border:0}' +
+    '@media (max-width:700px){.ob-gpop{padding:0;place-items:end stretch}.ob-gwin{width:100%;height:calc(100dvh - 12px - env(safe-area-inset-top));border-radius:14px 14px 0 0;padding-bottom:env(safe-area-inset-bottom)}.ob-gbar{height:48px}.ob-gbar button{height:44px}}' +
     '@media (prefers-reduced-motion:reduce){.ob-gpop,.ob-gwin{transition:none}}';
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 

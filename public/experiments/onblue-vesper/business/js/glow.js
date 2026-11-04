@@ -18,6 +18,8 @@
   if (!hero || !arc) { return; }
 
   var GW = 64, GH = 28, BASE = 0.72;            // glow canvas size; the top of the frames sits at 72% down it
+  // on a phone the frames leave gaps, so the light must reach clear by its box's foot (no seam)
+  var phone = window.matchMedia('(max-width: 700px)').matches;
   var glow = document.createElement('canvas');
   glow.className = 'ob-glow'; glow.width = GW; glow.height = GH; glow.setAttribute('aria-hidden', 'true');
   hero.insertBefore(glow, hero.firstChild);
@@ -87,7 +89,7 @@
     for (var y = 0; y < GH; y++) {
       var u, alpha, half;
       if (y <= yb) { u = (yb - y) / yb; alpha = Math.pow(1 - u, 1.5); half = 0.4 - 0.27 * u; }   // a narrow cone, tightening as it rises
-      else { u = (y - yb) / (GH - yb); alpha = 1 - u * 0.5; half = 0.4; }
+      else { u = (y - yb) / (GH - yb); alpha = phone ? Math.pow(1 - u, 2) : 1 - u * 0.5; half = 0.4; }
       for (var xx = 0; xx < GW; xx++) {
         var off = Math.abs((xx + 0.5) / GW - 0.5), edge = Math.max(0, 1 - off / half);
         var al = alpha * edge * edge * (3 - 2 * edge), o = (y * GW + xx) * 4;
