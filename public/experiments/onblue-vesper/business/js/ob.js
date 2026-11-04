@@ -52,7 +52,7 @@
 
   var P = 'fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
   var ICONS = {
-    spark: '<path d="M12 3c.6 4.2 2.3 6 6.5 6.7-4.2.7-5.9 2.5-6.5 6.7-.6-4.2-2.3-6-6.5-6.7C9.7 9 11.4 7.2 12 3Z" fill="currentColor"/><path d="M18.5 15.5c.2 1.4.8 2 2.2 2.2-1.4.2-2 .8-2.2 2.2-.2-1.4-.8-2-2.2-2.2 1.4-.2 2-.8 2.2-2.2Z" fill="currentColor"/>',
+    spark: '<path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z" fill="currentColor"/>',   // the onBlue mark itself (Appy: the two-star sparkle read badly at small sizes)
     arrow: '<path ' + P + ' d="M5 12h14M13 6l6 6-6 6"/>',
     check: '<path ' + P + ' d="m5 12.5 4.2 4L19 7"/>',
     close: '<path ' + P + ' d="M6 6l12 12M18 6 6 18"/>',

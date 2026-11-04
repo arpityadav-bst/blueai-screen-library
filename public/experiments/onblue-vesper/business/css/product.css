@@ -151,3 +151,25 @@ button.ob-chip--on:hover { border-color: transparent; color: #fff; }
   .ob-btn, .ob-toast, a.ob-card, button.ob-card, .ob-edit { transition: none; }
   .ob-btn:hover, a.ob-card:hover, button.ob-card:hover { transform: none; }
 }
+
+/* THE DROPDOWN (js/select.js upgrades every <select>): a quiet text button
+   with a chevron, and a white menu card with a volt tick on the chosen row */
+.ob-sel { position: relative; display: inline-block; max-width: calc(100% + 0.5rem); margin-left: -0.5rem; }   /* the nudge lives on the wrapper: on the button it shrank the box and cut the text */
+.ob-sel-native { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.ob-sel-btn { display: inline-flex; align-items: center; gap: 0.375rem; max-width: 100%; margin: 0; padding: 0.25rem 0.5rem; border: 1px solid transparent; border-radius: 0.5rem; background: none; color: var(--ink-1); font: inherit; font-weight: 500; text-align: left; cursor: pointer; transition: background 0.15s var(--ease), border-color 0.15s var(--ease); }
+.ob-sel-btn > span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.ob-sel-btn.is-empty { color: var(--ink-3); }
+.ob-sel-btn svg { flex: none; width: 0.875rem; height: 0.875rem; color: var(--ink-3); transition: transform 0.2s var(--ease); }
+.ob-sel-btn:hover { background: var(--surface-2); }
+.ob-sel-btn:focus-visible { outline: 0; box-shadow: var(--p-ring); }
+.ob-sel.is-open .ob-sel-btn { border-color: var(--line-2); background: #fff; }
+.ob-sel.is-open .ob-sel-btn svg { transform: rotate(180deg); }
+.ob-sel-menu { position: fixed; z-index: 90; min-width: 12rem; margin: 0; padding: 0.375rem; list-style: none; border: 1px solid rgba(10, 10, 9, 0.08); border-radius: 0.875rem; background: #fff; box-shadow: var(--p-lift); opacity: 0; transform: translateY(-0.25rem) scale(0.98); transform-origin: top left; pointer-events: none; transition: opacity 0.15s ease, transform 0.2s var(--ease); }
+.ob-sel.is-open .ob-sel-menu { opacity: 1; transform: none; pointer-events: auto; }
+.ob-sel-menu li { display: flex; align-items: center; gap: 0.625rem; padding: 0.5625rem 0.75rem 0.5625rem 0.5rem; border-radius: 0.5rem; color: var(--ink-2); font: 500 0.9375rem/1.2 var(--font); white-space: nowrap; cursor: pointer; }
+.ob-sel-menu li.is-active { background: var(--surface-2); color: var(--ink-1); }
+.ob-sel-menu li[aria-selected="true"] { color: var(--ink-1); }
+.ob-sel-menu li i { display: grid; flex: none; place-items: center; width: 1.125rem; height: 1.125rem; border-radius: 50%; }
+.ob-sel-menu li[aria-selected="true"] i { background: var(--accent); color: var(--on-accent); }
+.ob-sel-menu li i svg { width: 0.6875rem; height: 0.6875rem; }
+@media (prefers-reduced-motion: reduce) { .ob-sel-menu, .ob-sel-btn svg { transition: none; } }

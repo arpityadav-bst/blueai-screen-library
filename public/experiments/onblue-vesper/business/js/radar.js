@@ -45,6 +45,8 @@
       '<div class="ob-rd-top"><div class="ob-card ob-card--lit ob-rd-hero"><div class="ob-phone">' + OB.videoTag(OB.film(top.s.film)) + '</div><div class="ob-rd-hero-t">' +
       '<small>Best of your competitors right now</small><b>' + OB.ui.nb(top.s.title) + '</b><span class="ob-rd-hero-by">' + e(top.x.name) + ' &middot; ' + e(top.s.format) + '</span>' +
       '<span class="ob-rd-views"><strong>' + OB.short(top.s.views) + '</strong>&nbsp;views</span>' +
+      // what makes it work, as BlueAI reads it: fills the card with the reason to remix, not air
+      '<div class="ob-rd-why"><small>Why it works, as BlueAI reads it</small><ul>' + ['A hook in the first second', 'One character, one small problem', 'Short enough to watch twice'].map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div>' +
       '<p class="ob-rd-say">' + OB.agent() + '<span>BlueAI keeps the format and the hook, and makes it about ' + e(r.brand) + '.</span></p>' +
       '<span data-hero>' + remixBtn(top.x, 'hero', true) + '</span></div></div>' +
 
