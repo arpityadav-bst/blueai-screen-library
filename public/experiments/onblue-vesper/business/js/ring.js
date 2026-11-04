@@ -37,7 +37,11 @@
     for (n = 9; n <= 40; n++) { w = 2 * R * Math.sin(Math.PI / n) - gap; if (w <= cap) { break; } }
     // a phone (620 wide or less) keeps the ring 3D with fixed steps: 40deg (9
     // frames, about three across) on a tall phone, 30deg (12) on the rest
-    if (vw <= 620) { n = vh >= 780 ? 9 : 12; }
+    // (Appy: on a phone the videos sit closer and larger) a wider ring (80% of the
+    // screen, not 70%) and a 10px gap between frames instead of ~25
+    var phone = vw <= 620;
+    if (phone) { n = vh >= 780 ? 9 : 12; R = 0.8 * vw; gap = 10; }
+    hero.style.setProperty('--ring-r', phone ? R.toFixed(2) + 'px' : '');
     n = Math.min(n, 40); w = Math.max(60, 2 * R * Math.sin(Math.PI / n) - gap);
     hero.style.setProperty('--ring-w', w.toFixed(2) + 'px');
     hero.style.setProperty('--ring-step', (360 / n).toFixed(4) + 'deg');
