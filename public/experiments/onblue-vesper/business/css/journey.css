@@ -79,3 +79,13 @@
 .oj-scan { position: absolute; z-index: 2; left: 0; right: 0; top: -60px; height: 60px; background: linear-gradient(180deg, rgba(198, 244, 50, 0), rgba(198, 244, 50, 0.55) 72%, rgba(198, 244, 50, 0)); }
 .at-1 .oj-scan { animation: oj-scan 2.4s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
 @keyframes oj-scan { to { transform: translateY(580px); } }
+
+/* START AND END HOLD (Appy, 2026-11-05): the first and last titles pin with the
+   stage for half a screen. At the start the section title scrolls out first,
+   and only then do the steps move; at the end the last title settles beside
+   the stage, and only further scrolling brings the next section up. Each
+   title is a stage-high box, pinned where the stage pins. */
+@media (min-width: 901px) {
+  .oj-step:first-child, .oj-step:last-child { align-items: flex-start; min-height: calc(50vh + var(--oj-h, 100vh) / 2); }
+  .oj-step:first-child > div, .oj-step:last-child > div { position: sticky; top: calc((100vh - var(--oj-h, 100vh)) / 2); display: flex; flex-direction: column; justify-content: center; min-height: var(--oj-h, 100vh); }
+}
