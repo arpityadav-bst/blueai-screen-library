@@ -1,7 +1,7 @@
 /* PRICING as one instrument, not two SaaS cards (Appy: "in line with our theme,
    not a Fastlane copy"). The budget meter is one sentence that answers itself
-   ("$500 pays for up to 62,500 US views"), a volt slider, and a halftone field
-   where each dot is 1,000 US views: the lit dots grow with the budget, in the
+   ("$500 pays for up to 62,500 verified views"), a volt slider, and a halftone field
+   where each dot is 1,000 verified views: the lit dots grow with the budget, in the
    same dot language as the headline's tone. The panel is lit from the top like
    the face-off's onBlue column. The terms use the face-off's yes dot. */
 .ob-meter { position: relative; overflow: hidden; margin-top: var(--head-gap); padding: 2.75rem 3rem 2.25rem; border: 1px solid var(--line); border-radius: 1.25rem; background: radial-gradient(ellipse 60% 55% at 50% 0%, rgba(198, 244, 50, 0.12), rgba(198, 244, 50, 0) 75%), var(--surface); }
@@ -57,7 +57,7 @@
   .ob-meter .ob-range::-moz-range-thumb { width: 1.75rem; height: 1.75rem; }
   .ob-meter-dots { grid-template-rows: repeat(25, auto); gap: 0.1875rem; }   /* 625 = 25 x 25: no ragged last column */
   #pricing .ob-h2 { margin-left: 0; text-align: left; }   /* reads as one left-aligned block with its meter, like the FAQ under it */
-  #pricing .ob-h2 .ob-tone { white-space: nowrap; }   /* "US views" never splits */
+  #pricing .ob-h2 .ob-tone { white-space: nowrap; }   /* "verified views" never splits */
   .ob-pledge span { display: block; }   /* two lines, one sentence each */
   .ob-price-foot .ob-plats { display: grid; grid-template-columns: auto auto; justify-content: start; gap: 0.5rem 0.75rem; }
   .ob-dark .ob-price-foot .ob-chip--on { grid-column: 1 / -1; justify-self: start; height: 2rem; border: 1px solid var(--line-2); background: none; color: var(--ink-1); font-size: 0.8125rem; }

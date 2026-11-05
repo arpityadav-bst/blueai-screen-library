@@ -28,11 +28,11 @@
       return skip ? '' : '<span' + (last ? ' class="is-today"' : '') + ' style="left:' + (at / W * 100) + '%">' + (last ? 'Today' : d.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })) + '</span>';
     }).join('');
     return '<div class="ob-chart ob-an-chart"><div class="ob-an-grid" aria-hidden="true"><span><i>' + OB.short(top) + '</i></span><span><i>' + OB.short(top / 2) + '</i></span><span><i>0</i></span></div>' +
-      '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" role="img" aria-label="Daily US views">' + bars +
+      '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" role="img" aria-label="Daily verified views">' + bars +
       '</svg><div class="ob-chart-x">' + labels + '</div><div class="ob-chart-tip" data-tip hidden></div></div>';
   }
   function head() {
-    return '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Analytics</h1><p class="ob-p-lede">US views by day, and what they cost. You pay $8 per 1,000 US views.</p></div></header>';
+    return '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Analytics</h1><p class="ob-p-lede">verified views by day, and what they cost. You pay $8 per 1,000 verified views.</p></div></header>';
   }
 
   function render() {
@@ -42,8 +42,8 @@
       // what the user already did leads: videos approved and with creators, then anything still waiting
       var posting = A.st.videos.filter(function (v) { return v.status === 'posting'; }).length, w = k.waiting;
       var title = posting ? (posting === 1 ? '1 video is' : posting + ' videos are') + ' with creators now' : 'Your first views show up here the day creators post';
-      var body = posting ? 'Their first US views show up here within a day, and nothing is charged until they do.' + (A.st.paused ? ' Posting is paused, so they go out when you resume.' : '') :
-        'Approve a video and real creators start posting it on YouTube Shorts. Views usually show up within a day, and nothing is charged until they do.';
+      var body = posting ? 'Their first verified views show up here within a day, and nothing is charged until they do.' + (A.st.paused ? ' Posting is paused, so they go out when you resume.' : '') :
+        'Approve a video and creators start posting it on YouTube Shorts. Views usually show up within a day, and nothing is charged until they do.';
       var cta = w ? '<a class="ob-btn ob-btn--ink" href="studio.html">' + (w === 1 ? 'Review the 1 waiting' : 'Review the ' + w + ' waiting') + '</a>' : posting ? '<a class="ob-btn ob-btn--ink" href="studio.html">See them in Studio</a>' : '<a class="ob-btn ob-btn--ink" href="home.html">Back to Home</a>';
       main.innerHTML = head() + '<div class="ob-card ob-card--lit ob-pg-empty ob-an-empty"><div class="ob-an-ghost" aria-hidden="true">' + new Array(14).join('<i></i>') + '</div>' +
         '<b>' + title + '</b><p>' + body + '</p>' + cta +
@@ -52,7 +52,7 @@
     }
     // what only this page knows: how long the budget lasts at the pace so far (an estimate, and it says so)
     var weekly = k.spent / Math.max(1, k.days) * 7, weeks = weekly ? Math.round(k.left / weekly) : 0;
-    var kp = [['US views', OB.fmt(k.views)], ['Spent', '$' + OB.fmt(k.spent)], ['Budget lasts', '~' + weeks + '<small>weeks</small>'], ['Videos live', k.live], ['Creators who posted', k.creators]];
+    var kp = [['verified views', OB.fmt(k.views)], ['Spent', '$' + OB.fmt(k.spent)], ['Budget lasts', '~' + weeks + '<small>weeks</small>'], ['Videos live', k.live], ['Creators who posted', k.creators]];
     var top = A.views(live[0]) || 1;
     // row costs add up to the Spent figure exactly by largest remainder: round
     // down, then hand the missing dollars to the rows with the biggest
@@ -67,7 +67,7 @@
     main.innerHTML = head() + '<div class="ob-card ob-an-strip">' + kp.map(function (x) { return '<div><small>' + x[0] + '</small><span class="ob-p-figure">' + x[1] + '</span></div>'; }).join('') + '</div>' +
       '<section class="ob-card ob-card--lit ob-an-panel"><div class="ob-an-head"><div><h2 class="ob-p-h2">Daily views</h2><span class="ob-p-note">Last ' + days.length + ' days, today so far</span></div>' +
       '<div class="ob-legend"><span><i style="background:var(--an-new)"></i>New, posted in the last 3 days</span><span><i style="background:var(--an-old)"></i>Older videos</span></div></div>' + chart(days) + '</section>' +
-      '<section><div class="ob-p-sect"><h2 class="ob-p-h2">Every video</h2><span class="ob-p-note">' + live.length + ' live, most viewed first</span></div><div class="ob-table-wrap ob-an-table"><table class="ob-table"><thead><tr><th>Video</th><th>Posted</th><th>US views</th><th>Cost</th></tr></thead><tbody>' +
+      '<section><div class="ob-p-sect"><h2 class="ob-p-h2">Every video</h2><span class="ob-p-note">' + live.length + ' live, most viewed first</span></div><div class="ob-table-wrap ob-an-table"><table class="ob-table"><thead><tr><th>Video</th><th>Posted</th><th>verified views</th><th>Cost</th></tr></thead><tbody>' +
       live.map(function (v, i) {
         var vw = A.views(v);
         return '<tr><td><a href="studio.html#' + v.id + '"><span class="ob-table-th"><img alt="" src="' + OB.film(v.film).poster + '"></span>' + e(v.title) + '</a></td><td>' + (v.ago === 0 ? 'Today' : v.ago === 1 ? 'Yesterday' : v.ago + ' days ago') +

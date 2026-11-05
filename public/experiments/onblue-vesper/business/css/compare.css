@@ -40,7 +40,7 @@
   .cmp-row > span:not(:first-child) { padding-top: 0.0625rem; }
   .cmp-head { align-items: center; }
   .cmp-lit { left: 52%; width: 24%; }
-  .cmp-words small { white-space: normal; font-size: 0.75rem; text-wrap: balance; }   /* "per 1,000 / US views", no lone "views" */
+  .cmp-words small { white-space: normal; font-size: 0.75rem; text-wrap: balance; }   /* "per 1,000 / verified views", no lone "views" */
   .cmp-key { justify-content: center; gap: 0.75rem; margin: 0.75rem 0 0; color: var(--ink-3); font: 400 0.75rem/1 var(--font); }
   .cmp-key span { display: inline-flex; align-items: center; gap: 0.375rem; }
   .cmp-n { border-color: rgba(255, 255, 255, 0.32); }

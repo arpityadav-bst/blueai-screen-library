@@ -219,7 +219,7 @@
       }
     },
     {
-      key: 'wins', label: 'What wins', next: 'Next: my angles',
+      key: 'wins', label: 'What wins', next: 'Show my video ideas',
       say: function (r) { return ['Studying what wins in ' + r.category.toLowerCase(), 'Going through every Short your competitors posted.']; },
       work: ['Collecting their Shorts', 'Sorting them by format', window.matchMedia('(max-width: 700px)').matches ? 'Finding the ones that kept going' : 'Finding the ones that kept getting views', 'Measuring which formats get the views'],
       // the wait shows what this step works through, not a claim about results
@@ -228,7 +228,7 @@
         syncRivals(r);
         // the share is said once, as the lit card's figure; the line says what it is ranked on
         var top = r.formats[0];
-        var next = r.today === 'Not yet' ? 'You haven\'t started yet, so this is where to start.' : 'Next, I\'ll turn it into angles for you.';
+        var next = r.today === 'Not yet' ? 'You haven\'t started yet, so this is where to start.' : 'Next, I\'ll turn it into video ideas for you.';
         return [top.name + ' wins in ' + r.category.toLowerCase(), 'Ranked on views across ' + (estimated(r) ? 'about ' : 'all ') + r.rivalsTotal + ' Shorts your competitors posted in 6 months. ' + next, 'wins'];
       },
       result: function (r) {

@@ -21,15 +21,15 @@
     ['Learns your brand from one link', 'y', 'p', 'n', 'n', 'p'],
     ['Finds your competitors and what they post', 'y', 'p', 'p', 'n', 'n'],
     ['Finds the formats that win in your category', 'y', 'p', 'n', 'n', 'n'],
-    ['Posted by thousands of real creators on their own channels', 'y', 'n', 'n', 'p', 'n'],
-    ['You pay only for US views', 'y', 'n', 'n', 'n', 'n'],
+    ['Posted by thousands of creators on their own channels', 'y', 'n', 'n', 'p', 'n'],
+    ['You pay only for verified views', 'y', 'n', 'n', 'n', 'n'],
     ['Reads the results and doubles down', 'y', 'p', 'p', 'n', 'n'],
     ['Time to go live', 'Days', 'Months', 'Your evenings', 'Weeks', 'You still post'],
-    ['Price', '$8 per 1,000 US views', 'Monthly retainer', 'Your time', 'Per video', 'Subscription']
+    ['Price', '$8 per 1,000 verified views', 'Monthly retainer', 'Your time', 'Per video', 'Subscription']
   ];
   OB.COMPARE = { COLS: COLS, ROWS: ROWS };   // drawn as the face-off by js/compare.js
 
-  // the budget meter: what a budget pays for at $8 per 1,000 US views, drawn as
+  // the budget meter: what a budget pays for at $8 per 1,000 verified views, drawn as
   // a halftone field where each dot is 1,000 views; the lit dots grow with it
   var range = document.querySelector('[data-budget]');
   if (range) {
@@ -53,11 +53,11 @@
   }
 
   var FAQ = [
-    ['What do I pay?', '$8 for every 1,000 views from the US. You set a budget; when it is spent, posting stops. No setup fee and no retainer.'],
-    ['Do you guarantee views?', 'No, and nobody honest can. You pay only for the US views your videos actually get. If a video doesn\'t land, it costs you nothing. Each success is yours, our failures are ours.'],
+    ['What do I pay?', '$8 for every 1,000 verified views. You set a budget; when it is spent, posting stops. No setup fee and no retainer.'],
+    ['Do you guarantee views?', 'No, and nobody honest can. You pay only for the verified views your videos actually get. If a video doesn\'t land, it costs you nothing. Each success is yours, our failures are ours.'],
     ['Who posts the videos?', 'Creators from the onBlue community post them on their own channels. BlueAI matches each video to creators whose audience fits your buyers.'],
     ['Which platforms?', 'YouTube Shorts today. TikTok and Instagram are coming.'],
-    ['What is in the free report?', 'Your brand as BlueAI reads it, your competitors, what wins in your category, the angles to go after, your first three videos and a plan. It takes about two minutes.'],
+    ['What is in the free report?', 'Your brand as BlueAI reads it, your competitors, what wins in your category, video ideas worth making, your first three videos and a plan. It takes about two minutes.'],
     ['I don\'t have a website. Can I still start?', 'Yes. Answer three quick questions instead and BlueAI starts the same way.']
   ];
   var faq = document.querySelector('[data-faq]');

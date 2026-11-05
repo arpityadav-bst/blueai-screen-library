@@ -1,7 +1,7 @@
 /* The dashboard's data, built from the free report: the videos (and where
    each one is: making, waiting for your yes, posting, live), the daily views
    timeline (daily delta, old videos included, Ashish 2026-11-03), spend at
-   $8 per 1,000 US views, and each competitor's top Shorts. Illustrative and
+   $8 per 1,000 verified views, and each competitor's top Shorts. Illustrative and
    deterministic. One clip per video, and a clip's format is the format the
    card says. Everything follows the report: the angles you kept, the
    formats it found, your budget and pace, and how far you got (r.done, the

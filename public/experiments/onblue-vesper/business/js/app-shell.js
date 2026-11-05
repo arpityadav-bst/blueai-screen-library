@@ -27,7 +27,7 @@
     var set = A.st.budgetSet || P.finished;
     var used = A.st.budget ? Math.max(0, Math.min(100, Math.round(k.spent / A.st.budget * 100))) : 0;
     // the same exact figure Analytics shows, so the two never disagree; nothing spent says it once
-    var some = k.spent >= 1, spentLine = some ? '$' + OB.fmt(k.spent) + ' spent, ' + OB.fmt(k.views) + ' US views' : 'Nothing spent yet';
+    var some = k.spent >= 1, spentLine = some ? '$' + OB.fmt(k.spent) + ' spent, ' + OB.fmt(k.views) + ' verified views' : 'Nothing spent yet';
     var budget = set ? '<a class="ob-side-budget" href="plan.html" aria-label="Budget: $' + OB.fmt(k.left) + ' left of $' + OB.fmt(A.st.budget) + '">' +
       '<span class="ob-side-budget-top"><span class="ob-side-budget-l">Budget' + (A.st.paused ? '<em>Paused</em>' : '') + '</span>' + (some ? '<span>of $' + OB.fmt(A.st.budget) + '</span>' : '') + '</span>' +
       '<b>$' + OB.fmt(some ? k.left : A.st.budget) + (some ? '<small>left</small>' : '') + '</b>' +

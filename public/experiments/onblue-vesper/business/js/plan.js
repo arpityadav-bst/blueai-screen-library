@@ -1,6 +1,6 @@
 /* Plan: what BlueAI is running and what it costs. The budget reads like the
    homepage's pricing meter (one sentence that answers itself, the run's
-   slider, a quiet dot field where each dot is 2,500 US views: ink for views
+   slider, a quiet dot field where each dot is 2,500 verified views: ink for views
    already paid for, grey for what the budget still buys, pale for room to
    raise it). Then the angles, the
    pace as one row, and the rules as a list, each with the face-off's yes dot. */
@@ -8,9 +8,9 @@
   'use strict';
   var OB = window.OB, A = OB.app, r = A.r, e = OB.esc;
   var main = document.querySelector('[data-main]');
-  var MIN = 100, MAX = 5000, PER = 20;   // 250 dots of $20 (2,500 US views), the $5,000 top end
+  var MIN = 100, MAX = 5000, PER = 20;   // 250 dots of $20 (2,500 verified views), the $5,000 top end
   var PAUSED = 'Paused. No new videos go out; views on Shorts already live still count.';
-  var PER_VIDEO_WEEK = 80;   // an estimate: a live video earns about $80 of US views a week
+  var PER_VIDEO_WEEK = 80;   // an estimate: a live video earns about $80 of verified views a week
   function lasts(budget, perWeek) { return Math.max(1, Math.round(budget / (perWeek * PER_VIDEO_WEEK))); }
   var yes = function (sm) { return '<span class="ob-yes' + (sm ? ' ob-yes--sm' : '') + '">' + OB.icon('check') + '</span>'; };
 
@@ -26,21 +26,21 @@
   function sect(t, note) { return '<div class="ob-p-sect"><h2 class="ob-p-h2">' + t + '</h2>' + (note ? '<span class="ob-p-note">' + note + '</span>' : '') + '</div>'; }
 
   function render() {
-    // phones: half as many dots in five rows, each 5,000 US views, so the field stays short
+    // phones: half as many dots in five rows, each 5,000 verified views, so the field stays short
     var st = A.st, dots = '', paused = st.paused, k = A.kpis(), ph = phone(), per = ph ? PER * 2 : PER, n = MAX / per;
     for (var i = 0; i < n; i++) { dots += '<i></i>'; }
     main.innerHTML = head(st) +
 
       '<section class="ob-card ob-card--lit ob-pl-meter' + (paused ? ' is-paused' : '') + '"><div class="ob-pl-top"><div><p class="ob-pl-eq" data-eq></p>' +
       '<p class="ob-pl-sub" data-sub></p></div>' +
-      '<div class="ob-pl-price"><span class="ob-p-figure">$8<small>per 1,000 US views</small></span></div></div>' +
+      '<div class="ob-pl-price"><span class="ob-p-figure">$8<small>per 1,000 verified views</small></span></div></div>' +
       '<input class="ob-range ob-pl-range" type="range" min="' + MIN + '" max="' + MAX + '" step="50" value="' + st.budget + '" aria-label="Budget in dollars" data-budget>' +
       '<div class="ob-pl-ends" aria-hidden="true"><span>$' + OB.fmt(MIN) + '</span><span>$' + OB.fmt(MAX) + '</span></div>' +
       '<div class="ob-pl-dots" aria-hidden="true" data-dots>' + dots + '</div>' +
-      '<div class="ob-pl-key"><span><i class="is-spent"></i><b data-spent></b> spent</span><span><i class="is-on"></i><b data-left></b> left</span><span><i></i>Room to raise your budget</span><span class="ob-pl-unit">Each dot is ' + (ph ? '5,000' : '2,500') + ' US views</span></div>' +
+      '<div class="ob-pl-key"><span><i class="is-spent"></i><b data-spent></b> spent</span><span><i class="is-on"></i><b data-left></b> left</span><span><i></i>Room to raise your budget</span><span class="ob-pl-unit">Each dot is ' + (ph ? '5,000' : '2,500') + ' verified views</span></div>' +
       '<ul class="ob-pl-terms"><li>' + yes() + 'No setup fee</li><li>' + yes() + 'No retainer</li><li>' + yes() + 'Charged only for views that happen</li></ul></section>' +
 
-      '<section' + (paused ? ' class="ob-pl-dim"' : '') + '>' + sect('Angles BlueAI goes after', paused ? 'These apply when you resume posting' : (window.matchMedia('(hover: none)').matches ? 'Tap' : 'Click') + ' an angle to turn it on or off') + '<div class="ob-pg-grid2">' +
+      '<section' + (paused ? ' class="ob-pl-dim"' : '') + '>' + sect('Video ideas BlueAI makes', paused ? 'These apply when you resume posting' : (window.matchMedia('(hover: none)').matches ? 'Tap' : 'Click') + ' an idea to turn it on or off') + '<div class="ob-pg-grid2">' +
       r.angles.map(function (a, i) {
         return '<div class="ob-pa' + (a.on ? '' : ' is-off') + '" data-angle="' + i + '" role="checkbox" tabindex="0" aria-checked="' + a.on + '">' +
           '<span class="ob-pa-mark">' + OB.icon('check') + '</span><span class="ob-pa-off">Off</span><small>' + e(a.who) + '</small><b>' + e(a.say) + '</b><span class="ob-chip">' + e(a.format) + '</span></div>';
@@ -51,7 +51,7 @@
       [3, 5, 7, 10].map(function (n) { return '<button class="ob-pick" type="button" aria-pressed="' + (st.perWeek === n) + '" data-n="' + n + '" aria-label="' + n + ' a week">' + n + '<span class="ob-pl-aw"> a week</span></button>'; }).join('') + '</div></div>' +
       '<ul class="ob-card ob-pl-rules">' +
       '<li>' + yes() + '<div><b>You approve every video</b><span>Always on. Nothing posts without your yes.</span></div></li>' +
-      '<li>' + yes() + '<div><b>' + (r.where === 'Worldwide' ? 'Buyers worldwide' : 'Buyers in ' + (r.where === 'United States' ? 'the United States' : r.where === 'UK' ? 'the UK' : e(r.where))) + '</b><span>Creators are matched to audiences where your buyers are. ' + (r.where === 'United States' ? 'You pay for US views.' : 'Views are billed in the US only for now.') + '</span></div></li>' +
+      '<li>' + yes() + '<div><b>' + (r.where === 'Worldwide' ? 'Buyers worldwide' : 'Buyers in ' + (r.where === 'United States' ? 'the United States' : r.where === 'UK' ? 'the UK' : e(r.where))) + '</b><span>Creators are matched to audiences where your buyers are. You pay only for verified views.</span></div></li>' +
       '<li><span class="ob-pl-where" aria-hidden="true">' + OB.icon('youtube', 14) + '</span><div><b>Where it posts</b><span class="ob-plats ob-pl-plats"><span class="ob-chip">' + OB.icon('youtube', 14) + 'YouTube Shorts</span><span class="ob-chip ob-chip--soon">TikTok' + (ph ? ' soon' : ', coming') + '</span><span class="ob-chip ob-chip--soon">Instagram' + (ph ? ' soon' : ', coming') + '</span></span></div></li>' +
       '</ul></section>';
 
@@ -62,11 +62,11 @@
       // once money is going out, progress leads and the budget becomes the line under it
       if (live) {
         var perWeek = sp / Math.max(1, k.days) * 7, weeks = perWeek ? Math.max(0, Math.round((v - sp) / perWeek)) : 0;
-        main.querySelector('[data-eq]').innerHTML = '<b>' + OB.fmt(k.views) + '</b> of <b>' + OB.fmt(cap) + '</b> US views delivered';
+        main.querySelector('[data-eq]').innerHTML = '<b>' + OB.fmt(k.views) + '</b> of <b>' + OB.fmt(cap) + '</b> verified views delivered';
         sub.textContent = 'Your $' + OB.fmt(v) + ' buys up to ' + OB.fmt(cap) + '. At this pace it lasts about ' + weeks + ' more week' + (weeks === 1 ? '' : 's') + '.';
       } else {
         var wk = lasts(v, st.perWeek);
-        main.querySelector('[data-eq]').innerHTML = '<b>$' + OB.fmt(v) + '</b> pays for up to <b>' + OB.fmt(cap) + '</b> US views';
+        main.querySelector('[data-eq]').innerHTML = '<b>$' + OB.fmt(v) + '</b> pays for up to <b>' + OB.fmt(cap) + '</b> verified views';
         sub.textContent = '$' + OB.fmt(v) + ' in total, not monthly. At ' + st.perWeek + ' new videos a week it usually lasts about ' + wk + ' week' + (wk === 1 ? '' : 's') + ', an estimate.';
       }
       main.querySelector('[data-spent]').textContent = '$' + OB.fmt(sp);

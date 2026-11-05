@@ -8,7 +8,7 @@
   'use strict';
   var OB = window.OB, A = OB.app, r = A.r, e = OB.esc, P = A.progress;
   var main = document.querySelector('[data-main]');
-  var LEFT = ['your brand', 'competitors', 'what wins', 'your angles', 'first videos', 'your plan'];
+  var LEFT = ['your brand', 'competitors', 'what wins', 'video ideas', 'first videos', 'your plan'];
   var used;
 
   function hello() { var h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; }
@@ -34,7 +34,7 @@
   function resume() {
     if (P.finished) { return ''; }
     var rest = LEFT.slice(P.done), bar = LEFT.map(function (_, i) { return '<i' + (i < P.done ? ' class="is-done"' : '') + '></i>'; }).join('');
-    return '<section class="ob-resume"><div class="ob-resume-t"><b>Finish your report</b><p>Still to go: ' + e(rest.join(', ')) + '. BlueAI makes your first videos once your angles are set.</p>' +
+    return '<section class="ob-resume"><div class="ob-resume-t"><b>Finish your report</b><p>Still to go: ' + e(rest.join(', ')) + '. BlueAI makes your first videos once your video ideas are set.</p>' +
       '<span class="ob-resume-bar" aria-label="' + P.done + ' of ' + P.total + ' steps done">' + bar + '</span></div>' +
       '<a class="ob-btn ob-btn--ink" href="../run.html?resume=1">Continue my report' + OB.icon('arrow', 16) + '</a></section>';
   }

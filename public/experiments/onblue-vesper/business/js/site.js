@@ -165,10 +165,10 @@
     go({ sell: f.sell.value.trim(), buyers: f.buyers.value.trim(), where: where ? where.textContent : 'United States' });
   });
 
-  // back from the run by any route (the logo, "Done for now"), with a report and no
-  // account yet: the hero's quiet line offers the report back instead of "No website?"
+  // back from the run by any route (the logo, "Done for now") before starting it:
+  // the hero's quiet line offers the report back instead of "No website?"
   var rep = OB.report.get(), alt = document.querySelector('.ob-hero-alt');
-  if (alt && rep && !OB.store('onblue-app-stage')) {
+  if (alt && rep && !rep.started) {
     alt.innerHTML = 'Welcome back. <a class="ob-link" href="run.html?resume=1">Continue your report' + (rep.brand === 'Your brand' ? '' : ' for ' + OB.esc(rep.brand)) + '</a>';
   }
 })();

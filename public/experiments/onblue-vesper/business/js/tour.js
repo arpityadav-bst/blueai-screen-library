@@ -12,8 +12,8 @@
   var OB = window.OB;
   var TIPS = [
     ['[data-tour="needs"]', 'Your yes comes first', 'New videos wait here until you approve them. Watch one first if you like.'],
-    ['[data-tour="prompt"]', 'Ask BlueAI', 'Ask for anything here: a new video, a new angle, a remix of a competitor.'],
-    ['.ob-side-budget|[data-nav="plan"]', 'Your budget', 'Set it on Plan, with your pace. You pay $8 per 1,000 US views, nothing else.'],
+    ['[data-tour="prompt"]', 'Ask BlueAI', 'Ask for anything here: a new video, a new idea, a remix of a competitor.'],
+    ['.ob-side-budget|[data-nav="plan"]', 'Your budget', 'Set it on Plan, with your pace. You pay $8 per 1,000 verified views, nothing else.'],
     ['[data-nav="studio"]', 'Studio', 'Every video BlueAI makes. Ask for changes in plain words.'],
     ['[data-nav="brand"]', 'Brand', 'What BlueAI knows about you. Change it once and every video uses it.'],
     ['[data-nav="radar"]', 'Radar and Analytics', 'Radar watches your competitors every day. Analytics shows your views and what they cost.', '[data-nav="analytics"]']

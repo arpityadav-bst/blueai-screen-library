@@ -66,7 +66,7 @@
     // every line here is from the 2026-11-03 PM sync (Ashish) and the overhaul
     // plan: the agent learns the company, finds competitors and the formats that
     // win, makes the videos, a community of creators posts them, you pay per
-    // 1,000 US views, old videos keep counting, every loop gets better
+    // 1,000 verified views, old videos keep counting, every loop gets better
     // [before, accent, after, line]: one ink headline with the halftone accent
     // on its key words, the way the hero and the statements are set
     return [
@@ -74,8 +74,8 @@
       ['Finds your ', 'competitors', ' and what they post.', 'It finds ' + r.rivals.length + ' rivals in ' + r.category.toLowerCase() + ' and the ' + r.rivalsTotal + ' Shorts they posted in the last six months.'],
       ['Finds the formats that ', 'win', ' in your category.', 'It sorts every rival Short by format and keeps the ones that win. Right now, ' + top.toLowerCase() + ' leads.'],
       ['Makes your videos on ', 'winning formats', '.', 'BlueAI makes your Shorts on the formats that win in your category.'],
-      ['Creators post them ', 'everywhere at once', '.', 'A community of thousands of real creators posts them on their own channels. Days, not months.'],
-      ['Reads the results and ', 'doubles down', '.', 'It tracks the views every day, old videos included, and makes more of what works. You pay $8 per 1,000 US views.']
+      ['Creators post them ', 'everywhere at once', '.', 'A community of thousands of creators posts them on their own channels. Days, not months.'],
+      ['Reads the results and ', 'doubles down', '.', 'It tracks the views every day, old videos included, and makes more of what works. You pay $8 per 1,000 verified views.']
     ];
   }
   // a side (-1 left, 1 right), a y and the card's width give its centre; the

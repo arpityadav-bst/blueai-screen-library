@@ -123,7 +123,7 @@
     // "What wins", the first thing worth an email (Appy: on step 1 there is
     // nothing to save yet); once reached it stays to the last step, the plan
     // included (Appy), and when going back
-    saveBtn.classList.toggle('is-hidden', !(saved || Math.max(at, done - 1) >= 2));   // done counts a step once its result shows, so step 2's list made it 2: the step reached is done - 1
+    saveBtn.classList.toggle('is-hidden', saved || Math.max(at, done - 1) < 2);   // signed in = saved to the account, nothing to ask   // done counts a step once its result shows, so step 2's list made it 2: the step reached is done - 1
     saveBtn.disabled = saved;
     saveBtn.innerHTML = saved ? OB.icon('check', 14) + 'Saved' : '<span>Save <span class="ob-save-my">my </span>report</span>';   // 380 and below drops "my" (run-3.css)
   }
@@ -247,8 +247,8 @@
   function err(msg) { suErr.textContent = msg; suErr.hidden = !msg; suIn.classList.toggle('is-bad', !!msg); }
   function openSignup(mode, viaGoogle) {
     suMode = mode || '';
-    suT.textContent = viaGoogle ? 'Continue with Google' : mode === 'start' ? 'Save your report and start' : 'Save your report';
-    suSub.textContent = viaGoogle ? 'Which Google account should onBlue use?' : mode === 'start' ? 'Free to save. Your budget is set to $' + OB.fmt(r.budget) + ', and you only ever pay $8 per 1,000 US views that happen.' : 'Free, and it picks up right where BlueAI left off.';
+    suT.textContent = viaGoogle ? 'Continue with Google' : mode === 'first' ? 'Sign in to get your free report' : mode === 'start' ? 'Save your report and start' : 'Save your report';
+    suSub.textContent = viaGoogle ? 'Which Google account should onBlue use?' : mode === 'first' ? 'Free, no card. BlueAI builds it in your account, so it is saved as it goes.' : mode === 'start' ? 'Free to save. Your budget is set to $' + OB.fmt(r.budget) + ', and you only ever pay $8 per 1,000 verified views that happen.' : 'Free, and it picks up right where BlueAI left off.';
     google.hidden = !!viaGoogle; orLine.hidden = !!viaGoogle;
     suLabel.textContent = viaGoogle ? 'Google account email' : 'Email';
     suGo.textContent = viaGoogle ? 'Continue' : 'Continue with email';
@@ -257,26 +257,25 @@
     var target = suIn.value ? suGo : suIn;
     if (window.innerWidth > 860 || suIn.value) { window.setTimeout(function () { target.focus({ preventScroll: true }); }, 60); }
   }
-  function closeSignup() { modal.classList.remove('is-open'); modal.style.bottom = ''; }
+  function closeSignup() { modal.classList.remove('is-open'); modal.style.bottom = ''; if (suMode === 'first' && !saved) { window.location.href = './'; } }
   // iOS keeps the layout viewport under the keyboard: lift the phone's bottom
   // sheet to sit on top of it (Android resizes, see the viewport meta)
-  var vv = window.visualViewport;
-  if (vv) {
-    var lift = function () { modal.style.bottom = modal.classList.contains('is-open') && window.innerWidth <= 860 ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) + 'px' : ''; };
-    vv.addEventListener('resize', lift); vv.addEventListener('scroll', lift);
-  }
+  var vv = window.visualViewport, lift = function () { modal.style.bottom = modal.classList.contains('is-open') && window.innerWidth <= 860 ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) + 'px' : ''; };
+  if (vv) { vv.addEventListener('resize', lift); vv.addEventListener('scroll', lift); }
   document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') { closeSignup(); } });
   modal.addEventListener('click', function (ev) { if (ev.target === modal || ev.target.closest('[data-close]')) { closeSignup(); } });
   function finish(email) {
     r.email = email; api.save();
     OB.sess('onblue:signedin', '1'); OB.sess('onblue:email', email); OB.sess('onblue:site', r.site || '');
     OB.sess('onblue:agency', r.brand); OB.sess('onblue:agency-status', 'approved');
+    // sign in first (PM, 2026-11-05): the account opens now and the run starts after it
+    if (suMode === 'first') { saved = true; OB.store('onblue-tour-done', null); OB.store('onblue-app-stage', 'new'); OB.store('onblue-app-new', null); OB.store('onblue-app-running', null); closeSignup(); renderStepper(); begin(); return; }
     if (suMode !== 'start' && done < STEPS.length) {
       saved = true; closeSignup(); renderStepper();
       toast('Saved to ' + email);
       return;
     }
-    OB.store('onblue-tour-done', null); OB.store('onblue-app-stage', 'new'); OB.store('onblue-app-new', null); OB.store('onblue-app-running', null);
+    r.started = 1; api.save(); OB.store('onblue-tour-done', null); OB.store('onblue-app-stage', 'new'); OB.store('onblue-app-new', null); OB.store('onblue-app-running', null);
     window.location.href = 'app/home.html?welcome=1';
   }
   api.signup = function (mode) { if (saved && mode === 'start') { suMode = 'start'; finish(r.email); } else { openSignup(mode); } };
@@ -293,5 +292,6 @@
   });
   saveBtn.addEventListener('click', function () { if (!saved) { openSignup(); } });
 
-  renderFacts(); go(resume ? Math.min(done, STEPS.length - 1) : 0);
+  function begin() { renderFacts(); go(resume ? Math.min(done, STEPS.length - 1) : 0); }
+  if (saved || OB.sess('onblue:signedin') === '1') { saved = true; r.email = r.email || OB.sess('onblue:email') || ''; api.save(); begin(); } else { openSignup('first'); }
 })();

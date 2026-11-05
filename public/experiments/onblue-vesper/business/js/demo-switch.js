@@ -41,7 +41,7 @@
   function show(on) { box.classList.toggle('is-open', on); pill.setAttribute('aria-expanded', String(on)); }
   function go(stage) {
     var r = OB.report.make({ site: SITE });
-    r.done = 6; r.email = EMAIL; r.name = 'Sam'; r.today = 'Sometimes';
+    r.done = 6; r.started = 1; r.email = EMAIL; r.name = 'Sam'; r.today = 'Sometimes';
     OB.report.save(r);
     OB.sess('onblue:signedin', '1'); OB.sess('onblue:email', EMAIL); OB.sess('onblue:site', SITE);
     OB.sess('onblue:agency', r.brand); OB.sess('onblue:agency-status', 'approved');

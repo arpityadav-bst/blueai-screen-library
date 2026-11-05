@@ -12,7 +12,7 @@
   var sec = face && face.closest('section');
   var FEAT = C.ROWS.filter(function (r) { return /^[ypn]$/.test(r[1]); });
   var WORDS = C.ROWS.filter(function (r) { return !/^[ypn]$/.test(r[1]); });
-  // a word answer like "$8 per 1,000 US views" splits into the figure and its
+  // a word answer like "$8 per 1,000 verified views" splits into the figure and its
   // unit on two lines, so the lit column never wraps mid-phrase
   function words(v) {
     var m = /^(\$[\d,.]+) (.+)$/.exec(v);
