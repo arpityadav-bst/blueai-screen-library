@@ -29,6 +29,13 @@
     : HIS[c.id] && c.kind === 'engagement' ? { page: 'dash', open: HIS[c.id] }
     : c.kind === 'engagement' ? { page: 'dash', open: ENGAGE[c.status] || 'spring' }
     : { page: 'report' };
+  /* his growth report's FINAL top cards are "Compact" (PM, 2026-11-05). His
+     report starts on "Current" unless the browser remembers a pick, and this
+     app runs on its own address, so it never had one: set Compact as the
+     starting pick (same origin as his report), keeping any pick made since */
+  if (route.page === 'report') {
+    try { if (!window.localStorage.getItem('campaign-report:tiles')) { window.localStorage.setItem('campaign-report:tiles', 'compact'); } } catch (e) {}
+  }
   frame.src = route.page === 'dash' ? '../campaign.html' : '../campaign-report/index.html';
 
   var HIDE = {
