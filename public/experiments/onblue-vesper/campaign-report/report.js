@@ -123,6 +123,32 @@
     p.geo = g;
   });
 
+  /* ---- viewer age and gender (sample) --------------------------------------
+     What YouTube shows next to geography: per video, the share of views by
+     age group and by gender, counted over signed-in viewers only, in its own
+     buckets and order. YouTube holds these back below a privacy floor, so a
+     post needs its channel's analytics (the same flag as geography) and more
+     views than geography does. Its own seed, so every other number on the
+     page stays as it was. */
+  var AGES = ['13–17', '18–24', '25–34', '35–44', '45–54', '55–64', '65+'];
+  var AGE_BASE = [0.13, 0.33, 0.27, 0.14, 0.07, 0.04, 0.02];
+  var GENDERS = ['Male', 'Female', 'User-specified'];
+  var DEMO_MIN = 100;
+  var dseed = 20261105;
+  function DR() {
+    dseed = dseed + 0x6D2B79F5 | 0;
+    var t = Math.imul(dseed ^ dseed >>> 15, 1 | dseed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  }
+  posts.forEach(function (p) {
+    if (!p.creator.geoOn || p.views < DEMO_MIN) { p.demo = null; return; }
+    var age = AGE_BASE.map(function (b) { return b * (0.45 + 1.2 * DR()); });
+    var sum = age.reduce(function (s, v) { return s + v; }, 0);
+    var male = 0.62 + 0.26 * DR(), other = DR() < 0.6 ? 0 : 0.015 * DR();
+    p.demo = { age: age.map(function (v) { return v / sum; }), gender: [male, 1 - male - other, other] };
+  });
+
   /* ---- the selected period ------------------------------------------------- */
   var LAST = DAYS - 1;
   var PRESETS = [
@@ -276,6 +302,22 @@
       .map(function (k) { return { cc: k, name: COUNTRY_NAME[k], v: by[k] }; })
       .sort(function (a, b) { return b.v - a.v; });
     return { rows: rows, covered: covered, n: list.length, cv: cv, total: total };
+  }
+  /* each post's shares weighted by the views it gathered in the period, so a
+     big post counts for more than a small one */
+  function demoOf(list) {
+    var age = AGES.map(function () { return 0; }), gender = GENDERS.map(function () { return 0; });
+    var covered = 0, cv = 0, total = 0;
+    list.forEach(function (p) {
+      total += p.pv;
+      if (!p.demo || !p.pv) { return; }
+      covered++;
+      cv += p.pv;
+      p.demo.age.forEach(function (s, k) { age[k] += s * p.pv; });
+      p.demo.gender.forEach(function (s, k) { gender[k] += s * p.pv; });
+    });
+    var share = function (v) { return cv ? v / cv : 0; };
+    return { age: age.map(share), gender: gender.map(share), covered: covered, n: list.length, cv: cv, total: total };
   }
 
   /* ---- header -------------------------------------------------------------- */
@@ -580,6 +622,48 @@
     });
   }
 
+  /* ---- viewer age, viewer gender -------------------------------------------
+     The two other audience stats YouTube shows, each a card of its own under
+     geography, built like it (same bars, same label column, so the bars line
+     up down the page; same coverage note), each in YouTube's own order, never
+     re-sorted by share. One Hidden | Live data switch in the review bar runs
+     both. Shown by default while they are being reviewed. */
+  var demoMode = 'live';
+  try { demoMode = window.localStorage.getItem('campaign-report:demo') === 'off' ? 'off' : 'live'; } catch (e) {}
+  var DEMO = [
+    { key: 'age', card: '#age-card', title: 'Viewer age', word: 'age', labels: AGES },
+    { key: 'gender', card: '#gender-card', title: 'Viewer gender', word: 'gender', labels: GENDERS }
+  ];
+  function demoEmpty(m) { return '<div class="geo-empty">' + m.word.charAt(0).toUpperCase() + m.word.slice(1) + ' data is still processing.</div>'; }
+  function shareBars(labels, shares) {
+    return '<div class="geo-list">' + labels.map(function (l, k) {
+      var s = shares[k];
+      return '<div class="geo-row"><span class="geo-name">' + esc(l) + '</span>'
+        + '<span class="geo-bar"><i style="width:' + (s * 100).toFixed(1) + '%"></i></span>'
+        + '<span class="geo-pct">' + (s > 0 ? pct(s) : '0%') + '</span></div>';
+    }).join('') + '</div>';
+  }
+  function demoNote(d, m) {
+    return '<p class="geo-note">' + IC.info + '<span>Based on ' + num(d.covered) + ' of ' + plural(d.n, 'post')
+      + ', ' + pct(d.total ? d.cv / d.total : 0) + ' of views. YouTube counts signed-in viewers only,'
+      + ' and posts without ' + m.word + ' data are left out.</span></p>';
+  }
+  function renderDemo() {
+    var d = demoOf(scope());
+    DEMO.forEach(function (m) {
+      var card = $(m.card);
+      card.hidden = demoMode === 'off';
+      card.innerHTML = demoMode === 'off' ? '' :
+        '<div class="card-head"><div><h2 class="rep-h">' + m.title + '</h2>'
+        + '<p class="rep-hint">Views on the posts by viewer ' + m.word + (isFull() ? '' : ', ' + spanText()) + '.'
+        + ' Open any post’s details to see its own.</p></div></div>'
+        + (d.covered ? demoNote(d, m) + shareBars(m.labels, d[m.key]) : demoEmpty(m));
+    });
+    document.querySelectorAll('[data-demo-mode]').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.getAttribute('data-demo-mode') === demoMode ? 'true' : 'false');
+    });
+  }
+
   /* ---- posts: filter, sort, group, page ------------------------------------
      One list view. Sorting lives on the column headers (Published flips
      newest and oldest, the counts sort high to low), so there is no separate
@@ -788,6 +872,7 @@
     renderTopCreators();
     renderTopPosts();
     renderGeo();
+    renderDemo();
     state.page = 1;
     renderPosts();
   }
@@ -935,6 +1020,21 @@
     }
     return '<section class="dr-sec" data-dr-geo><h4 class="rep-h">Viewer geography</h4>' + body + '</section>';
   }
+  function demoSection(list, single) {
+    var d = demoOf(list), p = list[0];
+    if (demoMode === 'off') { return ''; }
+    return DEMO.map(function (m) {
+      var body;
+      if (!d.covered) {
+        body = single && p.views >= DEMO_MIN && !p.pv
+          ? '<div class="geo-empty">This post gathered no views ' + spanText() + '.</div>'
+          : demoEmpty(m);
+      } else {
+        body = (single ? '' : demoNote(d, m)) + shareBars(m.labels, d[m.key]);
+      }
+      return '<section class="dr-sec" data-dr-' + m.key + '><h4 class="rep-h">' + m.title + '</h4>' + body + '</section>';
+    }).join('');
+  }
   function drStats(v, l, c) {
     return '<div class="dr-stats">'
       + '<div class="dr-stat"><span>Views</span><b>' + num(v) + '</b></div>'
@@ -963,6 +1063,7 @@
         + periodNote()
         + drStats(p.pv, p.pl, p.pc)
         + geoSection([p], true)
+        + demoSection([p], true)
         + '<div class="dr-acts"><a class="btn" href="' + p.url + '" target="_blank" rel="noopener">' + IC.yt + 'Open on YouTube</a>'
         + '<button class="btn" type="button" data-copy="' + p.url + '">' + IC.link + 'Copy link</button></div>';
     } else {
@@ -974,6 +1075,7 @@
         + periodNote()
         + drStats(g.views, g.likes, g.comments)
         + geoSection(g.posts, false)
+        + demoSection(g.posts, false)
         + '<section class="dr-sec"><h4 class="rep-h">Posts</h4><div class="dr-list">' + list.map(function (q) {
             return '<button class="dr-item" type="button" data-open-push="' + q.id + '">'
               + '<span class="post-who"><span style="width:22px;flex:none">' + thumb(q.asset) + '</span>'
@@ -1233,6 +1335,13 @@
       geoMode = a;
       try { window.localStorage.setItem('campaign-report:geo', a); } catch (e) {}
       renderGeo();
+      if (drawer.classList.contains('is-open')) { paintDrawer(); }
+      return;
+    }
+    if ((a = t.getAttribute('data-demo-mode'))) {
+      demoMode = a;
+      try { window.localStorage.setItem('campaign-report:demo', a); } catch (e) {}
+      renderDemo();
       if (drawer.classList.contains('is-open')) { paintDrawer(); }
       return;
     }
