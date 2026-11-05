@@ -12,7 +12,7 @@
   var qs = new URLSearchParams(window.location.search);
   if (!input && qs.get('site')) { input = { site: qs.get('site') }; }
   var r = input ? OB.report.make(input) : OB.report.get();
-  if (!r) { window.location.replace('./'); return; }
+  if (!r) { window.location.replace('index.html'); return; }
   OB.sess('onblue-run-input', null);
   // ?resume=1 (app home's "Continue my report"): pick up at the first step not
   // finished (r.done), already saved when the account exists
@@ -257,7 +257,7 @@
     var target = suIn.value ? suGo : suIn;
     if (window.innerWidth > 860 || suIn.value) { window.setTimeout(function () { target.focus({ preventScroll: true }); }, 60); }
   }
-  function closeSignup() { modal.classList.remove('is-open'); modal.style.bottom = ''; if (suMode === 'first' && !saved) { window.location.href = './'; } }
+  function closeSignup() { modal.classList.remove('is-open'); modal.style.bottom = ''; if (suMode === 'first' && !saved) { window.location.href = 'index.html'; } }
   // iOS keeps the layout viewport under the keyboard: lift the phone's bottom
   // sheet to sit on top of it (Android resizes, see the viewport meta)
   var vv = window.visualViewport, lift = function () { modal.style.bottom = modal.classList.contains('is-open') && window.innerWidth <= 860 ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) + 'px' : ''; };

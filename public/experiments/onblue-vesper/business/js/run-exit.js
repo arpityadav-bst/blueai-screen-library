@@ -28,7 +28,7 @@
     pop = document.createElement('div');
     pop.className = 'ob-exit-pop'; pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', 'Before you go');
     pop.innerHTML = '<b>Your report stays in this browser.</b><p>' + (early ? 'Pick up where you left off from the homepage, any time.' : 'Save it with your email to open it anywhere.') + '</p>' +
-      '<div class="ob-exit-act"><button class="ob-btn ob-btn--sm ob-btn--ink" type="button" data-exit-save>' + (early ? 'Keep going' : 'Save my report') + '</button><a class="ob-link" href="./">Leave anyway</a></div>';
+      '<div class="ob-exit-act"><button class="ob-btn ob-btn--sm ob-btn--ink" type="button" data-exit-save>' + (early ? 'Keep going' : 'Save my report') + '</button><a class="ob-link" href="index.html">Leave anyway</a></div>';
     end.appendChild(pop); link.setAttribute('aria-expanded', 'true');
     pop.querySelector('[data-exit-save]').addEventListener('click', function () { close(); if (!early) { save.click(); } });
     pop.querySelector('[data-exit-save]').focus();

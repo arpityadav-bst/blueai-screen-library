@@ -169,7 +169,7 @@
           // choices are start now, or done for now; the homepage offers it back
           if (api.saved()) {
             row.innerHTML = '<p class="ob-sent"><span class="ob-yes ob-yes--sm">' + OB.icon('check', 12) + '</span>Saved to your account, <b>' + e(r.email) + '</b></p><p class="ob-sent-say">Not starting today? Pick it up from the homepage any time.</p>';
-            out.querySelector('.ob-next').insertAdjacentHTML('beforeend', '<a class="ob-btn ob-later" href="./" data-later>Done for now, back to onBlue</a>');
+            out.querySelector('.ob-next').insertAdjacentHTML('beforeend', '<a class="ob-btn ob-later" href="index.html" data-later>Done for now, back to onBlue</a>');
             return;
           }
           // emailed: say where it is and how to come back, and turn the CTA into one
@@ -179,7 +179,7 @@
             row.innerHTML = '<p class="ob-sent"><span class="ob-yes ob-yes--sm">' + OB.icon('check', 12) + '</span>Sent to <b>' + e(r.mailed) + '</b><button class="ob-link" type="button" data-change>Change</button></p>' +
               '<p class="ob-sent-say">Your report is in your inbox. Open it any time to pick up right here, at your plan.</p>';
             row.querySelector('[data-change]').addEventListener('click', function () { r.mailed = ''; api.save(); mail(); });
-            out.querySelector('.ob-next').insertAdjacentHTML('beforeend', '<a class="ob-btn ob-later" href="./" data-later>Done for now, back to onBlue</a>');
+            out.querySelector('.ob-next').insertAdjacentHTML('beforeend', '<a class="ob-btn ob-later" href="index.html" data-later>Done for now, back to onBlue</a>');
             return;
           }
           row.innerHTML = '<p>Not ready yet? Get the report by email.</p><form class="ob-add" data-mail><input class="ob-input" type="email" placeholder="you@yourbrand.com" aria-label="Email" required value="' + e(r.email || '') + '"><button class="ob-btn ob-btn--sm" type="submit">' + OB.icon('mail', 15) + 'Email it to me</button></form>';

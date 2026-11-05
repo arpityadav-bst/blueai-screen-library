@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>/* the host turns /business/ into /business, which breaks every relative path: land on index.html instead */ if (!/\/$|\.html$/.test(location.pathname)) { location.replace(location.pathname + '/index.html' + location.search + location.hash); }</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
 <title>onBlue for business: short videos that win</title>
 <meta name="description" content="Type your website. BlueAI learns your brand, finds what wins in your category, makes the videos, and creators post them. $8 per 1,000 verified views.">
@@ -29,7 +30,7 @@
 
 <header class="ob-nav" data-nav>
   <div class="ob-nav-in">
-    <a class="ob-logo" href="./"><svg class="ob-logo-mark" viewBox="0 0 24 24" aria-hidden="true"><defs><radialGradient id="ob-logo-glint" gradientUnits="userSpaceOnUse" cx="-15.6" cy="12" r="15" gradientTransform="scale(1.6 1)"><stop offset="0" stop-color="#c6f432"/><stop offset="0.5" stop-color="#c6f432"/><stop offset="1" stop-color="#0b0b0a"/><animate attributeName="cx" values="-15.6;-15.6;30.6;30.6" keyTimes="0;0.52;0.82;1" calcMode="spline" keySplines="0 0 1 1;0.45 0 0.25 1;0 0 1 1" dur="7s" repeatCount="indefinite"/></radialGradient></defs><path class="ob-logo-glint" fill="url(#ob-logo-glint)" d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg><span><span class="ob-logo-on">on</span>Blue</span></a>
+    <a class="ob-logo" href="index.html"><svg class="ob-logo-mark" viewBox="0 0 24 24" aria-hidden="true"><defs><radialGradient id="ob-logo-glint" gradientUnits="userSpaceOnUse" cx="-15.6" cy="12" r="15" gradientTransform="scale(1.6 1)"><stop offset="0" stop-color="#c6f432"/><stop offset="0.5" stop-color="#c6f432"/><stop offset="1" stop-color="#0b0b0a"/><animate attributeName="cx" values="-15.6;-15.6;30.6;30.6" keyTimes="0;0.52;0.82;1" calcMode="spline" keySplines="0 0 1 1;0.45 0 0.25 1;0 0 1 1" dur="7s" repeatCount="indefinite"/></radialGradient></defs><path class="ob-logo-glint" fill="url(#ob-logo-glint)" d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg><span><span class="ob-logo-on">on</span>Blue</span></a>
     <div class="ob-nav-end">
       <a class="ob-nav-signin" href="app/signin.html">Sign in</a>
       <button class="ob-nav-cta" type="button" data-to-field>Start free</button>

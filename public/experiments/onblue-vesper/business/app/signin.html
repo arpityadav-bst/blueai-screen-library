@@ -74,8 +74,8 @@
 <body class="ob-page">
 <div class="si">
   <header class="si-top">
-    <a class="ob-logo" href="../" data-logo></a>
-    <a href="../">Back to the website</a>
+    <a class="ob-logo" href="../index.html" data-logo></a>
+    <a href="../index.html">Back to the website</a>
   </header>
   <main class="si-main">
     <div class="si-card">
@@ -91,7 +91,7 @@
         <p class="si-msg" role="status" aria-live="polite" data-msg></p>
         <button class="ob-btn ob-btn--ink" type="submit">Continue with email</button>
       </form>
-      <p class="si-alt">New to onBlue? <a href="../">Get your free report first</a>. <span class="si-alt-2">It takes about a minute, and you sign up only if you want to keep it.</span></p>
+      <p class="si-alt">New to onBlue? <a href="../index.html">Get your free report first</a>. <span class="si-alt-2">It takes about a minute, and you sign up only if you want to keep it.</span></p>
     </div>
   </main>
   <p class="si-foot">A design prototype. No password is stored.</p>
@@ -133,7 +133,7 @@
     // a report this browser emailed but never saved: send them back to it, not to a new one
     if (r && email && String(r.email || '').toLowerCase() === email) { return 'You have a free report for ' + OB.esc(r.brand) + ', but no account yet. <a href="../run.html?resume=1">Open your report</a> and save it to sign up.'; }
     // phones: the address never splits at its hyphen, and the next step sits in the message itself
-    var ph = window.matchMedia('(max-width: 700px)').matches, way = ph ? ' <a href="../">Get your free report first</a>.' : '';
+    var ph = window.matchMedia('(max-width: 700px)').matches, way = ph ? ' <a href="../index.html">Get your free report first</a>.' : '';
     return (email ? 'No onBlue account for <span class="si-em">' + OB.esc(email) + '</span> yet.' : 'No onBlue account is linked to that Google account yet.') + way;
   }
 

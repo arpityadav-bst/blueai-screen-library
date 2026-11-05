@@ -41,7 +41,7 @@
       '<span class="ob-me-t"><b>' + e(who) + '</b><small>' + e(email) + '</small></span><span class="ob-me-dots" aria-hidden="true"><i></i><i></i><i></i></span></button>' +
       '<div class="ob-menu" role="menu" data-menu><div class="ob-menu-who"><b>' + e(r.brand) + '</b><small>Workspace</small></div>' +
       '<button type="button" role="menuitem" data-tour-replay>' + OB.icon('redo', 16) + 'Replay the tour</button>' +
-      '<a href="../" role="menuitem">' + OB.icon('globe', 16) + 'onBlue website<span class="ob-menu-ext" aria-hidden="true">' + OB.icon('arrow', 14) + '</span></a><hr>' +
+      '<a href="../index.html" role="menuitem">' + OB.icon('globe', 16) + 'onBlue website<span class="ob-menu-ext" aria-hidden="true">' + OB.icon('arrow', 14) + '</span></a><hr>' +
       '<div class="ob-menu-demo" role="group" aria-label="Prototype demo"><small>Prototype demo</small><div>' +
       '<button type="button" data-st="new" aria-pressed="' + (A.stage === 'new') + '" title="Just signed up">Day 1</button>' +
       '<button type="button" data-st="running" aria-pressed="' + (A.stage === 'running') + '" title="Two weeks in">Week 2</button>' +
@@ -87,7 +87,7 @@
     if (!ev.target.closest('[data-menu]')) { menuOpen(false); }
     if (ev.target.closest('[data-signout]')) {
       ['onblue:signedin', 'onblue:email', 'onblue:site', 'onblue:agency', 'onblue:agency-status'].forEach(function (k) { OB.sess(k, null); });
-      window.location.href = '../';
+      window.location.href = '../index.html';
     }
     if (ev.target.closest('[data-tour-replay]')) {
       OB.store('onblue-tour-done', null);
