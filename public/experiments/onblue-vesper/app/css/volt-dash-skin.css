@@ -1,0 +1,203 @@
+/* VOLT SKIN FOR ABHISHT'S DASHBOARD SCREENS, FROM OUTSIDE.
+   campaign.html (onblue.css + its own inline styles) stays his file. The app
+   shows two of its views in a frame: the engagement report (#view-report, the
+   engagement samples and every other engagement campaign) and the in-review
+   screen (#view-campaign). app/report-frame.js links this sheet into the framed
+   document after his own styles, so his future changes still flow in.
+   Two layers, as in volt-report-skin.css: his light-theme tokens take Volt
+   values, then the parts of those two views get Volt's shapes. */
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300..700&display=swap");
+@import url("../../volt/css/volt-tokens.css");
+
+/* ---- his tokens, Volt values (his light theme is :root[data-theme="light"]) */
+:root[data-theme="light"], :root {
+  --bg: var(--v-bg);
+  --text: var(--v-ink-1);
+  --muted: var(--v-ink-3);
+  --border: var(--v-line-2);
+  --border-soft: var(--v-line);
+  --charcoal: var(--v-surface);
+  --charcoal-2: var(--v-surface);
+  --charcoal-3: var(--v-surface-2);
+  --band-lift: var(--v-surface-2);
+  --card-bg: var(--v-surface);
+  --card-radius: var(--v-r-panel);
+  --ink: var(--v-ink-1);
+  --ink-soft: var(--v-ink-1);
+  --lede-ink: var(--v-ink-2);
+  --note-ink: var(--v-ink-2);
+  --tile-ink: var(--v-ink-2);
+  --chip-ink: var(--v-ink-2);
+  --mini-ink: var(--v-ink-2);
+  --dim-ink: var(--v-ink-4);
+  --ph-ink: var(--v-ink-4);
+  --blue: var(--v-accent);
+  --blue-ink: var(--v-ink-1);
+  --notice-ink: var(--v-ink-2);
+  --green: var(--v-accent-deep);
+  --green-ink: var(--v-accent-ink);
+  --green-line: var(--v-accent-line);
+  --green-fill: var(--v-accent-wash);
+  --hair: var(--v-line);
+  --hair-2: var(--v-line-2);
+  --wash-2: rgba(10, 10, 9, 0.025);
+  --wash-hover: rgba(10, 10, 9, 0.04);
+  --surface-hover: rgba(10, 10, 9, 0.02);
+  --card-line-hover: rgba(10, 10, 9, 0.2);
+  --card-shadow: var(--v-card);
+  --card-shadow-hover: var(--v-card);
+  --solid-bg: var(--v-ink-1);
+  --solid-ink: #fff;
+  --solid-bg-hover: #161614;
+  --solid-line-hover: #161614;
+  --solid-shadow: none;
+  --solid-shadow-hover: none;
+  --err-ink: var(--v-err);
+  --err-line: var(--v-err);
+  --err-ring: rgba(200, 67, 43, 0.14);
+  --ui-font: var(--v-font);
+  --band-grain: 0;
+}
+
+/* ---- plain warm paper: his glyph field and grain are the old look (and the
+   field is a pointer-driven canvas, a cost on Mac Chrome) -------------------- */
+.ascii-bg, .grain-hero { display: none !important; }
+.band::before, .apply-bg::before, .site-foot::before { content: none; }
+/* one quiet scrollbar on both report types, no reserved pale strip */
+html, html.is-scrolling { scrollbar-gutter: auto; scrollbar-width: thin; scrollbar-color: rgba(10, 10, 9, 0.18) transparent; }
+
+/* ---- layout: his header is hidden in the frame, so its room goes too; the
+   in-review screen keeps the live report's width so nothing shifts sideways - */
+.dash { padding-top: clamp(18px, 2.6vw, 22px); }
+#view-campaign { max-width: var(--band-max); }
+#view-report .dash-band, #view-campaign .dash-band { margin-top: 12px; }
+
+/* ---- type ---------------------------------------------------------------- */
+body { font-family: var(--v-font); letter-spacing: var(--v-tr-mid); }
+.dash-head .title-lg { font: var(--v-t-p-title); font-weight: 500; letter-spacing: var(--v-tr-display); }
+.title-lg em { font-family: inherit; font-style: normal; font-weight: inherit; font-size: 1em; color: inherit; }
+.rep-h { font: 500 1.0625rem/1.3 var(--v-font); letter-spacing: var(--v-tr-mid); }
+.rep-meta b, .post-id b, .crow-name, .banner b, .banner button { font-weight: 500; }
+.tile-v, .rep-state b { font-weight: 600; letter-spacing: var(--v-tr-tight); }
+/* no small uppercase labels: his table heads, post labels and run tags in sentence case
+   (the run tags are written WATCH, LIKE, COMMENT in his data, so they are cased here) */
+.runs th, .post-lab, .run-act { font-size: 0.75rem; font-weight: 500; letter-spacing: 0; text-transform: none; }
+.run-act { text-transform: lowercase; }
+.run-act::first-letter { text-transform: uppercase; }
+
+/* ---- surfaces ------------------------------------------------------------ */
+.dash .card, .dash-panel {
+  border: 1px solid var(--v-line);
+  border-radius: var(--v-r-panel);
+  background: var(--v-surface);
+  box-shadow: var(--v-card);
+}
+.dash .card:hover, .dash-panel:hover { border-color: var(--v-line); box-shadow: var(--v-card); transform: none; }
+/* his travelling stroke light is a mask + filter on a moving layer: off here */
+.dash .card::after { content: none; }
+.tile { border-color: var(--v-line); border-radius: var(--v-r-lg); background: var(--v-surface); box-shadow: var(--v-card); }
+.tile-l { color: var(--v-ink-3); }
+/* "not billed until resolved" is information, not alarm: no amber in Volt */
+.tile-s.is-warn { color: var(--v-ink-3); }
+.rep-state { border-color: var(--v-line); border-radius: var(--v-r-md); background: var(--v-surface); }
+.rep-state.is-bad b { color: var(--v-err); }
+.banner { border-color: var(--v-accent-line); border-radius: var(--v-r-md); background: var(--v-accent-wash); color: var(--v-ink-2); }
+.banner button { color: var(--v-ink-1); text-decoration: underline; text-decoration-color: var(--v-accent-deep); text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+.back { color: var(--v-ink-3); }
+@media (hover: hover) { .back:hover { color: var(--v-ink-1); } }
+.post-av, .post-thumb { background: var(--v-surface-2); }
+.post-thumb { border-color: var(--v-line); border-radius: var(--v-r-sm); }
+.post-out { border-color: var(--v-line-2); color: var(--v-ink-3); }
+@media (hover: hover) { .post-out:hover { border-color: var(--v-ink-4); color: var(--v-ink-1); } }
+.bar { background: var(--v-surface-2); }
+.bar-fill { background: var(--v-accent); }
+
+/* ---- the in-review screen's empty card ---------------------------------- */
+.rep-empty-ic { border-radius: var(--v-r-md); background: var(--v-accent-wash); color: var(--v-accent-ink); }
+.rep-empty p { color: var(--v-ink-3); }
+
+/* ---- the chart: an ink line over a volt wash, a volt point ringed in ink -- */
+.rep-chart svg { font-family: var(--v-font); }
+.rep-chart svg path[fill="rgba(21,110,254,0.08)"] { fill: var(--v-accent-wash); }
+.rep-chart svg path[stroke="var(--blue-ink)"] { stroke: var(--v-ink-1); }
+.rep-chart svg circle[stroke="var(--blue-ink)"] { fill: var(--v-accent); stroke: var(--v-ink-1); }
+/* the chart scales down by its viewBox, so its text is raised in user units to
+   keep about 11 to 13px on screen (report-frame.js keeps "Target pace" clear) */
+@media (max-width: 760px) { .rep-chart svg { overflow: visible; } .rep-chart svg text { font-size: 13px; } .rep-chart svg text[font-weight="600"] { font-size: 14.5px; } }
+@media (max-width: 600px) { .rep-chart svg text { font-size: 17px; } .rep-chart svg text[font-weight="600"] { font-size: 19px; } }
+@media (max-width: 460px) { .rep-chart svg text { font-size: 22px; } .rep-chart svg text[font-weight="600"] { font-size: 24px; } }
+@media (max-width: 400px) { .rep-chart svg text { font-size: 25px; } .rep-chart svg text[font-weight="600"] { font-size: 27px; } }
+@media (max-width: 340px) { .rep-chart svg text { font-size: 29px; } .rep-chart svg text[font-weight="600"] { font-size: 31px; } }
+
+/* ---- buttons ------------------------------------------------------------- */
+.dash .btn {
+  height: 2.5rem;
+  padding: 0 1.125rem;
+  border-radius: var(--v-r-btn);
+  font: 500 0.875rem/1 var(--v-font);
+  letter-spacing: var(--v-tr-mid);
+  transition: transform 0.15s var(--v-ease), background 0.15s var(--v-ease), border-color 0.15s var(--v-ease);
+}
+.dash .btn-solid, .dash .btn-solid:hover {
+  border: 1px solid transparent;
+  background: var(--v-ink-btn);
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -0.125rem 0 rgba(0, 0, 0, 0.4), 0 1px 0.125rem rgba(10, 10, 9, 0.24), 0 0.5rem 1rem -0.5rem rgba(10, 10, 9, 0.5);
+}
+.dash .btn-solid:hover { background: var(--v-ink-btn-hover); transform: translateY(-1px); }
+.dash .btn-ghost { border: 1px solid var(--v-line-2); background: var(--v-surface); color: var(--v-ink-1); box-shadow: inset 0 1px 0 #fff, var(--v-shadow-1); }
+.dash .btn-ghost:hover { border-color: var(--v-ink-4); background: var(--v-surface); transform: translateY(-1px); }
+.dash .btn:active { transform: translateY(0) scale(0.98); }
+.dash .btn:focus-visible { outline: 0; box-shadow: var(--v-ring); }
+
+/* ---- chips and status pills --------------------------------------------- */
+.dash .chip {
+  gap: 0.375rem;
+  height: 1.75rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--v-line);
+  border-radius: var(--v-r-pill);
+  background: var(--v-surface);
+  box-shadow: inset 0 1px 0 #fff, var(--v-shadow-1);
+  color: var(--v-ink-2);
+  font: 500 0.8125rem/1 var(--v-font);
+  letter-spacing: var(--v-tr-mid);
+}
+.dash .chip svg { color: var(--v-ink-3); }
+.dash .chip--open, .dash .pill-ok { border-color: transparent; background: var(--v-accent); box-shadow: none; color: var(--v-on-accent); }
+.dash .chip--wait, .dash .pill-wait { border-color: var(--v-line-2); border-style: dashed; background: none; box-shadow: none; color: var(--v-ink-2); }
+/* under target is the one state that signals a problem: the error tone */
+.dash .chip--under { border-color: rgba(200, 67, 43, 0.28); background: rgba(200, 67, 43, 0.07); box-shadow: none; color: var(--v-err); }
+.dash .chip--soon { border-style: dashed; background: none; box-shadow: none; color: var(--v-ink-4); }
+.dash .pill-bad { border-color: rgba(200, 67, 43, 0.28); background: rgba(200, 67, 43, 0.07); box-shadow: none; color: var(--v-err); }
+.dash .runs .chip { height: 1.5rem; padding: 0 0.625rem; font-size: 0.75rem; }
+
+/* ---- proof of work: filters, table, evidence links ----------------------- */
+.rep-filter {
+  border-color: var(--v-line-2);
+  background: var(--v-surface);
+  box-shadow: inset 0 1px 0 #fff, var(--v-shadow-1);
+  color: var(--v-ink-2);
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s var(--v-ease), color 0.15s var(--v-ease);
+}
+@media (hover: hover) { .rep-filter:hover { border-color: var(--v-ink-4); color: var(--v-ink-1); } }
+.rep-filter.is-on { border-color: transparent; background: var(--v-ink-btn); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 0.375rem 0.875rem -0.5rem rgba(10, 10, 9, 0.5); }
+.runs th { color: var(--v-ink-4); border-bottom-color: var(--v-line); }
+.runs td { color: var(--v-ink-2); }
+.run-act { border-color: var(--v-line-2); border-radius: var(--v-r-pill); color: var(--v-ink-3); }
+.run-evd a { color: var(--v-ink-1); text-decoration-color: var(--v-accent-deep); text-decoration-thickness: 1.5px; }
+.rep-privacy, .rep-foot { color: var(--v-ink-4); }
+
+/* ---- phones: 44px is the floor for every tap ----------------------------- */
+@media (hover: none) and (pointer: coarse) {
+  .dash .btn, .rep-filter { height: auto; min-height: 44px; }
+  .run-evd { gap: 8px; }
+  .run-evd a, .banner button, .dash .back { display: inline-flex; align-items: center; min-height: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash .btn, .rep-filter { transition: none; }
+  .dash .btn:hover, .dash .btn:active { transform: none; }
+}

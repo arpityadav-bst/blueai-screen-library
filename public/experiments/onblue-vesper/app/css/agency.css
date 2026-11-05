@@ -14,9 +14,10 @@
   place-items: center;
   width: 24px;
   height: 24px;
-  border-radius: var(--r-xs);
-  background: var(--ink);
-  color: var(--on-accent);
+  border-radius: 50%;
+  background: var(--ink-btn);
+  color: var(--blue);
+  font-weight: 600;
   font: var(--t-label);
   overflow: hidden;
   transform: translateY(-50%);

@@ -60,7 +60,7 @@
       + '<span class="label" id="l-' + o.v + '"><span>' + esc(o.label) + '</span></span>'
       + '<div class="chips">' + o.items.map(function (it) {
           return '<button class="chip-choice" type="button" ' + o.attr + '="' + esc(it.value) + '" aria-pressed="' + !!it.on + '">'
-            + (it.on && !o.one ? '<span class="nw-chip-tick">' + I.tick + '</span>' : '') + (it.html || esc(it.value)) + '</button>';
+            + (it.on ? '<span class="nw-chip-tick">' + I.tick + '</span>' : '') + (it.html || esc(it.value)) + '</button>';
         }).join('') + '</div>'
       + help(o.v, o.hint, o.err) + '</div>';
   }

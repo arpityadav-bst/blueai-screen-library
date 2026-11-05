@@ -20,9 +20,13 @@
 }
 .start-copy { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: var(--sp-10); }
 .start-title { display: block; font: var(--t-display); letter-spacing: var(--tr-display); color: #fff; }
-.start-title em { font-family: var(--serif-font); font-style: italic; font-weight: 400; font-size: 1.06em; letter-spacing: 0; color: #4a8dff; } /* onBlue's own blue ink on dark (onblue.css, dark theme) */
-.start-lede { display: block; max-width: 44ch; margin-top: var(--sp-2); font: var(--t-body-lg); letter-spacing: var(--tr-body); color: rgba(255, 255, 255, 0.62); }
-.start-card .start-cta { margin-top: var(--sp-6); background: #fff; color: var(--ink); box-shadow: none; }
+/* the accent word on the dark card: Volt's light-ink tone */
+.start-title { color: #f2f2ec; }
+.start-title em { font: inherit; font-style: normal; letter-spacing: inherit; color: transparent; background: var(--tone-dark); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; padding-bottom: 0.12em; }
+.start-lede { display: block; max-width: 44ch; margin-top: var(--sp-2); font: var(--t-body-lg); letter-spacing: var(--tr-body); color: rgba(242, 242, 236, 0.62); }
+/* the one way in: Volt's accent button, ink on volt */
+.start-card .start-cta { margin-top: var(--sp-6); border-color: transparent; background: var(--blue); color: var(--on-volt); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 8px 16px -10px rgba(80, 110, 0, 0.6); }
+.start-card .start-cta svg { color: currentColor; }
 .start-cta svg { transition: transform 0.24s var(--ease-hover); }
 .start-card:hover .start-cta svg { transform: translateX(3px); }
 /* in review the card informs, it does not open anything (campaigns.js startCard) */
@@ -112,11 +116,11 @@
   border: 1px solid var(--app-panel-line);
   border-radius: var(--r-md);
   background: var(--app-panel);
-  box-shadow: var(--elev-2);
+  box-shadow: var(--elev-3);
 }
 /* the agency popover's measure (css/components.css .agency-pop): 14 on top, 16 round the rest */
 .notice-head { position: relative; display: flex; align-items: flex-start; gap: var(--sp-3); padding: 14px var(--sp-4) var(--sp-4); }
-.notice-head > svg { flex: none; margin-top: 2px; color: var(--notice-ink); }
+.notice-head > svg { flex: none; margin-top: 2px; color: var(--app-ink-1); }
 .notice-text { flex: 1; min-width: 0; font: var(--t-small); color: var(--app-ink-3); }
 .notice-text b { display: block; margin-bottom: 2px; padding-right: var(--sp-6); font: var(--t-body); font-weight: 500; color: var(--app-ink-1); }
 /* the button sits on the title's line, as in the agency popover; the text runs under it */

@@ -2,8 +2,8 @@
    the app. No sidebar: a flow is a separate, focused space. REVAMP-PLAN.md 2.6. */
 
 /* ---- the frame ---- */
-/* a flow is white edge to edge; html.app.app-flow outranks shell.css's grey ground */
-html.app.app-flow, html.app.app-flow body { background: var(--app-panel) !important; }
+/* a flow is Volt's paper edge to edge, its fields white on it; html.app.app-flow outranks shell.css's ground */
+html.app.app-flow, html.app.app-flow body { background: var(--app-canvas) !important; }
 .app-flow body { display: flex; flex-direction: column; }
 .flow-head {
   flex: none;
@@ -12,6 +12,7 @@ html.app.app-flow, html.app.app-flow body { background: var(--app-panel) !import
   color: var(--app-ink-1);
   font: 500 15px/20px var(--ui-font);
   letter-spacing: var(--tr-body);
+  background: var(--app-canvas);
 }
 /* ONE GRID FOR THE WHOLE FLOW: the head's row, the rail and form, and the
    foot's buttons all sit on the same two columns, so nothing floats in a
@@ -21,7 +22,7 @@ html.app.app-flow, html.app.app-flow body { background: var(--app-panel) !import
 .flow-main { flex: 1; min-height: 0; overflow-y: auto; }
 .flow-wrap { display: grid; grid-template-columns: 240px minmax(0, 640px); justify-content: center; gap: var(--sp-12); padding: var(--sp-12) var(--sp-6) var(--sp-16); }
 .flow-col { min-width: 0; }
-.flow-foot { flex: none; height: 72px; border-top: 1px solid var(--app-row-line); background: var(--app-panel); }
+.flow-foot { flex: none; height: 72px; padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid var(--app-row-line); background: var(--app-canvas); }
 /* the bar is full bleed; its buttons sit on the content's own grid, so Back lines up
    with the form's left edge and the primary with its right, right under the last field */
 .flow-foot-in { display: grid; grid-template-columns: 240px minmax(0, 640px); justify-content: center; gap: var(--sp-12); height: 100%; padding: 0 var(--sp-6); }
@@ -41,10 +42,10 @@ html.app.app-flow, html.app.app-flow body { background: var(--app-panel) !import
 .app-flow .app-toast { bottom: calc(72px + var(--sp-4)); }
 
 /* ---- step head ---- */
-.eyebrow-app { font: 500 11px/16px var(--ui-font); letter-spacing: 0.14em; text-transform: uppercase; color: var(--app-ink-3); }
-@media (min-width: 2048px) { .eyebrow-app { font-size: 12px; } }
+/* the type over the title: a quiet line in sentence case (Volt has no small uppercase kickers) */
+.eyebrow-app { font: var(--t-small); font-weight: 500; letter-spacing: var(--tr-body); color: var(--app-ink-3); }
 .flow-title { margin-top: var(--sp-3); font: var(--t-display); letter-spacing: var(--tr-display); color: var(--app-ink-1); }
-.flow-title em { font-family: var(--serif-font); font-style: italic; font-weight: 400; font-size: 1.06em; letter-spacing: 0; color: var(--blue-ink); }
+/* .flow-title em: the accent word, Volt's tone (css/tokens.css) */
 .flow-lede { margin-top: var(--sp-2); font: var(--t-body-lg); letter-spacing: var(--tr-body); color: var(--app-ink-3); }
 .flow-fields { display: flex; flex-direction: column; gap: var(--sp-6); margin-top: var(--sp-8); }
 
@@ -65,9 +66,10 @@ html.app.app-flow, html.app.app-flow body { background: var(--app-panel) !import
   text-align: left;
   cursor: pointer;
 }
-.step-dot { display: grid; place-items: center; width: 20px; height: 20px; border: 1px solid var(--border); border-radius: 50%; font: var(--t-label); }
-.app-step.is-current { background: var(--blue-wash); color: var(--app-ink-1); font-weight: 500; }
-.app-step.is-current .step-dot { border-color: transparent; background: var(--notice-ink); color: var(--on-accent); }
+.step-dot { display: grid; place-items: center; width: 20px; height: 20px; border: 1px solid var(--border); border-radius: 50%; font: var(--t-label); font-weight: 600; }
+/* the step you are on: a white chip lifted off the paper, its number on volt (the rail's open page) */
+.app-step.is-current { background: var(--app-panel); color: var(--app-ink-1); font-weight: 500; box-shadow: inset 0 0 0 1px rgba(10, 10, 9, 0.07), 0 1px 2px rgba(10, 10, 9, 0.05), 0 6px 14px -8px rgba(10, 10, 9, 0.22); }
+.app-step.is-current .step-dot { border-color: transparent; background: var(--blue); color: var(--on-volt); box-shadow: 0 0 0 1px rgba(63, 106, 0, 0.4); }
 .app-step.is-done { color: var(--app-ink-2); }
 .app-step.is-done .step-dot { border-color: transparent; background: var(--ink); color: var(--on-accent); }
 .app-step.is-done:hover { background: var(--app-nav-hover); }
@@ -101,7 +103,8 @@ html.app.app-flow, html.app.app-flow body { background: var(--app-panel) !import
   font: var(--t-body-lg);
   letter-spacing: var(--tr-body);
   outline: 0;
-  transition: border-color var(--dur-hover) var(--ease-hover);
+  box-shadow: inset 0 1px 2px rgba(10, 10, 9, 0.04);
+  transition: border-color var(--dur-hover) var(--ease-hover), box-shadow 0.3s var(--ease-hover);
 }
 .textarea { height: auto; min-height: 104px; padding: 10px var(--sp-3); resize: vertical; }
 .input::placeholder, .textarea::placeholder { color: var(--ph-ink); }
@@ -115,11 +118,15 @@ html.app.app-flow, html.app.app-flow body { background: var(--app-panel) !import
 .money .input { padding-left: 26px; font-variant-numeric: tabular-nums; }
 .help { margin-top: -2px; font: var(--t-small); color: var(--app-ink-3); }
 .help.is-err { color: var(--err-ink); }
+/* phones: 16px in every field, so iOS never zooms the page on focus */
+@media (hover: none) and (pointer: coarse) { .input, .textarea, .select { font-size: 16px; } }
 
 /* choice cards and chips (selection is one treatment everywhere) */
 .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); }
 @media (max-width: 600px) { .choice-grid { grid-template-columns: 1fr; } }
-.app-choice[aria-pressed="true"], .chip-choice[aria-pressed="true"] { border-color: var(--blue-line); background: var(--blue-wash); }
+.app-choice[aria-pressed="true"] { border-color: var(--blue-line); background: var(--blue-wash); box-shadow: 0 0 0 1px var(--blue-line); }
+/* a chosen chip is Volt's chosen pick: ink, white words (its tick turns volt, css/new.css) */
+.chip-choice[aria-pressed="true"] { border-color: transparent; background: var(--ink-btn); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 6px 14px -8px rgba(10, 10, 9, 0.5); }
 .chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
 .chip-choice {
   display: inline-flex;
@@ -133,12 +140,15 @@ html.app.app-flow, html.app.app-flow body { background: var(--app-panel) !import
   color: var(--app-ink-1);
   font: var(--t-body);
   font-weight: 500;
+  letter-spacing: var(--tr-body);
   cursor: pointer;
+  box-shadow: var(--elev-1);
+  transition: border-color var(--dur-hover) var(--ease-hover), background var(--dur-hover) var(--ease-hover);
 }
 .chip-choice:hover { border-color: var(--card-line-hover); }
 
 /* a quiet box for estimates and "what happens next" */
-.note-box { display: flex; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); border-radius: var(--r-md); background: var(--app-ground); color: var(--app-ink-2); }
+.note-box { display: flex; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); border: 1px solid var(--app-row-line); border-radius: var(--r-md); background: var(--app-band); color: var(--app-ink-2); }
 .note-box > svg { flex: none; margin-top: 2px; color: var(--app-ink-3); }
 .note-box--warn { background: var(--warn-fill); color: var(--app-ink-1); }
 .note-box--warn > svg { color: var(--warn-ink); }

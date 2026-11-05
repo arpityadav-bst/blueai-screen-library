@@ -46,6 +46,12 @@
      report area is often narrower than that; inside the app it always shows */
   var SHOW = { report: '', dash: '#dash, #dash[hidden] { display: block !important; }' };
 
+  // a two-letter code reads as the country's name, as the samples do
+  function country(g) {
+    if (!/^[a-z]{2}$/i.test(g || '')) { return g; }
+    try { return new Intl.DisplayNames(['en'], { type: 'region' }).of(g.toUpperCase()) || g; } catch (e) { return g; }
+  }
+
   // the campaign's own name and setup on his in-review screen, in his markup
   function fillOwn(doc) {
     var growth = c.kind !== 'engagement', rate = D.rateOf(c);
@@ -71,7 +77,7 @@
     }
     doc.querySelector('[data-cam="meta"]').innerHTML = '<span class="chip chip--wait">In review</span>'
       + '<span>' + (growth ? 'Video growth' : 'Video engagement') + '</span>'
-      + '<span>Country: <b>' + A.esc(/^us$/i.test(c.geo) ? 'United States' : c.geo) + '</b></span>'
+      + '<span>Country: <b>' + A.esc(country(c.geo)) + '</b></span>'
       + '<span class="is-num">#' + A.esc(c.id) + '</span>';
     // no target row: we can't guarantee a number of views (PM, 2026-11-03)
     doc.querySelector('[data-cam="setup"]').innerHTML = row('Campaign budget', A.esc(c.budget))
@@ -87,20 +93,28 @@
      faded outline of the report it will get, in his own report's parts (tiles,
      a chart card, a list), with one line on top of it. Ours, added from
      outside, styled with his classes plus a few of its own (ob-). */
+  /* in the Volt look (2026-11-05): ink and warm paper, the current step a
+     volt dot, the faded chart a volt wash; volt is never text on paper */
   var AHEAD_CSS = '.ob-steps { display: flex; gap: 8px; margin: 0 0 20px; padding: 0; list-style: none; }'
-    + '.ob-steps li { flex: 1; display: flex; align-items: center; gap: 8px; padding: 12px 14px; border: 1px solid rgba(0,0,0,.08); border-radius: 12px; background: #fff; color: #767b85; font-size: 13px; font-weight: 500; }'
-    + '.ob-steps i { flex: none; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: rgba(0,0,0,.05); color: #767b85; font-style: normal; font-size: 11px; font-weight: 600; }'
-    + '.ob-steps .is-done { color: #0b0b0d; } .ob-steps .is-done i { background: rgba(22,163,74,.12); color: #15803d; }'
-    + '.ob-steps .is-now { border-color: rgba(21,110,254,.4); background: rgba(21,110,254,.06); color: #0b0b0d; } .ob-steps .is-now i { background: #156efe; color: #fff; }'
+    + '.ob-steps li { flex: 1; display: flex; align-items: center; gap: 8px; padding: 12px 14px; border: 1px solid rgba(10,10,9,.08); border-radius: 12px; background: #fff; box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(10,10,9,.05); color: #6b6b66; font-size: 13px; font-weight: 500; }'
+    + '.ob-steps i { flex: none; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: #f1f1ed; color: #6b6b66; font-style: normal; font-size: 11px; font-weight: 600; }'
+    + '.ob-steps .is-done { color: #0b0b0a; } .ob-steps .is-done i { background: rgba(198,244,50,.22); color: #3f6a00; }'
+    + '.ob-steps .is-now { border-color: rgba(63,106,0,.28); background: #fff; color: #0b0b0a; } .ob-steps .is-now i { background: #c6f432; color: #0b0b0a; }'
     + '.ob-ghost { position: relative; margin-top: 20px; }'
     + '.ob-ghost-in { opacity: .35; pointer-events: none; user-select: none; }'
-    + '.ob-bar { display: block; height: 10px; margin-top: 10px; border-radius: 999px; background: rgba(0,0,0,.07); }'
-    + '.ob-chart { height: 180px; margin-top: 14px; border-radius: 10px; background: linear-gradient(180deg, rgba(21,110,254,.06), rgba(21,110,254,0)); }'
-    + '.ob-row { display: block; height: 14px; margin-top: 14px; border-radius: 999px; background: rgba(0,0,0,.06); }'
+    + '.ob-bar { display: block; height: 10px; margin-top: 10px; border-radius: 999px; background: rgba(10,10,9,.07); }'
+    + '.ob-chart { height: 180px; margin-top: 14px; border-radius: 10px; background: linear-gradient(180deg, rgba(198,244,50,.28), rgba(198,244,50,0)); }'
+    + '.ob-row { display: block; height: 14px; margin-top: 14px; border-radius: 999px; background: rgba(10,10,9,.06); }'
     // the line over the outline is the one thing to read there: larger, lifted, with its own mark
-    + '.ob-ghost-say { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 4px; padding: 26px 40px 28px; border: 1px solid rgba(0,0,0,.1); border-radius: 18px; background: #fff; box-shadow: 0 24px 60px -18px rgba(18,32,64,.38), 0 2px 6px rgba(18,32,64,.06); text-align: center; font-size: 19px; font-weight: 600; letter-spacing: -0.015em; color: #0b0b0d; white-space: nowrap; }'
-    + '.ob-ghost-say i { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 8px; border-radius: 12px; background: rgba(21,110,254,.08); color: #156efe; }'
-    + '.ob-ghost-say span { display: block; font-size: 15px; font-weight: 400; letter-spacing: -0.005em; color: #5f636b; }';
+    + '.ob-ghost-say { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 4px; padding: 26px 40px 28px; border: 1px solid rgba(10,10,9,.08); border-radius: 20px; background: #fff; box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(10,10,9,.06), 0 36px 64px -28px rgba(10,10,9,.42); text-align: center; font-size: 19px; font-weight: 500; letter-spacing: -0.015em; color: #0b0b0a; white-space: nowrap; }'
+    + '.ob-ghost-say i { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 8px; border-radius: 12px; background: rgba(198,244,50,.22); color: #3f6a00; }'
+    + '.ob-ghost-say span { display: block; font-size: 15px; font-weight: 400; letter-spacing: -0.005em; color: #6b6b66; }'
+    // his .tiles (3 across) comes after .tiles--four, so the outline says 4 itself
+    + '.ob-ghost .tiles--four { grid-template-columns: repeat(4, minmax(0, 1fr)); }'
+    + '@media (max-width: 720px) { .ob-ghost .tiles--four { grid-template-columns: repeat(2, minmax(0, 1fr)); } }'
+    // phone: the four steps two by two, the line over the outline wraps inside the screen
+    + '@media (max-width: 700px) { .ob-steps { display: grid; grid-template-columns: 1fr 1fr; } .ob-steps li { min-height: 44px; white-space: nowrap; }'
+    + ' .ob-ghost-say { width: calc(100% - 32px); padding: 20px 20px 22px; font-size: 17px; white-space: normal; } .ob-ghost-say span { font-size: 14px; } }';
   var CHART = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16"/><path d="M6 16l4-5 3 3 5-7"/></svg>';
   function addAhead(doc) {
     var cam = doc.getElementById('view-campaign'), grid = cam && cam.querySelector('.rep-grid');
@@ -144,13 +158,58 @@
       if (u !== t) { n.nodeValue = u; }
     }
   }
+  /* "Target pace" and the end value share the top right corner of his progress
+     chart when a campaign ends on target: the label then steps below the line */
+  function clearPace(doc) {
+    doc.querySelectorAll('.rep-chart svg').forEach(function (svg) {
+      var pace = null, val = null;
+      svg.querySelectorAll('text').forEach(function (t) {
+        if (t.textContent === 'Target pace') { pace = t; } else if (t.getAttribute('font-weight') === '600') { val = t; }
+      });
+      if (!pace || !val) { return; }
+      if (!pace.hasAttribute('data-oy')) { pace.setAttribute('data-oy', pace.getAttribute('y')); }
+      var oy = +pace.getAttribute('data-oy');
+      pace.setAttribute('y', oy);
+      try {
+        var a = pace.getBBox(), b = val.getBBox();
+        if (a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height) {
+          pace.setAttribute('y', (oy + 14 + a.height).toFixed(1));
+        }
+      } catch (e) {}
+    });
+  }
+  /* his growth report always names his own campaign: the head carries the
+     opened campaign's name, product, country, end date and id instead */
+  function nameOwn(doc) {
+    if (route.page !== 'report' || !c) { return; }
+    var name = doc.getElementById('c-name'), meta = doc.querySelectorAll('#c-meta > span');
+    if (name && name.textContent !== c.title) { name.textContent = c.title; }
+    if (meta.length < 5) { return; }
+    var set = function (el, html) { if (el.innerHTML !== html) { el.innerHTML = html; } };
+    set(meta[1], A.esc(c.product || ''));
+    if (c.ends) { set(meta[2], 'Ends <b>' + A.esc(c.ends) + '</b>'); }
+    set(meta[3], 'Geography: <b>' + A.esc(country(c.geo)) + '</b>');
+    set(meta[4], '#' + A.esc(c.id));
+  }
   function keepReworded(doc) {
     var main = doc.getElementById('dash') || doc.querySelector('main') || doc.body;
     reword(main);
-    var mo = new MutationObserver(function () { mo.disconnect(); reword(main); watch(); });
+    nameOwn(doc);
+    clearPace(doc);
+    var mo = new MutationObserver(function () { mo.disconnect(); reword(main); nameOwn(doc); clearPace(doc); watch(); });
     function watch() { mo.observe(main, { childList: true, subtree: true, characterData: true }); }
     watch();
   }
+
+  var SKIN = { report: 'css/volt-report-skin.css', dash: 'css/volt-dash-skin.css' };
+  function reveal() { frame.classList.add('is-ready'); }
+
+  /* on a phone the framed report fills the screen: a thin bar above it opens the
+     app's menu (shell.js answers [data-nav-open]), as the list's own head does */
+  var brand = document.querySelector('#side .app-brand');
+  frame.insertAdjacentHTML('beforebegin', '<div class="frame-bar"><button class="app-btn app-btn--icon app-btn--quiet" type="button" data-nav-open aria-label="Open menu">'
+    + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>');
+  if (brand) { frame.previousElementSibling.appendChild(brand.cloneNode(true)); }
 
   frame.addEventListener('load', function () {
     var doc, win;
@@ -159,6 +218,18 @@
       var s = doc.createElement('style');
       s.textContent = HIDE[route.page] + ' { display: none !important; } body { background: transparent !important; } ' + SHOW[route.page];
       doc.head.appendChild(s);
+      /* THE VOLT LOOK, FROM OUTSIDE (2026-11-05): one app-owned sheet per
+         screen of his, linked after his own styles so his files stay his and
+         his later changes still flow in. The frame shows once it has loaded,
+         so his old look never flashes first. */
+      var skin = doc.createElement('link');
+      skin.rel = 'stylesheet';
+      skin.href = new URL(SKIN[route.page], location.href).href;
+      skin.onload = skin.onerror = function () { reveal(); clearPace(doc); };
+      // his chart's text grows on a phone (the skins), so the corner is checked again
+      if (win) { win.addEventListener('resize', function () { clearPace(doc); }); }
+      doc.head.appendChild(skin);
+      setTimeout(reveal, 1500);
       // every way back on his screens is the app's list
       doc.addEventListener('click', function (e) {
         /* "View a sample report" on an in-review campaign opens the app's own
@@ -192,6 +263,6 @@
       keepReworded(doc);
     }
     // shown even if the frame could not be read, so the screen is never hidden
-    frame.classList.add('is-ready');
+    if (!doc) { reveal(); }
   });
 })();

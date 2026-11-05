@@ -26,7 +26,7 @@
   transition: background var(--dur-hover) var(--ease-hover), color var(--dur-hover) var(--ease-hover);
 }
 .nw-type .nw-type-go svg { transition: transform 0.24s var(--ease-hover); }
-.nw-type:hover .nw-type-go { border-color: transparent; background: var(--ink); color: var(--solid-ink); }
+.nw-type:hover .nw-type-go { border-color: transparent; background: var(--ink-btn); color: var(--solid-ink); box-shadow: var(--solid-shadow); }
 .nw-type:hover .nw-type-go svg { transform: translateX(3px); }
 /* TWO OF EACH, NO MORE (Appy): two sizes (the name, and one text size for
    everything under it), two weights (500 says "this is the thing", 400 says
@@ -52,8 +52,9 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--notice-ink);
-  color: var(--on-accent);
+  background: var(--blue);
+  color: var(--on-volt);
+  box-shadow: 0 0 0 1px rgba(63, 106, 0, 0.4);
   transform: scale(0);
   transition: transform 150ms var(--ease-hover);
 }
@@ -138,7 +139,7 @@
   font-weight: 500;
   transition: transform 0.32s var(--ease-hover);
 }
-.nw-type .nw-acts svg { color: var(--blue); }
+.nw-type .nw-acts svg { color: var(--blue-ink); }
 .nw-type .nw-acts span:nth-child(2) { margin-left: var(--sp-3); }
 .nw-type .nw-acts span:nth-child(3) { margin-left: var(--sp-1); }
 .nw-type:hover .nw-acts span { transform: translateX(4px); }

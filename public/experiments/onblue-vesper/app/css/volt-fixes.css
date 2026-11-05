@@ -1,0 +1,124 @@
+/* Volt review fixes (2026-11-05), loaded last on every app page so they win
+   over the shared sheets without pushing any of them past 300 lines.
+   Looks only: no copy, data, flow or state changes. */
+
+/* ---- in review vs live: review is a neutral pill with a hollow volt ring,
+   live keeps the solid green dot, so the two never read as one green ---- */
+.app-status--review { background: var(--neutral-fill); color: var(--app-ink-2); }
+.app-status--review::before,
+.app-dot--review::before { box-sizing: border-box; border: 1.5px solid #9ccf12; background: transparent; box-shadow: none; }
+
+/* ---- the amber lock line on Review: Volt has no amber, so it reads in ink ---- */
+.nw-lock { color: var(--app-ink-2); }
+.nw-lock svg { color: var(--app-ink-1); }
+
+/* ---- the custom budget amount: a field of its own, a field's gap away ---- */
+.nw-budgets + .nw-half { margin-top: var(--sp-4); }
+
+/* ---- a dialog's last line never ends on one stranded word ---- */
+.app-dialog-body { text-wrap: pretty; }
+
+/* ---- the current type in the change-type picker: a quiet label, not a call to action ---- */
+.nw-type[aria-pressed="true"] .nw-type-go { background: none; box-shadow: none; color: var(--app-ink-3); }
+.nw-type[aria-pressed="true"] .nw-type-go svg { display: none; }
+
+/* ---- the drafts notice: the step and the time always show ---- */
+.needs-sub { white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+
+/* ---- campaign IDs: Geist, like every other word in the product ---- */
+.c-hash { font-family: var(--ui-font); font-variant-numeric: tabular-nums; letter-spacing: 0; }
+
+/* ---- search: Volt's own clear X (a still image, not the browser's blue one) ---- */
+.search input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b6b66' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6 6 18'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
+  cursor: pointer;
+}
+@media (hover: none) and (pointer: coarse) { .search input { font-size: 16px; } }
+
+/* ---- Ends on, Custom range: Volt colours inside the native date fields ---- */
+.pmenu-date { accent-color: #0b0b0a; }
+.pmenu-date::selection { background: rgba(198, 244, 50, 0.45); }
+.pmenu-date::-webkit-datetime-edit-day-field:focus,
+.pmenu-date::-webkit-datetime-edit-month-field:focus,
+.pmenu-date::-webkit-datetime-edit-year-field:focus { background: rgba(198, 244, 50, 0.45); color: var(--app-ink-1); }
+
+/* ---- Get started steps: the label wraps rather than losing its last word ---- */
+.app-nav-step { height: auto; min-height: var(--nav-row); padding-top: 6px; padding-bottom: 6px; align-items: flex-start; }
+.app-nav-step > span:not(.app-sr) { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.3; }
+.app-nav-step .app-step-mark { margin-top: 1px; }
+
+/* ---- Settings: the same open page head as Campaigns ---- */
+body[data-page="settings"] .app-head {
+  position: static;
+  height: auto;
+  padding-top: var(--sp-4);
+  border-bottom: 0;
+  background: none;
+}
+body[data-page="settings"] .app-title { font: var(--t-display); letter-spacing: var(--tr-display); }
+
+/* ---- the prototype dock: only its bars take a tap, never the gaps between ---- */
+.app-dock { pointer-events: none; }
+.app-dock-bar { pointer-events: auto; }
+.app-dock-bar button { white-space: nowrap; }
+.app.is-nav-open .app-dock { display: none; }
+/* the agency popover's second line sits above the dock */
+.agency-pop { z-index: 55; }
+/* on touch there is no hover to reveal it, so it stays out of the way unless asked for (#dock) */
+@media (hover: none) { .app-dock { display: none; } .app-dock:target { display: flex; opacity: 1; } }
+
+/* the list head's wordmark is for phones; the sidebar carries it elsewhere */
+.list-head > .app-brand { display: none; }
+
+/* ---- phone ---- */
+@media (max-width: 767px) {
+  /* the refresh confirmation floats under the actions instead of widening them */
+  .list-actions { position: relative; min-width: 0; }
+  .list-actions .app-flash { position: absolute; top: calc(100% + var(--sp-2)); right: 0; z-index: 2; padding: 6px 10px; border-radius: var(--r-pill); background: var(--app-panel); box-shadow: var(--elev-1); }
+
+  /* filter menus are a bottom sheet: never off an edge of the screen */
+  .pmenu, .pmenu.is-right, .pmenu.is-range {
+    position: fixed;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 55;
+    width: auto;
+    max-height: 86dvh;
+    overflow-y: auto;
+    padding: var(--sp-3) var(--sp-3) calc(var(--sp-3) + env(safe-area-inset-bottom));
+    border-bottom: 0;
+    border-radius: 20px 20px 0 0;
+  }
+  .pmenu-list { max-height: 56dvh; }
+  .pmenu li { height: 44px; }
+  .pmenu-search { height: 44px; }
+  .pmenu-date { height: 44px; font-size: 16px; }
+  .pmenu-acts .app-btn { flex: 1; height: 44px; }
+
+  /* 44px tap floor; the ID chip grows its hit area, not its look */
+  .pill { height: 44px; padding: 0 var(--sp-4); }
+  .search { height: 44px; }
+  .app-link[data-clear] { min-height: 44px; display: inline-flex; align-items: center; }
+  .c-hash { padding: 12px 6px; margin: -12px -6px; }
+
+  /* the drawer's account row spans the drawer, chevron at the right, as on desktop */
+  .app-acct-btn { width: 100%; }
+  .app-acct-name { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+  /* the brand beside the burger, and a burger with a full hit area on the gutter */
+  .list-head .app-menu-btn { width: 44px; height: 44px; margin-left: -10px; }
+  .list-head > .app-brand { grid-area: brand; display: inline-flex; width: auto; padding: 0; }
+  .list-head:has(> .app-brand) { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "menu brand actions" "titles titles titles"; column-gap: var(--sp-2); }
+
+  /* Settings: burger on its own line above the title; full-width Save on top */
+  body[data-page="settings"] .app-head { flex-direction: column; align-items: flex-start; gap: var(--sp-2); padding-top: 0; }
+  body[data-page="settings"] .app-head .app-menu-btn { width: 44px; height: 44px; margin-left: -10px; }
+  .set-foot { flex-direction: column-reverse; align-items: stretch; gap: var(--sp-3); }
+  #set-save { width: 100%; height: 48px; }
+}

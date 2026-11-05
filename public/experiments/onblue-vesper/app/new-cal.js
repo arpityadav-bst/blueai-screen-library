@@ -141,7 +141,9 @@
     var r = t.getBoundingClientRect(), GAP = 6, M = 8;
     if (isTime(key)) { el.style.width = r.width + 'px'; }
     var h = el.offsetHeight, w = el.offsetWidth;
-    var up = window.innerHeight - r.bottom - GAP < h && r.top - GAP > h;
+    // the floor is the wizard's footer when there is one, so the panel never covers Back
+    var foot = document.querySelector('.flow-foot'), floor = foot ? foot.getBoundingClientRect().top : window.innerHeight;
+    var up = floor - r.bottom - GAP < h && r.top - GAP > h;
     el.style.left = Math.min(Math.max(M, r.left), Math.max(M, window.innerWidth - w - M)) + 'px';
     el.style.top = (up ? r.top - GAP - h : r.bottom + GAP) + 'px';
     el.style.visibility = 'visible';

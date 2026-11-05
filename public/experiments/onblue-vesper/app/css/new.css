@@ -13,7 +13,7 @@
 .nw-change { margin-left: var(--sp-2); font: var(--t-small); font-weight: 500; letter-spacing: 0; text-transform: none; }
 
 /* a pressed chip also carries a tick, so a group that adds up never looks like one that swaps */
-.nw-chip-tick { display: inline-flex; margin-left: calc(var(--sp-1) * -1); color: var(--notice-ink); }
+.nw-chip-tick { display: inline-flex; margin-left: calc(var(--sp-1) * -1); color: var(--blue); }
 
 /* ---- step 1: the reference upload under its paste box ---- */
 .nw-refs { min-height: 88px; }
@@ -25,6 +25,7 @@
   padding: var(--sp-3) var(--sp-4);
   border: 1px dashed var(--border);
   border-radius: var(--r-md);
+  background: var(--app-panel);
   color: var(--app-ink-3);
   cursor: pointer;
   transition: border-color var(--dur-hover) var(--ease-hover);
@@ -68,7 +69,8 @@
   letter-spacing: var(--tr-body);
   text-align: left;
   cursor: pointer;
-  transition: border-color var(--dur-hover) var(--ease-hover);
+  box-shadow: inset 0 1px 2px rgba(10, 10, 9, 0.04);
+  transition: border-color var(--dur-hover) var(--ease-hover), box-shadow 0.3s var(--ease-hover);
 }
 .nw-dtb:hover { border-color: var(--card-line-hover); }
 .nw-dtb:focus-visible, .nw-dtb[aria-expanded="true"] { border-color: var(--blue-line); box-shadow: var(--focus-ring); }
@@ -80,9 +82,9 @@
 .nw-dtb[aria-expanded="true"] .nw-dtb-c { transform: rotate(180deg); }
 
 /* the panel: fixed to the viewport, so the scrolling form never clips it */
-.nw-cal { position: fixed; z-index: 40; width: 320px; max-width: calc(100vw - var(--sp-8)); padding: var(--sp-3); border: 1px solid var(--app-panel-line); border-radius: var(--r-md); background: var(--app-panel); box-shadow: var(--elev-2); }
+.nw-cal { position: fixed; z-index: 40; width: 320px; max-width: calc(100vw - var(--sp-8)); padding: var(--sp-3); border: 1px solid var(--app-panel-line); border-radius: var(--r-md); background: var(--app-panel); box-shadow: var(--elev-3); }
 .nw-cal-head { display: flex; align-items: center; justify-content: space-between; }
-.nw-cal-m { font: var(--t-body); font-weight: 600; letter-spacing: var(--tr-body); color: var(--app-ink-1); }
+.nw-cal-m { font: var(--t-body); font-weight: 500; letter-spacing: var(--tr-body); color: var(--app-ink-1); }
 .nw-cal-nav { display: grid; place-items: center; width: var(--ctl-sm); height: var(--ctl-sm); border: 0; border-radius: var(--r-sm); background: none; color: var(--app-ink-3); cursor: pointer; }
 .nw-cal-nav:hover { background: var(--app-nav-hover); color: var(--app-ink-1); }
 .nw-cal-nav:disabled { opacity: 0.3; pointer-events: none; }
@@ -95,8 +97,9 @@
 .nw-cal-d:focus-visible, .nw-tm-o:focus-visible { box-shadow: inset 0 0 0 2px var(--blue-line); }
 /* the days either side of the month stay, so a week never ends mid-row */
 .nw-cal-d.is-out { color: var(--app-ink-4); }
-.nw-cal-d.is-today { color: var(--notice-ink); font-weight: 600; }
-.nw-cal-d.is-on, .nw-tm-o.is-on { background: var(--notice-ink); color: var(--on-accent); font-weight: 600; }
+/* today: ink and underlined in volt; the chosen day or time: a volt fill, ink figures */
+.nw-cal-d.is-today { color: var(--app-ink-1); font-weight: 600; text-decoration: underline; text-decoration-color: var(--volt-deep); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.nw-cal-d.is-on, .nw-tm-o.is-on { background: var(--blue); color: var(--on-volt); font-weight: 600; box-shadow: inset 0 0 0 1px rgba(63, 106, 0, 0.28); }
 .nw-cal-d:disabled { color: var(--border); cursor: not-allowed; }
 /* the time list: the calendar's panel at the trigger's width, eight rows and the ninth cut */
 .nw-cal--time { padding: var(--sp-1); }
@@ -114,7 +117,7 @@
 
 /* ---- step 4: three summary cards ---- */
 .nw-cards { display: flex; flex-direction: column; gap: var(--sp-3); margin-top: var(--sp-8); }
-.nw-card { padding: var(--pad-card); border: 1px solid var(--app-panel-line); border-radius: var(--r-md); background: var(--app-panel); }
+.nw-card { padding: var(--pad-card); border: 1px solid var(--app-panel-line); border-radius: var(--r-md); background: var(--app-panel); box-shadow: var(--elev-1); }
 .nw-card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); }
 .nw-card-head h2 { font: var(--t-body-lg); font-weight: 500; letter-spacing: var(--tr-body); color: var(--app-ink-1); }
 .nw-card-head .app-btn { margin-right: calc(var(--sp-2) * -1); }

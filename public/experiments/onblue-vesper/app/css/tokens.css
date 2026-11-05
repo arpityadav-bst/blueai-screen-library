@@ -1,83 +1,116 @@
-/* onBlue for business, the signed-in app: tokens.
+/* onBlue for business, the signed-in app: tokens, in the Volt theme.
    Loaded after onblue.css and scoped to html.app (app pages only), so the homepage and the
-   creators site resolve exactly what they resolved before. The brand tokens
-   (--blue, --ink, --green, --err-ink, --spark-ink...) come from onblue.css;
-   this file adds the app's own scales on top. Values: REVAMP-PLAN.md section 5. */
+   creators site resolve exactly what they resolved before. The token NAMES are
+   the PM's (every component file reads them); the VALUES are Volt's (Geist,
+   ink on warm paper, the volt accent #c6f432; volt/css/volt-tokens.css). */
+
+/* THE BRAND TOKENS onblue.css SETS. Its light theme sits on
+   :root[data-theme="light"] (0,2,0); html.app[data-theme] (0,2,1) outranks it
+   on app pages only. Volt is a fill, never text on paper: --blue is the fill,
+   the inks that used to be blue are ink. */
+html.app[data-theme] {
+  --ui-font: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --serif-font: var(--ui-font);
+  --bg: #f7f7f4;
+  --text: #0b0b0a;
+  --ink: #0b0b0a;
+  --blue: #c6f432;
+  --blue-ink: #3f6a00;
+  --notice-ink: #0b0b0a;
+  --spark-ink: #0b0b0a;
+  --green: #3f8f12;
+  --green-fill: rgba(63, 143, 18, 0.1);
+  --green-line: rgba(63, 143, 18, 0.3);
+  --err-ink: #b23a24;
+  --err-line: #c8432b;
+  --solid-ink: #ffffff;
+  --solid-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -2px 0 rgba(0, 0, 0, 0.4), 0 1px 2px rgba(10, 10, 9, 0.24), 0 8px 16px -8px rgba(10, 10, 9, 0.5);
+  --border: rgba(10, 10, 9, 0.14);
+  --border-soft: rgba(10, 10, 9, 0.1);
+  --hair-2: rgba(10, 10, 9, 0.12);
+  --card-line-hover: #9a9a94;
+  --ph-ink: #9a9a94;
+  --bar-bg: #f1f1ed;
+  --card-radius: 18px;
+}
 
 .app {
-  /* SURFACES, THREE STEPS BY ROLE (Appy, 2026-11-03): the sidebar is the
-     deepest, the content area one step lighter, and only the things you work
-     with (lists, cards, controls, dialogs) are white. Light-mode elevation is
-     carried by tone, a few points of lightness per step: tone says which
-     layer, hairlines mark edges, and shadows are only for what floats.
-     --app-ground stays the inset fill used inside white cards. */
-  --app-side: #ebecef;
-  --app-ground: #f7f8fa;
+  /* SURFACES, THREE STEPS BY ROLE (Appy, 2026-11-03), in Volt's warm paper:
+     the sidebar is the deepest, the content area paper, and only the things
+     you work with (lists, cards, controls, dialogs) are white. */
+  --app-side: #efefea;
+  --app-ground: #f7f7f4;
   --app-panel: #ffffff;
-  --app-panel-line: rgba(0, 0, 0, 0.08);
-  --app-row-line: rgba(0, 0, 0, 0.06);
-  --app-nav-hover: rgba(0, 0, 0, 0.035);
-  --app-nav-active: rgba(0, 0, 0, 0.055);
-  --neutral-fill: rgba(0, 0, 0, 0.05);
-  --app-canvas: #f8f9fa;
-  --app-card-line: rgba(0, 0, 0, 0.08);
-  --elev-card: none;
+  --app-panel-line: rgba(10, 10, 9, 0.08);
+  --app-row-line: rgba(10, 10, 9, 0.07);
+  --app-nav-hover: rgba(10, 10, 9, 0.045);
+  --app-nav-active: #ffffff;
+  --neutral-fill: rgba(10, 10, 9, 0.05);
+  --app-canvas: #f7f7f4;
+  --app-card-line: rgba(10, 10, 9, 0.08);
+  --elev-card: inset 0 1px 0 #fff, 0 1px 2px rgba(10, 10, 9, 0.05);
   /* behind a dialog: dark enough that the dialog is the only thing in focus */
-  --app-scrim: rgba(11, 11, 13, 0.5);
-  /* a list's header band, and its edge: a plain hairline now that the
-     content area's tone does the separating */
-  --app-band: #f3f4f6;
-  --app-list-line: rgba(0, 0, 0, 0.08);
-  /* the dark skies' texture (start card, type cards, pricing): a field of faint,
-     thin four-point stars, one per 22px tile (Appy: star-shaped and thin; .11 was too dim) */
-  --sky-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Cpath d='M3 .5C3 2.4 3.6 3 5.5 3 3.6 3 3 3.6 3 5.5 3 3.6 2.4 3 .5 3 2.4 3 3 2.4 3 .5Z' fill='%23fff' fill-opacity='.22'/%3E%3C/svg%3E");
+  --app-scrim: rgba(11, 11, 10, 0.46);
+  /* a list's header band, and its edge */
+  --app-band: #f1f1ed;
+  --app-list-line: rgba(10, 10, 9, 0.08);
+  /* the dark skies' texture (start card, type cards, pricing): faint thin
+     four-point stars, one per 22px tile */
+  --sky-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Cpath d='M3 .5C3 2.4 3.6 3 5.5 3 3.6 3 3 3.6 3 5.5 3 3.6 2.4 3 .5 3 2.4 3 3 2.4 3 .5Z' fill='%23f2f2ec' fill-opacity='.2'/%3E%3C/svg%3E");
 
-  /* four text levels, by rank */
-  --app-ink-1: #0b0b0d;
-  --app-ink-2: #3c4049;
-  --app-ink-3: #5f636b;
-  --app-ink-4: #6b707a;
-  /* context in a list row: as light as body-size text can go and still pass
-     WCAG AA on white (4.5:1) */
-  --app-ink-quiet: #757a83;
+  /* four text levels, by rank (Volt inks; the quiet two kept at AA on white) */
+  --app-ink-1: #0b0b0a;
+  --app-ink-2: #3b3b38;
+  --app-ink-3: #6b6b66;
+  --app-ink-4: #74746d;
+  --app-ink-quiet: #6f6f69;
 
-  /* tones */
-  --blue-wash: rgba(21, 110, 254, 0.08);
-  --blue-line: rgba(21, 110, 254, 0.36);
-  --focus-ring: 0 0 0 3px rgba(21, 110, 254, 0.16);
-  --app-success-ink: #166534;
+  /* tones: the old blue washes are volt washes now */
+  --blue-wash: rgba(198, 244, 50, 0.22);
+  --blue-line: #9ccf12;
+  --focus-ring: 0 0 0 4px rgba(198, 244, 50, 0.45);
+  --app-success-ink: #3f6a00;
   --warn-ink: #92400e;
   --warn-line: rgba(180, 83, 9, 0.32);
   --warn-fill: rgba(217, 119, 6, 0.1);
-  --err-fill: rgba(208, 69, 74, 0.08);
-  --err-line-soft: rgba(208, 69, 74, 0.32);
+  --err-fill: rgba(200, 67, 43, 0.08);
+  --err-line-soft: rgba(200, 67, 43, 0.32);
   --on-accent: #ffffff;
-  /* PASTEL SECTION MARKS (Appy, 2026-11-03, option 2): the page stays white;
-     each section's heading carries a small soft-colour chip that says what
-     kind of thing lives under it. Ground pastel, icon one deep step of the
-     same hue. Live green, your campaigns blue, samples violet. */
-  --pastel-live: #e3f5ec;
-  --pastel-live-ink: #166534;
-  --pastel-all: #e6efff;
-  --pastel-all-ink: #0d5ad6;
-  --pastel-sample: #ecebfc;
-  --pastel-sample-ink: #534ab7;
+  /* text set ON a volt fill */
+  --on-volt: #0b0b0a;
+  /* the volt fill's deeper middle: focus borders, rings, a pressed edge */
+  --volt-deep: #9ccf12;
+  /* the 3D ink of a primary button */
+  --ink-btn: linear-gradient(180deg, #2c2c29 0%, #0b0b0a 100%);
+  --ink-btn-hover: linear-gradient(180deg, #373733 0%, #161614 100%);
+  /* THE ACCENT WORD (Volt .ob-tone at product sizes): ink at the top meeting
+     volt at the bottom, clipped to the letters. Light and dark grounds. */
+  --tone: linear-gradient(180deg, #0b0b0a 0%, #0b0b0a 42%, #8fbf12 70%, #c6f432 88%);
+  --tone-dark: linear-gradient(180deg, #f2f2ec 0%, #f2f2ec 42%, #c6f432 78%);
+  /* PASTEL SECTION MARKS (Appy, 2026-11-03, option 2), warmed for Volt:
+     live green, your campaigns volt, samples paper. */
+  --pastel-live: #e8f3df;
+  --pastel-live-ink: #2f6b0c;
+  --pastel-all: #eef8cf;
+  --pastel-all-ink: #3f6a00;
+  --pastel-sample: #efefea;
+  --pastel-sample-ink: #3b3b38;
 
-  /* type: size / line-height, then tracking */
-  --t-display: 500 32px/36px var(--ui-font);
-  --t-metric: 500 32px/36px var(--ui-font);
-  --t-title: 500 24px/30px var(--ui-font);
-  --t-heading: 600 17px/24px var(--ui-font);
-  /* a figure that matters but is not the answer (a price on a card): under the title, over the text */
-  --t-figure: 500 20px/26px var(--ui-font);
+  /* type: size / line-height, then tracking (Geist: 500 for UI and headings,
+     600 only for figures) */
+  --t-display: 500 34px/38px var(--ui-font);
+  --t-metric: 600 32px/36px var(--ui-font);
+  --t-title: 500 26px/32px var(--ui-font);
+  --t-heading: 500 18px/24px var(--ui-font);
+  --t-figure: 600 20px/26px var(--ui-font);
   --t-body-lg: 400 15px/24px var(--ui-font);
-  --t-body: 400 14px/20px var(--ui-font);
-  --t-small: 400 13px/20px var(--ui-font);
+  --t-body: 400 14px/21px var(--ui-font);
+  --t-small: 400 13px/19px var(--ui-font);
   --t-label: 500 12px/16px var(--ui-font);
-  --tr-display: -0.03em;
-  --tr-title: -0.025em;
-  --tr-heading: -0.015em;
-  --tr-body: -0.01em;
+  --tr-display: -0.04em;
+  --tr-title: -0.035em;
+  --tr-heading: -0.02em;
+  --tr-body: -0.015em;
 
   /* spacing */
   --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 20px;
@@ -85,57 +118,70 @@
   --pad-card: 20px 24px;
   --pad-card-sm: 16px 20px 20px;
 
-  /* radii: panel 16 > card 12 > control 6 */
-  --r-xs: 6px;
-  --r-sm: 8px;
-  --r-md: 12px;
+  /* radii (Volt): button 8, nav row 10, menu and card 14, panel 18 */
+  --r-xs: 8px;
+  --r-sm: 10px;
+  --r-md: 14px;
   --r-pill: 999px;
 
-  /* elevation: only things that float get a shadow */
-  --elev-1: 0 1px 2px rgba(18, 32, 64, 0.035);
-  --elev-2: 0 18px 44px -20px rgba(18, 32, 64, 0.3), 0 2px 6px rgba(18, 32, 64, 0.06);
-  --elev-3: 0 30px 70px -30px rgba(18, 32, 64, 0.35);
+  /* elevation (Volt): hairline lift, float, lift */
+  --elev-1: inset 0 1px 0 #fff, 0 1px 2px rgba(10, 10, 9, 0.05);
+  --elev-2: inset 0 1px 0 #fff, 0 1px 2px rgba(10, 10, 9, 0.05), 0 26px 44px -24px rgba(10, 10, 9, 0.35);
+  --elev-3: inset 0 1px 0 #fff, 0 1px 2px rgba(10, 10, 9, 0.06), 0 36px 64px -28px rgba(10, 10, 9, 0.42);
 
   /* sizes */
-  --app-sidebar-w: 260px;
+  --app-sidebar-w: 248px;
   --app-rail-w: 64px;
   --app-gutter: 12px;
   --app-header-h: 64px;
   --app-content-max: 1120px;
-  --ctl-sm: 28px;
+  --ctl-sm: 30px;
   --ctl: 36px;
   --ctl-lg: 44px;
-  --nav-row: 32px;
+  --nav-row: 38px;
 
-  /* motion: instant on, soft off */
-  --dur-hover: 160ms;
-  --ease-hover: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* motion (Volt ease): instant on, soft off */
+  --dur-hover: 150ms;
+  --ease-hover: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* LARGE SCREENS STEP UP ONE NOTCH. From 2048px of browser width (a 4K screen
-   at 150%, a 1440p screen at 100%), the same type in the same layout reads
-   small: the content sits in much more empty screen, and on high-density
-   panels the strokes thin out. So the scale moves up one step and the frame
-   widens. A 1080p screen at 100% is 1920px wide and is untouched. Everything
-   that uses the tokens follows; nothing else has to know. */
+/* LARGE SCREENS STEP UP ONE NOTCH. From 2048px of browser width the same
+   type in the same layout reads small, so the scale moves up one step and
+   the frame widens. A 1080p screen at 100% is untouched. */
 @media (min-width: 2048px) {
   .app {
-    --t-display: 500 36px/40px var(--ui-font);
-    --t-metric: 500 36px/40px var(--ui-font);
-    --t-title: 500 26px/32px var(--ui-font);
-    --t-heading: 600 18px/26px var(--ui-font);
-    --t-figure: 500 22px/28px var(--ui-font);
+    --t-display: 500 38px/42px var(--ui-font);
+    --t-metric: 600 36px/40px var(--ui-font);
+    --t-title: 500 28px/34px var(--ui-font);
+    --t-heading: 500 19px/26px var(--ui-font);
+    --t-figure: 600 22px/28px var(--ui-font);
     --t-body-lg: 400 16px/26px var(--ui-font);
     --t-body: 400 15px/22px var(--ui-font);
     --t-small: 400 14px/20px var(--ui-font);
     --t-label: 500 13px/18px var(--ui-font);
 
-    --app-sidebar-w: 280px;
+    --app-sidebar-w: 272px;
     --app-header-h: 68px;
     --app-content-max: 1280px;
-    --ctl-sm: 30px;
+    --ctl-sm: 32px;
     --ctl: 38px;
     --ctl-lg: 46px;
-    --nav-row: 34px;
+    --nav-row: 40px;
   }
+}
+
+/* THE ACCENT WORD in every app title: the serif italic <em> becomes Volt's
+   tone (one word per heading, as the PM's markup already has it) */
+.app :is(.flow-title, .tp-title, .pr-title, .app-display, .app-empty h2) em {
+  font: inherit;
+  font-style: normal;
+  letter-spacing: inherit;
+  color: transparent;
+  background: var(--tone);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding-bottom: 0.12em;
 }

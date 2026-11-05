@@ -41,12 +41,13 @@ html.app, html.app body {
   gap: var(--sp-2);
   height: 60px;
   padding: 0 var(--sp-3);
-  font: 500 18px/24px var(--ui-font);
-  letter-spacing: var(--tr-display);
+  font: 600 19px/24px var(--ui-font);
+  letter-spacing: -0.03em;
   color: var(--app-ink-1);
 }
-.app-brand svg { width: 24px; height: 24px; color: var(--spark-ink); }
-.app-brand i { font-style: normal; color: var(--blue); }
+/* the Volt wordmark: the spark and the word all ink */
+.app-brand svg { width: 26px; height: 26px; color: var(--spark-ink); }
+.app-brand i { font-style: normal; color: inherit; }
 
 
 /* New campaign is the first nav row, written like the rest (Appy): a plus and
@@ -70,16 +71,16 @@ html.app, html.app body {
 .app-dot { flex: none; width: 16px; height: 16px; display: grid; place-items: center; }
 .app-dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--app-ink-4); }
 .app-dot--live::before { background: var(--green); }
-.app-dot--review::before { background: var(--notice-ink); }
-/* a Get started step: a ring to do, a green tick done (quiet), a dashed ring waiting */
+.app-dot--review::before { background: var(--blue); box-shadow: 0 0 0 1px rgba(63, 106, 0, 0.4); }
+/* a Get started step: a ring to do, a volt tick done (Volt's yes), a dashed ring waiting */
 button.app-nav-step { width: 100%; border: 0; background: none; font: inherit; letter-spacing: inherit; text-align: left; cursor: pointer; }
 span.app-nav-step:hover { background: none; }
 .app-nav-step.is-done, .app-nav-step.is-wait { color: var(--app-ink-3); }
 span.app-nav-step { cursor: default; }
 .app-step-mark { flex: none; display: grid; place-items: center; width: 16px; height: 16px; border: 1.5px solid var(--app-ink-4); border-radius: 50%; color: #fff; }
-.app-step-mark.is-done { border-color: var(--green); background: var(--green); }
-/* the tick stays white: the nav's own rule greys every icon in a row */
-.app-nav-item .app-step-mark svg { color: #fff; }
+.app-step-mark.is-done { border-color: transparent; background: var(--blue); box-shadow: 0 0 0 1px rgba(63, 106, 0, 0.4); }
+/* the tick stays ink on the volt: the nav's own rule greys every icon in a row */
+.app-nav-item .app-step-mark svg { color: var(--on-volt); }
 .app-step-mark.is-wait { border-style: dashed; }
 .app-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .app-nav-item {
@@ -91,12 +92,14 @@ span.app-nav-step { cursor: default; }
   border-radius: var(--r-sm);
   color: var(--app-ink-2);
   font-weight: 500;
+  letter-spacing: var(--tr-body);
   transition: background var(--dur-hover) var(--ease-hover), color var(--dur-hover) var(--ease-hover);
 }
 .app-nav-item svg { flex: none; color: var(--app-ink-3); }
 .app-nav-item:hover { background: var(--app-nav-hover); color: var(--app-ink-1); transition-duration: 0ms; }
 .app-nav-item:hover svg { color: var(--app-ink-2); }
-.app-nav-item[aria-current="page"] { background: var(--app-nav-active); color: var(--app-ink-1); }
+/* the open page: a white chip lifted off the rail (Volt's .ob-navi.is-on) */
+.app-nav-item[aria-current="page"] { background: var(--app-nav-active); color: var(--app-ink-1); box-shadow: inset 0 0 0 1px rgba(10, 10, 9, 0.07), 0 1px 2px rgba(10, 10, 9, 0.05), 0 6px 14px -8px rgba(10, 10, 9, 0.22); }
 .app-nav-item[aria-current="page"] svg { color: var(--app-ink-1); }
 .app-nav-item .app-count { margin-left: auto; }
 .app-nav-item .ext { margin-left: auto; color: var(--app-ink-4); }
@@ -144,15 +147,15 @@ span.app-nav-step { cursor: default; }
   position: relative;
   width: 28px;
   height: 28px;
-  border: 1px solid var(--app-panel-line);
-  border-radius: var(--r-sm);
-  background: var(--app-panel);
-  color: var(--app-ink-1);
+  border-radius: 50%;
+  background: var(--ink-btn);
+  color: var(--blue);
   font: var(--t-small);
-  font-weight: 500;
+  font-weight: 600;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
-/* in review: a blue dot on the avatar's corner, ringed in the sidebar's tone */
-.app-acct-av.is-review::after { content: ""; position: absolute; right: -3px; bottom: -3px; width: 9px; height: 9px; border: 2px solid var(--app-side); border-radius: 50%; background: var(--notice-ink); }
+/* in review: a volt dot on the avatar's corner, ringed in the sidebar's tone */
+.app-acct-av.is-review::after { content: ""; position: absolute; right: -3px; bottom: -3px; width: 9px; height: 9px; border: 2px solid var(--app-side); border-radius: 50%; background: var(--blue); }
 .app-acct-name { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: var(--t-body); font-weight: 500; color: var(--app-ink-1); }
 .app-acct-btn svg { flex: none; color: var(--app-ink-4); }
 .app-menu {
@@ -161,12 +164,16 @@ span.app-nav-step { cursor: default; }
   right: 0;
   bottom: calc(100% + var(--sp-1));
   z-index: 20;
-  padding: var(--sp-1);
+  padding: 6px;
   border: 1px solid var(--app-panel-line);
-  border-radius: var(--r-md);
+  border-radius: 16px;
   background: var(--app-panel);
-  box-shadow: var(--elev-2);
+  box-shadow: var(--elev-3);
+  animation: app-menu-in 0.2s var(--ease-hover);
 }
+/* solid from the first frame: it slides, it never fades (Volt's menu) */
+@keyframes app-menu-in { from { transform: translateY(6px); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .app-menu { animation: none; } }
 .app-menu-note { padding: var(--sp-2) var(--sp-2) var(--sp-1); font: var(--t-small); color: var(--app-ink-3); overflow-wrap: anywhere; }
 .app-menu-sep { height: 1px; margin: var(--sp-1) 0; background: var(--app-row-line); }
 .app-menu-item {
@@ -179,14 +186,16 @@ span.app-nav-step { cursor: default; }
   border: 0;
   border-radius: var(--r-sm);
   background: none;
-  color: var(--app-ink-1);
+  color: var(--app-ink-2);
   font: var(--t-body);
+  font-weight: 500;
   letter-spacing: var(--tr-body);
   text-align: left;
   cursor: pointer;
 }
-.app-menu-item:hover { background: var(--app-nav-hover); }
-.app-menu-item svg { color: var(--app-ink-3); }
+.app-menu-item:hover { background: var(--app-band); color: var(--app-ink-1); }
+.app-menu-item svg { color: var(--app-ink-2); }
+.app-menu-item:hover svg { color: var(--app-ink-1); }
 
 /* ---- panel ---- */
 .app-panel {
@@ -196,6 +205,7 @@ span.app-nav-step { cursor: default; }
   border: 1px solid var(--app-panel-line);
   border-radius: var(--card-radius);
   background: var(--app-canvas);
+  box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(10, 10, 9, 0.04);
 }
 .app-head {
   position: sticky;
@@ -249,7 +259,10 @@ span.app-nav-step { cursor: default; }
     width: 280px;
     align-items: stretch;
     padding: var(--sp-2) var(--sp-3) var(--sp-3);
+    padding-bottom: max(var(--sp-3), env(safe-area-inset-bottom));
     background: var(--app-side);
+    /* 44 is the floor for every tap on a phone */
+    --nav-row: 44px;
     transform: translateX(-100%);
     transition: transform 0.2s var(--ease-hover);
   }

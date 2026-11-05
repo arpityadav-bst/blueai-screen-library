@@ -34,7 +34,7 @@
             + '<span class="nw-type-facts"><span class="nw-type-spec"><i>You bring</i><b>' + esc(t.bring) + '</b></span>'
             + '<span class="nw-type-spec"><i>You pay</i><b>' + esc(t.pay) + '</b></span></span>'
             // the card's own button, so it reads as something to press, not a page to read
-            + '<span class="nw-type-go">Choose ' + esc(t.name) + ARROW + '</span>'
+            + '<span class="nw-type-go">' + (selected === id ? 'Current type' : 'Choose ' + esc(t.name) + ARROW) + '</span>'
             + '</button>';
         }).join('')
       + '</div>';

@@ -41,6 +41,8 @@
   border-radius: var(--r-xs);
   background: var(--app-panel);
   color: var(--app-ink-3);
+  box-shadow: var(--elev-1);
+  transition: border-color var(--dur-hover) var(--ease-hover), box-shadow 0.3s var(--ease-hover);
 }
 .search[hidden], .toolbar[hidden] { display: none; }
 .search:focus-within { border-color: var(--blue-line); box-shadow: var(--focus-ring); }
@@ -70,11 +72,16 @@
   color: var(--app-ink-2);
   font: var(--t-small);
   font-weight: 500;
+  letter-spacing: var(--tr-body);
   cursor: pointer;
+  box-shadow: var(--elev-1);
 }
-.pill:hover { background: var(--app-nav-hover); }
+.pill:hover { border-color: rgba(10, 10, 9, 0.16); color: var(--app-ink-1); }
 .pill .v { display: inline-flex; align-items: center; gap: var(--sp-1); color: var(--app-ink-1); }
-.pill.is-set { border-color: var(--blue-line); background: var(--blue-wash); }
+/* a set filter is Volt's chosen chip: ink, white words */
+.pill.is-set { border-color: transparent; background: var(--ink-btn); color: rgba(255, 255, 255, 0.72); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14); }
+.pill.is-set .v { color: #fff; }
+.pill.is-set svg { color: rgba(255, 255, 255, 0.72); }
 .pill[aria-expanded="true"] { border-color: var(--blue-line); box-shadow: var(--focus-ring); }
 .pill svg { color: var(--app-ink-3); }
 
@@ -84,19 +91,20 @@
   left: 0;
   z-index: 30;
   width: 260px;
-  padding: var(--sp-1);
+  padding: 6px;
   border: 1px solid var(--app-panel-line);
   border-radius: var(--r-md);
   background: var(--app-panel);
-  box-shadow: var(--elev-2);
+  box-shadow: var(--elev-3);
 }
 .pmenu.is-right { left: auto; right: 0; }
 .pmenu-search { display: flex; align-items: center; gap: var(--sp-2); height: var(--ctl); margin-bottom: var(--sp-1); padding: 0 var(--sp-2); border-bottom: 1px solid var(--app-row-line); color: var(--app-ink-3); }
 .pmenu-search input { flex: 1; border: 0; outline: 0; background: none; font: var(--t-body); color: var(--app-ink-1); }
 .pmenu-list { max-height: 280px; overflow-y: auto; list-style: none; outline: 0; }
 .pmenu li { display: flex; align-items: center; gap: var(--sp-2); height: var(--nav-row); padding: 0 var(--sp-2); border-radius: var(--r-sm); color: var(--app-ink-1); cursor: pointer; }
-.pmenu li.is-active { background: var(--app-nav-hover); }
-.pmenu-ck { width: 16px; color: var(--notice-ink); }
+.pmenu li.is-active { background: var(--app-band); }
+/* the chosen option's tick: the text-safe volt green */
+.pmenu-ck { width: 16px; color: var(--blue-ink); font-weight: 600; }
 .pmenu-t { flex: 1; display: flex; align-items: center; gap: var(--sp-2); min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .pmenu-n { color: var(--app-ink-3); font: var(--t-small); font-variant-numeric: tabular-nums; }
 .pmenu-none { padding: var(--sp-2); font: var(--t-small); color: var(--app-ink-3); }
@@ -117,7 +125,7 @@ body[data-page="campaigns"] .app-body { max-width: 1280px; }
 /* one white card with a firmer edge than a plain card, so the list holds its
    shape on a white page without a second container (Appy: the tray was one
    layer too many) */
-.tbl { overflow: hidden; border: 1px solid var(--app-list-line); border-radius: var(--r-md); container-type: inline-size; background: var(--app-panel); }
+.tbl { overflow: hidden; border: 1px solid var(--app-list-line); border-radius: var(--r-md); container-type: inline-size; background: var(--app-panel); box-shadow: var(--elev-1); }
 .row {
   display: grid;
   /* Campaign takes the slack.
@@ -140,7 +148,7 @@ body[data-page="campaigns"] .app-body { max-width: 1280px; }
 .row > * { min-width: 0; }
 .row.is-link { cursor: pointer; transition: background var(--dur-hover) var(--ease-hover); }
 .row.is-link:hover { background: var(--app-nav-hover); transition-duration: 0ms; }
-.row.is-link:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
+.row.is-link:focus-visible { outline: 2px solid var(--volt-deep); outline-offset: -2px; box-shadow: none; }
 /* the header band (Appy's pick, A, final): the column labels on a grey band across the card's top */
 .row--head { min-height: 44px; padding-top: 0; padding-bottom: 0; background: var(--app-band); font: var(--t-small); font-weight: 500; color: var(--app-ink-2); }
 .th { border: 0; background: none; padding: 0; font: inherit; color: inherit; cursor: pointer; }
@@ -161,7 +169,7 @@ body[data-page="campaigns"] .app-body { max-width: 1280px; }
   cursor: copy;
   transition: background var(--dur-hover) var(--ease-hover), color var(--dur-hover) var(--ease-hover);
 }
-.c-hash:hover, .c-hash:focus-visible { background: var(--app-nav-active); color: var(--app-ink-1); transition-duration: 0ms; }
+.c-hash:hover, .c-hash:focus-visible { background: var(--app-band); color: var(--app-ink-1); transition-duration: 0ms; }
 .c-prod, .c-geo, .c-ends { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .c-ends.is-none { color: var(--app-ink-3); }
 /* ONE DARK ANCHOR PER ROW: the name and the fill read first; product, type,
@@ -236,11 +244,11 @@ body[data-page="campaigns"] .app-body { max-width: 1280px; }
   right: 0;
   z-index: 30;
   width: 200px;
-  padding: var(--sp-1);
+  padding: 6px;
   border: 1px solid var(--app-panel-line);
   border-radius: var(--r-md);
   background: var(--app-panel);
-  box-shadow: var(--elev-2);
+  box-shadow: var(--elev-3);
 }
 .needs-menu .app-menu-item { color: var(--err-ink); }
 .needs-menu .app-menu-item svg { color: currentColor; }

@@ -69,7 +69,7 @@
     var html = '<div class="app-field" data-field="budget" role="group" aria-labelledby="l-budget">'
       + '<span class="label" id="l-budget"><span>Campaign budget</span></span>'
       + '<div class="nw-budgets' + (err.budget && !b.budgetPick ? ' is-bad' : '') + '">' + cards + '</div>'
-      + (custom ? U.money({ k: 'budgetCustom', v: 'budget', value: b.budgetCustom, ph: '500', aria: 'Custom budget', err: err.budget, noHelp: true, cls: 'nw-half' }) : '')
+      + (custom ? U.money({ k: 'budgetCustom', v: 'budget', value: b.budgetCustom, ph: '500', label: 'Custom amount', aria: 'Custom budget', err: err.budget, noHelp: true, cls: 'nw-half' }) : '')
       + U.help('budget', '', err.budget) + '</div>'
       + U.money({ k: 'bid', label: t.rateLabel, value: b.bid, ph: t.ratePh, err: err.bid, cls: 'nw-half',
         // one line in the one help slot, so an error replaces all of it

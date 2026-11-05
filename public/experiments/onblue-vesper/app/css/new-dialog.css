@@ -6,10 +6,15 @@
   padding: 0;
   border: 1px solid var(--app-panel-line);
   border-radius: var(--card-radius);
-  background: var(--app-panel);
+  /* Volt's dialog: a faint volt glow from the top edge, a volt rim line, a spring in */
+  background: radial-gradient(ellipse 60% 55% at 50% 0%, rgba(198, 244, 50, 0.14), rgba(198, 244, 50, 0) 75%), var(--app-panel);
   color: var(--app-ink-2);
   box-shadow: var(--elev-3);
 }
+.app-dialog[open] { animation: app-pop 0.35s cubic-bezier(0.2, 1.15, 0.35, 1); }
+.app-dialog::before { content: ""; position: absolute; top: 0; left: 18%; right: 18%; height: 1.5px; background: linear-gradient(90deg, rgba(198, 244, 50, 0), #c6f432 30%, #9ccf12 50%, #c6f432 70%, rgba(198, 244, 50, 0)); pointer-events: none; }
+@keyframes app-pop { from { opacity: 0; transform: translateY(10px) scale(0.97); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .app-dialog[open] { animation: none; } }
 /* padding sits on the form, so a click whose target is the dialog itself is the backdrop */
 .app-dialog > form { padding: var(--sp-6); }
 .app-dialog::backdrop { background: var(--app-scrim); }
@@ -18,4 +23,12 @@
 .app-dialog-foot { display: flex; justify-content: flex-end; gap: var(--sp-2); margin-top: var(--sp-6); }
 
 .app-btn--danger { border-color: transparent; background: var(--err-ink); color: var(--on-accent); }
+.app-btn--danger { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 8px 16px -10px rgba(178, 58, 36, 0.6); }
 .app-btn--danger:hover { border-color: transparent; background: var(--err-line); }
+/* phones: a bottom sheet, its buttons full width with the answer on top */
+@media (max-width: 700px) {
+  .app-dialog { width: 100%; max-width: 100%; margin: auto 0 0; border-radius: var(--card-radius) var(--card-radius) 0 0; }
+  .app-dialog > form { padding-bottom: max(var(--sp-6), env(safe-area-inset-bottom)); }
+  .app-dialog-foot { flex-direction: column-reverse; }
+  .app-dialog-foot .app-btn { width: 100%; height: var(--ctl-lg); }
+}
