@@ -1,0 +1,201 @@
+/* How it works (volt/js/journey.js), from the Volt homepage's journey.css,
+   journey-2.css and journey-3.css, cut to the PM's three steps. The words
+   scroll on the left; the stage stays pinned on the right: a 1010 x 760 scene,
+   scaled by --oj-s (journey.js fit()). The stage carries at-N (this step),
+   gt-N (every step before it) and, on step 3, is-then once the posting is done
+   (the views so far take the phone). Transforms and opacity only. */
+
+.oj { padding: clamp(5.5rem, 10vw, 8.5rem) 0 0; }
+.oj-in { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: var(--s12); }
+.oj-title { max-width: 70rem; margin: 0 auto var(--s8); color: var(--ink-1); font: var(--t-statement); letter-spacing: var(--tr-display); text-align: center; text-wrap: balance; }
+
+/* the words: three titles that scroll by, the one in the middle in full ink */
+.oj-step { display: flex; align-items: center; min-height: 78vh; }
+.oj-step:first-child, .oj-step:last-child { min-height: var(--oj-h, 100vh); }
+.oj-step > div { opacity: 0.22; transform: translateY(0.5rem); transition: opacity 0.3s var(--ease), transform 0.3s var(--ease); }
+.oj-step.is-now > div { opacity: 1; transform: none; }
+.oj-step h3 { margin: 0; color: var(--ink-1); font: var(--t-title); letter-spacing: var(--tr-display); }
+
+/* the stage, pinned */
+.oj-side { position: relative; }
+.oj-pin { position: sticky; top: calc((100vh - var(--oj-h, 100vh)) / 2); display: flex; align-items: center; }
+.oj-stage-box { flex: none; }
+.oj-stage::before { content: ""; position: absolute; left: 50%; top: 50%; width: 560px; height: 560px; margin: -280px 0 0 -280px; border-radius: 50%; background: radial-gradient(circle, rgba(198, 244, 50, 0.2) 0%, rgba(198, 244, 50, 0.07) 40%, rgba(198, 244, 50, 0) 70%); pointer-events: none; }
+.oj-stage { position: relative; width: 1010px; height: 760px; transform: scale(var(--oj-s, 1)); transform-origin: 0 0; }
+.oj-fact, .oj-node, .oj-phone { position: absolute; left: 50%; top: 50%; }
+
+/* the phone: Apple's frame (.ob-iphone, parts.css), a flat tilt per step */
+.oj-phone { z-index: 3; width: 296px; height: auto; margin: -303px 0 0 -148px; transform: scale(1.15) rotate(-3deg); transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.at-2 .oj-phone { transform: scale(1.15); }
+.at-3 .oj-phone { transform: scale(1.15) rotate(-1deg); }
+.oj-glass { --bg: #0b0b0a; --surface: #151513; --surface-2: #1e1e1b; --line: rgba(255, 255, 255, 0.08); --line-2: rgba(255, 255, 255, 0.15);
+  --ink-1: #f2f2ec; --ink-2: #d2d2ca; --ink-3: #a2a29a; --ink-4: #6e6e68; background: var(--bg); }
+.oj-glare { position: absolute; inset: 0; z-index: 5; background: linear-gradient(118deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.05) 28%, rgba(255, 255, 255, 0) 42%); pointer-events: none; }
+
+.oj-screen { position: absolute; inset: 0; opacity: 0; transition: opacity 0.3s ease; }
+.oj-screen small { display: block; color: var(--ink-4); font: 500 12px/1.3 var(--font); }
+.at-1 .oj-site, .at-2 .oj-make, .at-2 .oj-film, .at-3 .oj-post, .at-3.is-then .oj-stats { opacity: 1; }
+.at-3.is-then .oj-post { opacity: 0; }
+.at-2 .oj-film { transition-delay: 1.7s; }
+.oj-film { width: 100%; height: 100%; object-fit: cover; background: #0b0b0a; }
+
+/* step 1: the brand card, headed by the brand's name, what was read ticking on */
+.oj-site { overflow: hidden; background: var(--bg); }
+.oj-card { padding: 50px 14px 14px; }
+.oj-bar { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; background: var(--surface-2); color: var(--ink-1); font: 600 13px/1 var(--font); letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; }
+.oj-bar i { display: grid; place-items: center; flex: none; width: 20px; height: 20px; overflow: hidden; border-radius: 5px; color: #fff; font: 700 10px/1 var(--font); font-style: normal; }
+.oj-og { position: relative; height: 128px; margin-top: 12px; overflow: hidden; border-radius: 14px; background-size: cover; background-position: center; }
+.oj-desc { margin: 12px 0 0; color: var(--ink-3); font: 400 12.5px/1.45 var(--font); }
+.oj-read { display: grid; gap: 6px; margin-top: 12px; }
+.oj-read span { display: flex; align-items: center; gap: 7px; padding: 8px 10px; border-radius: 9px; background: var(--surface-2); color: var(--ink-1); font: 500 12px/1 var(--font); opacity: 0; transform: translateY(6px); transition: opacity 0.3s ease, transform 0.3s var(--ease); }
+.oj-read svg { flex: none; padding: 2px; border-radius: 50%; background: var(--accent); color: var(--on-accent); }
+.at-1 .oj-read span { opacity: 1; transform: none; transition-delay: var(--d); }
+.oj-scan { position: absolute; z-index: 2; left: 0; right: 0; top: -60px; height: 60px; background: linear-gradient(180deg, rgba(198, 244, 50, 0), rgba(198, 244, 50, 0.55) 72%, rgba(198, 244, 50, 0)); }
+.at-1 .oj-scan { animation: oj-scan 2.4s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+@keyframes oj-scan { to { transform: translateY(580px); } }
+.oj-look { display: grid; grid-template-columns: auto 1fr; gap: 6px; margin-top: 8px; }
+.oj-look > span { padding: 9px 10px; border-radius: 9px; background: var(--surface-2); opacity: 0; transform: translateY(6px); transition: opacity 0.3s ease, transform 0.3s var(--ease); }
+.at-1 .oj-look > span { opacity: 1; transform: none; transition-delay: 0.95s; }
+.at-1 .oj-look > span + span { transition-delay: 1.15s; }
+.oj-look small { display: block; margin-bottom: 6px; color: var(--ink-4); font: 500 10.5px/1 var(--font); }
+.oj-look i { display: flex; gap: 4px; }
+.oj-look u { display: block; width: 16px; height: 16px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); }
+.oj-look b { display: block; color: var(--ink-1); font: 500 12px/1.3 var(--font); }
+
+/* inner screens (they start under the island) */
+.oj-make, .oj-post, .oj-stats { padding: 50px 16px 16px; background: var(--bg); }
+
+/* step 2: your first videos, being made, then the first one plays */
+.oj-make ol { display: grid; gap: 8px; margin: 10px 0 20px; padding: 0; list-style: none; }
+.oj-make li { padding: 10px; border-radius: 10px; background: var(--surface-2); color: var(--ink-1); font: 500 13px/1.35 var(--font); opacity: 0; transform: translateY(6px); transition: opacity 0.25s ease, transform 0.3s var(--ease); }
+.at-2 .oj-make li { opacity: 1; transform: none; transition-delay: var(--d); }
+.oj-make li b { display: block; margin-bottom: 2px; color: var(--ink-3); font: 500 11px/1.2 var(--font); }
+.oj-prog { height: 8px; margin-top: 8px; overflow: hidden; border-radius: 4px; background: var(--surface-2); }
+.oj-prog i { display: block; height: 100%; background: var(--ink-1); transform-origin: 0 50%; transform: scaleX(0); }
+.at-2 .oj-prog i { transform: scaleX(1); transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1) 0.6s; }
+.oj-drafts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
+.oj-drafts span { min-width: 0; opacity: 0.18; transition: opacity 0.4s ease; }
+.at-2 .oj-drafts span { opacity: 1; transition-delay: var(--d); }
+.oj-drafts img { display: block; width: 100%; aspect-ratio: 9 / 16; border-radius: 9px; object-fit: cover; }
+.oj-make .oj-drafts small { margin-top: 6px; color: var(--ink-3); font: 500 10.5px/1.2 var(--font); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* the flyers: white cards that travel out from the phone; in 0.55s, out 0.3s */
+.oj-fact, .oj-node { z-index: 4; border: 1px solid rgba(10, 10, 9, 0.08); background: rgba(255, 255, 255, 0.94); box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(10, 10, 9, 0.05), 0 26px 44px -24px rgba(10, 10, 9, 0.35); opacity: 0; transform: translate(-50%, -50%) scale(0.7); transition: transform 0.3s ease, opacity 0.2s ease; }
+.at-1 .oj-fact, .at-3 .oj-node { opacity: 1; transform: translate(calc(var(--x) - 50%), calc(var(--y) - 50%)); transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.25, 1.06) var(--d), opacity 0.25s ease var(--d); }
+
+/* step 1: what was read, with an icon and a slow float (260 wide) */
+.oj-fact { display: flex; align-items: flex-start; gap: 12px; width: 260px; padding: 16px 18px; border-radius: 18px; }
+.oj-fact i { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: var(--accent); color: var(--on-accent); }
+.oj-fact small { display: block; color: var(--ink-4); font: 500 13.5px/1 var(--font); }
+.oj-fact b { display: block; margin-top: 7px; color: var(--ink-1); font: 500 18px/1.3 var(--font); letter-spacing: -0.015em; }
+.at-1 .oj-fact { animation: oj-bob 5s ease-in-out infinite; animation-delay: var(--b); }
+@keyframes oj-bob { 50% { translate: 0 -4px; } }
+
+/* the wires: lines drawing themselves from under the phone to each card's edge */
+.oj-wires { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.oj-wires g { opacity: 0; transition: opacity 0.2s ease; }
+.at-1 .w-1, .at-3 .w-3 { opacity: 1; }
+.oj-wires path { fill: none; stroke: rgba(10, 10, 9, 0.28); stroke-width: 1.5; stroke-dasharray: 0 1; }
+.oj-wires circle { fill: var(--accent); stroke: rgba(10, 10, 9, 0.5); stroke-width: 1; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.at-1 .w-1 path, .at-3 .w-3 path { animation: oj-wire 0.45s ease-out var(--d) both; }
+.at-1 .w-1 circle, .at-3 .w-3 circle { animation: oj-dot 0.3s cubic-bezier(0.2, 1.5, 0.4, 1) var(--d) both; }
+@keyframes oj-wire { from { stroke-dasharray: 0 1; } to { stroke-dasharray: 1 0; } }
+@keyframes oj-dot { from { opacity: 0; transform: scale(0.2); } to { opacity: 1; transform: none; } }
+
+/* step 3: a network of creators; each lights up Live as its line arrives (200 wide) */
+.oj-node { display: flex; align-items: center; gap: 10px; width: 200px; padding: 10px 12px; border-radius: 16px; }
+.oj-node .oj-av { flex: none; width: 40px; height: 40px; overflow: hidden; border-radius: 50%; }
+.oj-node .oj-av img { width: 100%; height: 100%; object-fit: cover; }
+.oj-node .oj-av i { display: grid; place-items: center; width: 100%; height: 100%; color: #fff; font: 700 15px/1 var(--font); font-style: normal; }
+.oj-node b { display: block; color: var(--ink-1); font: 600 14px/1.2 var(--font); }
+.oj-node small { display: block; margin-top: 3px; color: var(--ink-4); font: 500 12px/1.2 var(--font); }
+.oj-node em { margin-left: auto; padding: 4px 8px; border-radius: 6px; background: var(--accent); color: var(--on-accent); font: 700 11px/1.2 var(--font); font-style: normal; opacity: 0; transform: scale(0.6); transition: opacity 0.2s ease, transform 0.2s ease; }
+.at-3 .oj-node em { opacity: 1; transform: none; transition: opacity 0.25s ease calc(var(--d) + 0.35s), transform 0.35s cubic-bezier(0.2, 1.5, 0.4, 1) calc(var(--d) + 0.35s); }
+
+/* the phone while posting: channels going from queued to Live */
+.oj-post-n { display: block; margin: 4px 0 12px; color: var(--ink-1); font: 700 22px/1.15 var(--font); letter-spacing: -0.02em; }
+.oj-post ol { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.oj-post li { display: flex; align-items: center; gap: 8px; padding: 7px 10px 7px 7px; border-radius: 10px; background: var(--surface-2); font: 600 12px/1 var(--font); }
+.oj-post li b { flex: 1; color: var(--ink-1); font-weight: 600; }
+.oj-post li b small { display: block; margin-top: 2px; color: var(--ink-4); font: 500 10px/1 var(--font); }
+.oj-post li span { flex: none; width: 54px; height: 5px; overflow: hidden; border-radius: 3px; background: rgba(255, 255, 255, 0.12); }
+.oj-post li span:not(.oj-pav) i { display: block; height: 100%; background: var(--ink-1); transform-origin: 0 50%; transform: scaleX(0); }
+.oj-post li .oj-pav { width: 26px; height: 26px; border-radius: 50%; background: none; }
+.oj-pav img, .oj-pav i { display: grid; place-items: center; width: 100%; height: 100%; object-fit: cover; color: #fff; font: 700 11px/1 var(--font); font-style: normal; }
+.oj-post li em { padding: 3px 6px; border-radius: 5px; background: var(--accent); color: var(--on-accent); font: 700 10px/1.2 var(--font); font-style: normal; opacity: 0; }
+.at-3 .oj-post li span:not(.oj-pav) i { transform: scaleX(1); transition: transform 0.4s ease var(--d); }
+.at-3 .oj-post li em { opacity: 1; transition: opacity 0.2s ease calc(var(--d) + 0.4s); }
+
+/* then the views so far: the count climbing, the week's bars growing */
+.oj-stats b[data-oj-total] { display: block; margin: 4px 0 14px; color: var(--ink-1); font: 700 32px/1 var(--font); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.oj-chart { display: flex; align-items: flex-end; gap: 6px; height: 150px; padding-bottom: 6px; border-bottom: 1px solid var(--line-2); }
+.oj-chart i { flex: 1; height: var(--h); border-radius: 4px 4px 1px 1px; background: var(--accent); transform-origin: bottom; transform: scaleY(0); }
+.at-3.is-then .oj-chart i { transform: scaleY(1); transition: transform 0.6s var(--ease) var(--d); }
+
+/* step 2's callout, phone only (no room for it on desktop) */
+.oj-done { display: none; }
+
+@media (max-width: 900px) {
+  .oj-in { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .oj-in > * { min-width: 0; }
+  .oj-side { order: -1; position: sticky; top: 4rem; z-index: 3; background: var(--bg); }
+  .oj-side, .oj-pin { min-width: 0; overflow-x: clip; }
+  .oj-pin { position: static; height: auto; padding: var(--s3) 0; }
+  .oj-step, .oj-step:first-child, .oj-step:last-child { min-height: 60svh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .oj-step > div, .oj-fact, .oj-node, .oj-screen, .oj-phone, .oj-read span, .oj-make li, .oj-prog i, .oj-done { transition: none !important; }
+  .at-1 .oj-scan, .at-1 .oj-fact { animation: none; }
+}
+
+/* THE PHONE (700 and below): the steps stay a vertical scroll; the stage pins
+   above them, so each step's title sits in the room under it. The scene is its
+   own 350 x 400 portrait (journey.js fit() adds .oj-ph): the phone left of
+   centre, at most two cards beside it, no wires. */
+@media (max-width: 700px) {
+  .oj { padding: 4.75rem 0; }
+  .oj-title { margin-bottom: 1.5rem; }
+  .oj-step, .oj-step:first-child { min-height: 30svh; align-items: flex-start; padding: 1.5rem 0; }
+  .oj-step:last-child { min-height: 0; padding-bottom: 0; }
+  .oj-side { margin-bottom: max(20svh, 10.5rem); }
+  .oj-in > div:first-child { margin-top: calc(-1 * max(20svh, 10.5rem)); }
+  .oj-step h3 { font-size: 1.5rem; line-height: 1.15; text-wrap: balance; }
+  .oj-ph .oj-step.is-past > div { opacity: 0; }
+  .oj-side { margin-inline: -1.25rem; padding-inline: 1.25rem; }
+  .oj-pin { overflow-x: visible; }
+  .oj-side::after { content: ""; position: absolute; left: 0; right: 0; top: calc(100% - 1.5rem); height: 3rem; background: linear-gradient(rgba(247, 247, 244, 0), var(--bg) 50%, rgba(247, 247, 244, 0)); pointer-events: none; }
+  .oj-ph .oj-phone::before { bottom: -5%; }
+  .oj-ph .oj-stage { opacity: var(--oj-out, 1); }
+  .oj-pinned .oj-side::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 4rem; background: var(--bg); pointer-events: none; }
+  .oj-ph .oj-stage { width: 350px; height: 400px; }
+  .oj-ph .oj-stage::before { left: calc(50% - 70px); width: 300px; height: 300px; margin: -150px 0 0 -150px; }
+  .oj-ph .oj-wires, .oj-ph .oj-fact:nth-child(n+3), .oj-ph .oj-node:nth-child(n+3) { display: none; }
+  .oj-ph .oj-phone { left: calc(50% - 70px); transform: scale(0.6) rotate(-3deg); }
+  .oj-ph .at-2 .oj-phone { transform: scale(0.6); }
+  .oj-ph .at-3 .oj-phone { transform: scale(0.6) rotate(-1deg); }
+  .oj-ph .at-1 .oj-fact, .oj-ph .at-3 .oj-node { transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)); }
+  .oj-ph .oj-fact, .oj-ph .oj-node { width: 168px; padding: 10px 12px; border-radius: 14px; }
+  .oj-ph .oj-look > span { min-width: 0; }
+  .oj-ph .oj-look b { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .oj-ph .oj-fact { gap: 8px; }
+  .oj-ph .oj-fact i { width: 28px; height: 28px; border-radius: 8px; }
+  .oj-ph .oj-fact i svg { width: 16px; height: 16px; }
+  .oj-ph .oj-fact small, .oj-ph .oj-node small { font-size: 12px; }
+  .oj-ph .oj-fact b { display: -webkit-box; margin-top: 4px; overflow: hidden; font-size: 13px; line-height: 1.3; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+  .oj-ph .oj-node { gap: 8px; padding: 8px 10px; }
+  .oj-ph .oj-node .oj-av { width: 32px; height: 32px; }
+  .oj-ph .oj-node b { font-size: 13px; }
+  .oj-ph .oj-node em { position: absolute; top: -8px; right: 8px; padding: 3px 6px; }
+  .oj-ph .oj-done { position: absolute; left: 50%; top: 50%; z-index: 4; display: flex; align-items: center; gap: 10px; width: 168px; padding: 8px; border: 1px solid rgba(10, 10, 9, 0.08); border-radius: 14px; background: rgba(255, 255, 255, 0.94); box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(10, 10, 9, 0.05), 0 26px 44px -24px rgba(10, 10, 9, 0.35); opacity: 0; transform: translate(-50%, -50%) scale(0.7); transition: transform 0.3s ease, opacity 0.2s ease; }
+  .oj-ph .at-2 .oj-done { opacity: 1; transform: translate(calc(var(--px) - 50%), calc(var(--py) - 50%)); transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.25, 1.06) var(--d), opacity 0.25s ease var(--d); }
+  .oj-ph .oj-done img { flex: none; width: 40px; height: 71px; border-radius: 7px; object-fit: cover; }
+  .oj-ph .oj-done small { display: block; color: var(--ink-4); font: 500 12px/1.2 var(--font); }
+  .oj-ph .oj-done b { display: block; margin: 4px 0 5px; color: var(--ink-1); font: 700 15px/1 var(--font); letter-spacing: -0.02em; }
+  .oj-ph .oj-done em { display: inline-block; padding: 4px 8px; border-radius: 6px; background: var(--accent); color: var(--on-accent); font: 700 11px/1.2 var(--font); font-style: normal; }
+}
+/* tall phones: a bigger phone (journey.js gives the stage half the screen) */
+@media (max-width: 700px) and (min-height: 780px) {
+  .oj-ph .oj-phone { transform: scale(0.66) rotate(-3deg); }
+  .oj-ph .at-2 .oj-phone { transform: scale(0.66); }
+  .oj-ph .at-3 .oj-phone { transform: scale(0.66) rotate(-1deg); }
+}

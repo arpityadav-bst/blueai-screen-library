@@ -1,0 +1,156 @@
+/* The website, part 1: nav, hero (the website field), the film wall, the
+   credential line, How it works. Fastlane's shape, light, one accent. */
+
+
+/* hero */
+/* SCREEN SECTIONS: the hero and the one-idea sections (the statement, the 80K
+   result, the close) each fill exactly one viewport, content centred, so at
+   any moment you see one whole section and nothing of its neighbours. The
+   hero's ring is fitted to the height left over (js/ring.js). */
+.ob-screen { display: flex; flex-direction: column; justify-content: center; min-height: 100svh; }
+
+/* hero rhythm: one gap (--hero-gap) between the groups, tight spacing inside a
+   group. Groups: title + subtitle | field + no-website line | ring | creators.
+   The ring's stage carries ~0.186 x its frame width of empty band above and
+   below the frames, so the gaps around it subtract that to read as --hero-gap. */
+/* The hero owns the first screen: at least the viewport under the header, so
+   the next section starts below the fold. The group gap grows with the
+   screen's height, and whatever room is left over is split evenly above and
+   below the stack, so it is never a hole at the top or the bottom. */
+.ob-hero { --hero-gap: clamp(1.75rem, 4.6vh, 3.75rem); --field-gap: var(--stack-gap); --stack-gap: clamp(1.5rem, 3.6vh, 2.75rem); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: safe center; height: max(35rem, calc(100svh - var(--hdr, 4.5rem))); padding: clamp(0.75rem, 2vh, 2rem) 0 clamp(1.25rem, 3.2vh, 2.5rem); text-align: center; }
+.ob-hero > * { flex: none; }   /* the ring must never be shrunk to fit (the PM's crop bug) */
+/* FILL THE SCREEN (Appy): the room left over goes first into two flexible
+   spacers, one above the headline and one between the field and the ring, so
+   the creators line lands just above the bottom on a normal screen. They are
+   CAPPED (on a tall window they grew into holes), and anything beyond the caps
+   is split evenly above and below the whole stack */
+.ob-hero::before, .ob-hero::after { content: ""; flex: 1 1 0; min-height: 0; }
+.ob-hero::before { max-height: 2.5rem; }
+.ob-hero::after { max-height: 3.5rem; }
+.ob-hero::before { order: 0; }
+.ob-hero > .ob-wrap { order: 1; }
+.ob-hero::after { order: 2; }
+.ob-hero > .ob-cyl { order: 3; }
+.ob-hero h1 { max-width: 22ch; margin: 0 auto; color: var(--ink-1); font: var(--t-display); font-size: clamp(2.75rem, 5.1vw, 4.75rem); letter-spacing: var(--tr-display); }   /* the hero's own size (Appy): 76px max. Title, line, field and the no-website
+   line are ONE group with one equal gap (--stack-gap), not two pairs */
+.ob-hero-sub { max-width: 40rem; margin: var(--stack-gap) auto 0; color: var(--ink-3); font: 400 clamp(1rem, 1.15vw, 1.0625rem)/1.5 var(--font); }
+
+.ob-field { display: flex; align-items: center; gap: var(--s2); width: min(35rem, 100%); margin: var(--field-gap) auto 0; padding: 0.4375rem 0.4375rem 0.4375rem 1.125rem; border: 1px solid var(--line-2); border-radius: var(--r-md); background: var(--surface); box-shadow: var(--shadow-2); transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease); }
+.ob-field:focus-within { border-color: var(--ink-1); box-shadow: 0 0 0 0.25rem var(--accent-wash), var(--shadow-2); }
+/* the globe sits on the placeholder's optical centre: lowercase text centres
+   below its line box, so the icon comes down 1px to meet it */
+.ob-field-ico { flex: none; display: grid; place-items: center; width: 1.5rem; height: 1.5rem; color: var(--ink-4); transform: translateY(1px); }
+.ob-field-ico svg { display: block; }
+.ob-field-ico img { width: 1.25rem; height: 1.25rem; border-radius: 0.3125rem; }
+.ob-field input { flex: 1; min-width: 0; height: 2.75rem; border: 0; outline: 0; background: none; color: var(--ink-1); font: 400 1rem/normal var(--font); letter-spacing: var(--tr-mid); padding: 0; }
+.ob-field input::placeholder { color: var(--ink-4); }
+.ob-field .ob-btn { height: 2.875rem; padding: 0 var(--s5); font-size: 0.9375rem; }
+.ob-field-name { margin-top: var(--s3); color: var(--ink-3); font: var(--t-small); }
+.ob-field-name b { color: var(--ink-1); font-weight: 500; }
+/* one small line under the field: the brand name once you type, the
+   no-website link until then */
+.ob-field-name:empty { display: none; }
+.ob-field-name:not(:empty) + .ob-hero-alt { display: none; }
+.ob-hero-alt { display: flex; justify-content: center; align-items: baseline; gap: 0.375rem; margin-top: var(--stack-gap); color: var(--ink-4); font: 400 0.8125rem/1.3 var(--font); }
+.ob-hero-alt .ob-link { font-size: 0.8125rem; }
+
+/* the hero's field gets the weight (Appy, 2026-11-04): bigger, and lifted off
+   the page on a white face with a deeper shadow; the closing CTA's field keeps
+   the base size */
+.ob-hero .ob-field, .ob-close .ob-field { width: min(32.5rem, 100%); padding: 0.375rem 0.375rem 0.375rem 1rem; border-color: rgba(10, 10, 9, 0.16); background: #fff; box-shadow: 0 1px 0.125rem rgba(10, 10, 9, 0.06), 0 1.375rem 2.75rem -1.25rem rgba(10, 10, 9, 0.3); }
+.ob-hero .ob-field input, .ob-close .ob-field input { height: 2.625rem; font-size: 0.9688rem; }
+.ob-hero .ob-field .ob-btn, .ob-close .ob-field .ob-btn { height: 2.625rem; padding: 0 var(--s4); font-size: 0.875rem; }
+.ob-hero .ob-field-ico, .ob-close .ob-field-ico { width: 1.375rem; height: 1.375rem; }
+.ob-hero .ob-field-ico svg, .ob-hero .ob-field-ico img, .ob-close .ob-field-ico svg, .ob-close .ob-field-ico img { width: 1.125rem; height: 1.125rem; }
+
+/* the social proof row (Fastlane's avatar stack), under the ring */
+.ob-crowd-row { display: flex; justify-content: center; margin: 0 0 var(--s8); padding: 0 var(--s5); }   /* moved out of the hero (Appy): it now opens the statement section, above its title */
+.ob-crowd { display: inline-flex; align-items: center; gap: 0.75rem; color: var(--ink-3); font: 400 0.9375rem/1.3 var(--font); }
+.ob-crowd-faces { display: flex; }
+.ob-crowd-faces img { width: 2.125rem; height: 2.125rem; border: 0.125rem solid var(--bg); border-radius: 50%; object-fit: cover; background: var(--surface-2); }
+.ob-crowd-faces img + img { margin-left: -0.625rem; }
+
+/* the five phones under the hero: centre one larger */
+.ob-tile video { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* section heads */
+/* THE GRID: every section sits in .ob-wrap (70rem), with one vertical rhythm,
+   and opens with a CENTRED head: a title on the scale, an optional lede, then
+   one fixed gap to its content. Split sections (the result, the loop's steps)
+   keep their headline in the left column but on the same scale. */
+.ob-sec { padding: clamp(5.5rem, 10vw, 8.5rem) 0; }
+.ob-h2 { max-width: 22ch; margin: 0 auto; text-align: center; text-wrap: balance; color: var(--ink-1); font: var(--t-title); letter-spacing: var(--tr-display); }
+.ob-lede { max-width: 36.25rem; margin: var(--s4) auto 0; text-align: center; color: var(--ink-3); font: var(--t-lede); }
+.ob-center { text-align: center; }
+.ob-center .ob-h2, .ob-center .ob-lede { margin-left: auto; margin-right: auto; }
+
+/* the film wall: two rows drifting opposite ways (transform only) */
+.ob-wall { position: relative; display: grid; gap: var(--s4); margin-top: var(--head-gap); padding: 0.5rem 0; overflow: hidden; pointer-events: none; }   /* no pointer interaction (Appy): it just drifts */
+.ob-wall::before, .ob-wall::after { content: ""; position: absolute; top: 0; bottom: 0; z-index: 2; width: 7.5rem; pointer-events: none; }
+.ob-wall::before { left: 0; background: linear-gradient(90deg, var(--bg), rgba(247, 247, 244, 0)); }
+.ob-wall::after { right: 0; background: linear-gradient(270deg, var(--bg), rgba(247, 247, 244, 0)); }
+.ob-wall-row { display: flex; gap: var(--s4); width: max-content; animation: ob-drift 80s linear infinite; }
+.ob-wall-row--b { animation-direction: reverse; animation-duration: 95s; }
+/* the wall fits one screen with its heading: each of the two rows takes half
+   of what is left of the viewport (about 24rem goes to padding, heading, gaps) */
+.ob-tile { position: relative; flex: none; width: clamp(8.5rem, calc((100svh - 24rem) / 2 * 0.5625), 15.5rem); aspect-ratio: 9 / 16; overflow: hidden; border-radius: 0.75rem; background: #111; transition: transform 0.35s var(--ease); }
+@keyframes ob-drift { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* the credential line (Fastlane's highlighted "$1B+") */
+/* not a full screen (Appy): very generous space above and below instead */
+.ob-cred-sec { padding: clamp(8rem, 14vw, 13rem) 0; }
+.ob-cred { max-width: 70rem; margin: 0 auto; color: var(--ink-1); font: var(--t-statement); letter-spacing: var(--tr-display); text-align: center; }
+.ob-cred-cta { display: flex; justify-content: center; margin-top: var(--s8); }
+
+/* How it works: a sticky loop that turns as you scroll */
+
+/* THE PHONE (700 and below; desktop untouched): the hero grows instead of
+   being one locked frame, display type at 36 (34 at 560), 44 taps, 76 bands */
+@media (max-width: 700px) {
+  .ob-hero { height: auto; min-height: calc(100svh - var(--hdr, 4.5rem)); }
+  .ob-hero h1 { font-size: 2.25rem; text-wrap: balance; }
+  .ob-hero-alt { font-size: 0.875rem; }
+  .ob-hero-alt .ob-link { display: inline-flex; align-items: center; min-height: 2.75rem; margin: -0.75rem 0; padding: 0 0.25rem; font-size: 0.875rem; }
+  /* "Continue your report for <brand>": one piece, a 44 tap, a long brand ends in an ellipsis */
+  .ob-hero-alt a.ob-link { display: block; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; line-height: 2.75rem; }
+  .ob-hero-sub span { display: block; }   /* one sentence per line, never a lone "it." */
+  .ob-field-name { font-size: 0.875rem; text-wrap: balance; }   /* the error line matches the no-website line (14) */
+  .ob-field-name .ob-link { padding: 0.75rem 0.25rem; margin: -0.75rem -0.25rem; }   /* "start without one": a 44 tap, the wrap unmoved */
+  .ob-cred { text-wrap: balance; }
+  .ob-cred br { display: none; }
+  .ob-cred-l { display: block; text-wrap: balance; }   /* one sentence per block, each balanced: no lone "post them." */
+  .ob-close .ob-field input, .ob-close .ob-field .ob-btn { height: 2.75rem; }
+  .ob-sec { padding: 4.75rem 0; }
+  .ob-cred-sec { padding: 3.5rem 0 2.375rem; }   /* the related join (38 + the loop's 76), not a void before "One loop." */
+  .ob-crowd-row { margin-bottom: 1.5rem; padding: 0; }
+  .ob-crowd { flex-direction: column; gap: 0.625rem; font-size: 0.875rem; text-align: center; }
+  .ob-crowd > span:last-child { max-width: 24ch; }
+  .ob-cred-cta { margin-top: 1.5rem; }
+  .ob-cred-cta .ob-btn { height: 3rem; padding: 0 1.5rem; font-size: 0.9375rem; }
+  .ob-h2 { font-size: 1.875rem; }
+  .ob-lede { font-size: 1rem; }
+  .ob-center .ob-lede { text-wrap: balance; }   /* three even lines, no short "in your voice." */
+  .ob-wall { margin-top: 2rem; }
+  .ob-wall::before, .ob-wall::after { width: 1.5rem; }   /* still overlays, never a mask */
+  .ob-nw { white-space: nowrap; }   /* "short video," never splits over the break */
+  main > section, .ob-foot { overflow-x: clip; }   /* shadows and tilts end at the screen's edge, inside their own band, not the root */
+  .ob-tile { width: clamp(8rem, calc((100svh - 21rem) / 2 * 0.5625), 9.25rem); }   /* heading + wall on one screen */
+}
+/* in-page anchors (footer, menu) land their heading under the floating pill */
+@media (max-width: 900px) { .ob-sec[id], .ob-close[id], .oj[id] { scroll-margin-top: 4.5rem; } }
+@media (max-width: 560px) {
+  .ob-field { flex-wrap: wrap; border-radius: var(--r-lg); padding: 0.5rem; }
+  .ob-field .ob-btn { width: 100%; }
+  .ob-hero h1 { font-size: 2.125rem; }
+  .ob-hero .ob-field input { height: 3rem; }
+  .ob-hero .ob-field .ob-btn { height: 3.25rem; font-size: 0.9375rem; }   /* the hero CTA: 52 */
+  .ob-close .ob-field input { height: 3rem; }
+  .ob-close .ob-field .ob-btn { height: 3.25rem; font-size: 0.9375rem; }   /* the last ask matches the first */
+  /* the wrapped button sits centred in its slab: an even 8 round it; the globe keeps its indent */
+  .ob-hero .ob-field, .ob-close .ob-field { padding: 0.5rem; }
+  .ob-hero .ob-field-ico, .ob-close .ob-field-ico { margin-left: 0.5rem; }
+  .ob-hero-alt { flex-wrap: wrap; column-gap: 0.375rem; row-gap: 0; }   /* "Welcome back." and its link wrap as whole pieces */
+}
+/* touch: 16px in every field, so iOS never zooms on focus */
+@media (hover: none) and (pointer: coarse) { .ob-hero .ob-field input, .ob-close .ob-field input { font-size: 1rem; } }
+@media (prefers-reduced-motion: reduce) { .ob-wall-row { animation: none; } }

@@ -1,0 +1,38 @@
+/* EVERYTHING FROM THE HORIZON DOWN IS DARK (Appy, after Fastlane's comparison
+   band): the comparison, pricing, FAQ, the close and the footer. The tokens are
+   redefined inside .ob-dark, so every component follows without its own dark
+   rules; only what hard-codes a colour is overridden below. */
+/* into the dark: SCREEN GLOW (Appy picked it from seven). A straight edge from
+   the light page; the dark opens with a soft volt glow spreading down from a
+   thin volt line at its top, like light from a screen. Gradients only; the
+   dark sections' grain runs over it so there is no seam below. */
+.ob-horizon { position: relative; overflow: hidden; height: 10rem; background: radial-gradient(ellipse 46% 100% at 50% 0%, rgba(198, 244, 50, 0.3) 0%, rgba(198, 244, 50, 0.09) 42%, rgba(198, 244, 50, 0) 76%), #0b0b0a; }
+.ob-horizon::before { content: ""; position: absolute; z-index: 1; top: 0; left: 14%; right: 14%; height: 1.5px; background: linear-gradient(90deg, rgba(198, 244, 50, 0), #c6f432 30%, #ecffad 50%, #c6f432 70%, rgba(198, 244, 50, 0)); }
+.ob-horizon::after { content: ""; position: absolute; inset: 0; background: url("../img/grain.png") repeat; pointer-events: none; }
+.ob-dark {
+  --bg: #0b0b0a; --surface: #151513; --surface-2: #1e1e1b;
+  --line: rgba(255, 255, 255, 0.08); --line-2: rgba(255, 255, 255, 0.15);
+  --ink-1: #f2f2ec; --ink-2: #d2d2ca; --ink-3: #a2a29a; --ink-4: #6e6e68;
+  --accent-wash: rgba(198, 244, 50, 0.14);
+  --shadow-2: 0 0.875rem 2.125rem -0.875rem rgba(0, 0, 0, 0.6); --shadow-3: 0 1.875rem 4.375rem -1.75rem rgba(0, 0, 0, 0.7);
+  /* a fine static grain (a 4 KB tile of faint specks, no blend mode) so the dark
+     reads as material, not an empty screen */
+  background: var(--bg) url("../img/grain.png") repeat; color: var(--ink-2);
+}
+.ob-sec--top { padding-top: var(--s8); }
+/* the primary button turns light on the dark */
+.ob-dark .ob-btn--ink { background: linear-gradient(180deg, #ffffff 0%, #e6e6df 100%); color: #0b0b0a; box-shadow: inset 0 1px 0 #fff, inset 0 -0.125rem 0 rgba(0, 0, 0, 0.12), 0 0.5rem 1.125rem -0.5rem rgba(0, 0, 0, 0.7); }
+.ob-dark .ob-btn--ink:hover { background: linear-gradient(180deg, #ffffff 0%, #f1f1ea 100%); }
+.ob-dark .ob-btn:not(.ob-btn--ink):not(.ob-btn--accent) { background: var(--surface-2); }
+/* the close's field stays a lifted white slab, the one bright object on the dark */
+.ob-dark .ob-field { border-color: transparent; background: #fff; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 1.5rem 3.125rem -1.25rem rgba(0, 0, 0, 0.8); }
+.ob-dark .ob-field input { color: #0b0b0a; }
+.ob-dark .ob-field input::placeholder { color: #9a9a94; }
+.ob-dark .ob-field .ob-btn--ink { background: linear-gradient(180deg, #2c2c29 0%, #0b0b0a 100%); color: #fff; }
+.ob-dark .ob-chip--on { color: #0b0b0a; }
+/* THE PHONE: related dark bands (the face-off, pricing, the FAQ) meet at half the 76 band */
+@media (max-width: 700px) {
+  .ob-dark + .ob-dark.ob-sec { padding-top: 2.375rem; }
+  .ob-dark.ob-sec:has(+ .ob-dark.ob-sec) { padding-bottom: 2.375rem; }   /* both sides halve: 38 + 38 = the 76 join */
+  .ob-horizon { height: 6rem; }   /* a shorter lead-in to the dark; the volt line and glow stay */
+}

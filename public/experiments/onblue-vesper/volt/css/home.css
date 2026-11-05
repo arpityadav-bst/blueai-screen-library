@@ -1,0 +1,43 @@
+/* brands.html, the Volt homepage on the PM's product: the few rules the Volt
+   sheets lack for it. The one CTA in place of the website field, the account
+   in the bar, the in-page landings, the calculator's editable rate and the
+   features grid with its two tiles. Overlays (gate, account menu, leaving
+   cover) are volt/css/brands-overlays.css. */
+
+/* ---- the header: anchors as the CTA, and signed in the doors give way to the account */
+a.ob-nav-cta { text-decoration: none; }
+body.is-signed-in .ob-nav-signin, body.is-signed-in .bh-menu-signin { display: none; }
+
+/* ---- in-page landings clear the floating pill -------------------------- */
+.ob-sec[id], .ob-close[id], .oj[id], #post, .bh-anchor { scroll-margin-top: 5.5rem; }
+#pricing, #features { position: relative; }
+.bh-anchor { position: absolute; top: 0; left: 0; width: 1px; height: 1px; }
+
+/* ---- the hero and the close: one CTA, then the sign-in line -------------- */
+.bh-hero-cta { display: flex; justify-content: center; margin-top: var(--field-gap, var(--stack-gap)); }
+.bh-close-cta { display: flex; justify-content: center; margin-top: var(--s8); }
+.bh-hero-cta .ob-btn, .bh-close-cta .ob-btn { height: 3rem; padding: 0 var(--s6); font-size: 0.9688rem; }
+.ob-hero .bh-alt { margin-top: var(--s5); }
+.bh-alt .ob-link { font-size: inherit; }
+
+/* ---- features: the two tiles side by side, each two rows tall ------------ */
+.bt-chart { grid-row: span 2; }
+
+/* ---- pricing: the rate in the sentence is a number the visitor can change */
+.ob-rate { width: 1.6ch; margin: 0 0.0625rem; padding: 0 0.125rem; border: 0; border-bottom: 1.5px dashed var(--accent); border-radius: 0; background: transparent; color: var(--ink-1); font: inherit; font-weight: 600; font-variant-numeric: tabular-nums; text-align: center; -moz-appearance: textfield; appearance: textfield; }
+.ob-rate::-webkit-outer-spin-button, .ob-rate::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.ob-rate:hover { border-bottom-style: solid; }
+.ob-rate:focus { outline: 0; border-bottom-style: solid; background: rgba(198, 244, 50, 0.12); }
+
+/* THE PHONE BAR (900 and below): signed in, the account disc sits beside the burger */
+@media (max-width: 900px) {
+  .ob-nav-in { grid-template-columns: 1fr auto auto; }
+  body.is-signed-in .ob-nav-end { display: flex; grid-column: 2; }
+  .bh-menu-cta { margin-top: 0.25rem; }
+  .bt-chart { grid-column: span 2; grid-row: auto; }
+  .bt-chart .bt-viz { min-height: 12rem; }
+}
+@media (max-width: 560px) {
+  .bh-hero-cta .ob-btn { width: 100%; height: 3.25rem; }
+  .bh-close-cta .ob-btn { width: 100%; }
+}

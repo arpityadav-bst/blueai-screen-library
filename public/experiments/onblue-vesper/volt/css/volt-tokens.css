@@ -1,0 +1,73 @@
+/* VOLT KIT: the Volt values under a v- prefix, safe to link on ANY page.
+   base.css puts its tokens on :root under plain names (--bg, --accent, --ease,
+   --r-md, --t-title, --on-accent ...) that the PM's onblue.css and
+   app/css/tokens.css also define with other values, so base.css must not be
+   linked on the app pages or inside the framed reports. Those pages link this
+   file instead and map their own token names onto these, e.g.
+     :root { --app-ground: var(--v-bg); --app-ink-1: var(--v-ink-1); }
+   Values are copied from base.css, product.css and dark.css; change them
+   there and here together. No selectors except :root and .v-dark. */
+:root {
+  /* ground and ink */
+  --v-bg: #f7f7f4;
+  --v-surface: #ffffff;
+  --v-surface-2: #f1f1ed;
+  --v-side: #f3f3ef;                       /* the rail's top tint (reference app.css) */
+  --v-line: rgba(10, 10, 9, 0.08);
+  --v-line-2: rgba(10, 10, 9, 0.14);
+  --v-ink-1: #0b0b0a;
+  --v-ink-2: #3b3b38;
+  --v-ink-3: #6b6b66;
+  --v-ink-4: #9a9a94;
+
+  /* the accent */
+  --v-accent: #c6f432;
+  --v-accent-deep: #9ccf12;                /* focus borders, the rim's middle */
+  --v-accent-ink: #3f6a00;                 /* "Saved", positive text on paper */
+  --v-accent-wash: rgba(198, 244, 50, 0.22);
+  --v-accent-line: rgba(63, 106, 0, 0.28);
+  --v-on-accent: #0b0b0a;
+  --v-ink-btn: linear-gradient(180deg, #2c2c29 0%, #0b0b0a 100%);
+  --v-ink-btn-hover: linear-gradient(180deg, #373733 0%, #161614 100%);
+
+  /* type */
+  --v-font: "Geist", system-ui, sans-serif;
+  --v-t-display: 500 clamp(2.125rem, 3.6vw, 3.25rem)/1.06 var(--v-font);
+  --v-t-statement: 500 clamp(1.875rem, 4.2vw, 3.625rem)/1.14 var(--v-font);
+  --v-t-title: 500 clamp(2rem, 3.6vw, 3.25rem)/1.06 var(--v-font);
+  --v-t-lede: 400 clamp(1.0625rem, 1.35vw, 1.25rem)/1.5 var(--v-font);
+  --v-t-h3: 500 1.25rem/1.25 var(--v-font);
+  --v-t-body: 400 0.9688rem/1.55 var(--v-font);
+  --v-t-small: 400 0.8125rem/1.45 var(--v-font);
+  --v-t-label: 500 0.75rem/1.3 var(--v-font);
+  --v-t-p-title: 500 clamp(1.75rem, 2.4vw, 2.375rem)/1.1 var(--v-font);
+  --v-t-p-h2: 500 1.25rem/1.25 var(--v-font);
+  --v-t-p-figure: 600 clamp(2rem, 2.6vw, 2.75rem)/1 var(--v-font);
+  --v-tr-display: -0.04em;
+  --v-tr-tight: -0.035em;
+  --v-tr-mid: -0.015em;
+
+  /* radius, motion, depth */
+  --v-r-sm: 0.5rem; --v-r-md: 0.75rem; --v-r-lg: 1.125rem; --v-r-panel: 1.25rem; --v-r-xl: 1.75rem; --v-r-pill: 62.4375rem;
+  --v-r-btn: 0.5rem;
+  --v-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --v-shadow-1: 0 1px 0.125rem rgba(10, 10, 9, 0.05);
+  --v-shadow-2: 0 0.75rem 2rem -0.875rem rgba(10, 10, 9, 0.22);
+  --v-shadow-3: 0 1.875rem 4.375rem -1.75rem rgba(10, 10, 9, 0.35);
+  --v-float: inset 0 1px 0 #fff, 0 1px 0.125rem rgba(10, 10, 9, 0.05), 0 1.625rem 2.75rem -1.5rem rgba(10, 10, 9, 0.35);
+  --v-lift: inset 0 1px 0 #fff, 0 1px 0.125rem rgba(10, 10, 9, 0.06), 0 2.25rem 4rem -1.75rem rgba(10, 10, 9, 0.42);
+  --v-card: inset 0 1px 0 #fff, 0 1px 0.125rem rgba(10, 10, 9, 0.05);
+  --v-glow: radial-gradient(ellipse 60% 55% at 50% 0%, rgba(198, 244, 50, 0.14), rgba(198, 244, 50, 0) 75%);
+  --v-rim: linear-gradient(90deg, rgba(198, 244, 50, 0), #c6f432 30%, #9ccf12 50%, #c6f432 70%, rgba(198, 244, 50, 0));
+  --v-ring: 0 0 0 0.25rem rgba(198, 244, 50, 0.45);
+  --v-field-focus: 0 0 0 0.3125rem rgba(198, 244, 50, 0.24), 0 0.75rem 1.5rem -1rem rgba(10, 10, 9, 0.3);
+  --v-scrim: rgba(11, 11, 10, 0.46);
+  --v-err: #c8432b;
+}
+/* the dark band's values, for any dark surface */
+.v-dark {
+  --v-bg: #0b0b0a; --v-surface: #151513; --v-surface-2: #1e1e1b;
+  --v-line: rgba(255, 255, 255, 0.08); --v-line-2: rgba(255, 255, 255, 0.15);
+  --v-ink-1: #f2f2ec; --v-ink-2: #d2d2ca; --v-ink-3: #a2a29a; --v-ink-4: #6e6e68;
+  --v-accent-wash: rgba(198, 244, 50, 0.14);
+}

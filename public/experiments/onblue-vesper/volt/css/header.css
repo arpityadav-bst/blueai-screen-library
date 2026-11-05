@@ -1,0 +1,134 @@
+/* The website header, matched to the PM's brands.html header (onblue.css
+   .header / #site-nav / .header-cta): same logo size, nav centred in a
+   1fr auto 1fr grid, same link size and padding, same outlined CTA that fills
+   on hover, and the same per-width sizes. Values are copied, not approximated. */
+
+.ob-nav {
+  --logo: 1.2188rem; --logo-mark: 1.75rem;
+  --nav: 0.875rem; --nav-h: 2.5rem; --nav-pad: 1.125rem;
+  --btn: 0.8438rem; --btn-h: 2.125rem; --btn-pad: 1rem;
+  --header-y: 1.375rem; --header-x: 2.5rem; --band-max: 73.75rem;
+  position: relative; z-index: 40;   /* scrolls away with the page like any section */
+  box-sizing: content-box; height: var(--nav-h);   /* keeps its place when the pill below leaves the flow */
+  padding: var(--header-y) max(var(--header-x), 1.25rem) 0.625rem;
+  pointer-events: none;          /* the bar itself is see-through; only its content takes clicks */
+}
+.ob-nav-in {
+  position: relative; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+  height: var(--nav-h); max-width: var(--band-max); margin: 0 auto; pointer-events: auto;
+  border: 1px solid transparent; border-radius: 0.875rem;
+}
+
+/* PAST HALF THE FIRST SCREEN (Appy): the open header scrolls away with the
+   page; once half the first screen has gone by, a floating glass pill holding
+   only the logo and the CTA slides down from above and stays. iOS-style glass:
+   - (VOLT KIT: the reference's blur is gone, see the background below)
+   - a light top-to-bottom sheen, a bright bevel along the top edge, a faint
+     dark one along the bottom, and a thin white rim all round
+   - a hairline outer edge and a soft lift shadow so it floats
+   - corners concentric with the CTA inside it (0.375rem + 0.5rem padding = 0.875rem)
+   The open header keeps its own height in the flow, so nothing under it moves
+   when the pill takes over. */
+.ob-nav-in > .ob-logo { grid-column: 1; }
+.ob-nav-end { grid-column: 3; }
+.ob-nav.is-stuck .ob-nav-in {
+  position: fixed; top: 0.875rem; left: 0; right: 0; width: calc(100% - 2rem); max-width: 35rem;
+  height: calc(var(--btn-h) + 1rem); margin: 0 auto; padding: 0 0.5rem 0 1.125rem;
+  animation: ob-pill-in 0.45s var(--ease) both;
+  border-color: rgba(255, 255, 255, 0.5);
+  /* VOLT KIT: no backdrop-filter (it caps Mac Chrome at 30fps beside the ring and wall); an opaque paper face instead, so nothing scrolling under it ghosts through */
+  background: linear-gradient(180deg, #fff 0%, #f7f7f4 100%);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.85),
+    inset 0 -1px 1px rgba(10, 10, 9, 0.06),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    inset 0 0 0.875rem rgba(255, 255, 255, 0.22),
+    0 0 0 0.5px rgba(10, 10, 9, 0.1),
+    0 1px 0.125rem rgba(10, 10, 9, 0.06),
+    0 0.875rem 2.125rem -0.875rem rgba(10, 10, 9, 0.3);
+}
+@keyframes ob-pill-in { from { transform: translateY(calc(-100% - 1.25rem)); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ob-nav.is-stuck .ob-nav-in { animation: none; } }
+.ob-nav-signin { transition: opacity 0.2s ease; }
+.ob-nav.is-stuck .ob-nav-signin { display: none; }
+.ob-nav.is-stuck .ob-nav-cta { border-color: var(--ink-1); background: var(--ink-1); color: #fff; }
+.ob-nav.is-stuck .ob-nav-cta:hover { background: #2a2a27; }
+
+.ob-nav .ob-logo { justify-self: start; font-size: var(--logo); }
+.ob-nav .ob-logo-mark { width: var(--logo-mark); height: var(--logo-mark); }
+/* THE VOLT SHINE (Appy): the spark is filled by a horizontal-oval radial
+   gradient (a volt core fading softly to ink) whose centre drifts left to right
+   every 7 s (SMIL in the markup). One shape, one fill: no overlay, so no dark
+   fringe at the edges, and the volt arrives and leaves as a soft curved front. */
+@media (prefers-reduced-motion: reduce) { .ob-logo-glint { fill: var(--ink-1); } }
+
+.ob-nav-signin {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.1em;
+  height: var(--nav-h); padding: 0 var(--nav-pad);
+  color: var(--ink-1); font: 400 var(--nav)/1 var(--font); letter-spacing: -0.01em;
+  white-space: nowrap; text-decoration: none; transition: color 0.35s ease;
+}
+.ob-nav-signin:hover { color: #5f636b; }
+
+.ob-nav-end { display: flex; align-items: center; gap: 0.625rem; justify-self: end; }
+.ob-nav-cta {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: var(--btn-h); padding: 0 var(--btn-pad);
+  border: 1px solid var(--ink-1); border-radius: 0.375rem; background: transparent; color: var(--ink-1);
+  font: 500 var(--btn)/1 var(--font); letter-spacing: -0.02em; white-space: nowrap; cursor: pointer;
+  transition: background 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+}
+.ob-nav-cta:hover { background: var(--ink-1); color: var(--bg); }
+
+@media (min-width: 1280px) and (max-width: 1599px) { .ob-nav { --header-x: 48px; } }
+@media (min-width: 1600px) {
+  .ob-nav { --logo: 1.3125rem; --logo-mark: 1.875rem; --nav: 0.9375rem; --nav-h: 2.75rem; --btn: 0.9375rem; --btn-h: 2.375rem; --header-y: 1.75rem; --header-x: 4rem; --nav-pad: 1.25rem; --band-max: 77.5rem; }
+}
+@media (min-width: 1920px) {
+  .ob-nav { --logo: 1.4062rem; --logo-mark: 2rem; --nav: 1rem; --nav-h: 3rem; --btn: 1rem; --btn-h: 2.5rem; --header-y: 2rem; --header-x: 5rem; --nav-pad: 1.375rem; --btn-pad: 1.375rem; --band-max: 83.75rem; }
+}
+@media (min-width: 2560px) { .ob-nav { --header-x: 120px; --band-max: 1480px; } }
+@media (min-width: 901px) and (max-width: 1279px) {
+  .ob-nav { --logo: 1.1875rem; --nav: 0.8125rem; --nav-h: 2.25rem; --btn: 0.8125rem; --btn-h: 2rem; --header-y: 1rem; --header-x: 1.75rem; --nav-pad: 0.875rem; }
+}
+@media (min-width: 901px) and (max-height: 850px) { .ob-nav { --header-y: 14px; } }
+@media (min-width: 901px) and (max-height: 720px) { .ob-nav { --nav-h: 30px; --btn-h: 30px; } }
+@media (max-width: 900px) {
+  .ob-nav { --logo: 1.25rem; --header-y: 1rem; --header-x: 1.125rem; padding-left: max(var(--header-x), 1.25rem, env(safe-area-inset-left)); padding-right: max(var(--header-x), 1.25rem, env(safe-area-inset-right)); }
+  .ob-nav-signin { display: none; }
+}
+@media (max-width: 560px) { .ob-nav { --header-x: 1rem; } }   /* MOBILE-RULES 3; the 1.25rem floor keeps the gutter at 20 */
+
+/* OVER THE DARK (js/site.js adds .on-dark while a dark section is under the
+   pill): the logo turns volt, and the shine passing through the spark turns
+   black, the reverse of the light page */
+.ob-nav.on-dark .ob-logo { color: var(--accent); transition: color 0.3s ease; }
+.ob-nav.on-dark #ob-logo-glint stop:nth-child(1), .ob-nav.on-dark #ob-logo-glint stop:nth-child(2) { stop-color: #0b0b0a; }
+.ob-nav.on-dark #ob-logo-glint stop:nth-child(3) { stop-color: #c6f432; }
+/* over the dark bottom the pill gets an opaque dark face at every width, so
+   the volt wordmark never sits on paper and nothing under it bleeds through;
+   its CTA turns paper so it still reads as the action */
+.ob-nav.is-stuck.on-dark .ob-nav-in { border-color: rgba(255, 255, 255, 0.12); background: linear-gradient(180deg, #282825 0%, #161614 100%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 0 0 0.5px rgba(0, 0, 0, 0.4), 0 0.875rem 2.125rem -0.875rem rgba(0, 0, 0, 0.6); }
+.ob-nav.is-stuck.on-dark .ob-nav-cta { border-color: #f2f2ec; background: #f2f2ec; color: #0b0b0a; }
+.ob-nav.is-stuck.on-dark .ob-nav-cta:hover { border-color: #fff; background: #fff; }
+
+/* THE PHONE BAR (900 and below, MOBILE-RULES 4): two things, the wordmark and
+   a burger (44 hit area, 18px bars, no box). Its menu is a popover under it:
+   44 rows, the CTA last and full width. No scrim, no scroll lock; a tap
+   outside closes it (js/site.js). Hidden above 900, so the desktop bar is as it was. */
+.ob-burger, .ob-nav-menu { display: none; }
+@media (max-width: 900px) {
+  .ob-nav-end { display: none; }
+  .ob-burger { grid-column: 3; justify-self: end; display: grid; place-content: center; gap: 0.3125rem; width: 2.75rem; height: 2.75rem; margin-right: -0.75rem; padding: 0; border: 0; background: none; cursor: pointer; }
+  .ob-nav.is-stuck .ob-burger { margin-right: -0.25rem; }
+  .ob-burger i { display: block; width: 1.125rem; height: 1.5px; border-radius: 1px; background: var(--ink-1); transition: transform 0.2s var(--ease), background 0.3s ease; }
+  .ob-burger[aria-expanded="true"] i:first-child { transform: translateY(0.1875rem) rotate(45deg); }
+  .ob-burger[aria-expanded="true"] i:last-child { transform: translateY(-0.1875rem) rotate(-45deg); }
+  .ob-nav.on-dark .ob-burger i { background: #f2f2ec; }
+  .ob-nav-menu { position: absolute; top: calc(100% + 0.5rem); right: 0; z-index: 2; display: grid; gap: 0.25rem; width: min(16.5rem, 100vw - 2.5rem); padding: 0.5rem; border: 1px solid var(--line); border-radius: 0.875rem; background: var(--surface); box-shadow: var(--shadow-3); opacity: 0; visibility: hidden; transform: translateY(0.5rem); transition: opacity 0.2s var(--ease), transform 0.2s var(--ease), visibility 0s linear 0.2s; }
+  .ob-nav-menu.is-open { opacity: 1; visibility: visible; transform: none; transition: opacity 0.2s var(--ease), transform 0.2s var(--ease); }
+  .ob-nav-row { display: flex; align-items: center; height: 2.75rem; padding: 0 0.75rem; border-radius: 0.5625rem; color: var(--ink-1); font: 500 0.9375rem/1 var(--font); letter-spacing: -0.01em; text-decoration: none; }
+  a.ob-nav-row:hover { background: var(--surface-2); }
+  .ob-btn.ob-nav-row { justify-content: center; width: 100%; margin-top: 0.25rem; color: #fff; }
+}
+@media (prefers-reduced-motion: reduce) { .ob-nav-menu, .ob-burger i { transition: none !important; } }

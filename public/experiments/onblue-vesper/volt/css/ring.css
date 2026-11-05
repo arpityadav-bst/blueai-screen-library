@@ -1,0 +1,66 @@
+/* The hero's film ring: the PM's cylinder from brands.html (.work-arc), same
+   geometry, same turn, same lens fringe and focus falloff. No pointer
+   interaction (Appy): no hold, no play button, no player; it keeps turning.
+   The reasoning behind every number is beside the original in brands.html. */
+
+.ob-hero {
+  --ring-r: 70vw;
+  --ring-w: calc(16.25vw - 1.5494rem);   /* 2 x 70 x sin(6.67deg): a step between the PM's 12deg and 15deg */
+  --ring-step: 13.333deg;              /* 360 / 27 */
+}
+/* the ambient light the screens throw on the page (js/glow.js paints it) */
+.ob-hero { isolation: isolate; }
+.ob-glow { position: absolute; left: 0; z-index: -1; width: 100%; opacity: 0.32; pointer-events: none; }
+.ob-cyl {
+  width: 100%;
+  margin-top: calc(var(--hero-gap, 2.5rem) * 1.33 - 0.75rem - var(--ring-w) * 0.186);   /* reads as a third more than --hero-gap (Appy) */
+  perspective: calc(var(--ring-r) * 1.8);
+  overflow: hidden; pointer-events: none;
+  padding-bottom: calc(var(--ring-w) * 0.12);   /* room for the frames' reflections below the stage */
+  position: relative;   /* VOLT KIT: the edge fade is two paper overlays (::before/::after below), not a CSS mask */
+}
+.ob-cyl-stage {
+  position: relative;
+  height: calc(var(--ring-w) * 1.62);
+  transform-style: preserve-3d;
+  animation: ob-cyl-turn 420s linear infinite;   /* one turn in 7 minutes (Appy: much slower) */
+}
+@keyframes ob-cyl-turn { to { transform: rotateY(360deg); } }
+
+.ob-cyl-card {
+  position: absolute; left: 50%; top: 50%;
+  display: block; width: var(--ring-w);
+  padding: 0; border: 0; background: none;
+  transform: translate(-50%, -50%) rotateY(calc(var(--i) * var(--ring-step))) translateZ(var(--ring-r)) rotateY(180deg);
+  backface-visibility: hidden;
+}
+.ob-cyl-shot {
+  position: relative; z-index: 0; display: block;
+  border-radius: 0.75rem; overflow: hidden; background: var(--surface-2);
+  animation: ob-cyl-ca 420s linear infinite;   /* must equal the turn */
+  animation-delay: calc(var(--i) * var(--slot, -15.556s));   /* 420s / slots, set by js/ring.js */
+}
+.ob-cyl-shot video { display: block; width: 100%; aspect-ratio: 9 / 16; object-fit: cover; }
+/* a faint reflection under EACH frame (Appy: very subtle and small). It lives
+   on the frame itself so it follows the frame round the curve; one reflection
+   of the whole ring left gaps and flat tops under the curved row */
+.ob-cyl-card { -webkit-box-reflect: below 0.375rem linear-gradient(rgba(0, 0, 0, 0) 84%, rgba(0, 0, 0, 0.14)); }
+
+/* VOLT KIT: the reference animates blur + drop-shadow here (a lens fringe);
+   animated filters cap Mac Chrome at 30fps, so the kit keeps the same clock
+   and fades the side-on frames with opacity instead */
+@keyframes ob-cyl-ca {
+  0%, 12% { opacity: 0.5; }
+  26% { opacity: 0.68; }
+  36% { opacity: 0.88; }
+  47%, 53% { opacity: 1; }
+  64% { opacity: 0.88; }
+  74% { opacity: 0.68; }
+  88%, 100% { opacity: 0.5; }
+}
+.ob-cyl::before, .ob-cyl::after { content: ""; position: absolute; top: 0; bottom: 0; z-index: 2; width: 7%; pointer-events: none; }
+.ob-cyl::before { left: 0; background: linear-gradient(90deg, var(--bg), rgba(247, 247, 244, 0)); }
+.ob-cyl::after { right: 0; background: linear-gradient(270deg, var(--bg), rgba(247, 247, 244, 0)); }
+
+/* frame size and slot count are fitted to the screen by js/ring.js (fitRing) */
+@media (prefers-reduced-motion: reduce) { .ob-cyl-stage { animation: none; } }
