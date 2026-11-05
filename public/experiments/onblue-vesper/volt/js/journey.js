@@ -113,7 +113,7 @@
       return;
     }
     stepsEl.querySelectorAll('.oj-step').forEach(function (s, i) {
-      var r = s.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - mid);
+      var r = s.firstElementChild.getBoundingClientRect(), d = Math.abs((r.top + r.bottom) / 2 - mid);
       if (d < bestD) { bestD = d; best = i; }
     });
     if (best !== last) { last = best; setStep(best); }
@@ -158,7 +158,7 @@
     var mid = window.innerHeight / 2, sr = sec.getBoundingClientRect(), bd = Infinity;
     if (sr.top > mid || sr.bottom < mid) { return; }
     stepsEl.querySelectorAll('.oj-step').forEach(function (s) {
-      var b = s.getBoundingClientRect(), d = (b.top + b.bottom) / 2 - mid;
+      var b = s.firstElementChild.getBoundingClientRect(), d = (b.top + b.bottom) / 2 - mid;
       if (Math.abs(d) < Math.abs(bd)) { bd = d; }
     });
     if (Math.abs(bd) < 6 || Math.abs(bd) > window.innerHeight * 0.18) { return; }
