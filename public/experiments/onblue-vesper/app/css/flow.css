@@ -136,6 +136,7 @@ html.app.app-flow, html.app.app-flow body { background: var(--app-panel) !import
   cursor: pointer;
 }
 .chip-choice:hover { border-color: var(--card-line-hover); }
+.chip-choice .app-plat { width: 20px; height: 20px; }
 
 /* a quiet box for estimates and "what happens next" */
 .note-box { display: flex; gap: var(--sp-3); padding: var(--sp-3) var(--sp-4); border-radius: var(--r-md); background: var(--app-ground); color: var(--app-ink-2); }

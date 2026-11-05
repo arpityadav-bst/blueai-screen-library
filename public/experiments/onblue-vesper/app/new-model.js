@@ -35,11 +35,15 @@
   };
   var ORDER = ['growth', 'engagement'];
 
+  /* Release 1 of the server (ROB-21562): YouTube and Instagram. Growth takes
+     one or both; engagement promotes one video, so it takes the one its link is on. */
   var PLATS = {
-    // YouTube only for now (data.js): the form asks no platform question
     youtube: { an: 'a YouTube', hosts: ['youtube.com', 'youtu.be'], urlLabel: 'YouTube video URL',
-      urlPh: 'https://youtube.com/watch?v=...', urlHint: 'A public YouTube video or Short.', paste: 'Paste a public YouTube video or Short.' }
+      urlPh: 'https://youtube.com/watch?v=...', urlHint: 'A public YouTube video or Short.', paste: 'Paste a public YouTube video or Short.' },
+    instagram: { an: 'an Instagram', hosts: ['instagram.com', 'instagr.am'], urlLabel: 'Instagram Reel URL',
+      urlPh: 'https://instagram.com/reel/...', urlHint: 'A public Instagram Reel.', paste: 'Paste a public Instagram Reel.' }
   };
+  var PLAT_ORDER = ['youtube', 'instagram'];
   var ACTIONS = ['Watch', 'Like', 'Comment'];
   // label, then the code the Campaigns list already uses for it
   var MARKETS = [['United States', 'US'], ['India', 'IN'], ['Worldwide', 'WORLDWIDE']];
@@ -72,6 +76,8 @@
     b.postUrl = ''; b.actions = ACTIONS.slice();
     b.site = ''; b.refs = ''; b.refsFiles = '';
     b.bid = t === 'growth' ? TYPES.growth.ratePh : '';
+    // engagement takes one platform: keep the first of growth's picks
+    if (t === 'engagement' && b.platforms.length !== 1) { b.platforms = [b.platforms[0] || 'youtube']; }
   }
 
   // would switching type throw away something the agency typed?
@@ -127,11 +133,16 @@
   function errors(b) {
     var e = {}, t = TYPES[b.type];
     if (!t) { e.type = 'Pick a campaign type.'; return e; }
+    if (!b.platforms.length) { e.platforms = 'Pick at least one platform.'; }
     if (!b.name.trim()) { e.name = 'Give the campaign a name.'; }
     if (!b.product.trim()) { e.product = "Name the product you're promoting."; }
     if (b.type === 'engagement') {
-      var pl = PLATS.youtube, url = b.postUrl.trim().toLowerCase();
-      if (!pl.hosts.some(function (h) { return url.indexOf(h) >= 0; })) { e.postUrl = pl.paste; }
+      // a link from the other platform is the one mistake the form can see, so it says so
+      var p = PLATS[b.platforms[0]] ? b.platforms[0] : 'youtube', pl = PLATS[p], other = p === 'youtube' ? 'instagram' : 'youtube';
+      var url = b.postUrl.trim().toLowerCase();
+      var hit = function (x) { return PLATS[x].hosts.some(function (h) { return url.indexOf(h) >= 0; }); };
+      if (url && hit(other)) { e.postUrl = 'That’s ' + PLATS[other].an + ' link. ' + pl.paste; }
+      else if (!hit(p)) { e.postUrl = pl.paste; }
       if (!b.actions.length) { e.actions = 'Pick at least one action.'; }
     }
     var bud = budgetOf(b);
@@ -150,10 +161,10 @@
     return e;
   }
 
-  var STEP_OF = { type: 0, name: 1, product: 1, postUrl: 1, actions: 1, site: 1, refs: 1,
+  var STEP_OF = { type: 0, platforms: 1, name: 1, product: 1, postUrl: 1, actions: 1, site: 1, refs: 1,
     budget: 2, bid: 2, start: 2, end: 2, market: 3, note: 3 };
   // how the Review step names a field it is waiting on
-  var NAMES = { type: 'campaign type', name: 'campaign name', product: 'product name',
+  var NAMES = { type: 'campaign type', platforms: 'platform', name: 'campaign name', product: 'product name',
     postUrl: 'video URL', actions: 'action', budget: 'budget', bid: 'bid', start: 'start', end: 'end', note: 'notes' };
 
   function stepErrors(b, i) {
@@ -219,6 +230,8 @@
       if (m) { b.market = m[0]; }
     }
     b.name = (src.name || c.title || '').trim() + ' (copy)';
+    b.platforms = (c.platforms || b.platforms).filter(function (p) { return PLATS[p]; }).slice(0, t === 'engagement' ? 1 : 2);
+    if (!b.platforms.length) { b.platforms = ['youtube']; }
     var bud = String(Number(num(src.budget || c.budget)) || '');
     b.budgetPick = !bud ? '' : PRESETS.indexOf(bud) >= 0 ? bud : 'custom';
     b.budgetCustom = b.budgetPick === 'custom' ? bud : '';
@@ -226,7 +239,7 @@
   }
 
   window.onblueNew = {
-    TYPES: TYPES, ORDER: ORDER, PLATS: PLATS, ACTIONS: ACTIONS, MARKETS: MARKETS, PRESETS: PRESETS, STEPS: STEPS,
+    TYPES: TYPES, ORDER: ORDER, PLATS: PLATS, PLAT_ORDER: PLAT_ORDER, ACTIONS: ACTIONS, MARKETS: MARKETS, PRESETS: PRESETS, STEPS: STEPS,
     blank: blank, setType: setType, typeOwned: typeOwned, budgetOf: budgetOf, money: money, price: price, num: num,
     zone: zone, days: days, when: when, at: at, fmtDay: fmtDay, fmtTime: fmtTime, errors: errors, stepErrors: stepErrors,
     stepValid: stepValid, firstMissing: firstMissing, hasInput: hasInput, toRow: toRow, fromCampaign: fromCampaign, STEP_OF: STEP_OF

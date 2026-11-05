@@ -122,6 +122,7 @@
 .nw-dl dt { font: var(--t-small); color: var(--app-ink-3); }
 .nw-dl dd { font: var(--t-body); letter-spacing: var(--tr-body); color: var(--app-ink-1); overflow-wrap: anywhere; }
 @media (max-width: 600px) { .nw-dl { grid-template-columns: 1fr; gap: 0; } .nw-dl dd + dt { margin-top: var(--sp-2); } }
+.nw-plats { display: inline-flex; align-items: center; gap: var(--sp-2); vertical-align: top; }
 .nw-pre { white-space: pre-line; }
 .nw-missing { color: var(--err-ink); font-weight: 500; }
 .nw-none { color: var(--app-ink-3); }
