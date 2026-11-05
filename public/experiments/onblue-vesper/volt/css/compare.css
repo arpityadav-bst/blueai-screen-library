@@ -58,3 +58,5 @@
 /* the marks' key is a phone aid only (js/compare.js); the desktop table keeps its own read */
 .cmp-key { display: none; }
 @media (max-width: 700px) { .cmp-key { display: flex; } }
+/* 360: the onBlue pill and the rival's name keep a clear gap */
+@media (max-width: 380px) { .cmp-head em { padding: 0.375rem 0.5rem; } .cmp-head > span:last-child { padding-left: 0.375rem; } }

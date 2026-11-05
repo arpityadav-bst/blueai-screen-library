@@ -34,7 +34,9 @@
   // THE PHONE SCENE (700 and below): a 350 x 400 portrait, the phone left of
   // centre and at most two cards beside it, each at this second spot (--px / --py)
   var PW = 350, PHH = 400, PC = [[86, -56], [86, 62]];
-  function ph(i) { var p = PC[Math.min(i, PC.length - 1)]; return ';--px:' + p[0] + 'px;--py:' + p[1] + 'px'; }
+  // step 1's three facts stack beside the phone (PM: Sells, Buyers and Category all stay)
+  var PF = [[86, -118], [86, 0], [86, 118]];
+  function ph(i, list) { list = list || PC; var p = list[Math.min(i, list.length - 1)]; return ';--px:' + p[0] + 'px;--py:' + p[1] + 'px'; }
   function ava(i) { return i < 5 ? '<img src="' + AV + (i + 1) + '.jpg" alt="">' : '<i style="background:' + B.pal[i % 4] + '">' + CREATORS[i][0].charAt(1).toUpperCase() + '</i>'; }
 
   function build() {
@@ -46,7 +48,7 @@
     // step 1: what was read, three cards (card widths match volt/css/journey.css)
     var FACTS = spots([[-1, -190], [1, -70], [-1, 150]], 260);
     var facts = [['Sells', B.sell, 'brand'], ['Buyers', B.buyers, 'users'], ['Category', B.category, 'studio']].map(function (f, i) {
-      return '<div class="oj-fact" style="' + at(FACTS, i) + ph(i) + ';--d:' + (120 + i * 90) + 'ms;--b:' + (i * 0.7) + 's"><i>' + OB.icon(f[2], 18) + '</i><span><small>' + f[0] + '</small><b>' + e(f[1]) + '</b></span></div>';
+      return '<div class="oj-fact" style="' + at(FACTS, i) + ph(i, PF) + ';--d:' + (120 + i * 90) + 'ms;--b:' + (i * 0.7) + 's"><i>' + OB.icon(f[2], 18) + '</i><span><small>' + f[0] + '</small><b>' + e(f[1]) + '</b></span></div>';
     }).join('');
     // step 3: a network of creators, four each side, lighting up Live in turn
     var NODES = spots([[-1, -225], [-1, -75], [-1, 75], [-1, 225], [1, -225], [1, -75], [1, 75], [1, 225]], 200);

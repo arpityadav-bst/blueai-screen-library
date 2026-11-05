@@ -32,6 +32,8 @@
   var burger = document.querySelector('[data-burger]'), menu = document.querySelector('[data-nav-menu]');
   if (burger && menu) {
     var shut = function () { menu.classList.remove('is-open'); burger.setAttribute('aria-expanded', 'false'); };
+    // the menu is pinned to the header: scrolling the page underneath closes it
+    window.addEventListener('scroll', function () { if (menu.classList.contains('is-open')) { shut(); } }, { passive: true });
     burger.addEventListener('click', function () { var on = !menu.classList.contains('is-open'); menu.classList.toggle('is-open', on); burger.setAttribute('aria-expanded', String(on)); });
     document.addEventListener('click', function (e) { if (!burger.contains(e.target) && (!menu.contains(e.target) || e.target.closest('.ob-nav-row'))) { shut(); } });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { shut(); } });

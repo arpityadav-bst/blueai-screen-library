@@ -88,8 +88,7 @@
   .ob-dw { display: none; }
   #faq.ob-sec { padding-bottom: 2.375rem; }   /* 38 + the close's 56: no double band of black before the spark */
   .ob-qa-head h2 { font-size: 1.875rem; }
-  .ob-qa-head p { margin-bottom: 0; font-size: 1rem; }
-  .ob-qa-head .ob-btn { display: none; }   /* the close owns the CTA */
+  .ob-qa-head p { margin-bottom: 1.25rem; font-size: 1rem; }   /* the PM's button sits under the intro (J1) */
   .ob-qa-a p { padding: 0 1.25rem 1.25rem 3.3125rem; text-wrap: pretty; }   /* in line with the question text, no one-word last line */
 }
 /* small phones: the result's CTA matches the hero's, full width (MOBILE-RULES 1) */
