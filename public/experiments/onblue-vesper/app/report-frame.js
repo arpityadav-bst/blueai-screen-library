@@ -161,6 +161,18 @@
       doc.head.appendChild(s);
       // every way back on his screens is the app's list
       doc.addEventListener('click', function (e) {
+        /* "View a sample report" on an in-review campaign opens the app's own
+           sample of that kind, so it is the very report a live campaign gets
+           (Appy, 2026-11-05): growth = his final growth report (Compact, with
+           its switches), engagement = his engagement report. His own button
+           opened an older in-page sample with a different layout. */
+        var smp = e.target.closest && e.target.closest('[data-sample]');
+        if (smp) {
+          e.preventDefault();
+          e.stopPropagation();
+          window.location.href = 'campaign.html?id=' + (smp.getAttribute('data-sample') === 'engagement' ? '7c2d91e4' : 'a15d7f22');
+          return;
+        }
         var back = e.target.closest && e.target.closest('[data-back], a.back');
         if (!back) { return; }
         e.preventDefault();
