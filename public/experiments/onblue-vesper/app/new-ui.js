@@ -18,6 +18,17 @@
     upload: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>'
   };
 
+  // the platform's own mark, decorative: the chip or row already says its name.
+  // Each Instagram mark gets its own gradient id, so two on one page never share one
+  var mN = 0;
+  function mark(p) {
+    return D.PLATFORMS[p].mark.replace(/\{n\}/g, 'nw' + (++mN));
+  }
+  function plats(list) {
+    return '<span class="app-plats" aria-hidden="true">' + list.map(mark).join('') + '</span>'
+      + '<span>' + list.map(function (p) { return D.PLATFORMS[p].name; }).join(' and ') + '</span>';
+  }
+
   function help(v, hint, err) {
     var text = err || hint || '';
     return '<p class="help' + (err ? ' is-err' : '') + '" id="h-' + v + '" data-hint="' + esc(hint || '') + '"'
@@ -50,7 +61,7 @@
       + (o.noHelp ? '' : help(v, o.hint, o.err)) + '</div>';
   }
 
-  /* A row of pressable chips (actions, market). The label is a
+  /* A row of pressable chips (platforms, actions, market). The label is a
      plain span named by aria-labelledby, because a group has no one control
      for a <label> to point at. */
   // o.one: a pick-one group. Only a group that adds up carries ticks; a tick on a
@@ -71,5 +82,5 @@
       + (lede ? '<p class="flow-lede">' + esc(lede) + '</p>' : '');
   }
 
-  window.onblueNewUI = { I: I, help: help, text: text, money: money, chips: chips, head: head };
+  window.onblueNewUI = { I: I, mark: mark, plats: plats, help: help, text: text, money: money, chips: chips, head: head };
 })();

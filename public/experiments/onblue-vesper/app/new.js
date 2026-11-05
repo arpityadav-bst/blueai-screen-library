@@ -30,8 +30,9 @@
   /* NO CAMPAIGNS UNTIL THE AGENCY IS APPROVED (Appy, 2026-11-03, as on main):
      an agency in review is sent back to Campaigns, which says why */
   if (A.session.status === 'review') { location.replace('campaigns.html'); return; }
-  // YouTube only for now (data.js): a draft or copy from when Instagram was offered runs there too
-  b.platforms = ['youtube'];
+  // a draft saved while the app was YouTube only kept ['youtube'], so it reads as before
+  b.platforms = (b.platforms || []).filter(function (p) { return N.PLATS[p]; });
+  if (b.type === 'engagement' && b.platforms.length > 1) { b.platforms = b.platforms.slice(0, 1); }
   // no type named: the picker chooses one, over Campaigns. Phones keep the page,
   // which tells them to use a computer.
   if (!b.type) {
@@ -231,6 +232,19 @@
   document.addEventListener('click', function (e) {
     var t = e.target.closest ? e.target : null, el;
     if (!t) { return; }
+    if ((el = t.closest('[data-plat]'))) {
+      var p = el.dataset.plat;
+      if (b.type === 'growth') {
+        // growth takes one or both, kept in YouTube, Instagram order
+        b.platforms = N.PLAT_ORDER.filter(function (x) { return x === p ? b.platforms.indexOf(p) < 0 : b.platforms.indexOf(x) >= 0; });
+      } else {
+        b.platforms = [p];
+        if (b.postUrl) { shown.postUrl = true; } // a pasted link is read again against the new platform
+      }
+      shown.platforms = true;
+      save(); render('[data-plat="' + p + '"]');
+      return;
+    }
     if ((el = t.closest('[data-action]'))) {
       var a = el.dataset.action, on = b.actions.indexOf(a) >= 0;
       b.actions = N.ACTIONS.filter(function (x) { return x === a ? !on : b.actions.indexOf(x) >= 0; });

@@ -43,6 +43,29 @@
     rejected: ['Rejected', 'rejected']
   };
 
+  /* PLATFORMS ARE BACK IN THE CREATE FORM (PM, 2026-11-05, ROB-21562): release 1
+     of the server takes YouTube and Instagram (details.platforms). The list and
+     the report still show no platform; the sample rows stay on YouTube. */
+  var PLATFORMS = {
+    youtube: {
+      name: 'YouTube',
+      mark: '<svg class="app-plat" viewBox="0 0 24 24" aria-hidden="true">'
+        + '<path fill="#FF0000" d="M23.5 6.2a3 3 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3 3 0 0 0 .5 6.2C0 8.07 0 12 0 12s0 3.93.5 5.8a3 3 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51A3 3 0 0 0 23.5 17.8C24 15.93 24 12 24 12s0-3.93-.5-5.8z"/>'
+        + '<path fill="#fff" d="M9.55 15.57V8.43L15.82 12l-6.27 3.57z"/></svg>'
+    },
+    instagram: {
+      name: 'Instagram',
+      mark: '<svg class="app-plat" viewBox="0 0 24 24" aria-hidden="true">'
+        + '<defs><linearGradient id="ig{n}" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse">'
+        + '<stop offset="0" stop-color="#FEC053"/><stop offset=".35" stop-color="#F2203E"/>'
+        + '<stop offset=".7" stop-color="#B729A8"/><stop offset="1" stop-color="#5342D6"/></linearGradient></defs>'
+        + '<rect x="1.5" y="1.5" width="21" height="21" rx="6" fill="url(#ig{n})"/>'
+        + '<rect x="6.2" y="6.2" width="11.6" height="11.6" rx="3.6" fill="none" stroke="#fff" stroke-width="1.9"/>'
+        + '<circle cx="12" cy="12" r="2.9" fill="none" stroke="#fff" stroke-width="1.9"/>'
+        + '<circle cx="17.2" cy="6.8" r="1.1" fill="#fff"/></svg>'
+    }
+  };
+
 
   /* WHAT THE AGENCY MAKES IN THIS PROTOTYPE, kept in localStorage so the wizard,
      the list and the report agree. Submitted campaigns use the row shape above
@@ -57,9 +80,9 @@
 
   // the agency's own submitted campaigns lead the list, as the newest
   var OWN = read(K_CAMPAIGNS);
-  // campaigns filed while Instagram was offered run on YouTube now; and one filed
-  // while an agency in review could still create (it waited) is simply in review
-  OWN.forEach(function (c) { c.platforms = ['youtube']; if (c.status === 'waiting') { c.status = 'review'; } });
+  // one filed while an agency in review could still create (it waited) is simply
+  // in review; a campaign keeps the platforms it was filed with
+  OWN.forEach(function (c) { if (!c.platforms || !c.platforms.length) { c.platforms = ['youtube']; } if (c.status === 'waiting') { c.status = 'review'; } });
   MINE = OWN.concat(MINE);
   STATUS.draft = ['Draft', 'draft'];
 
@@ -75,7 +98,7 @@
   function spentOf(c) { return (c.done || 0) * rateOf(c) / (c.kind !== 'engagement' ? 1000 : 1); }
 
   window.onblueData = {
-    MINE: MINE, OWN: OWN, SAMPLES: SAMPLES, STATUS: STATUS, TODAY: new Date(2026, 9, 22),
+    MINE: MINE, OWN: OWN, SAMPLES: SAMPLES, STATUS: STATUS, PLATFORMS: PLATFORMS, TODAY: new Date(2026, 9, 22),
     /* A NEW ACCOUNT, AS THE DOCK MAKES ONE: what the agency has filed since
        "New account" was pressed (onblue-first-since), so a campaign submitted
        there shows in its list and its sidebar, and earlier ones do not. */
