@@ -12,21 +12,22 @@
     return esc(T[b.type].name) + '<button class="app-link nw-change" type="button" data-act="change-type">Change</button>';
   }
 
-  /* ---- 1: what to promote (PM's field order: platform, name, product, then the
-     type's own). Platforms (PM, 2026-10-30, ROB-21562): growth takes one or both,
-     engagement takes the one its video is on, so it is a pick-one row (no ticks)
-     and its link field follows the pick. ---- */
+  /* ---- 1: what to promote (PM's field order: name, product, platform, then the
+     type's own; platform moved below product, PM 2026-11-05). Platforms (PM,
+     2026-10-30, ROB-21562): growth takes one or both, engagement takes the one
+     its video is on, so it is a pick-one row (no ticks) and its link field
+     follows the pick. ---- */
   function promote(b, err) {
     var growth = b.type === 'growth', pl = N.PLATS[b.platforms[0]] || N.PLATS.youtube;
-    var html = U.chips({
-      v: 'platforms', attr: 'data-plat', label: growth ? 'Platforms' : 'Platform', err: err.platforms, one: !growth,
-      hint: growth ? 'Pick one or both.' : 'The platform your video is on.',
-      items: N.PLAT_ORDER.map(function (p) {
-        return { value: p, on: b.platforms.indexOf(p) >= 0, html: U.mark(p) + esc(window.onblueData.PLATFORMS[p].name) };
-      })
-    })
-      + U.text({ k: 'name', label: 'Campaign name', value: b.name, ph: 'Fernweh Coffee: spring launch', err: err.name })
-      + U.text({ k: 'product', label: 'Product name', value: b.product, ph: 'Fernweh Coffee', err: err.product });
+    var html = U.text({ k: 'name', label: 'Campaign name', value: b.name, ph: 'Fernweh Coffee: spring launch', err: err.name })
+      + U.text({ k: 'product', label: 'Product name', value: b.product, ph: 'Fernweh Coffee', err: err.product })
+      + U.chips({
+        v: 'platforms', attr: 'data-plat', label: growth ? 'Platforms' : 'Platform', err: err.platforms, one: !growth,
+        hint: growth ? 'Pick one or both.' : 'The platform your video is on.',
+        items: N.PLAT_ORDER.map(function (p) {
+          return { value: p, on: b.platforms.indexOf(p) >= 0, html: U.mark(p) + esc(window.onblueData.PLATFORMS[p].name) };
+        })
+      });
     if (growth) {
       html += U.text({ k: 'site', label: 'Reference websites', value: b.site, ph: 'fernwehcoffee.com, another-brand.com', plain: true,
         hint: 'Sites whose look and tone we should take cues from.' })

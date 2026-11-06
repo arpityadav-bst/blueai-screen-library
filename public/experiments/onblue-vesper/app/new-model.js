@@ -133,9 +133,9 @@
   function errors(b) {
     var e = {}, t = TYPES[b.type];
     if (!t) { e.type = 'Pick a campaign type.'; return e; }
-    if (!b.platforms.length) { e.platforms = 'Pick at least one platform.'; }
     if (!b.name.trim()) { e.name = 'Give the campaign a name.'; }
     if (!b.product.trim()) { e.product = "Name the product you're promoting."; }
+    if (!b.platforms.length) { e.platforms = 'Pick at least one platform.'; }
     if (b.type === 'engagement') {
       // a link from the other platform is the one mistake the form can see, so it says so
       var p = PLATS[b.platforms[0]] ? b.platforms[0] : 'youtube', pl = PLATS[p], other = p === 'youtube' ? 'instagram' : 'youtube';
@@ -161,7 +161,7 @@
     return e;
   }
 
-  var STEP_OF = { type: 0, platforms: 1, name: 1, product: 1, postUrl: 1, actions: 1, site: 1, refs: 1,
+  var STEP_OF = { type: 0, name: 1, product: 1, platforms: 1, postUrl: 1, actions: 1, site: 1, refs: 1,
     budget: 2, bid: 2, start: 2, end: 2, market: 3, note: 3 };
   // how the Review step names a field it is waiting on
   var NAMES = { type: 'campaign type', platforms: 'platform', name: 'campaign name', product: 'product name',
