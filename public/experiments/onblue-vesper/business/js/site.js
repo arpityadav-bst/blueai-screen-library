@@ -32,21 +32,32 @@
   // the nav gets a hairline once the page scrolls
   var nav = document.querySelector('[data-nav]');
   // the glass pill takes over once half the first screen has scrolled by
-  // over a dark section, the pill's logo turns volt (header.css .on-dark): look
-  // at what sits under the pill's middle, skipping the header itself
+  // over a dark section, the pill's logo turns volt (header.css .on-dark).
+  // MEASURED, NOT HIT-TESTED (2026-11-06): elementsFromPoint on every scroll
+  // event hit-tested through the hero's 3D film ring and hung the first fold;
+  // the dark bands' positions are read once (and on resize), a scroll compares
+  // numbers, once per frame
+  var darks = [], ticking = false;
+  var measure = function () {
+    var y = window.scrollY;
+    darks = [].map.call(document.querySelectorAll('.ob-dark, .ob-horizon'), function (el) { var r = el.getBoundingClientRect(); return [r.top + y, r.bottom + y]; });
+  };
   var overDark = function () {
-    if (!document.elementsFromPoint) { return false; }
-    var hits = document.elementsFromPoint(window.innerWidth / 2, 34);
-    for (var i = 0; i < hits.length; i++) { if (!nav.contains(hits[i])) { return !!hits[i].closest('.ob-dark, .ob-horizon'); } }
+    var y = window.scrollY + 34;
+    for (var i = 0; i < darks.length; i++) { if (y >= darks[i][0] && y < darks[i][1]) { return true; } }
     return false;
   };
   var onScroll = function () {
+    ticking = false;
     if (!nav) { return; }
     var stuck = window.scrollY > window.innerHeight * 0.5;
     nav.classList.toggle('is-stuck', stuck);
     nav.classList.toggle('on-dark', stuck && overDark());
   };
-  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; window.requestAnimationFrame(onScroll); } }, { passive: true });
+  if ('ResizeObserver' in window) { new ResizeObserver(function () { measure(); onScroll(); }).observe(document.body); }
+  window.addEventListener('load', function () { measure(); onScroll(); });
+  measure(); onScroll();
 
   // the phone bar's burger and its popover (header.css, 900 and below): a tap
   // outside, Escape, any row, or widening past 900 closes it

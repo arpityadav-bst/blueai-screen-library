@@ -291,7 +291,7 @@
       }, 700);
     });
   }
-  window.addEventListener('scroll', function () { window.requestAnimationFrame(tick); }, { passive: true });
+  var tickQ = false; window.addEventListener('scroll', function () { if (!tickQ) { tickQ = true; window.requestAnimationFrame(function () { tickQ = false; tick(); }); } }, { passive: true });   // one tick a frame
   window.addEventListener('resize', function () { fit(); tick(); });
   fit();
   var first = report();
