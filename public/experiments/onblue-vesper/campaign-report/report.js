@@ -581,14 +581,21 @@
   }
 
   /* ---- viewer geography ----------------------------------------------------
-     TWO VIEWS, switched from the prototype bar at the bottom left. "off" is
-     what ships while the backend work is pending: no geography anywhere, not
-     the card, not the section in a post's details, not the CSV columns (a
-     Coming soon note felt wrong, Abhisht 2026-10-22). "live" is the finished
-     card. The choice is remembered per browser. */
+     THREE VIEWS, switched from the prototype bar at the bottom left. "off" is
+     what ships while the backend work is pending: no geography card (a
+     Coming soon note felt wrong, Abhisht 2026-10-22). "empty" is the card
+     before any post has enough views for audience data (the sample data
+     always has some, so this is the only way to see it). "live" is the
+     finished card. The choice is remembered per browser.
+     CAMPAIGN TOTALS ONLY (Abhisht 2026-11-06): geography, age and gender are
+     shown for the campaign as a whole, never per post or per channel (no post
+     details, no audience sections in a creator's details, no CSV columns), so
+     a brand never sees which posts have no data yet. Each card is built from
+     the campaign's own posts that have that data, weighted by their views,
+     with no fallback to channel-level data. */
   var geoAll = false, geoMode = 'off';
-  try { geoMode = window.localStorage.getItem('campaign-report:geo') === 'live' ? 'live' : 'off'; } catch (e) {}
-  var PROCESSING = '<div class="geo-empty">Geography data is still processing.</div>';
+  try { geoMode = { live: 'live', empty: 'empty' }[window.localStorage.getItem('campaign-report:geo')] || 'off'; } catch (e) {}
+  var PROCESSING = '<div class="geo-empty">Geography data shows up once the videos have enough views. This usually takes a few days.</div>';
   function geoBars(g, limit) {
     var rows = g.rows.slice(0, limit), rest = g.rows.slice(limit);
     if (rest.length) {
@@ -603,38 +610,38 @@
         + '</div>';
     }).join('') + '</div>';
   }
-  function coverNote(g) {
-    return '<p class="geo-note">' + IC.info + '<span>Based on ' + num(g.covered) + ' of ' + plural(g.n, 'post')
-      + ', ' + pct(g.total ? g.cv / g.total : 0) + ' of views. Posts without geography data are left out.</span></p>';
+  /* one general line on all three cards: no count of posts covered, no source named */
+  function audienceNote() {
+    return '<p class="geo-note">' + IC.info + '<span>Based on videos with enough views to report audience data.</span></p>';
   }
+  /* the three audience cards carry their title only, no hint line under it (Abhisht 2026-11-06) */
   function renderGeo() {
-    var g = geoOf(scope()), card = $('#geo-card');
-    card.hidden = geoMode === 'off';
-    card.innerHTML = geoMode === 'off' ? '' :
-      '<div class="card-head"><div><h2 class="rep-h">Viewer geography</h2>'
-      + '<p class="rep-hint">Where the views on the posts came from' + (isFull() ? '' : ', ' + spanText()) + '.'
-      + ' Open any post’s details to see its own geography.</p></div>'
-      + (g.rows.length > 5 ? '<button class="link-btn" type="button" data-geo-all>' + (geoAll ? 'Show top 5' : 'Show all') + '</button>' : '')
+    var g = geoOf(scope()), card = $('#geo-card'), has = geoMode === 'live' && g.covered;
+    card.hidden = geoMode === 'off' || audLayout === 'one';
+    card.innerHTML = card.hidden ? '' :
+      '<div class="card-head"><div><h2 class="rep-h">Viewer geography</h2></div>'
+      + (has && g.rows.length > 5 ? '<button class="link-btn" type="button" data-geo-all>' + (geoAll ? 'Show top 5' : 'Show all') + '</button>' : '')
       + '</div>'
-      + (g.covered ? coverNote(g) + geoBars(g, geoAll ? 99 : 5) : PROCESSING);
+      + (has ? audienceNote() + geoBars(g, geoAll ? 99 : 5) : PROCESSING);
     document.querySelectorAll('[data-geo-mode]').forEach(function (b) {
       b.setAttribute('aria-pressed', b.getAttribute('data-geo-mode') === geoMode ? 'true' : 'false');
     });
+    renderAudLayout();
   }
 
   /* ---- viewer age, viewer gender -------------------------------------------
      The two other audience stats YouTube shows, each a card of its own under
      geography, built like it (same bars, same label column, so the bars line
      up down the page; same coverage note), each in YouTube's own order, never
-     re-sorted by share. One Hidden | Live data switch in the review bar runs
-     both. Shown by default while they are being reviewed. */
+     re-sorted by share. One Hidden | No data yet | Live data switch in the
+     review bar runs both. Shown by default while they are being reviewed. */
   var demoMode = 'live';
-  try { demoMode = window.localStorage.getItem('campaign-report:demo') === 'off' ? 'off' : 'live'; } catch (e) {}
+  try { demoMode = { off: 'off', empty: 'empty' }[window.localStorage.getItem('campaign-report:demo')] || 'live'; } catch (e) {}
   var DEMO = [
     { key: 'age', card: '#age-card', title: 'Viewer age', word: 'age', labels: AGES },
     { key: 'gender', card: '#gender-card', title: 'Viewer gender', word: 'gender', labels: GENDERS }
   ];
-  function demoEmpty(m) { return '<div class="geo-empty">' + m.word.charAt(0).toUpperCase() + m.word.slice(1) + ' data is still processing.</div>'; }
+  function demoEmpty(m) { return '<div class="geo-empty">' + m.word.charAt(0).toUpperCase() + m.word.slice(1) + ' data shows up once the videos have enough views. This usually takes a few days.</div>'; }
   function shareBars(labels, shares) {
     return '<div class="geo-list">' + labels.map(function (l, k) {
       var s = shares[k];
@@ -643,25 +650,59 @@
         + '<span class="geo-pct">' + (s > 0 ? pct(s) : '0%') + '</span></div>';
     }).join('') + '</div>';
   }
-  function demoNote(d, m) {
-    return '<p class="geo-note">' + IC.info + '<span>Based on ' + num(d.covered) + ' of ' + plural(d.n, 'post')
-      + ', ' + pct(d.total ? d.cv / d.total : 0) + ' of views. YouTube counts signed-in viewers only,'
-      + ' and posts without ' + m.word + ' data are left out.</span></p>';
-  }
   function renderDemo() {
-    var d = demoOf(scope());
+    var d = demoOf(scope()), has = demoMode === 'live' && d.covered;
     DEMO.forEach(function (m) {
       var card = $(m.card);
-      card.hidden = demoMode === 'off';
-      card.innerHTML = demoMode === 'off' ? '' :
-        '<div class="card-head"><div><h2 class="rep-h">' + m.title + '</h2>'
-        + '<p class="rep-hint">Views on the posts by viewer ' + m.word + (isFull() ? '' : ', ' + spanText()) + '.'
-        + ' Open any post’s details to see its own.</p></div></div>'
-        + (d.covered ? demoNote(d, m) + shareBars(m.labels, d[m.key]) : demoEmpty(m));
+      card.hidden = demoMode === 'off' || audLayout === 'one';
+      card.innerHTML = card.hidden ? '' :
+        '<div class="card-head"><div><h2 class="rep-h">' + m.title + '</h2></div></div>'
+        + (has ? audienceNote() + shareBars(m.labels, d[m.key]) : demoEmpty(m));
     });
     document.querySelectorAll('[data-demo-mode]').forEach(function (b) {
       b.setAttribute('aria-pressed', b.getAttribute('data-demo-mode') === demoMode ? 'true' : 'false');
     });
+    renderAudLayout();
+  }
+
+  /* ---- viewer data: one card or three (prototype review control) -----------
+     "one": a single Viewer data card, the note once under its title, then
+     Geography, Age and Gender as sections (Abhisht 2026-11-06: the same note
+     three times was wasted space; side by side squished the bars). With no
+     data in any section the card shows one empty line, not three. "three":
+     the separate cards above. The Geography and Age and gender switches
+     still decide which sections show and in which state. Remembered per
+     browser. */
+  var audLayout = 'one';
+  try { audLayout = window.localStorage.getItem('campaign-report:audcard') === 'three' ? 'three' : 'one'; } catch (e) {}
+  function audSec(title, body, action) {
+    return '<div class="aud-sec"><div class="aud-sec-head"><h3 class="aud-h">' + title + '</h3>' + (action || '') + '</div>' + body + '</div>';
+  }
+  function renderAudLayout() {
+    var card = $('#aud-card'), showGeo = geoMode !== 'off', showDemo = demoMode !== 'off';
+    document.querySelectorAll('[data-aud-layout]').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.getAttribute('data-aud-layout') === audLayout ? 'true' : 'false');
+    });
+    card.hidden = audLayout !== 'one' || !(showGeo || showDemo);
+    if (card.hidden) { card.innerHTML = ''; return; }
+    var g = geoOf(scope()), d = demoOf(scope());
+    var geoHas = geoMode === 'live' && g.covered, demoHas = demoMode === 'live' && d.covered;
+    var head = '<div class="card-head"><div><h2 class="rep-h">Viewer data</h2></div></div>';
+    if (!geoHas && !demoHas) {
+      card.innerHTML = head + '<div class="geo-empty">Viewer data shows up once the videos have enough views. This usually takes a few days.</div>';
+      return;
+    }
+    var secs = [];
+    if (showGeo) {
+      secs.push(audSec('Geography', geoHas ? geoBars(g, geoAll ? 99 : 5) : PROCESSING,
+        geoHas && g.rows.length > 5 ? '<button class="link-btn" type="button" data-geo-all>' + (geoAll ? 'Show top 5' : 'Show all') + '</button>' : ''));
+    }
+    if (showDemo) {
+      DEMO.forEach(function (m) {
+        secs.push(audSec(m.word.charAt(0).toUpperCase() + m.word.slice(1), demoHas ? shareBars(m.labels, d[m.key]) : demoEmpty(m)));
+      });
+    }
+    card.innerHTML = head + audienceNote() + secs.join('');
   }
 
   /* ---- posts: filter, sort, group, page ------------------------------------
@@ -735,8 +776,9 @@
     return rowHead(false, true, state.group === 'none' ? '' : '<span class="c-lead">Creator</span>');
   }
   /* Title and creator open YouTube in a new tab. They read as plain text until
-     hovered, then turn blue and underlined with an external-link mark, so the
-     row itself can stay the way into Details. */
+     hovered, then turn blue and underlined with an external-link mark. The row
+     itself opens nothing: there are no post details (campaign totals only,
+     Abhisht 2026-11-06). */
   function channelUrl(c) { return 'https://www.youtube.com/' + c.handle; }
   function xlink(href, text) {
     return '<a class="xlink" href="' + href + '" target="_blank" rel="noopener"><span class="xl-text">' + esc(text) + '</span>'
@@ -748,7 +790,7 @@
   }
   function postRow(p, rank, sortable) {
     var gone = p.status === 'removed';
-    return '<div class="post' + (gone ? ' is-removed' : '') + '" data-row="' + p.id + '" tabindex="0" role="button" aria-label="Details for ' + esc(p.asset.title) + '">'
+    return '<div class="post' + (gone ? ' is-removed' : '') + '">'
       + (rank ? '<span class="t-rank c-rank">' + rank + '</span>' : '')
       + '<span class="t-content c-content">' + thumb(p.asset) + '<span class="pc-text">'
       + '<span class="pc-title">' + xlink(p.url, p.asset.title) + '</span>'
@@ -993,12 +1035,7 @@
     drawer.classList.add('is-open');
     drawer.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
-    if (view.focus === 'geo') {
-      var sec = drawer.querySelector('[data-dr-geo]');
-      if (sec) { sec.scrollIntoView({ block: 'start' }); }
-    } else {
-      drawer.scrollTop = 0;
-    }
+    drawer.scrollTop = 0;
     var close = drawer.querySelector('[data-dr-close]');
     if (close) { close.focus({ preventScroll: true }); }
   }
@@ -1007,33 +1044,6 @@
     drawer.setAttribute('aria-hidden', 'true');
     scrim.hidden = true;
     document.body.style.overflow = '';
-  }
-  function geoSection(list, single) {
-    var g = geoOf(list), p = list[0], body;
-    if (geoMode === 'off') { return ''; }
-    if (!g.covered) {
-      body = single && p.views >= GEO_MIN && !p.pv
-        ? '<div class="geo-empty">This post gathered no views ' + spanText() + '.</div>'
-        : PROCESSING;
-    } else {
-      body = (single ? '' : coverNote(g)) + geoBars(g, 6);
-    }
-    return '<section class="dr-sec" data-dr-geo><h4 class="rep-h">Viewer geography</h4>' + body + '</section>';
-  }
-  function demoSection(list, single) {
-    var d = demoOf(list), p = list[0];
-    if (demoMode === 'off') { return ''; }
-    return DEMO.map(function (m) {
-      var body;
-      if (!d.covered) {
-        body = single && p.views >= DEMO_MIN && !p.pv
-          ? '<div class="geo-empty">This post gathered no views ' + spanText() + '.</div>'
-          : demoEmpty(m);
-      } else {
-        body = (single ? '' : demoNote(d, m)) + shareBars(m.labels, d[m.key]);
-      }
-      return '<section class="dr-sec" data-dr-' + m.key + '><h4 class="rep-h">' + m.title + '</h4>' + body + '</section>';
-    }).join('');
   }
   function drStats(v, l, c) {
     return '<div class="dr-stats">'
@@ -1045,44 +1055,28 @@
   function periodNote() {
     return isFull() ? '' : '<p class="dr-period">Showing what was gathered ' + spanText() + '.</p>';
   }
+  /* Only a creator has details now: their posts and counts. No audience
+     sections and no post details behind the post rows (campaign totals
+     only, Abhisht 2026-11-06). */
   function paintDrawer() {
     var view = stack[stack.length - 1], html;
     var top = '<div class="dr-top">'
-      + (stack.length > 1 ? '<button class="dr-back" type="button" data-dr-back>&lsaquo; Back</button>' : '<span class="dr-kicker">' + (view.kind === 'post' ? 'Post' : 'Creator') + '</span>')
+      + (stack.length > 1 ? '<button class="dr-back" type="button" data-dr-back>&lsaquo; Back</button>' : '<span class="dr-kicker">Creator</span>')
       + '<button class="icon-sm" type="button" data-dr-close aria-label="Close">' + IC.close + '</button></div>';
 
-    if (view.kind === 'post') {
-      var p = byId[view.id], gone = p.status === 'removed';
-      html = top
-        + '<div class="dr-hero"><span>' + thumb(p.asset, 'lg', gone) + '</span><div>'
-        + '<h3>' + esc(p.asset.title) + '</h3>'
-        + '<div class="dr-who">' + avatar(p.creator, 'sm') + '<b>' + esc(p.creator.name) + '</b><span>' + subs(p.creator.subs) + '</span></div>'
-        + '<p class="dr-when">Posted ' + dateF(p.at) + ' at ' + timeF(p.at) + '</p>'
-        + (gone ? '<p class="dr-flag">Removed from YouTube. Its last known views still count toward your target.</p>' : '')
-        + '</div></div>'
-        + periodNote()
-        + drStats(p.pv, p.pl, p.pc)
-        + geoSection([p], true)
-        + demoSection([p], true)
-        + '<div class="dr-acts"><a class="btn" href="' + p.url + '" target="_blank" rel="noopener">' + IC.yt + 'Open on YouTube</a>'
-        + '<button class="btn" type="button" data-copy="' + p.url + '">' + IC.link + 'Copy link</button></div>';
-    } else {
-      var g = view.group;
-      var head = '<div class="dr-who" style="margin-top:0">' + avatar(g.first.creator, 'lg') + '<div><h3 style="font-size:16px">' + esc(g.first.creator.name) + '</h3>'
-          + '<span>' + plural(g.posts.length, 'post') + ' · ' + subs(g.first.creator.subs) + '</span></div></div>';
-      var list = g.posts.slice().sort(SORTS.views);
-      html = top + head
-        + periodNote()
-        + drStats(g.views, g.likes, g.comments)
-        + geoSection(g.posts, false)
-        + demoSection(g.posts, false)
-        + '<section class="dr-sec"><h4 class="rep-h">Posts</h4><div class="dr-list">' + list.map(function (q) {
-            return '<button class="dr-item" type="button" data-open-push="' + q.id + '">'
-              + '<span class="post-who"><span style="width:22px;flex:none">' + thumb(q.asset) + '</span>'
-              + '<span class="post-id"><b>' + esc(q.asset.title) + '</b><span>' + when(q.at) + (q.status === 'removed' ? ' · Removed' : '') + '</span></span></span>'
-              + '<span class="post-n">' + num(q.pv) + '</span></button>';
-          }).join('') + '</div></section>';
-    }
+    var g = view.group;
+    var head = '<div class="dr-who" style="margin-top:0">' + avatar(g.first.creator, 'lg') + '<div><h3 style="font-size:16px">' + esc(g.first.creator.name) + '</h3>'
+        + '<span>' + plural(g.posts.length, 'post') + ' · ' + subs(g.first.creator.subs) + '</span></div></div>';
+    var list = g.posts.slice().sort(SORTS.views);
+    html = top + head
+      + periodNote()
+      + drStats(g.views, g.likes, g.comments)
+      + '<section class="dr-sec"><h4 class="rep-h">Posts</h4><div class="dr-list">' + list.map(function (q) {
+          return '<div class="dr-item">'
+            + '<span class="post-who"><span style="width:22px;flex:none">' + thumb(q.asset) + '</span>'
+            + '<span class="post-id"><b>' + esc(q.asset.title) + '</b><span>' + when(q.at) + (q.status === 'removed' ? ' · Removed' : '') + '</span></span></span>'
+            + '<span class="post-n">' + num(q.pv) + '</span></div>';
+        }).join('') + '</div></section>';
     drawer.innerHTML = html;
   }
   function creatorGroupOf(id) {
@@ -1099,10 +1093,10 @@
     var item = function (act, icon, label) {
       return '<button type="button" role="menuitem" data-act="' + act + '" data-id="' + id + '">' + icon + label + '</button>';
     };
-    /* a post row and a creator row (grouped by creator) get the same three, about their own thing */
+    /* a creator row (grouped by creator) keeps Details; a post row has no details, only its links */
     menu.innerHTML = btn.getAttribute('data-menu-kind') === 'creator'
       ? item('cdetails', IC.info, 'Details') + item('channel', IC.yt, 'Open channel') + item('ccopy', IC.link, 'Copy channel link')
-      : item('details', IC.info, 'Details') + item('yt', IC.yt, 'Open on YouTube') + item('copy', IC.link, 'Copy link');
+      : item('yt', IC.yt, 'Open on YouTube') + item('copy', IC.link, 'Copy link');
     menu.hidden = false;
     var r = btn.getBoundingClientRect(), mw = menu.offsetWidth, mh = menu.offsetHeight;
     var left = Math.min(window.innerWidth - mw - 12, r.right - mw);
@@ -1227,16 +1221,14 @@
     return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
   }
   function downloadCsv() {
-    var list = filtered(), span = isFull() ? 'Campaign to date' : spanText(), live = geoMode === 'live';
-    var head = ['Period', 'Posted at', 'Channel', 'Subscribers', 'Video title', 'Post URL', 'Status', 'Views', 'Likes', 'Comments'];
-    var rows = [live ? head.concat(['Top geography', 'Top geography share']) : head];
+    /* no per-post audience columns: campaign totals only (Abhisht 2026-11-06) */
+    var list = filtered(), span = isFull() ? 'Campaign to date' : spanText();
+    var rows = [['Period', 'Posted at', 'Channel', 'Subscribers', 'Video title', 'Post URL', 'Status', 'Views', 'Likes', 'Comments']];
     list.forEach(function (p) {
-      var g = geoOf([p]), top = g.rows[0];
-      var row = [
+      rows.push([
         span, new Date(p.at).toISOString(), p.creator.name, p.creator.subs, p.asset.title, p.url,
         p.status === 'removed' ? 'Removed' : 'Live', p.pv, p.pl, p.pc
-      ];
-      rows.push(live ? row.concat([top ? top.name : '', top ? pct(top.v / g.cv, 1) : '']) : row);
+      ]);
     });
     var blob = new Blob([rows.map(function (r) { return r.map(csvCell).join(','); }).join('\n')], { type: 'text/csv' });
     var a = document.createElement('a');
@@ -1255,11 +1247,7 @@
     if (!menu.hidden && !(t && menu.contains(t)) && !(t && t === menuBtn)) { closeMenu(); }
     if (!pop.hidden && !ev.target.closest('#share-pop') && !(t && t.id === 'btn-share')) { closeShare(); }
     if (!rpop.hidden && !ev.target.closest('#range-pop') && !(t && t.id === 'btn-range')) { closeRange(); }
-    if (!t) {
-      var row = ev.target.closest('[data-row]');
-      if (row) { openDrawer({ kind: 'post', id: row.getAttribute('data-row') }); }
-      return;
-    }
+    if (!t) { return; }
 
     var a;
     if ((a = t.getAttribute('data-menu'))) {
@@ -1269,7 +1257,6 @@
     if ((a = t.getAttribute('data-act'))) {
       var id = t.getAttribute('data-id'), p = byId[id], g = lastGroups[id];
       closeMenu();
-      if (a === 'details') { openDrawer({ kind: 'post', id: id }); }
       if (a === 'yt') { window.open(p.url, '_blank', 'noopener'); }
       if (a === 'copy') { copy(p.url); }
       if (a === 'cdetails') { openDrawer({ kind: 'creator', group: g }); }
@@ -1289,8 +1276,6 @@
       return;
     }
     if (t.hasAttribute('data-cal-cancel')) { closeRange(); return; }
-    if ((a = t.getAttribute('data-open'))) { openDrawer({ kind: 'post', id: a }); return; }
-    if ((a = t.getAttribute('data-open-push'))) { openDrawer({ kind: 'post', id: a }, true); return; }
     if ((a = t.getAttribute('data-cgroup'))) { openDrawer({ kind: 'creator', group: creatorGroupOf(a) }); return; }
     if ((a = t.getAttribute('data-grp'))) {
       state.open[a] = !state.open[a];
@@ -1335,14 +1320,19 @@
       geoMode = a;
       try { window.localStorage.setItem('campaign-report:geo', a); } catch (e) {}
       renderGeo();
-      if (drawer.classList.contains('is-open')) { paintDrawer(); }
+      return;
+    }
+    if ((a = t.getAttribute('data-aud-layout'))) {
+      audLayout = a;
+      try { window.localStorage.setItem('campaign-report:audcard', a); } catch (e) {}
+      renderGeo();
+      renderDemo();
       return;
     }
     if ((a = t.getAttribute('data-demo-mode'))) {
       demoMode = a;
       try { window.localStorage.setItem('campaign-report:demo', a); } catch (e) {}
       renderDemo();
-      if (drawer.classList.contains('is-open')) { paintDrawer(); }
       return;
     }
     if (t.hasAttribute('data-top-more')) { topMore = !topMore; renderTopPosts(); return; }
@@ -1403,11 +1393,6 @@
   });
 
   document.addEventListener('keydown', function (ev) {
-    if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.matches && ev.target.matches('[data-row]')) {
-      ev.preventDefault();
-      openDrawer({ kind: 'post', id: ev.target.getAttribute('data-row') });
-      return;
-    }
     if (ev.key !== 'Escape') { return; }
     if (!menu.hidden) { var b = menuBtn; closeMenu(); if (b) { b.focus(); } return; }
     if (!rpop.hidden) { closeRange(); $('#btn-range').focus(); return; }

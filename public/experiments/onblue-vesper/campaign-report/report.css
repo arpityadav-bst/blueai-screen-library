@@ -227,6 +227,15 @@ svg { flex: none; }
 .geo-empty { margin-top: 14px; padding: 16px; border: 1px dashed var(--line-strong); border-radius: 12px; color: var(--muted); font-size: 13px; line-height: 1.5; }
 .geo-empty b { display: block; margin-bottom: 2px; color: var(--ink-soft); font-weight: 600; }
 
+/* one Viewer data card: the note once under the title, then geography, age
+   and gender as sections split by a rule */
+.aud-sec { margin-top: 20px; }
+.aud-sec + .aud-sec { padding-top: 20px; border-top: 1px solid var(--line); }
+.aud-sec-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.aud-h { color: var(--ink-soft); font-size: 13px; font-weight: 600; }
+.aud-sec .geo-list { margin-top: 12px; }
+.aud-sec .geo-empty { margin-top: 10px; }
+
 /* ---- ranked tables (top creators, top posts) ------------------------------- */
 .tbl { margin-top: 14px; }
 .tbl--creators { --tcols: 24px minmax(0, 1fr) 110px 70px 100px 80px 96px; }
@@ -392,9 +401,6 @@ button.tr:hover { background: rgba(18, 32, 64, 0.025); }
 .post-n.is-key { font-weight: 600; }
 .post-mstats { display: none; gap: 12px; color: var(--dim); font-size: 12px; font-variant-numeric: tabular-nums; }
 .plist--rank .post { grid-template-columns: var(--cols-r); }
-.post[data-row] { cursor: pointer; }
-.post[data-row]:hover { background: rgba(18, 32, 64, 0.025); }
-.post[data-row]:focus-visible { border-radius: 8px; outline: 2px solid var(--blue); outline-offset: -2px; }
 .pc-text { display: grid; justify-items: start; gap: 4px; min-width: 0; }
 .pc-title { display: -webkit-box; overflow: hidden; color: var(--ink-soft); font-size: 13px; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .post.is-removed .pc-title { color: var(--dim); }
@@ -587,7 +593,6 @@ button.cal-day:hover { border-radius: 999px; background: var(--wash); }
 .dr-list { margin-top: 8px; }
 .dr-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; width: 100%; padding: 10px 6px; border-radius: 10px; text-align: left; }
 .dr-item + .dr-item { box-shadow: 0 -1px 0 var(--line); }
-.dr-item:hover { background: var(--wash); }
 .dr-item .post-who { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .dr-item .post-n { font-weight: 600; }
 
