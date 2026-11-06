@@ -52,7 +52,7 @@
       ['Type', esc(t.name)],
       ['Campaign name', val(b.name.trim(), true, e.name)],
       ['Product', val(b.product.trim(), true, e.product)],
-      [growth ? 'Platforms' : 'Platform', e.platforms ? MISSING : '<span class="nw-plats">' + U.plats(b.platforms) + '</span>']
+      [b.platforms.length > 1 ? 'Platforms' : 'Platform', e.platforms ? MISSING : '<span class="nw-plats">' + U.plats(b.platforms) + '</span>']
     ];
     if (growth) {
       var files = b.refsFiles ? (b.refs.trim() ? '\n' : '') + b.refsFiles : '';

@@ -40,10 +40,20 @@
   var PLATS = {
     youtube: { an: 'a YouTube', hosts: ['youtube.com', 'youtu.be'], urlLabel: 'YouTube video URL',
       urlPh: 'https://youtube.com/watch?v=...', urlHint: 'A public YouTube video or Short.', paste: 'Paste a public YouTube video or Short.' },
-    instagram: { an: 'an Instagram', hosts: ['instagram.com', 'instagr.am'], urlLabel: 'Instagram Reel URL',
+    // COMING SOON (PM, 2026-11-06): shown in the row, not pickable until the
+    // integration ships. Delete `soon` to open it; nothing else changes.
+    instagram: { soon: true, an: 'an Instagram', hosts: ['instagram.com', 'instagr.am'], urlLabel: 'Instagram Reel URL',
       urlPh: 'https://instagram.com/reel/...', urlHint: 'A public Instagram Reel.', paste: 'Paste a public Instagram Reel.' }
   };
   var PLAT_ORDER = ['youtube', 'instagram'];
+  // the platforms a brand can pick today
+  function openPlat(p) { return !!PLATS[p] && !PLATS[p].soon; }
+  /* a draft or copy from when a now-closed platform was pickable keeps the open
+     ones; one left with none runs on YouTube */
+  function openPlats(list) {
+    var out = (list || []).filter(openPlat);
+    return out.length || !(list || []).length ? out : ['youtube'];
+  }
   var ACTIONS = ['Watch', 'Like', 'Comment'];
   // label, then the code the Campaigns list already uses for it
   var MARKETS = [['United States', 'US'], ['India', 'IN'], ['Worldwide', 'WORLDWIDE']];
@@ -230,7 +240,7 @@
       if (m) { b.market = m[0]; }
     }
     b.name = (src.name || c.title || '').trim() + ' (copy)';
-    b.platforms = (c.platforms || b.platforms).filter(function (p) { return PLATS[p]; }).slice(0, t === 'engagement' ? 1 : 2);
+    b.platforms = openPlats((c.platforms || b.platforms).filter(function (p) { return PLATS[p]; })).slice(0, t === 'engagement' ? 1 : 2);
     if (!b.platforms.length) { b.platforms = ['youtube']; }
     var bud = String(Number(num(src.budget || c.budget)) || '');
     b.budgetPick = !bud ? '' : PRESETS.indexOf(bud) >= 0 ? bud : 'custom';
@@ -239,7 +249,7 @@
   }
 
   window.onblueNew = {
-    TYPES: TYPES, ORDER: ORDER, PLATS: PLATS, PLAT_ORDER: PLAT_ORDER, ACTIONS: ACTIONS, MARKETS: MARKETS, PRESETS: PRESETS, STEPS: STEPS,
+    TYPES: TYPES, ORDER: ORDER, PLATS: PLATS, PLAT_ORDER: PLAT_ORDER, openPlat: openPlat, openPlats: openPlats, ACTIONS: ACTIONS, MARKETS: MARKETS, PRESETS: PRESETS, STEPS: STEPS,
     blank: blank, setType: setType, typeOwned: typeOwned, budgetOf: budgetOf, money: money, price: price, num: num,
     zone: zone, days: days, when: when, at: at, fmtDay: fmtDay, fmtTime: fmtTime, errors: errors, stepErrors: stepErrors,
     stepValid: stepValid, firstMissing: firstMissing, hasInput: hasInput, toRow: toRow, fromCampaign: fromCampaign, STEP_OF: STEP_OF

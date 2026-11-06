@@ -17,14 +17,20 @@
      2026-10-30, ROB-21562): growth takes one or both, engagement takes the one
      its video is on, so it is a pick-one row (no ticks) and its link field
      follows the pick. ---- */
+  /* A PLATFORM THAT IS COMING IS NOT IN THE ROW (PM, 2026-11-06): only the open
+     ones show, and the hint says "More platforms coming soon." (the line the
+     old live form had under its fixed YouTube chip). With both open, the row is
+     the 2026-10-30 one again. */
   function promote(b, err) {
     var growth = b.type === 'growth', pl = N.PLATS[b.platforms[0]] || N.PLATS.youtube;
+    var open = N.PLAT_ORDER.filter(N.openPlat), soon = open.length < N.PLAT_ORDER.length;
+    var hint = soon ? 'More platforms coming soon.' : growth ? 'Pick one or both.' : 'The platform your video is on.';
     var html = U.text({ k: 'name', label: 'Campaign name', value: b.name, ph: 'Fernweh Coffee: spring launch', err: err.name })
       + U.text({ k: 'product', label: 'Product name', value: b.product, ph: 'Fernweh Coffee', err: err.product })
       + U.chips({
-        v: 'platforms', attr: 'data-plat', label: growth ? 'Platforms' : 'Platform', err: err.platforms, one: !growth,
-        hint: growth ? 'Pick one or both.' : 'The platform your video is on.',
-        items: N.PLAT_ORDER.map(function (p) {
+        v: 'platforms', attr: 'data-plat', label: growth && open.length > 1 ? 'Platforms' : 'Platform', err: err.platforms, one: !growth,
+        hint: hint,
+        items: open.map(function (p) {
           return { value: p, on: b.platforms.indexOf(p) >= 0, html: U.mark(p) + esc(window.onblueData.PLATFORMS[p].name) };
         })
       });
