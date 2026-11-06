@@ -1,7 +1,7 @@
 /* brands.html, the Volt homepage, part 3: what sits over the page. The
    account chip and its menu, the signed-in state, the access gate, the
    campaign player and the leaving cover. The gate is full screen with no
-   panel (a paper veil, no blur); the player is an ink scrim around the film.
+   panel (a frosted paper veil); the player is an ink scrim around the film.
    Transform and opacity only. */
 
 /* ---- signed in: the doors in become the account ---------------------------- */
@@ -35,10 +35,9 @@ html.gate-lock { overflow: hidden; }
 .bh-gate::backdrop, .bh-lightbox::backdrop { background: transparent; }
 .bh-gate.is-open, .bh-lightbox.is-open { opacity: 1; }
 /* FULL SCREEN, NO PANEL (PM, 2026-11-06, as on main's brands.html): the veil is
-   the surface. No backdrop blur: the homepage keeps playing films behind it,
-   and blur over moving content drops Mac Chrome to 30 fps, so the veil is
-   heavier instead */
-.bh-gate { padding: 4.5rem 1.25rem max(1.5rem, env(safe-area-inset-bottom)); background: rgba(247, 247, 244, 0.95); }
+   the surface, frosted like main's (its light --gate-scrim and 14px blur;
+   Appy asked for the blur) */
+.bh-gate { padding: 4.5rem 1.25rem max(1.5rem, env(safe-area-inset-bottom)); background: rgba(247, 247, 244, 0.88); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
 .bh-gate-x { position: fixed; top: max(1.25rem, env(safe-area-inset-top)); right: max(1.25rem, env(safe-area-inset-right)); z-index: 6; width: 2.75rem; height: 2.75rem; }
 
 .bh-gate-box {
@@ -111,7 +110,7 @@ html.gate-lock { overflow: hidden; }
   .bh-acct-av { width: 2rem; height: 2rem; font-size: 0.8125rem; }
 }
 @media (max-width: 700px) {
-  .bh-gate { place-items: start center; background: rgba(247, 247, 244, 0.97); }
+  .bh-gate { place-items: start center; }
   .bh-gate-box { width: 100%; margin-top: max(0rem, calc(42dvh - 14rem)); }
   .bh-gate-mark { width: 2rem; height: 2rem; }   /* the same spark as the desktop dialog, smaller */
   .bh-gate-mark svg { width: 1rem; height: 1rem; }
