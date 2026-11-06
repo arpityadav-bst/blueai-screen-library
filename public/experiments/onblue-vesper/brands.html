@@ -95,38 +95,6 @@
     <div class="ob-cyl" data-cyl></div>
   </section>
 
-  <!-- PROOF, right under the hero -->
-  <section class="ob-sec ob-screen">
-    <div class="ob-wrap">
-      <div class="ob-result">
-        <div class="ob-result-copy">
-          <h2 class="ob-result-h">A small brand hit <span class="ob-tone">200K views</span></h2>
-          <p class="ob-result-say">Five Shorts, made by us and posted by creators to YouTube in the US. Every view organic.</p>
-          <a class="ob-btn ob-btn--ink ob-result-cta" href="#post" data-gate="open">Create a campaign <span data-ico="arrow"></span></a>
-          <p class="ob-result-who">Results vary. You pay for the views that happen, nothing more.</p>
-        </div>
-        <div class="ob-result-side">
-          <!-- stand-in film until there is the brand's own Short -->
-          <div class="ob-result-phone ob-iphone"><div class="ob-iphone-screen">
-            <video src="volt/films/pm-deal-reveal.mp4" poster="volt/films/pm-deal-reveal.jpg" muted loop playsinline preload="none" data-ob-film></video>
-            <span class="ob-result-count"><span data-ico="youtube"></span>200K views</span>
-          </div></div>
-          <div class="ob-result-days">
-            <b>Total views</b>
-            <!-- a running total on the same curve, so the last bar is the headline's 200K -->
-            <div class="ob-bars" data-bars>
-              <div class="ob-bar" style="height:8%"><span>15K</span></div>
-              <div class="ob-bar" style="height:21%"><span>43K</span></div>
-              <div class="ob-bar" style="height:43%"><span>85K</span></div>
-              <div class="ob-bar" style="height:69%"><span>138K</span></div>
-              <div class="ob-bar" style="height:100%"><span>200K</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <section class="oj" id="how-it-works" data-journey>
     <div class="ob-wrap"><h2 class="oj-title">How you get <span class="ob-tone">the views</span></h2></div>
     <div class="ob-wrap oj-in">
@@ -207,6 +175,38 @@
     </div>
   </section>
 
+  <!-- PROOF, the last word before the close (PM, 2026-11-06); dark, so the dark run is unbroken -->
+  <section class="ob-sec ob-dark" id="proof">
+    <div class="ob-wrap">
+      <div class="ob-result">
+        <div class="ob-result-copy">
+          <h2 class="ob-result-h">A small brand hit <span class="ob-tone">200K views</span></h2>
+          <p class="ob-result-say">Five Shorts, made by us and posted by creators to YouTube in the US. Every view organic.</p>
+          <a class="ob-btn ob-btn--ink ob-result-cta" href="#post" data-gate="open">Create a campaign <span data-ico="arrow"></span></a>
+          <p class="ob-result-who">Results vary. You pay for the views that happen, nothing more.</p>
+        </div>
+        <div class="ob-result-side">
+          <!-- stand-in film until there is the brand's own Short -->
+          <div class="ob-result-phone ob-iphone"><div class="ob-iphone-screen">
+            <video src="volt/films/pm-deal-reveal.mp4" poster="volt/films/pm-deal-reveal.jpg" muted loop playsinline preload="none" data-ob-film></video>
+            <span class="ob-result-count"><span data-ico="youtube"></span>200K views</span>
+          </div></div>
+          <div class="ob-result-days">
+            <b>Total views</b>
+            <!-- a running total on the same curve, so the last bar is the headline's 200K -->
+            <div class="ob-bars" data-bars>
+              <div class="ob-bar" style="height:8%"><span>15K</span></div>
+              <div class="ob-bar" style="height:21%"><span>43K</span></div>
+              <div class="ob-bar" style="height:43%"><span>85K</span></div>
+              <div class="ob-bar" style="height:69%"><span>138K</span></div>
+              <div class="ob-bar" style="height:100%"><span>200K</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- the close: our films drifting behind a volt rim of light (js/closing.js), the spark, the line, the CTA -->
   <section class="ob-close ob-dark ob-screen" id="start">
     <div class="ob-close-films" data-close-films aria-hidden="true"></div>
@@ -241,8 +241,8 @@
 
 <!-- the access gate: the doors (choose / sign in), the loader, then the agency form -->
 <dialog class="bh-gate" id="gate" aria-labelledby="gate-title-2">
+  <button class="ob-x bh-gate-x" type="button" data-gate="close" aria-label="Close"><span data-ico="close"></span></button>
   <div class="bh-gate-box">
-    <button class="ob-x" type="button" data-gate="close" aria-label="Close"><span data-ico="close"></span></button>
     <div class="bh-gate-load" id="gate-load" hidden><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><use href="#i-spark"/></svg></div>
     <section class="bh-gate-level" data-level="2" hidden>
       <div class="bh-pane" id="pane-reg">
