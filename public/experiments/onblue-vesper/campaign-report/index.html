@@ -69,6 +69,9 @@
 
   <section class="card" id="top-posts"></section>
 
+  <!-- audience: one Viewer data card, or three cards of their own (review bar, Viewer data) -->
+  <section class="card" id="aud-card" hidden></section>
+
   <section class="card" id="geo-card"></section>
 
   <section class="card" id="age-card"></section>
@@ -163,12 +166,19 @@
   <div class="devbar">
     <b>Geography</b>
     <button type="button" data-geo-mode="off" aria-pressed="true">Hidden</button>
+    <button type="button" data-geo-mode="empty" aria-pressed="false">No data yet</button>
     <button type="button" data-geo-mode="live" aria-pressed="false">Live data</button>
   </div>
   <div class="devbar">
     <b>Age and gender</b>
     <button type="button" data-demo-mode="off" aria-pressed="false">Hidden</button>
+    <button type="button" data-demo-mode="empty" aria-pressed="false">No data yet</button>
     <button type="button" data-demo-mode="live" aria-pressed="true">Live data</button>
+  </div>
+  <div class="devbar">
+    <b>Viewer data</b>
+    <button type="button" data-aud-layout="one" aria-pressed="true">One card</button>
+    <button type="button" data-aud-layout="three" aria-pressed="false">Three cards</button>
   </div>
 </div>
 
