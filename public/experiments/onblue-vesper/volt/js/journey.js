@@ -173,7 +173,9 @@
   ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (t) { window.addEventListener(t, letGo, { passive: true }); });
   window.addEventListener('scroll', function () { if (glide) { return; } window.clearTimeout(settleT); settleT = window.setTimeout(magnet, 220); }, { passive: true });
 
-  window.addEventListener('scroll', function () { window.requestAnimationFrame(tick); }, { passive: true });
+  // one tick a frame, however many scroll events land in it
+  var tickQ = false;
+  window.addEventListener('scroll', function () { if (!tickQ) { tickQ = true; window.requestAnimationFrame(function () { tickQ = false; tick(); }); } }, { passive: true });
   window.addEventListener('resize', function () { fit(); tick(); });
   fit();
   build();

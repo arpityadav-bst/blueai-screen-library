@@ -15,18 +15,31 @@
 
   var nav = document.querySelector('[data-nav]');
   if (nav) {
+    /* WHICH BANDS ARE DARK, MEASURED, NOT HIT-TESTED (PM, 2026-11-06: the first
+       fold hung on scroll). elementsFromPoint on every scroll event hit-tested
+       through the hero's 3D film ring each time; now the dark bands' page
+       positions are read once, again when the page changes size, and a scroll
+       only compares numbers, once per frame */
+    var darks = [], ticking = false;
+    var measure = function () {
+      var y = window.scrollY;
+      darks = [].map.call(document.querySelectorAll('.ob-dark, .ob-horizon'), function (el) { var r = el.getBoundingClientRect(); return [r.top + y, r.bottom + y]; });
+    };
     var overDark = function () {
-      if (!document.elementsFromPoint) { return false; }
-      var hits = document.elementsFromPoint(window.innerWidth / 2, 34);
-      for (var i = 0; i < hits.length; i++) { if (!nav.contains(hits[i])) { return !!hits[i].closest('.ob-dark, .ob-horizon'); } }
+      var y = window.scrollY + 34;
+      for (var i = 0; i < darks.length; i++) { if (y >= darks[i][0] && y < darks[i][1]) { return true; } }
       return false;
     };
     var onScroll = function () {
+      ticking = false;
       var stuck = window.scrollY > window.innerHeight * 0.5;
       nav.classList.toggle('is-stuck', stuck);
       nav.classList.toggle('on-dark', stuck && overDark());
     };
-    window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; window.requestAnimationFrame(onScroll); } }, { passive: true });
+    if ('ResizeObserver' in window) { new ResizeObserver(function () { measure(); onScroll(); }).observe(document.body); }
+    window.addEventListener('load', function () { measure(); onScroll(); });
+    measure(); onScroll();
   }
 
   var burger = document.querySelector('[data-burger]'), menu = document.querySelector('[data-nav-menu]');
