@@ -50,9 +50,9 @@
     var bud = N.budgetOf(b), zone = N.zone();
     var what = [
       ['Type', esc(t.name)],
-      [growth ? 'Platforms' : 'Platform', e.platforms ? MISSING : '<span class="nw-plats">' + U.plats(b.platforms) + '</span>'],
       ['Campaign name', val(b.name.trim(), true, e.name)],
-      ['Product', val(b.product.trim(), true, e.product)]
+      ['Product', val(b.product.trim(), true, e.product)],
+      [growth ? 'Platforms' : 'Platform', e.platforms ? MISSING : '<span class="nw-plats">' + U.plats(b.platforms) + '</span>']
     ];
     if (growth) {
       var files = b.refsFiles ? (b.refs.trim() ? '\n' : '') + b.refsFiles : '';
