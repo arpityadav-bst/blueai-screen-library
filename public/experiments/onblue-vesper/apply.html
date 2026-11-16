@@ -808,6 +808,26 @@ body { min-height: 100vh; }
    own consent row is still a row that stands alone. */
 .cash-confirms { margin-top: 20px; display: grid; gap: 10px; }
 .cash-confirms .q, .cash-confirms .q--consent { margin: 0; }
+/* THE COUNTRY ROW IS A DISABLED FIELD (Abhisht, 2026-11-16: "a bit more
+   disabled"). On the near-white panel fill it read as an empty input waiting to
+   be typed in. Now a grey wash, muted text and the softer border, with no hover
+   change and a not-allowed cursor (no lock icon: removed on his ask the same
+   day). */
+#cash-out-form .field-fixed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  border-color: var(--border-soft);
+  background: linear-gradient(var(--wash-hover), var(--wash-hover)), var(--card-bg);
+  color: var(--dim-ink);
+  cursor: not-allowed;
+  user-select: none;
+}
+#cash-out-form .field-fixed:hover {
+  border-color: var(--border-soft);
+  background: linear-gradient(var(--wash-hover), var(--wash-hover)), var(--card-bg);
+}
 /* the button is the one thing in this sheet that does something, and it should
    not look like the next item in a list of controls */
 .sheet-go { margin-top: 26px; }
@@ -1663,6 +1683,27 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
         <span class="msg" data-msg="payoutEmail"></span>
       </div>
 
+      <!-- NAME AND COUNTRY (Abhisht, 2026-11-16). PayPal holds a payout to some
+           accounts until it has the name and country on them: two of the 34 paid
+           on Nov 10 waited while we went back to the partners for both. Asked once
+           here instead. Both labels say "PayPal account" because that is the name
+           PayPal checks, which is not always the profile name. -->
+      <div class="q" data-field="payoutName">
+        <label class="q-label" for="cash-name">Name on your PayPal account</label>
+        <input class="field" id="cash-name" name="payoutName" type="text" autocomplete="name" autocapitalize="words" spellcheck="false" placeholder="First and last name">
+        <span class="msg" data-msg="payoutName"></span>
+      </div>
+
+      <!-- ONE COUNTRY, SHOWN AND NOT ASKED (2026-11-16). Cash-outs are paid to US
+           PayPal accounts only, so there is nothing to pick: the row states it,
+           the request sends "US", and a partner whose PayPal is elsewhere learns
+           it here before a payout is held. Swap in a picker when that changes. -->
+      <div class="q" data-field="payoutCountry">
+        <span class="q-label" id="cash-country-label">Country of your PayPal account</span>
+        <span class="field field-fixed" id="cash-country" role="textbox" aria-readonly="true" aria-labelledby="cash-country-label" aria-disabled="true">United States</span>
+        <span class="msg">Cash-outs go to US PayPal accounts only.</span>
+      </div>
+
       <!-- ONE ERROR SLOT FOR THE PAIR, NOT ONE EACH. Two mandatory boxes have a
            single failure, "you have not ticked them", and their two messages
            were near-duplicates; the red edge stays per box, so the row that
@@ -2422,7 +2463,10 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     empty: { balance: 0, earned: 0, active: 0, past: 0, txns: [] },
     one: {
       balance: 150, earned: 90, active: 1, past: 0,
-      txns: [{ date: 'Mar 8, 2026', label: 'Cash out to PayPal', amount: 90 }]
+      txns: [{ date: 'Mar 8, 2026', label: 'Cash out to PayPal', amount: 90 }],
+      /* the March cash-out's details, which is what fills the sheet for a
+         returning partner (2026-11-16) */
+      payout: { email: 'alex.rivera@example.com', name: 'Alex Rivera', country: 'US' }
     },
     /* THE 70% CLUB (ROB-21572 mock): ran 14 of their 20 October days and were paid
        anyway, here at $1.50 a day; the amount rule (share of days or the full $30)
@@ -2586,19 +2630,54 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
     var cash = document.getElementById('cash-out-form');
     var done = document.getElementById('cash-done');
     var mail = document.getElementById('cash-email');
+    var who = document.getElementById('cash-name');
+    /* the one country cash-outs are paid in today, which the sheet shows fixed */
+    var PAYOUT_COUNTRY = 'US';
     if (cash) {
       var sheet = document.getElementById('sheet-cash-out');
-      /* the address the gate handed over, which is the only one this flow knows */
-      mail.value = d.email || '';
+
+      /* A RETURNING PARTNER IS NOT ASKED TWICE. The last cash-out's email and
+         name come back filled in, and the two boxes are still ticked by hand. A
+         first cash-out starts from the sign-in email, and the name is left for
+         the partner: the profile name is often a handle, and a wrong name is what
+         gets a payout held. Filled on every open, not once, because the account
+         under the sheet can change. */
+      function fillCash() {
+        var saved = ACCOUNTS[acct].payout;
+        mail.value = saved ? saved.email : (d.email || '');
+        who.value = saved ? saved.name : '';
+      }
+      fillCash();
+      document.addEventListener('click', function (e) {
+        if (e.target.closest && e.target.closest('[data-sheet="cash-out"]')) { fillCash(); }
+      }, true);
+
+      /* ONE WAY TO SAY A FIELD IS WRONG: red line on the field, red line under it.
+         The email used to set a class nothing styled, so its error was grey text
+         under a field that looked fine. */
+      function sayCash(key, text, field) {
+        var slot = cash.querySelector('[data-msg="' + key + '"]');
+        slot.textContent = text;
+        slot.classList.toggle('is-err', !!text);
+        if (field) { field.classList.toggle('err', !!text); }
+      }
+      /* an error goes as soon as its field is being fixed, not on the next press */
+      [[mail, 'payoutEmail'], [who, 'payoutName']].forEach(function (p) {
+        p[0].addEventListener('input', function () {
+          if (p[0].classList.contains('err')) { sayCash(p[1], '', p[0]); }
+        });
+      });
 
       sheet.addEventListener('close', function () {
         cash.hidden = false;
         done.hidden = true;
         cash.reset();
-        mail.value = d.email || '';
-        Array.prototype.forEach.call(cash.querySelectorAll('.check'), function (c) { c.classList.remove('on'); });
-        Array.prototype.forEach.call(cash.querySelectorAll('.msg'), function (m) { m.textContent = ''; });
-        cash.querySelector('#cash-email').classList.remove('is-bad');
+        fillCash();
+        Array.prototype.forEach.call(cash.querySelectorAll('.check'), function (c) { c.classList.remove('on', 'err-ring'); });
+        Array.prototype.forEach.call(cash.querySelectorAll('.check-box'), function (c) { c.innerHTML = ''; });
+        sayCash('payoutEmail', '', mail);
+        sayCash('payoutName', '', who);
+        sayCash('confirms', '');
       });
 
       Array.prototype.forEach.call(cash.querySelectorAll('input[type="checkbox"]'), function (box) {
@@ -2611,24 +2690,30 @@ textarea.field { height: auto; padding: 12px 14px; line-height: 1.5; resize: ver
       cash.addEventListener('submit', function (e) {
         e.preventDefault();
         var boxes = cash.querySelectorAll('input[type="checkbox"]');
-        var bad = !isEmail(mail.value.trim());
-        cash.querySelector('[data-msg="payoutEmail"]').textContent = !mail.value.trim()
-          ? 'Add the PayPal email to receive this into.'
-          : bad ? 'That doesn\u2019t look like an email. Check for a typo.' : '';
-        mail.classList.toggle('is-bad', bad);
+        var em = mail.value.trim();
+        var nm = who.value.trim().replace(/\s+/g, ' ');
+        var emErr = !em ? 'Add the PayPal email to receive this into.'
+          : !isEmail(em) ? 'That doesn\u2019t look like an email. Check for a typo.' : '';
+        /* PayPal names a personal account by first and last name */
+        var nmErr = !nm ? 'Add the name on your PayPal account.'
+          : nm.indexOf(' ') < 0 ? 'Add your first and last name.' : '';
+        sayCash('payoutEmail', emErr, mail);
+        sayCash('payoutName', nmErr, who);
         var unticked = !boxes[0].checked ? 'Confirm the details above are correct.'
           : !boxes[1].checked ? 'Confirm you understand this before withdrawing.' : '';
-        cash.querySelector('[data-msg="confirms"]').textContent = unticked;
+        sayCash('confirms', unticked);
         Array.prototype.forEach.call(boxes, function (b) {
           b.closest('label').querySelector('.check').classList.toggle('err-ring', !b.checked);
         });
-        if (bad || unticked) { return; }
+        if (emErr || nmErr || unticked) { return; }
 
         /* THE MONEY ACTUALLY MOVES. A withdrawal that congratulated you and left
            the balance where it was would be the one place on this screen where a
            figure and a statement disagree. It goes to the ledger rather than
            vanishing, which is where the reader would look for it. */
         var a = ACCOUNTS[acct];
+        /* kept for the next cash-out, which opens with these filled in */
+        a.payout = { email: em, name: nm, country: PAYOUT_COUNTRY };
         /* THE SHEET REPORTS WHAT MOVED, NOT WHAT IS LEFT. Written as another
            data-fig="balance" it would have read "your request of $0" the
            instant the balance it was describing became zero. */
