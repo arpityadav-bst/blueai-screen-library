@@ -444,6 +444,14 @@
                                       : num(C.views - C.target) + ' views past the ' + num(C.target) + ' the budget covers')
           + '</span></td><td>' + money(overBy) + '</td></tr>'
         : '<tr class="is-total"><td>Remaining</td><td>' + money(C.budget - lifeSpend) + '</td></tr>');
+    /* budget used, under the rows (CEO and PM, 2026-11-16): spent of budget,
+       the error tone once it runs past */
+    var used = C.budget ? lifeSpend / C.budget : 0, meter = $('#acct-meter');
+    if (meter) {
+      meter.className = 'acct-meter' + (over ? ' is-over' : '');
+      meter.innerHTML = '<span class="acct-meter-l">Budget used</span><b class="acct-meter-v">' + Math.floor(used * 100) + '%</b>'
+        + '<span class="acct-meter-bar" aria-hidden="true"><i style="width:' + Math.min(100, used * 100).toFixed(1) + '%"></i></span>';
+    }
   }
 
   /* ---- views over time -----------------------------------------------------
@@ -472,7 +480,82 @@
   }
 
   var CH = { W: 660, H: 250, L: 46, R: 16, T: 22, B: 32 };
+
+  /* PER DAY OR TOTAL (CEO and PM, 2026-11-16), a switch in the card head.
+     Per day, the default: a bar per day of the views gathered that day, on the
+     same axes and date marks, the latest day drawn solid and labelled. Total:
+     the line below, unchanged. Remembered per browser. */
+  var chartMode = 'day';
+  try { if (window.localStorage.getItem('campaign-report:chart') === 'total') { chartMode = 'total'; } } catch (e) {}
+  function dayViews(k) { return posts.reduce(function (t, p) { return t + p.d[k]; }, 0); }
+  function renderBars() {
+    var pts = [], k, top = 0, sum = 0;
+    for (k = period.from; k <= period.to; k++) {
+      pts.push({ label: dayShort(k), tip: dateF(dayDate(k)) + (k === LAST ? ', so far' : ''), v: dayViews(k) });
+    }
+    $('#chart-hint').textContent = period.from === period.to ? 'Views gathered on ' + spanText() + '.'
+      : isFull() ? 'Views gathered each day on published posts.' : 'Views gathered each day, ' + spanText() + '.';
+    var n = pts.length;
+    pts.forEach(function (p) { top = Math.max(top, p.v); sum += p.v; });
+    var yMax = niceStep(top, 4) * 4, slot = (CH.W - CH.L - CH.R) / n;
+    var bw = Math.max(2, Math.min(n === 1 ? 64 : 28, slot * 0.62)), hw = Math.min(slot, bw * 1.8);
+    var cx = function (j) { return CH.L + slot * (j + 0.5); };
+    var cy = function (v) { return CH.T + (CH.H - CH.T - CH.B) * (1 - v / yMax); };
+    var base = cy(0), rules = '', labels = '', bars = '', font = ' font-family="Inter, system-ui, sans-serif"';
+    for (k = 0; k <= 4; k++) {
+      var v = yMax * k / 4, y = cy(v).toFixed(1);
+      rules += '<line x1="' + CH.L + '" y1="' + y + '" x2="' + (CH.W - CH.R) + '" y2="' + y + '"/>';
+      labels += '<text x="' + (CH.L - 9) + '" y="' + (+y + 3.5) + '" text-anchor="end">' + (v ? compact(v) : '0') + '</text>';
+    }
+    var marks = [], step = Math.max(1, Math.ceil((n - 1) / 4));
+    for (k = 0; k < n - 1; k += step) { marks.push(k); }
+    if (marks.length > 1 && n - 1 - marks[marks.length - 1] < step / 2) { marks.pop(); }
+    marks.push(n - 1);
+    marks.forEach(function (j) {
+      labels += '<text x="' + cx(j).toFixed(1) + '" y="' + (CH.H - 10) + '" text-anchor="middle">' + esc(pts[j].label) + '</text>';
+    });
+    pts.forEach(function (p, j) {
+      if (!p.v) { return; }
+      var x = cx(j) - bw / 2, y = cy(p.v), r = Math.min(3, bw / 2, base - y), f = function (z) { return z.toFixed(1); };
+      bars += '<path class="bar' + (j === n - 1 ? ' is-last' : '') + '" fill="#156efe"' + (j === n - 1 ? '' : ' fill-opacity="0.38"')
+        + ' d="M' + f(x) + ' ' + f(base) + 'V' + f(y + r) + 'Q' + f(x) + ' ' + f(y) + ' ' + f(x + r) + ' ' + f(y) + 'H' + f(x + bw - r)
+        + 'Q' + f(x + bw) + ' ' + f(y) + ' ' + f(x + bw) + ' ' + f(y + r) + 'V' + f(base) + 'Z"/>';
+    });
+    /* the latest day's count over its bar, clear of the bars just before it */
+    var near = Math.max.apply(null, pts.slice(-4).map(function (p) { return p.v; }));
+    var lx = n === 1 ? cx(0) : cx(n - 1) + bw / 2;
+    $('#chart').innerHTML =
+      '<svg viewBox="0 0 ' + CH.W + ' ' + CH.H + '" role="img" aria-label="Views gathered each day, ' + num(sum) + ' in total, ' + num(pts[n - 1].v) + ' on the latest day">'
+      + '<g stroke="rgba(0,0,0,0.08)" stroke-width="1">' + rules + '</g>'
+      + '<rect class="hov-band" visibility="hidden" y="' + CH.T + '" width="' + hw.toFixed(1) + '" height="' + (base - CH.T).toFixed(1) + '" rx="4" fill="rgba(0,0,0,0.04)"/>'
+      + '<g fill="#767b85" font-size="10"' + font + '>' + labels + '</g>'
+      + bars
+      + '<text x="' + lx.toFixed(1) + '" y="' + (cy(near) - 8).toFixed(1) + '" text-anchor="' + (n === 1 ? 'middle' : 'end') + '" fill="#0b0b0d" font-size="11.5" font-weight="600"' + font + '>' + num(pts[n - 1].v) + '</text>'
+      + '<rect x="' + CH.L + '" y="0" width="' + (CH.W - CH.L - CH.R) + '" height="' + CH.H + '" fill="transparent"/>'
+      + '</svg><div class="chart-tip" hidden></div>';
+
+    var svg = $('#chart svg'), band = svg.querySelector('.hov-band'), tip = $('#chart .chart-tip');
+    function move(ev) {
+      var r = svg.getBoundingClientRect(), px = (ev.clientX - r.left) / r.width * CH.W;
+      var j = Math.max(0, Math.min(n - 1, Math.floor((px - CH.L) / slot)));
+      band.setAttribute('x', (cx(j) - hw / 2).toFixed(1));
+      band.setAttribute('visibility', 'visible');
+      tip.hidden = false;
+      tip.innerHTML = '<span>' + esc(pts[j].tip) + '</span><b>' + num(pts[j].v) + ' views that day</b>';
+      tip.style.left = Math.max(70, Math.min(r.width - 70, cx(j) / CH.W * r.width)) + 'px';
+      tip.style.top = (cy(pts[j].v) / CH.H * r.height) + 'px';
+    }
+    function leave() { band.setAttribute('visibility', 'hidden'); tip.hidden = true; }
+    svg.addEventListener('pointermove', move);
+    svg.addEventListener('pointerdown', move);
+    svg.addEventListener('pointerleave', leave);
+  }
+
   function renderChart() {
+    document.querySelectorAll('[data-chart-mode]').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.getAttribute('data-chart-mode') === chartMode ? 'true' : 'false');
+    });
+    if (chartMode === 'day') { renderBars(); return; }
     $('#chart-hint').textContent = isFull()
       ? 'Total views gathered on published posts, by day.'
       : 'Views gathered ' + spanText() + ', by day.';
@@ -593,8 +676,9 @@
      a brand never sees which posts have no data yet. Each card is built from
      the campaign's own posts that have that data, weighted by their views,
      with no fallback to channel-level data. */
-  var geoAll = false, geoMode = 'off';
-  try { geoMode = { live: 'live', empty: 'empty' }[window.localStorage.getItem('campaign-report:geo')] || 'off'; } catch (e) {}
+  // geography shows by default (CEO, 2026-11-16: viewer data is the headline); the dock can still hide it
+  var geoAll = false, geoMode = 'live';
+  try { geoMode = { off: 'off', empty: 'empty', live: 'live' }[window.localStorage.getItem('campaign-report:geo')] || 'live'; } catch (e) {}
   var PROCESSING = '<div class="geo-empty">Geography data shows up once the videos have enough views. This usually takes a few days.</div>';
   function geoBars(g, limit) {
     var rows = g.rows.slice(0, limit), rest = g.rows.slice(limit);
@@ -610,7 +694,8 @@
         + '</div>';
     }).join('') + '</div>';
   }
-  /* one general line on all three cards: no count of posts covered, no source named */
+  /* one general line, once: under the three cards' row, or in the one card. No
+     count of posts covered, no source named */
   function audienceNote() {
     return '<p class="geo-note">' + IC.info + '<span>Based on videos with enough views to report audience data.</span></p>';
   }
@@ -622,7 +707,7 @@
       '<div class="card-head"><div><h2 class="rep-h">Viewer geography</h2></div>'
       + (has && g.rows.length > 5 ? '<button class="link-btn" type="button" data-geo-all>' + (geoAll ? 'Show top 5' : 'Show all') + '</button>' : '')
       + '</div>'
-      + (has ? audienceNote() + geoBars(g, geoAll ? 99 : 5) : PROCESSING);
+      + (has ? geoBars(g, geoAll ? 99 : 5) : PROCESSING);
     document.querySelectorAll('[data-geo-mode]').forEach(function (b) {
       b.setAttribute('aria-pressed', b.getAttribute('data-geo-mode') === geoMode ? 'true' : 'false');
     });
@@ -657,7 +742,7 @@
       card.hidden = demoMode === 'off' || audLayout === 'one';
       card.innerHTML = card.hidden ? '' :
         '<div class="card-head"><div><h2 class="rep-h">' + m.title + '</h2></div></div>'
-        + (has ? audienceNote() + shareBars(m.labels, d[m.key]) : demoEmpty(m));
+        + (has ? shareBars(m.labels, d[m.key]) : demoEmpty(m));
     });
     document.querySelectorAll('[data-demo-mode]').forEach(function (b) {
       b.setAttribute('aria-pressed', b.getAttribute('data-demo-mode') === demoMode ? 'true' : 'false');
@@ -672,9 +757,10 @@
      data in any section the card shows one empty line, not three. "three":
      the separate cards above. The Geography and Age and gender switches
      still decide which sections show and in which state. Remembered per
-     browser. */
-  var audLayout = 'one';
-  try { audLayout = window.localStorage.getItem('campaign-report:audcard') === 'three' ? 'three' : 'one'; } catch (e) {}
+     browser. THREE IS THE DEFAULT (CEO and PM, 2026-11-16): three headline
+     widgets under the top numbers, the note once under the row (#aud-note). */
+  var audLayout = 'three';
+  try { audLayout = window.localStorage.getItem('campaign-report:audcard') === 'one' ? 'one' : 'three'; } catch (e) {}
   function audSec(title, body, action) {
     return '<div class="aud-sec"><div class="aud-sec-head"><h3 class="aud-h">' + title + '</h3>' + (action || '') + '</div>' + body + '</div>';
   }
@@ -683,10 +769,15 @@
     document.querySelectorAll('[data-aud-layout]').forEach(function (b) {
       b.setAttribute('aria-pressed', b.getAttribute('data-aud-layout') === audLayout ? 'true' : 'false');
     });
-    card.hidden = audLayout !== 'one' || !(showGeo || showDemo);
-    if (card.hidden) { card.innerHTML = ''; return; }
     var g = geoOf(scope()), d = demoOf(scope());
     var geoHas = geoMode === 'live' && g.covered, demoHas = demoMode === 'live' && d.covered;
+    var note = $('#aud-note');
+    if (note) {
+      note.hidden = audLayout !== 'three' || !(geoHas || demoHas);
+      note.innerHTML = note.hidden ? '' : audienceNote();
+    }
+    card.hidden = audLayout !== 'one' || !(showGeo || showDemo);
+    if (card.hidden) { card.innerHTML = ''; return; }
     var head = '<div class="card-head"><div><h2 class="rep-h">Viewer data</h2></div></div>';
     if (!geoHas && !demoHas) {
       card.innerHTML = head + '<div class="geo-empty">Viewer data shows up once the videos have enough views. This usually takes a few days.</div>';
@@ -1314,6 +1405,12 @@
       tilesMode = a;
       try { window.localStorage.setItem('campaign-report:tiles', a); } catch (e) {}
       renderTiles();
+      return;
+    }
+    if ((a = t.getAttribute('data-chart-mode'))) {
+      chartMode = a === 'total' ? 'total' : 'day';
+      try { window.localStorage.setItem('campaign-report:chart', chartMode); } catch (e) {}
+      renderChart();
       return;
     }
     if ((a = t.getAttribute('data-geo-mode'))) {

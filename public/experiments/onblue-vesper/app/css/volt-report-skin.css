@@ -50,8 +50,13 @@ body { font-family: var(--v-font); letter-spacing: var(--v-tr-mid); }
 
 /* ---- surfaces ------------------------------------------------------------ */
 .sample-note { border-color: var(--v-accent-line); border-radius: var(--v-r-md); background: var(--v-accent-wash); color: var(--v-ink-2); }
-.card { border-color: var(--v-line); border-radius: var(--v-r-panel); background: var(--v-surface); box-shadow: var(--v-card); }
-.tile, .mini { border-color: var(--v-line); border-radius: var(--v-r-lg); background: var(--v-surface); box-shadow: var(--v-card); }
+/* ONE STROKE FOR EVERY WIDGET (Appy, 2026-11-16): white, tinted or pastel,
+   every card and tile has the same 1px hairline and the same corner, and NO
+   shadow: the fill already lifts each one off the page, so a drop only added
+   noise. No inset white highlight either. The small stat strips keep one step
+   smaller corners for their height */
+.card, .tile { border: 1px solid var(--v-line); border-radius: var(--v-r-panel); background: var(--v-surface); box-shadow: none; }
+.mini { border: 1px solid var(--v-line); border-radius: var(--v-r-lg); background: var(--v-surface); box-shadow: none; }
 .tile-v, .tile--hero .tile-v { font-weight: 600; letter-spacing: var(--v-tr-tight); }
 .mini-v, .dr-stat b { font-weight: 600; letter-spacing: var(--v-tr-mid); }
 .tile-l, .mini-l { color: var(--v-ink-3); }
@@ -84,6 +89,66 @@ body { font-family: var(--v-font); letter-spacing: var(--v-tr-mid); }
 @media (max-width: 340px) { .chart svg text { font-size: 29px; } .chart svg text[font-weight="600"] { font-size: 31px; } }
 .chart-tip { border-color: var(--v-line); border-radius: var(--v-r-md); box-shadow: var(--v-lift); }
 .chart-tip b { font-weight: 600; }
+/* Per day, in the line's own language: past days a volt wash with a green
+   edge, the latest day solid volt ringed in ink, like the line's end point */
+.chart svg .bar { fill: var(--v-accent); fill-opacity: 0.5; stroke: var(--v-accent-line); stroke-width: 1px; }
+.chart svg .bar.is-last { fill-opacity: 1; stroke: var(--v-ink-1); stroke-width: 1.5px; }
+.chart svg .hov-band { fill: rgba(10, 10, 9, 0.045); }
+/* the Per day | Total switch */
+.seg { border-color: var(--v-line); border-radius: var(--v-r-md); background: var(--v-surface-2); }
+.seg button { border-radius: var(--v-r-sm); color: var(--v-ink-3); letter-spacing: var(--v-tr-mid); }
+.seg button:hover { color: var(--v-ink-1); }
+.seg button[aria-pressed="true"] { background: var(--v-surface); color: var(--v-ink-1); box-shadow: inset 0 1px 0 #fff, 0 0 0 1px var(--v-line), var(--v-shadow-1); }
+
+/* ---- the section bar (report-sections.css): no header above it here, so it
+   sticks at the top; the marked group is a white pill with a volt dot, the
+   way the app's own nav marks a page ------------------------------------- */
+:root { --secnav-top: 0px; }
+.secnav-a { color: var(--v-ink-3); letter-spacing: var(--v-tr-mid); }
+.secnav-a:hover { background: rgba(10, 10, 9, 0.045); color: var(--v-ink-1); }
+.secnav-a[aria-current] { border-color: var(--v-line); background: var(--v-surface); box-shadow: var(--v-shadow-1); color: var(--v-ink-1); }
+.secnav-a[aria-current]::before { content: ""; flex: none; width: 0.4375rem; height: 0.4375rem; border-radius: 50%; background: var(--v-accent); box-shadow: 0 0 0 1px var(--v-accent-line); }
+/* phones: every group a white chip, the marked one ink */
+@media (max-width: 700px) {
+  .secnav-a { border-color: var(--v-line-2); background: var(--v-surface); box-shadow: inset 0 1px 0 #fff, var(--v-shadow-1); }
+  .secnav-a[aria-current] { border-color: transparent; background: var(--v-ink-btn); color: #fff; }
+}
+
+/* ---- hierarchy by tint (CEO and PM, 2026-11-16). Primary, the headline
+   numbers and the audience widgets: each its own soft pastel. Secondary, the
+   chart and Accounting: a faint warm tint. Tertiary, the lists: white. On a
+   pastel the quiet inks step up one (ink-3 measures 4.6:1 or more on every
+   pastel here, so small text stays AA) and bar tracks turn white so the volt
+   still reads ------------------------------------------------------------ */
+:root {
+  --rp-lime: #f1f9d4;
+  --rp-sky: #e8f2fc;
+  --rp-lilac: #f0ecfb;
+  --rp-peach: #fdefe4;
+  --rp-sand: #f8f2de;
+  --rp-warm: #fcfbf7;
+  --rp-track: rgba(255, 255, 255, 0.8);
+}
+#tiles-top > .tile, .aud-row > .card { --dim: var(--v-ink-3); --muted: var(--v-ink-2); }
+#tiles-top > .tile:nth-child(5n+1) { background: var(--rp-lime); }
+#tiles-top > .tile:nth-child(5n+2) { background: var(--rp-sky); }
+#tiles-top > .tile:nth-child(5n+3) { background: var(--rp-lilac); }
+#tiles-top > .tile:nth-child(5n+4) { background: var(--rp-peach); }
+#tiles-top > .tile:nth-child(5n+5) { background: var(--rp-sand); }
+#geo-card { background: var(--rp-peach); }
+#age-card { background: var(--rp-lilac); }
+#gender-card, #aud-card { background: var(--rp-sky); }
+#tiles-top .fill-bar, .aud-row .geo-bar, .aud-row .geo-cc { background: var(--rp-track); }
+#tiles-top .fill-bar i, .aud-row .geo-bar i { box-shadow: inset 0 0 0 1px rgba(63, 106, 0, 0.4); }
+.aud-row .geo-row.is-other .geo-bar i { box-shadow: none; }
+.chart-card, .acct-card { background: var(--rp-warm); }
+.aud-foot .geo-note { color: var(--v-ink-3); }
+/* Accounting's budget meter: volt as the fill, the error tone once over */
+.acct-meter { border-top-color: var(--v-line); }
+.acct-meter-l { color: var(--v-ink-3); }
+.acct-meter-bar { background: rgba(10, 10, 9, 0.06); }
+.acct-meter-bar i { background: var(--v-accent); box-shadow: inset 0 0 0 1px var(--v-accent-line); }
+.acct-meter.is-over .acct-meter-bar i { background: var(--v-err); box-shadow: none; }
 
 /* ---- buttons ------------------------------------------------------------- */
 .btn {

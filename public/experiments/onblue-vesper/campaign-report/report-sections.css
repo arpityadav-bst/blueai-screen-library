@@ -1,0 +1,138 @@
+/* THE REPORT IN SECTIONS (CEO and PM, 2026-11-16). Structure for the five
+   groups (Overview, Audience, Views & spend, Creators, Posts), the bar that
+   names them, the three audience widgets, the Per day | Total switch, the
+   chart's bars and Accounting's budget meter. Loaded after report.css and in
+   his look (his tokens); the Volt look on top lives in
+   app/css/volt-report-skin.css. One gap everywhere: between tiles, cards and
+   groups alike. */
+:root {
+  --rgap: 16px;
+  --secnav-h: 52px;
+  /* his sticky header is 72px and a hairline; the framed report hides it and
+     the skin sets this to 0 */
+  --secnav-top: 73px;
+}
+
+/* ---- the section bar ------------------------------------------------------ */
+.secnav {
+  position: sticky;
+  top: var(--secnav-top);
+  z-index: 20;
+  margin: 14px -20px 0;
+  padding: 0 20px;
+  background: var(--page);
+}
+/* the hairline shows once the bar is stuck (report-nav.js sets is-stuck) */
+.secnav::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--line);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.secnav.is-stuck::after { opacity: 1; }
+.secnav-in {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: var(--secnav-h);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.secnav-in::-webkit-scrollbar { display: none; }
+.secnav-a {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 13.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.secnav-a:hover { background: var(--wash); color: var(--ink); }
+.secnav-a[aria-current] { border-color: var(--blue-line); background: var(--blue-wash); color: var(--blue-ink); }
+
+/* ---- the groups ----------------------------------------------------------- */
+.rsec { margin-top: var(--rgap); }
+.rsec:focus { outline: none; }
+/* a jump lands the group, or a card in it, just under the stuck bar */
+.rsec, .rsec .card { scroll-margin-top: calc(var(--secnav-top) + var(--secnav-h) + var(--rgap)); }
+.rsec .tiles { margin-top: 0; }
+.rsec .tiles, .rsec .minis { gap: var(--rgap); }
+.rsec #tiles-posts { margin-top: var(--rgap); }
+.rsec > .card + .card { margin-top: var(--rgap); }
+.rsec .rep-grid { margin-top: 0; gap: var(--rgap); align-items: stretch; }
+
+/* ---- audience: three widgets in a row, stacking when narrow ---------------- */
+.aud-row { display: flex; flex-wrap: wrap; gap: var(--rgap); }
+.aud-row > .card { flex: 1 1 17rem; min-width: 0; }
+.aud-row > #aud-card { flex-basis: 100%; }
+.aud-row > .card > .geo-list { margin-top: 16px; }
+#geo-card, #age-card, #gender-card { container-type: inline-size; }
+/* each widget sizes its label column to its own labels, so the bars get the
+   room that is left */
+#geo-card .geo-row, #age-card .geo-row, #gender-card .geo-row { gap: 12px; grid-template-columns: 8.75rem minmax(0, 1fr) 3rem; }
+#age-card .geo-row { grid-template-columns: 3.5rem minmax(0, 1fr) 3rem; }
+#gender-card .geo-row { grid-template-columns: 6.75rem minmax(0, 1fr) 3rem; }
+#geo-card .geo-pct, #age-card .geo-pct, #gender-card .geo-pct { font-size: 13.5px; }
+/* a narrow widget puts the name and its share on one line, the bar under them */
+@container (max-width: 19rem) {
+  #geo-card .geo-row, #age-card .geo-row, #gender-card .geo-row { grid-template-columns: minmax(0, 1fr) auto; row-gap: 6px; }
+  #geo-card .geo-name, #age-card .geo-name, #gender-card .geo-name { grid-area: 1 / 1; }
+  #geo-card .geo-pct, #age-card .geo-pct, #gender-card .geo-pct { grid-area: 1 / 2; }
+  #geo-card .geo-bar, #age-card .geo-bar, #gender-card .geo-bar { grid-area: 2 / 1 / 3 / 3; }
+}
+/* the note, once, under the row: a line, not a box */
+.aud-foot .geo-note { margin-top: 10px; padding: 0 2px; border-radius: 0; background: none; }
+
+/* ---- views over time: the Per day | Total switch, the bars ----------------- */
+.seg { flex: none; display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 10px; background: var(--lift); }
+.seg button { height: 28px; padding: 0 12px; border-radius: 7px; color: var(--muted); font-size: 12.5px; font-weight: 500; white-space: nowrap; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--card); color: var(--ink); box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgba(0, 0, 0, 0.08); }
+
+/* ---- accounting fills its half of the row: the rows share the height, the
+   budget meter sits under them ------------------------------------------- */
+.acct-card { display: flex; flex-direction: column; }
+.rep-grid .acct-card .acct { flex: 1 1 auto; }
+.rep-grid .acct-card .acct td { vertical-align: middle; }
+.acct-meter { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 8px 12px; margin-top: 12px; padding-top: 14px; border-top: 1px solid var(--line); }
+.acct-meter:empty { display: none; }
+.acct-meter-l { color: var(--muted); font-size: 12.5px; }
+.acct-meter-v { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.acct-meter-bar { grid-column: 1 / -1; height: 8px; overflow: hidden; border-radius: 999px; background: var(--lift); }
+.acct-meter-bar i { display: block; height: 100%; border-radius: inherit; background: var(--blue); }
+.acct-meter.is-over .acct-meter-v { color: var(--red-ink); }
+.acct-meter.is-over .acct-meter-bar i { background: var(--red-ink); }
+.acct-card .rep-foot { margin-top: 14px; }
+
+/* ---- phones ---------------------------------------------------------------- */
+@media (max-width: 760px) {
+  :root { --rgap: 12px; }
+  .secnav { margin-left: -16px; margin-right: -16px; padding: 0 16px; }
+}
+@media (max-width: 700px) {
+  /* a row of chips that scrolls sideways, each a 44px target */
+  :root { --secnav-h: 60px; }
+  .secnav-a { height: 44px; padding: 0 16px; border-color: var(--line-strong); background: var(--card); }
+  .aud-row > .card { flex-basis: 100%; }
+}
+@media (max-width: 480px) {
+  .chart-card .card-head { flex-wrap: wrap; }
+}
+@media (hover: none) and (pointer: coarse) {
+  .seg button { height: 44px; padding: 0 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .secnav::after { transition: none; }
+}
