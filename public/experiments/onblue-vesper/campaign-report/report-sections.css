@@ -22,7 +22,9 @@
   padding: 0 20px;
   background: var(--page);
 }
-/* the hairline shows once the bar is stuck (report-nav.js sets is-stuck) */
+/* the hairline shows once the bar is stuck (report-nav.js sets is-stuck). It
+   runs edge to edge of the window, not just the report column: a spread
+   shadow carries it sideways (no scroll overflow) and the clip keeps it 1px */
 .secnav::after {
   content: "";
   position: absolute;
@@ -31,6 +33,8 @@
   bottom: 0;
   height: 1px;
   background: var(--line);
+  box-shadow: 0 0 0 100vmax var(--line);
+  clip-path: inset(0 -100vmax);
   opacity: 0;
   transition: opacity 0.2s ease;
 }

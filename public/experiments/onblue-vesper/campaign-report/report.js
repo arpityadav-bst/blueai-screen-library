@@ -326,17 +326,18 @@
     var m = Math.round((Date.now() - t) / 60000);
     if (m < 1) { return 'Updated just now'; }
     if (m < 60) { return 'Updated ' + m + ' min ago'; }
+    // past two days a date reads better than "626 h ago" (blind review, 2026-11-16)
+    if (m >= 2880) { return 'Updated ' + dateF(t); }
     return 'Updated ' + Math.round(m / 60) + ' h ago';
   }
   function renderHead() {
     $('#c-name').textContent = C.name;
-    $('#c-meta').innerHTML = [
-      '<span class="chip chip--live">Live</span>',
-      '<span>' + esc(C.product) + '</span>',
-      '<span>Ends <b>' + dateF(C.ends) + '</b></span>',
-      '<span>Geography: <b>' + esc(C.country) + '</b></span>',
-      '<span class="mono">#' + esc(C.ref) + '</span>'
-    ].join('');
+    /* the status beside the name; one grey line under it, without the
+       product (the name already says it) or the id (Copy report ID, in the
+       menu) (Appy, 2026-11-16) */
+    $('#c-status').innerHTML = '<span class="chip chip--live">Live</span>';
+    $('#c-meta').innerHTML = '<span>Ends ' + dateF(C.ends) + '</span><span>' + esc(C.country) + '</span>';
+    $('#btn-copy-id').setAttribute('data-copy', C.ref);
     $('#c-updated').textContent = ago(updatedAt);
     $('#btn-refresh').innerHTML = IC.refresh;
     renderShareBtn();
@@ -408,22 +409,25 @@
         + tile('Likes', num(pl), full ? 'on those posts' : 'gathered ' + spanText())
         + tile('Comments', num(pc), full ? 'on those posts' : 'gathered ' + spanText());
     } else {
+      /* ONE HERO, FOUR FACTS (blind dashboard review, Appy 2026-11-16): Views
+         is the one number that says whether this is working, so it stands
+         alone with its fill; Posts and Creators are its context and ride in
+         its foot. Likes and Comments become a rate, and the price the brand
+         pays per 1,000 views gets a place of its own */
       var target = tilesMode === 'compact';
-      top.className = 'tiles tiles--three';
+      var nPosts = full ? posts.length : newPosts, nCreators = full ? groupBy(posts, creatorKey).length : active;
+      var by = '<span class="tile-by">From <b>' + plural(nPosts, full ? 'post' : 'new post') + '</b> by <b>' + plural(nCreators, 'creator') + '</b></span>';
+      var views = full ? C.views : pv, rate = views ? (pl + pc) / views : 0;
+      top.className = 'tiles tiles--hero';
       low.className = 'minis';
-      top.innerHTML =
-          (!full ? hero('Views', num(pv), 'gathered ' + spanText())
-            : target ? hero('Views', num(C.views), 'of the ' + num(C.target) + ' views your budget covers', fillBar(C.views / C.target))
-            : hero('Views', num(C.views), 'YouTube views on published posts'))
-        + (full ? hero('Posts', num(posts.length), 'live on members\u2019 own accounts')
-                : hero('New posts', num(newPosts), 'published ' + spanText()))
-        + (full ? hero('Creators', num(groupBy(posts, creatorKey).length), 'channels posting your videos')
-                : hero('Creators', num(active), 'with views ' + spanText()));
+      top.innerHTML = (!full ? hero('Views', num(pv), 'gathered ' + spanText())
+          : target ? hero('Views', num(C.views), 'of the ' + num(C.target) + ' views your budget covers', fillBar(C.views / C.target))
+          : hero('Views', num(C.views), 'YouTube views on published posts')).replace(/<\/div>$/, by + '</div>');
       low.innerHTML =
-          (full ? mini('Spend', money(lifeSpend), 'of $' + num(C.budget))
+          (full ? mini('Spend', money(lifeSpend), 'of ' + money(C.budget))
                 : mini('Spend', money(periodSpend), spanText()))
-        + mini('Likes', num(pl))
-        + mini('Comments', num(pc))
+        + mini('Cost per 1,000 views', money(C.cpm), 'fixed for this campaign')
+        + mini('Engagement', pct(rate, 1), num(pl) + ' likes \u00b7 ' + num(pc) + ' comments')
         + mini('Time left', left + ' days', 'ends ' + dayShort(Math.round((C.ends - DAY0) / DAY)));
     }
 
@@ -679,6 +683,8 @@
   // geography shows by default (CEO, 2026-11-16: viewer data is the headline); the dock can still hide it
   var geoAll = false, geoMode = 'live';
   try { geoMode = { off: 'off', empty: 'empty', live: 'live' }[window.localStorage.getItem('campaign-report:geo')] || 'live'; } catch (e) {}
+  // the three cards' own widgets (report-audience.js, Appy 2026-11-16); his bars stay as the fallback and in the one-card layout
+  var AW = window.reportAudience;
   var PROCESSING = '<div class="geo-empty">Geography data shows up once the videos have enough views. This usually takes a few days.</div>';
   function geoBars(g, limit) {
     var rows = g.rows.slice(0, limit), rest = g.rows.slice(limit);
@@ -707,7 +713,7 @@
       '<div class="card-head"><div><h2 class="rep-h">Viewer geography</h2></div>'
       + (has && g.rows.length > 5 ? '<button class="link-btn" type="button" data-geo-all>' + (geoAll ? 'Show top 5' : 'Show all') + '</button>' : '')
       + '</div>'
-      + (has ? geoBars(g, geoAll ? 99 : 5) : PROCESSING);
+      + (!has ? PROCESSING : AW ? '<div class="aw aw--geo">' + AW.geo(g, geoAll) + '</div>' : geoBars(g, geoAll ? 99 : 5));
     document.querySelectorAll('[data-geo-mode]').forEach(function (b) {
       b.setAttribute('aria-pressed', b.getAttribute('data-geo-mode') === geoMode ? 'true' : 'false');
     });
@@ -742,7 +748,7 @@
       card.hidden = demoMode === 'off' || audLayout === 'one';
       card.innerHTML = card.hidden ? '' :
         '<div class="card-head"><div><h2 class="rep-h">' + m.title + '</h2></div></div>'
-        + (has ? shareBars(m.labels, d[m.key]) : demoEmpty(m));
+        + (!has ? demoEmpty(m) : AW ? '<div class="aw aw--' + m.key + '">' + AW[m.key](m.labels, d[m.key]) + '</div>' : shareBars(m.labels, d[m.key]));
     });
     document.querySelectorAll('[data-demo-mode]').forEach(function (b) {
       b.setAttribute('aria-pressed', b.getAttribute('data-demo-mode') === demoMode ? 'true' : 'false');

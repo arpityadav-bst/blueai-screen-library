@@ -1,0 +1,81 @@
+/* LOOK 2, BENTO: each group is one grid of tiles sized by importance, in
+   bold colour rather than pastels (Appy, 2026-11-16). Views is the big ink
+   tile; the four facts, the audience and Accounting each take a colour of
+   their own. White text on ink and cobalt, ink text on every light colour.
+   Imported by report-looks.css. */
+html[data-look="2"] {
+  --b-ink: #0b0b0a; --b-volt: #c6f432; --b-cobalt: #2f5bff; --b-tang: #ff8a3d; --b-lav: #d9ccff; --b-sky: #bfe3ff;
+  --b-r: 1.5rem;
+  --aw-0: #2f5bff; --aw-1: #ff8a3d; --aw-2: #9ccf12; --aw-3: #8f73f0; --aw-4: #4fb4f5; --aw-o: #d6d6cf;
+  --aw-col: rgba(11, 11, 10, 0.16); --aw-col-top: #0b0b0a;
+  --aw-g0: #2f5bff; --aw-g1: #0b0b0a; --aw-g2: rgba(11, 11, 10, 0.2);
+}
+html[data-look="2"] .card, html[data-look="2"] .tile, html[data-look="2"] .mini { border-radius: var(--b-r); }
+
+/* the head: the status as a volt pill */
+html[data-look="2"] .chip--live { border-color: transparent; background: var(--b-volt); }
+html[data-look="2"] .chip--live::before { background: var(--b-ink); }
+
+/* the section bar: one segmented control */
+html[data-look="2"] .secnav-in { flex: 0 1 auto; width: fit-content; max-width: 100%; height: auto; margin: 0.375rem 0; padding: 0.25rem; border: 1px solid var(--v-line); border-radius: 62rem; background: var(--v-surface); }
+html[data-look="2"] { --secnav-h: 3.5rem; }
+html[data-look="2"] .secnav-a,
+html[data-look="2"] .secnav-a[aria-current] { height: 2.25rem; padding: 0 1rem; border: 0; box-shadow: none; }
+html[data-look="2"] .secnav-a[aria-current] { background: var(--b-ink); color: #fff; }
+html[data-look="2"] .secnav-a[aria-current]::before { background: var(--b-volt); box-shadow: none; }
+
+/* overview: Views 2 x 2 in ink, the four facts around it */
+html[data-look="2"] #sec-overview:has(.tiles--hero) { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(9.5rem, auto); gap: var(--rgap); }
+html[data-look="2"] #sec-overview:has(.tiles--hero) > .tiles, html[data-look="2"] #sec-overview:has(.tiles--hero) > .minis { display: contents; }
+html[data-look="2"] .tile--hero { grid-column: span 2; grid-row: span 2; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.75rem; border-color: transparent; background: var(--b-ink); color: #fff; }
+html[data-look="2"] .tile--hero .tile-l { margin-bottom: auto; color: rgba(255, 255, 255, 0.64); }
+html[data-look="2"] .tile--hero .tile-v { color: #fff; font-size: 3.5rem; }
+html[data-look="2"] .tile--hero .tile-s, html[data-look="2"] .tile--hero .tile-by { color: rgba(255, 255, 255, 0.64); }
+html[data-look="2"] .tile--hero .tile-by b, html[data-look="2"] .tile--hero .fill-pct { color: #fff; }
+html[data-look="2"] .tile--hero .fill { margin: 0.75rem 0 0.25rem; }
+html[data-look="2"] .tile--hero .fill-bar { height: 0.5rem; background: rgba(255, 255, 255, 0.14); }
+html[data-look="2"] .tile--hero .fill-bar i { background: var(--b-volt); box-shadow: none; }
+html[data-look="2"] .mini { justify-content: space-between; padding: 1.25rem 1.375rem; border-color: transparent; }
+html[data-look="2"] .mini:nth-child(1) { background: var(--b-volt); }
+html[data-look="2"] .mini:nth-child(2) { border-color: var(--v-line); background: var(--v-surface); }
+html[data-look="2"] .mini:nth-child(3) { background: var(--b-cobalt); }
+html[data-look="2"] .mini:nth-child(4) { background: var(--b-tang); }
+html[data-look="2"] .mini:nth-child(1) .mini-l, html[data-look="2"] .mini:nth-child(1) small,
+html[data-look="2"] .mini:nth-child(4) .mini-l, html[data-look="2"] .mini:nth-child(4) small { color: var(--v-ink-2); }
+html[data-look="2"] .mini:nth-child(3) .mini-l, html[data-look="2"] .mini:nth-child(3) small { color: rgba(255, 255, 255, 0.72); }
+html[data-look="2"] .mini:nth-child(3) .mini-v { color: #fff; }
+
+/* audience: geography tall on the left, age and gender stacked beside it */
+html[data-look="2"] .aud-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--rgap); }
+html[data-look="2"] .aud-row > #aud-card { grid-column: 1 / -1; }
+html[data-look="2"] .aud-row > #geo-card { grid-column: 1 / 3; grid-row: 1 / 3; }
+html[data-look="2"] .aud-row > #age-card { grid-column: 3 / 5; border-color: transparent; background: var(--b-lav); }
+html[data-look="2"] .aud-row > #gender-card { grid-column: 3 / 5; border-color: transparent; background: var(--b-sky); }
+html[data-look="2"] .aud-row > #age-card .aw-say, html[data-look="2"] .aud-row > #age-card .aw-col-v,
+html[data-look="2"] .aud-row > #age-card .aw-col-l, html[data-look="2"] .aud-row > #gender-card .aw-say,
+html[data-look="2"] .aud-row > #gender-card .aw-more { color: var(--v-ink-2); }
+html[data-look="2"] #geo-card .aw-strip { height: 1rem; }
+html[data-look="2"] #geo-card .aw-legend { gap: 0.75rem; margin-top: 1.25rem; }
+html[data-look="2"] #gender-card .aw-split { height: 1rem; }
+html[data-look="2"] #gender-card .aw-g1 { background: var(--aw-g1); }
+
+/* views and spend: the chart wide and white, Accounting in ink */
+html[data-look="2"] .rep-grid { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+html[data-look="2"] .acct-card { border-color: transparent; background: var(--b-ink); color: #fff; }
+html[data-look="2"] .acct-card .rep-h, html[data-look="2"] .acct-card .acct td + td, html[data-look="2"] .acct-card .acct tr.is-total td, html[data-look="2"] .acct-card .acct-meter-v { color: #fff; }
+html[data-look="2"] .acct-card .acct td, html[data-look="2"] .acct-card .acct-work, html[data-look="2"] .acct-card .acct-meter-l, html[data-look="2"] .acct-card .rep-foot { color: rgba(255, 255, 255, 0.64); }
+html[data-look="2"] .acct-card .acct tr + tr td, html[data-look="2"] .acct-card .acct-meter { border-color: rgba(255, 255, 255, 0.12); }
+html[data-look="2"] .acct-card .acct-meter-bar { background: rgba(255, 255, 255, 0.14); }
+html[data-look="2"] .acct-card .acct-meter-bar i { background: var(--b-volt); box-shadow: none; }
+
+@media (max-width: 900px) {
+  html[data-look="2"] #sec-overview:has(.tiles--hero), html[data-look="2"] .aud-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  html[data-look="2"] .aud-row > #geo-card, html[data-look="2"] .aud-row > #age-card, html[data-look="2"] .aud-row > #gender-card { grid-column: 1 / -1; grid-row: auto; }
+  html[data-look="2"] .rep-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 480px) {
+  html[data-look="2"] #sec-overview:has(.tiles--hero) { grid-auto-rows: auto; }
+  html[data-look="2"] .tile--hero { min-height: 15rem; }
+  html[data-look="2"] .tile--hero .tile-v { font-size: 2.75rem; }
+  html[data-look="2"] .mini { min-height: 8rem; padding: 1rem; }
+}

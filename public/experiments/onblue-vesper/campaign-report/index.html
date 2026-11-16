@@ -34,17 +34,29 @@
 
   <a class="back" href="campaigns.html" data-owner>&lsaquo; All campaigns</a>
 
+  <!-- THE HEAD (Appy, 2026-11-16): the name with its status, one grey meta
+       line, one action (Share) and the rest in a menu. What sets the scope of
+       the numbers (the date range) and how fresh they are sit on the section
+       bar, beside the content they govern (report-head.js) -->
   <div class="rep-head">
     <div class="rep-name">
-      <h1 class="title" id="c-name"></h1>
+      <div class="rep-title-row">
+        <h1 class="title" id="c-name"></h1>
+        <span class="rep-status" id="c-status"></span>
+      </div>
       <div class="rep-meta" id="c-meta"></div>
     </div>
     <div class="rep-actions">
-      <span class="updated" id="c-updated"></span>
-      <button class="btn" type="button" id="btn-range" aria-haspopup="dialog" aria-expanded="false"></button>
-      <button class="btn icon-btn" type="button" id="btn-refresh" aria-label="Refresh numbers"></button>
       <button class="btn" type="button" id="btn-share" aria-haspopup="dialog" data-owner></button>
-      <button class="btn" type="button" id="btn-csv" data-owner></button>
+      <div class="rep-more">
+        <button class="btn icon-btn" type="button" id="btn-more" aria-haspopup="menu" aria-expanded="false" aria-controls="more-menu" aria-label="More actions">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>
+        </button>
+        <div class="more-menu" id="more-menu" role="menu" hidden>
+          <button type="button" role="menuitem" id="btn-csv" data-owner></button>
+          <button type="button" role="menuitem" id="btn-copy-id" data-copy="">Copy report ID</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -57,6 +69,11 @@
       <a class="secnav-a" href="#sec-views">Views &amp; spend</a>
       <a class="secnav-a" href="#sec-creators">Creators</a>
       <a class="secnav-a" href="#sec-posts">Posts</a>
+    </div>
+    <div class="secnav-tools">
+      <span class="updated" id="c-updated"></span>
+      <button class="refresh-btn" type="button" id="btn-refresh" aria-label="Refresh numbers"></button>
+      <button class="btn" type="button" id="btn-range" aria-haspopup="dialog" aria-expanded="false"></button>
     </div>
   </nav>
 
@@ -181,6 +198,13 @@
 <!-- Prototype review controls, not part of the product: one look at a time on
      the real page. -->
 <div class="devdock" aria-label="Prototype controls">
+  <!-- three looks of the same report (Appy, 2026-11-16): report-looks.js -->
+  <div class="devbar">
+    <b>Layout</b>
+    <button type="button" data-look="1" aria-pressed="true">1 Refined</button>
+    <button type="button" data-look="2" aria-pressed="false">2 Bento</button>
+    <button type="button" data-look="3" aria-pressed="false">3 Volt</button>
+  </div>
   <div class="devbar">
     <b>Top cards</b>
     <button type="button" data-tiles-mode="current" aria-pressed="true">Current</button>
@@ -213,7 +237,11 @@
 </div>
 
 <script src="sample-posts.js"></script>
+<script src="report-audience.js"></script>
 <script src="report.js"></script>
 <script src="report-nav.js"></script>
+<script src="report-head.js"></script>
+<script src="report-selects.js"></script>
+<script src="report-looks.js"></script>
 </body>
 </html>

@@ -1,0 +1,67 @@
+/* LOOK 3, VOLT: the report in the homepage's own language (Appy, 2026-11-16).
+   The overview is a dark band with the volt glow, like the homepage's dark
+   sections; every other card is the homepage's bento tile: white, a firmer
+   edge, the words first and the visual sitting in the halftone (dots fading
+   up into the white). Ink and volt carry the data. Static backgrounds only,
+   nothing animated. Imported by report-looks.css. */
+html[data-look="3"] {
+  --h-edge: rgba(10, 10, 9, 0.12);
+  --h-dots: linear-gradient(180deg, #fff 0%, #fff 38%, rgba(255, 255, 255, 0) 78%), radial-gradient(rgba(10, 10, 9, 0.12) 1.1px, rgba(10, 10, 9, 0) 1.4px);
+  --aw-0: #c6f432; --aw-1: #0b0b0a; --aw-2: #5c5c57; --aw-3: #9a9a94; --aw-4: #c9c9c2; --aw-o: #e3e3dc;
+  --aw-col: #d9d9d2; --aw-col-top: #c6f432;
+  --aw-g0: #0b0b0a; --aw-g1: #c6f432; --aw-g2: #d9d9d2;
+}
+
+/* every card: the homepage tile */
+html[data-look="3"] .card { border-color: var(--h-edge); border-radius: var(--v-r-lg); box-shadow: 0 1px 2px rgba(10, 10, 9, 0.04); }
+/* the cards with a visual: the halftone under it */
+html[data-look="3"] .aud-row > .card,
+html[data-look="3"] .chart-card { background-color: var(--v-surface-2); background-image: var(--h-dots); background-size: 100% 100%, 0.625rem 0.625rem; }
+html[data-look="3"] .acct-card { background: var(--v-glow), var(--v-surface); }
+html[data-look="3"] .aw-col-bar i { box-shadow: inset 0 0 0 1px rgba(10, 10, 9, 0.08); }
+html[data-look="3"] .aw-col.is-top .aw-col-bar i { box-shadow: inset 0 0 0 1px var(--v-accent-line); }
+
+/* the head: the status as the homepage's volt tag */
+html[data-look="3"] .chip--live { height: 1.375rem; padding: 0 0.5rem; border: 0; border-radius: 0.375rem; background: var(--v-accent); }
+html[data-look="3"] .chip--live::before { background: var(--v-ink-1); }
+
+/* the section bar: the homepage's tabs, ink when chosen */
+html[data-look="3"] .secnav-in { gap: 0.375rem; }
+html[data-look="3"] .secnav-a { height: 2rem; padding: 0 0.875rem; border: 1px solid var(--v-line); border-radius: 0.5rem; background: var(--v-surface); box-shadow: none; }
+html[data-look="3"] .secnav-a:hover { color: var(--v-ink-1); background: var(--v-surface); }
+html[data-look="3"] .secnav-a[aria-current] { border-color: transparent; background: var(--v-ink-1); color: #fff; box-shadow: none; }
+html[data-look="3"] .secnav-a[aria-current]::before { background: var(--v-accent); box-shadow: none; }
+
+/* the overview: one dark band, the hero on the left, the four facts on the
+   right split by hairlines */
+html[data-look="3"] #sec-overview:has(.tiles--hero) {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 0; overflow: hidden;
+  border-radius: var(--v-r-lg);
+  background: radial-gradient(ellipse 60% 90% at 22% 0%, rgba(198, 244, 50, 0.2) 0%, rgba(198, 244, 50, 0.06) 45%, rgba(198, 244, 50, 0) 75%), #0b0b0a;
+  color: #f2f2ec;
+}
+html[data-look="3"] .rsec #tiles-posts { margin-top: 0; }
+html[data-look="3"] .tile--hero { height: 100%; padding: 1.75rem; border: 0; border-radius: 0; background: none; }
+html[data-look="3"] .tile--hero .tile-l, html[data-look="3"] .tile--hero .tile-s, html[data-look="3"] .tile--hero .tile-by,
+html[data-look="3"] .mini-l, html[data-look="3"] .mini-v small { color: #a2a29a; }
+html[data-look="3"] .tile--hero .tile-v { color: #fff; font-size: 3rem; }
+html[data-look="3"] .tile--hero .tile-by b, html[data-look="3"] .tile--hero .fill-pct, html[data-look="3"] .mini-v { color: #fff; }
+html[data-look="3"] .tile--hero .fill { margin: 0.875rem 0 0.25rem; }
+html[data-look="3"] .tile--hero .fill-bar { height: 0.5rem; background: rgba(255, 255, 255, 0.12); }
+html[data-look="3"] .tile--hero .fill-bar i { background: var(--v-accent); box-shadow: none; }
+html[data-look="3"] .minis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; border-left: 1px solid rgba(255, 255, 255, 0.1); }
+html[data-look="3"] .mini { padding: 1.5rem 1.75rem; border: 0; border-radius: 0; background: none; }
+html[data-look="3"] .mini:nth-child(odd) { border-right: 1px solid rgba(255, 255, 255, 0.1); }
+html[data-look="3"] .mini:nth-child(-n+2) { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+html[data-look="3"] .mini::before { content: ""; width: 0.4375rem; height: 0.4375rem; margin-bottom: 0.25rem; border-radius: 50%; background: rgba(255, 255, 255, 0.24); }
+html[data-look="3"] .mini:first-child::before { background: var(--v-accent); }
+
+@media (max-width: 900px) {
+  html[data-look="3"] #sec-overview:has(.tiles--hero) { grid-template-columns: minmax(0, 1fr); }
+  html[data-look="3"] .minis { border-left: 0; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+}
+@media (max-width: 480px) {
+  html[data-look="3"] .tile--hero { padding: 1.25rem; }
+  html[data-look="3"] .tile--hero .tile-v { font-size: 2.5rem; }
+  html[data-look="3"] .mini { padding: 1rem 1.25rem; }
+}

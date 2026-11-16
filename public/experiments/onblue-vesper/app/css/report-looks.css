@@ -1,0 +1,158 @@
+/* THE REPORT'S THREE LOOKS (Appy, 2026-11-16). report-frame.js links this
+   after volt-report-skin.css; campaign-report/report-looks.js sets
+   html[data-look] = 1 (Refined), 2 (Bento) or 3 (Volt). This file holds what
+   all three share, the per-look files hold the rest.
+
+   SHARED: ONE TYPE SCALE AND TWO TEXT INKS (blind dashboard review: the page
+   had 15 sizes, 3 weights and a text grey that failed AA).
+     32  the page title and the hero number
+     24  a widget's lead number
+     16  card titles
+     13  body, rows, values in lists
+     12  labels, meta, axis notes
+   Weights 400 and 600. Ink-1 for numbers and names, ink-3 for labels and
+   meta, nothing lighter. Colour is for data and status only; each look
+   decides which colours. */
+@import url("report-look-1.css");
+@import url("report-look-2.css");
+@import url("report-look-3.css");
+
+:root {
+  --rt-hero: 600 2rem/1.05 var(--v-font);
+  --rt-lead: 600 1.5rem/1.1 var(--v-font);
+  --rt-title: 600 1rem/1.3 var(--v-font);
+  --rt-body: 400 0.8125rem/1.45 var(--v-font);
+  --rt-label: 400 0.75rem/1.4 var(--v-font);
+  --dim: var(--v-ink-3);
+  --muted: var(--v-ink-3);
+}
+
+/* ---- the head (Appy, 2026-11-16): the name and its status on one line, one
+   grey meta line, Share plus a "More" menu. The date range and freshness
+   live on the section bar, with the content they govern ---------------- */
+.rep-head { align-items: flex-start; }
+.rep-title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.875rem; }
+.title { font: var(--rt-hero); letter-spacing: var(--v-tr-tight); }
+.rep-meta { gap: 0; margin-top: 0.5rem; color: var(--v-ink-3); font: var(--rt-body); }
+.rep-meta > span + span::before { content: "·"; margin: 0 0.5rem; }
+.back { font: var(--rt-label); color: var(--v-ink-3); }
+.rep-actions { gap: 0.5rem; margin-top: 0.125rem; }
+.rep-head .btn, .secnav-tools .btn { height: 2.25rem; padding: 0 0.875rem; font: 600 0.8125rem/1 var(--v-font); }
+.rep-head .icon-btn { width: 2.25rem; padding: 0; color: var(--v-ink-3); }
+.rep-head .icon-btn:hover, .rep-head .icon-btn.is-on { color: var(--v-ink-1); }
+.rep-more { position: relative; }
+.more-menu { position: absolute; z-index: 40; top: calc(100% + 0.375rem); right: 0; display: grid; min-width: 12rem; padding: 0.375rem; border: 1px solid var(--v-line); border-radius: 0.875rem; background: #fff; box-shadow: var(--v-lift); }
+.more-menu[hidden] { display: none; }
+.more-menu button { display: flex; align-items: center; height: 2.25rem; padding: 0 0.75rem; border-radius: var(--v-r-sm); color: var(--v-ink-1); font: var(--rt-body); text-align: left; white-space: nowrap; }
+.more-menu button:hover, .more-menu button:focus-visible { background: var(--v-surface-2); }
+/* the bar: tabs on the left, freshness and the range on the right, one
+   hairline under it always (it anchors the tabs, and is the line the stuck
+   bar shows) */
+.secnav { display: flex; align-items: center; gap: 1rem; margin-top: 1.25rem; }
+.secnav::after { opacity: 1; }
+/* room on both sides of the line (Appy, 2026-11-16): a 56px bar keeps the
+   range button clear of it, and the content starts 24px under it */
+:root { --secnav-h: 3.5rem; }
+.secnav + .rsec { margin-top: 1.5rem; }
+.secnav-in { flex: 1 1 auto; min-width: 0; }
+.secnav-tools { flex: none; margin-left: auto; display: flex; align-items: center; gap: 0.25rem; }
+.updated { margin: 0; color: var(--v-ink-3); font: var(--rt-label); white-space: nowrap; }
+.refresh-btn { display: grid; place-items: center; width: 2rem; height: 2rem; margin-right: 0.25rem; border-radius: var(--v-r-sm); color: var(--v-ink-3); }
+.refresh-btn:hover { background: var(--v-surface-2); color: var(--v-ink-1); }
+.refresh-btn svg { width: 1rem; height: 1rem; }
+.chip--live { gap: 0.4375rem; height: 1.5rem; padding: 0 0.625rem; border: 1px solid var(--v-line-2); background: var(--v-surface); box-shadow: none; color: var(--v-ink-1); font: 600 0.75rem/1 var(--v-font); }
+.chip--live::before { content: ""; flex: none; width: 0.4375rem; height: 0.4375rem; border-radius: 50%; background: #2fae4a; }
+
+/* ---- cards: titles, hints, notes ---------------------------------------- */
+.rep-h { font: var(--rt-title); letter-spacing: var(--v-tr-mid); }
+.rep-hint { margin-top: 0.25rem; font: var(--rt-label); color: var(--v-ink-3); }
+.rep-foot, .aud-foot .geo-note { font: var(--rt-label); color: var(--v-ink-3); }
+.link-btn { font: 600 0.8125rem/1.3 var(--v-font); }
+.secnav-a { font: 400 0.8125rem/1 var(--v-font); }
+.secnav-a[aria-current] { font-weight: 600; }
+
+/* ---- the overview: one hero, four facts --------------------------------- */
+.tiles--hero { grid-template-columns: minmax(0, 1fr); }
+.tile-l, .mini-l { color: var(--v-ink-3); font: var(--rt-body); }
+.tile--hero .tile-v { font: var(--rt-hero); letter-spacing: var(--v-tr-tight); font-variant-numeric: tabular-nums; }
+.tile-s { color: var(--v-ink-3); font: var(--rt-label); }
+.fill-pct { font: 600 0.75rem/1 var(--v-font); }
+.tile-by { display: block; margin-top: 0.5rem; color: var(--v-ink-3); font: var(--rt-body); }
+.tile-by b { color: var(--v-ink-1); font-weight: 600; }
+.mini { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 0.375rem; }
+.mini-l { white-space: normal; }
+.mini-v { font: var(--rt-lead); letter-spacing: var(--v-tr-tight); text-align: left; }
+.mini-v small { margin-top: 0.375rem; color: var(--v-ink-3); font: var(--rt-label); letter-spacing: 0; }
+
+/* ---- the audience widgets (campaign-report/report-audience.js) ---------- */
+.aud-row > .card { display: flex; flex-direction: column; }
+.aw { flex: 1 1 auto; display: flex; flex-direction: column; }
+.aw-lead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.5rem; margin-top: 0.875rem; }
+.aw-big { color: var(--v-ink-1); font: var(--rt-lead); letter-spacing: var(--v-tr-tight); font-variant-numeric: tabular-nums; }
+.aw-say { color: var(--v-ink-3); font: var(--rt-body); }
+.aw-say b { color: var(--v-ink-1); font-weight: 600; }
+.aw-viz { flex: 1 1 auto; display: flex; flex-direction: column; margin-top: 1rem; }
+.aw-key { flex: none; display: inline-block; width: 0.625rem; height: 0.625rem; border-radius: 0.1875rem; }
+/* geography: one strip of every country, the list under it */
+.aw-strip { display: flex; gap: 2px; height: 0.625rem; overflow: hidden; border-radius: 62rem; }
+.aw-strip i { flex: none; display: block; min-width: 2px; height: 100%; }
+.aw-legend { display: grid; gap: 0.5rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.aw-legend li { display: grid; grid-template-columns: 0.625rem minmax(0, 1fr) auto; align-items: center; gap: 0.625rem; color: var(--v-ink-1); font: var(--rt-body); }
+.aw-name { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.aw-legend b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.aw-s0 { background: var(--aw-0); } .aw-s1 { background: var(--aw-1); } .aw-s2 { background: var(--aw-2); }
+.aw-s3 { background: var(--aw-3); } .aw-s4 { background: var(--aw-4); } .aw-so, .aw-sx { background: var(--aw-o); }
+/* age: columns in YouTube's order, the largest group marked */
+.aw-cols { flex: 1 1 auto; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.25rem; min-height: 9rem; }
+.aw-col { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; justify-items: center; gap: 0.375rem; min-width: 0; }
+.aw-col-v { color: var(--v-ink-3); font: var(--rt-label); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.aw-col.is-top .aw-col-v { color: var(--v-ink-1); font-weight: 600; }
+.aw-col-bar { display: flex; align-items: flex-end; width: 100%; max-width: 2.5rem; }
+.aw-col-bar i { display: block; width: 100%; border-radius: 0.375rem 0.375rem 0.125rem 0.125rem; background: var(--aw-col); }
+.aw-col.is-top .aw-col-bar i { background: var(--aw-col-top); }
+.aw-col-l { color: var(--v-ink-3); font: var(--rt-label); letter-spacing: -0.02em; white-space: nowrap; }
+/* gender: the two numbers, one split bar under them */
+.aw-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.875rem; }
+.aw-side { display: grid; gap: 0.25rem; }
+.aw-side1 { justify-items: end; text-align: right; }
+.aw-side .aw-say { display: inline-flex; align-items: center; gap: 0.375rem; }
+.aw--gender .aw-viz { justify-content: flex-end; }
+.aw-split { display: flex; gap: 2px; height: 0.75rem; overflow: hidden; border-radius: 62rem; }
+.aw-split i { flex: none; display: block; min-width: 2px; height: 100%; }
+.aw-g0 { background: var(--aw-g0); } .aw-g1 { background: var(--aw-g1); } .aw-g2 { background: var(--aw-g2); }
+.aw-more { margin-top: 0.625rem; color: var(--v-ink-3); font: var(--rt-label); }
+
+/* ---- views, accounting, the lists: the same scale ----------------------- */
+.acct td { font: var(--rt-body); color: var(--v-ink-3); }
+.acct td + td, .acct tr.is-total td { color: var(--v-ink-1); font-weight: 600; }
+.acct-work, .acct-meter-l { font: var(--rt-label); color: var(--v-ink-3); }
+.acct-meter-v { font: 600 0.8125rem/1.3 var(--v-font); }
+.tr-head, .post-head { font: var(--rt-label); color: var(--v-ink-3); }
+
+/* ---- the posts filters (Appy, 2026-11-16) --------------------------------
+   One focus ring, on the field: the input inside it drew its own as well,
+   offset from the field's. The pills ring only for the keyboard, never on a
+   mouse click. Their menu (report-selects.js) replaces the browser's list. */
+.search input:focus-visible, .sel select:focus-visible { outline: 0; box-shadow: none; }
+.sel:not(.is-set):focus-within { border-color: var(--v-line-2); box-shadow: inset 0 1px 0 #fff, var(--v-shadow-1); }
+.sel:not(.is-set).is-open, .sel:not(.is-set):has(select:focus-visible) { border-color: var(--v-ink-4); }
+.sel:has(select:focus-visible) { box-shadow: var(--v-ring); }
+.sel-menu { position: fixed; z-index: 70; display: grid; gap: 1px; padding: 0.375rem; border: 1px solid var(--v-line); border-radius: 0.875rem; background: #fff; box-shadow: var(--v-lift); }
+.sel-menu[hidden] { display: none; }
+.sel-menu button { display: flex; align-items: center; gap: 0.75rem; height: 2.25rem; padding: 0 0.75rem; border-radius: var(--v-r-sm); color: var(--v-ink-2); font: var(--rt-body); text-align: left; white-space: nowrap; }
+.sel-menu button:hover, .sel-menu button:focus, .sel-menu button:focus-visible { outline: 0; background: var(--v-surface-2); box-shadow: none; color: var(--v-ink-1); }
+.sel-menu button[aria-selected="true"] { color: var(--v-ink-1); font-weight: 600; }
+.sel-menu button[aria-selected="true"]::after { content: ""; flex: none; width: 0.4375rem; height: 0.4375rem; margin-left: auto; border-radius: 50%; background: var(--v-accent); box-shadow: 0 0 0 1px var(--v-accent-line); }
+
+@media (max-width: 760px) {
+  .title, .tile--hero .tile-v { font-size: 1.75rem; }
+}
+/* phones: the freshness line gives the tabs its room; refresh and the range stay */
+@media (max-width: 700px) {
+  .secnav-tools .updated { display: none; }
+  .secnav-tools .btn { padding: 0 0.625rem; }
+}
+@media (hover: none) and (pointer: coarse) {
+  .refresh-btn, .rep-head .icon-btn { width: 2.75rem; height: 2.75rem; }
+  .more-menu button { height: 2.75rem; }
+}

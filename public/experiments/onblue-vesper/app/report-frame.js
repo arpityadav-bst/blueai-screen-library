@@ -184,12 +184,13 @@
     if (route.page !== 'report' || !c) { return; }
     var name = doc.getElementById('c-name'), meta = doc.querySelectorAll('#c-meta > span');
     if (name && name.textContent !== c.title) { name.textContent = c.title; }
-    if (meta.length < 5) { return; }
+    // his head line is two spans now (ends, country) and the id rides on Copy report ID (2026-11-16)
+    if (meta.length < 2) { return; }
     var set = function (el, html) { if (el.innerHTML !== html) { el.innerHTML = html; } };
-    set(meta[1], A.esc(c.product || ''));
-    if (c.ends) { set(meta[2], 'Ends <b>' + A.esc(c.ends) + '</b>'); }
-    set(meta[3], 'Geography: <b>' + A.esc(country(c.geo)) + '</b>');
-    set(meta[4], '#' + A.esc(c.id));
+    if (c.ends) { set(meta[0], 'Ends ' + A.esc(c.ends)); }
+    set(meta[1], A.esc(country(c.geo)));
+    var copyId = doc.getElementById('btn-copy-id');
+    if (copyId && copyId.getAttribute('data-copy') !== c.id) { copyId.setAttribute('data-copy', c.id); }
   }
   function keepReworded(doc) {
     var main = doc.getElementById('dash') || doc.querySelector('main') || doc.body;
@@ -229,6 +230,13 @@
       // his chart's text grows on a phone (the skins), so the corner is checked again
       if (win) { win.addEventListener('resize', function () { clearPace(doc); }); }
       doc.head.appendChild(skin);
+      // the report's three looks (Appy, 2026-11-16), after the skin so they win its ties
+      if (route.page === 'report') {
+        var looks = doc.createElement('link');
+        looks.rel = 'stylesheet';
+        looks.href = new URL('css/report-looks.css', location.href).href;
+        doc.head.appendChild(looks);
+      }
       setTimeout(reveal, 1500);
       // every way back on his screens is the app's list
       doc.addEventListener('click', function (e) {
