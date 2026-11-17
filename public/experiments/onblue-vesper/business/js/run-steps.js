@@ -37,12 +37,6 @@
     if (nb && !nb.hasAttribute('data-back')) { nb.innerHTML = e(text) + ' ' + OB.icon('arrow', 16); }
     return nb;
   }
-  // a film whose label is this format, or -1 (only real matches get shown)
-  function filmOf(name) {
-    var hit = -1;
-    OB.FILMS.forEach(function (f, i) { if (hit < 0 && f[1].toLowerCase() === String(name).toLowerCase()) { hit = i; } });
-    return hit;
-  }
   function share(r, name) { var f = r.formats.filter(function (x) { return x.name === name; })[0]; return f ? f.share : 0; }
   // the market: a website never says where buyers are, so on that path it is a
   // guess until you set it; facts carry the flag ('guess') and the column marks it
@@ -77,7 +71,7 @@
   OB.STEPS = [
     {
       key: 'brand', label: 'Your brand', next: 'Looks right',
-      say: function (r) { var w = 'Watch your brand profile fill in ' + side() + '.'; return r.site ? ['Reading ' + r.site, 'This takes about a minute. ' + w] : ['Getting to know ' + nm(r), w]; },
+      say: function (r) { var w = side() === 'above' ? 'Your brand profile fills in as I read.' : 'Watch your brand profile fill in on the left.'; return r.site ? ['Reading ' + r.site, 'This takes about a minute. ' + w] : ['Getting to know ' + nm(r), w]; },
       // no website: BlueAI works from the answers you gave, so it says so
       work: function (r) {
         return r.site ? ['Opening your homepage', 'Finding what you sell', 'Working out who buys', 'Reading how you sound', 'Writing your brand profile']
@@ -109,8 +103,7 @@
       result: function (r) {
         return '<div class="ob-card ob-card--lit ob-pitch"><span class="ob-chip ob-chip--volt">' + e(r.brand === 'Your brand' ? 'Your brand' : r.brand) + ', in short</span>' +
           '<p><b>' + e(r.sell) + '.</b> For ' + e(lc(r.buyers)) + (r.where === 'Worldwide' ? ', anywhere' : ' in ' + e(r.where === 'United States' ? 'the US' : r.where === 'UK' ? 'the UK' : r.where)) + '.</p>' +
-          '<p class="ob-pitch-edge">What sets it apart: ' + e(lc(r.edge)) + '.</p>' +
-          '<button class="ob-link ob-pitch-fix" type="button" data-fix>Fix something in your profile</button></div>' +
+          '<button class="ob-btn ob-btn--sm ob-pitch-fix" type="button" data-fix>' + OB.icon('edit', 15) + 'Fix something in your profile</button></div>' +
           '<p class="ob-upnext">Still to come: ' + OB.STEPS.slice(1).map(function (s) { return '<b>' + e(s.label) + '</b>'; }).join(', ') + '</p>';
       },
       bind: function (out, r, api) {
@@ -140,15 +133,19 @@
         // waits at the foot while it is checked, then takes its place in the rank
         r.rivals.sort(function (a, b) { return (a.checking ? 1 : 0) - (b.checking ? 1 : 0) || b.videos - a.videos; });
         // a phone says "in 6 months" once, above the list, not in every row
-        return '<p class="ob-rows-cap">Shorts posted in the last 6 months</p><div class="ob-rows" data-rows>' + r.rivals.map(function (x, i) {
+        return '<p class="ob-rows-cap">Sorted by Shorts posted in the last 6 months</p><div class="ob-rows" data-rows>' + r.rivals.map(function (x, i) {
           // a real channel (report-live.js) gives its count and its subscribers; none found says so
         var sub = x.checking ? '<span class="ob-checking"></span>checking their Shorts&hellip;'
             : x.noYT ? 'no YouTube channel found'
             : x.yt ? (x.capped ? '50+' : x.videos) + ' Shorts<span class="ob-6m"> in 6 months</span><span class="ob-6m"> &middot; ' + compact(x.yt.subs) + ' subscribers</span>'
             : x.est ? (phone() ? '~' + x.videos + ' Shorts <em class="ob-guess">my guess</em>' : 'about ' + x.videos + ' Shorts<span class="ob-6m"> in 6 months</span>, my estimate') : x.videos + ' Shorts<span class="ob-6m"> in 6 months</span>';
           return '<div class="ob-row' + (x.on ? '' : ' is-off') + (x.checking ? ' is-checking' : '') + (x.est ? ' is-est' : '') + '" data-i="' + i + '" role="checkbox" tabindex="0" aria-checked="' + x.on + '">' +
-            '<span class="ob-row-av" style="--h:' + (OB.hash(x.name) % 360) + '" aria-hidden="true">' + e(x.name.charAt(0).toUpperCase()) + '</span>' +
-            '<span class="ob-row-main"><b>' + e(x.name) + '</b><small>' + e(x.site) + ' &middot; ' + sub + '</small></span><em class="ob-row-drop">Dropped</em>' + tick() + '</div>';
+            // the rival's own logo over its initial (the initial shows when there is none)
+            '<span class="ob-row-av" style="--h:' + (OB.hash(x.name) % 360) + '" aria-hidden="true">' + e(x.name.charAt(0).toUpperCase()) +
+            (x.site ? '<img alt="" src="https://www.google.com/s2/favicons?domain=' + encodeURIComponent(x.site) + '&sz=64" onload="if(this.naturalWidth<32)this.remove()" onerror="this.remove()">' : '') + '</span>' +
+            '<span class="ob-row-main"><b>' + e(x.name) + '</b><small>' + e(x.site) + (x.yt ? '' : ' &middot; ' + sub) + '</small></span>' +
+            (x.yt ? '<span class="ob-row-fig"><b>' + (x.capped ? '50+' : x.videos) + '</b><small>Shorts &middot; ' + compact(x.yt.subs) + ' subs</small></span>' : '') +
+            '<em class="ob-row-drop">Dropped</em>' + tick() + '</div>';
         }).join('') + '</div><form class="ob-add" data-add><input class="ob-input" placeholder="' + (window.matchMedia('(max-width: 700px)').matches ? 'Add one, like rival.com' : 'Add a competitor, like rival.com') + '" aria-label="Add a competitor"><button class="ob-btn" type="submit">' + OB.icon('plus', 16) + 'Add</button></form>';
       },
       bind: function (out, r, api) {
@@ -208,7 +205,7 @@
       result: function (r) {
         var on = rank(onRivals(r));
         var max = Math.max.apply(null, on.map(function (x) { return x.videos; }).concat([1]));
-        var top = r.formats[0], fi = filmOf(top.name);
+        var top = r.formats[0];
         var est = estimated(r) ? 'about ' : '';
         // your own channel, when BlueAI found it, on the same scale as theirs
         var you = r.brand === 'Your brand' ? 'You' : r.brand + ' (you)', mine = '';
@@ -216,24 +213,25 @@
           max = Math.max(max, r.own.shorts6);
           mine = hbar(you, String(r.own.shorts6), max, 'is-you', r.own.shorts6).replace('<span>' + e(you) + '</span>', '<span><span class="ob-you-l">' + e(you) + '</span><span class="ob-you-s">You</span></span>');
         }
-        // their real best Shorts (report-live.js): the proof a brand can click
-        var best = r.topShorts && r.topShorts.length ? '<div class="ob-panel">' + head('Their best Shorts', 'Most viewed, last 6 months') + '<div class="ob-yts">' + r.topShorts.map(function (t) {
+        // their most watched Shorts (report-live.js): any format, said so; the proof a brand can click
+        var best = r.topShorts && r.topShorts.length ? '<div class="ob-panel ob-halftone">' + head('Their most watched Shorts', 'Any format, last 6 months') + '<div class="ob-yts">' + r.topShorts.map(function (t) {
           return '<a class="ob-yt" href="' + e(t.url) + '" target="_blank" rel="noopener"><span class="ob-yt-thumb"><img src="' + e(t.thumb) + '" alt="" loading="lazy"><span class="ob-yt-play">' + OB.icon('play', 12) + '</span></span>' +
             '<span class="ob-yt-txt"><b>' + e(t.title) + '</b><small>' + e(t.rival) + ' &middot; ' + compact(t.views) + ' views</small></span></a>';
         }).join('') + '</div></div>' : '';
-        var lead = r.topShorts && r.topShorts[0];
+        // real channels give a real average; without them, the estimate says so
+        var real = on.filter(function (x) { return x.yt && x.videos; }), shorts = real.reduce(function (t, x) { return t + x.videos; }, 0);
+        var avg = shorts ? real.reduce(function (t, x) { return t + x.views; }, 0) / shorts : 0;
         // a phone binds the line's last three words, so no word sits alone under the thumb
-        var def = e(DEF[top.name] || 'The format that pulled the most views for your competitors.'); if (phone()) { def = def.replace(/ (\S+) (\S+)$/, '\u00a0$1\u00a0$2'); }
-        return '<div class="ob-card ob-card--lit ob-win">' + (fi >= 0 ? '<span class="ob-win-media">' + OB.videoTag(OB.film(fi)) + '</span>' : '') +
-          '<div><span class="ob-chip ob-chip--volt">Winning format</span><b class="ob-win-fig">' + top.share + '%<small>of views</small></b><p><b>' + e(top.name) + '.</b> ' +
-          def + '</p></div></div>' + best +
-          '<div class="ob-panel">' + (phone() ? head('Share of views by format', est + r.rivalsTotal + ' Shorts') : head('What wins in ' + r.category.toLowerCase(), 'Share of views, ' + est + r.rivalsTotal + ' Shorts')) + '<div class="ob-hbars ob-hbars--rank">' +
+        var def = e(DEF[top.name] || 'The format that pulled the most views for your competitors.'); if (phone()) { def = def.replace(/ (\S+) (\S+)$/, ' $1 $2'); }
+        // THE ONE DARK MOMENT of the run: the winning format, in the homepage's own dark section
+        return '<div class="ob-win ob-dark"><span class="ob-chip ob-chip--volt">Winning format</span><b class="ob-win-fig">' + top.share + '%<small>of views in ' + e(r.category.toLowerCase()) + '</small></b><p><b>' + e(top.name) + '.</b> ' + def + '</p></div>' +
+          '<div class="ob-panel ob-halftone">' + (phone() ? head('Share of views by format', est + r.rivalsTotal + ' Shorts') : head('What wins in ' + r.category.toLowerCase(), 'Share of views, ' + est + r.rivalsTotal + ' Shorts')) + '<div class="ob-hbars ob-hbars--rank">' +
           r.formats.map(function (f, i) { return hbar(f.name, f.share + '%', top.share, i ? '' : 'is-top', f.share); }).join('') + '</div></div>' +
           '<div class="ob-tiles3 ob-tiles2"><div class="ob-stat"><b>' + (est ? 'About ' : '') + r.perMonth + '</b><span>Shorts a month from your ' + on.length + ' competitor' + (on.length === 1 ? '' : 's') + '</span></div>' +
-          (lead ? '<div class="ob-stat"><b>' + compact(lead.views) + ' views</b><span>On ' + e(lead.rival) + '\'s most watched Short in the last 6 months</span></div></div>'
-            : '<div class="ob-stat"><b>' + r.longest.days + ' days</b><span>How long ' + e(r.longest.rival) + '\'s best ' + e(top.name) + ' Short kept pulling new views</span></div></div>') +
-          '<div class="ob-panel">' + head('Shorts posted', 'Last 6 months' + (est ? ', ~ is my estimate' : '')) + '<div class="ob-hbars ob-hbars--posted">' +
-          on.map(function (x) { return hbar(x.name, (x.est ? '~' : '') + (x.capped ? '50+' : x.videos), max, x.est ? 'is-est' : '', x.videos); }).join('') + mine + '</div></div>';
+          (avg ? '<div class="ob-stat"><b>' + compact(avg) + '</b><span>Average views per Short, across your competitors</span></div></div>'
+            : '<div class="ob-stat"><b>About ' + r.longest.days + ' days</b><span>How long ' + e(r.longest.rival) + '\'s best ' + e(top.name) + ' Short kept pulling new views, my estimate</span></div></div>') +
+          '<div class="ob-panel ob-halftone">' + head('Shorts posted', 'Last 6 months' + (est ? ', ~ is my estimate' : ', counted on YouTube')) + '<div class="ob-hbars ob-hbars--posted">' +
+          on.map(function (x) { return hbar(x.name, (x.est ? '~' : '') + (x.capped ? '50+' : x.videos), max, x.est ? 'is-est' : '', x.videos); }).join('') + mine + '</div></div>' + best;
       },
       bind: function (out) { OB.watchFilms(out); },
       facts: function (r) { return [['Top format', r.formats[0].name], ['Runner-up', r.formats[1].name]]; }

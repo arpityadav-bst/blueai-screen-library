@@ -22,12 +22,16 @@
       work: ['Splitting your buyers into groups', 'Writing a message for each', 'Pairing each with a winning format'],
       // the wait names the audiences it is writing for
       asks: function (r) { var w = list(r.angles.map(function (a) { return a.who.toLowerCase(); })); return [K.proof(r.angles.length + ' ideas', w.charAt(0).toUpperCase() + w.slice(1) + '. One message each.')]; },
-      done: function () { return ['Video ideas we\'d make for you', 'Each pairs an audience with a format that wins. Keep the ones that fit: once you start a campaign, our team makes them into Shorts.', 'make']; },
+      done: function () { return ['Video ideas we\'d make for you', 'Each pairs an audience with a format that wins. Keep the ones that fit: once you start a campaign, our team makes them into Shorts.', 'ideas']; },
       result: function (r) {
         return '<div class="ob-cards2">' + r.angles.map(function (a, i) {
           var s = K.share(r, a.format);
-          return '<div class="ob-angle' + (a.on ? '' : ' is-off') + '" data-i="' + i + '" role="checkbox" tabindex="0" aria-checked="' + a.on + '"><small>' + e(a.who) + '</small><b>' + nb(a.say) +
-            '</b><span class="ob-chip">' + e(a.format) + (s ? ' &middot; ' + s + '%' : '') + '</span><em class="ob-angle-off">Off, tap to keep</em>' + K.tick() + '</div>';
+          // an example Short of the idea's format, so the format reads as a picture, not a word
+          var ex = OB.film(OB.filmFor(a.format, OB.hash(a.say)));
+          return '<div class="ob-angle ob-angle--ex' + (a.on ? '' : ' is-off') + '" data-i="' + i + '" role="checkbox" tabindex="0" aria-checked="' + a.on + '">' +
+            (ex && ex.poster ? '<span class="ob-angle-ex" aria-hidden="true"><img src="' + e(ex.poster) + '" alt="" loading="lazy"><em>Example</em></span>' : '') +
+            '<span class="ob-angle-t"><small>' + e(a.who) + '</small><b>' + nb(a.say) +
+            '</b><span class="ob-angle-fmt"><span class="ob-chip">' + e(a.format) + '</span>' + (s ? '<small>' + s + '% of views</small>' : '') + '</span></span><em class="ob-angle-off">Off, tap to keep</em>' + K.tick() + '</div>';
         }).join('') + '</div>';
       },
       bind: function (out, r, api) {
@@ -56,11 +60,18 @@
           ['We make the Shorts', 'Our team makes ' + (n === 1 ? 'your video idea' : 'the ' + n + ' video ideas you kept') + ' into Shorts and reviews every one.'],
           ['Creators post them', 'Each one goes out through a creator\'s BlueAI agent. You pay only for the views they get.']
         ];
-        return '<div class="ob-card ob-card--lit ob-nextup"><h3>What happens next</h3><ol>' + steps.map(function (s, i) {
+        // the run's close, in the homepage's dark section: what the report holds
+        var on = K.onRivals(r), real = on.some(function (x) { return x.yt; });
+        var recap = '<div class="ob-recap ob-dark"><span class="ob-chip ob-chip--volt">Your report</span><div class="ob-recap-figs">' +
+          '<div><b>' + e(r.formats[0].name) + '</b><span>wins, ' + r.formats[0].share + '% of views</span></div>' +
+          '<div><b>' + on.length + '</b><span>competitor' + (on.length === 1 ? '' : 's') + (real ? ', real YouTube numbers' : '') + '</span></div>' +
+          '<div><b>' + n + '</b><span>video idea' + (n === 1 ? '' : 's') + ' to make</span></div></div>' +
+          '<p class="ob-recap-to">' + OB.icon('mail', 15) + 'Sent to <b>' + e(r.email || 'your inbox') + '</b></p></div>';
+        return recap + '<div class="ob-card ob-nextup"><h3>What happens next</h3><ol>' + steps.map(function (s, i) {
           return '<li><i>' + (i + 1) + '</i><span><b>' + e(s[0]) + '</b>' + e(s[1]) + '</span></li>';
         }).join('') + '</ol></div>' +
           '<div class="ob-next"><button class="ob-btn ob-btn--ink" type="button" data-start>Start a draft campaign ' + OB.icon('arrow', 16) + '</button>' +
-          '<a class="ob-btn ob-later" href="index.html">Done for now</a></div>';
+          '<a class="ob-link ob-later-link" href="index.html">Done for now</a></div>';
       },
       bind: function (out, r, api) {
         out.querySelector('[data-start]').addEventListener('click', function () { api.start(); });

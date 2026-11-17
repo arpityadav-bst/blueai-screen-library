@@ -106,8 +106,10 @@
 
   function renderStepper() {
     stepper.innerHTML = STEPS.map(function (s, i) {
-      var ok = i < done && i !== at;
-      return '<li class="' + (i === at ? 'is-now' : i < done ? 'is-done' : '') + '"' + (i === at ? ' aria-current="step"' : '') + (ok ? ' title="Back to ' + e(s.label) + '" aria-label="Go to step ' + (i + 1) + ': ' + e(s.label) + '"' : '') +
+      // the last step ticks too once the run is finished (it used to stay "now" forever)
+      var last = done >= STEPS.length && i === STEPS.length - 1 && i === at;
+      var ok = (i < done && i !== at) || last;
+      return '<li class="' + (last ? 'is-done' : i === at ? 'is-now' : i < done ? 'is-done' : '') + '"' + (i === at ? ' aria-current="step"' : '') + (ok ? ' title="Back to ' + e(s.label) + '" aria-label="Go to step ' + (i + 1) + ': ' + e(s.label) + '"' : '') +
         '><i>' + (ok ? OB.icon('check', 12) : i + 1) + '</i><span>' + e(s.label) + '</span></li>';
     }).join('');
     if (stepnow) { stepnow.innerHTML = '<b>' + e(STEPS[at].label) + '</b> &middot; step ' + (at + 1) + ' of ' + STEPS.length; }

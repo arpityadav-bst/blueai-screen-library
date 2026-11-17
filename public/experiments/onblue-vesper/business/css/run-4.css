@@ -81,3 +81,59 @@
   .ob-yt { flex-direction: row; align-items: center; gap: var(--s3); }
   .ob-yt-thumb { flex: none; width: 7.5rem; }
 }
+
+/* ---- the homepage's own language in the steps (2026-11-17, after a blind
+   review): the bento tiles' firmer 0.12 edge and dot field fading up from
+   white behind charts, and ONE dark moment per run in the homepage's dark
+   section (ink, grain, the volt line and glow): the winning format in step 3,
+   the report's recap in step 5. Values copied from css/bento.css and dark.css. */
+.ob-halftone { border-color: rgba(10, 10, 9, 0.12); box-shadow: 0 1px 2px rgba(10, 10, 9, 0.04);
+  background-color: var(--surface-2);
+  background-image: linear-gradient(180deg, var(--surface) 0%, var(--surface) 3.5rem, rgba(255, 255, 255, 0) 8rem), radial-gradient(rgba(10, 10, 9, 0.12) 1.1px, rgba(10, 10, 9, 0) 1.4px);
+  background-size: 100% 100%, 0.625rem 0.625rem; }
+
+/* the dark moment: the homepage's dark section as a card, its volt line on top */
+.ob-win.ob-dark, .ob-recap { position: relative; overflow: hidden; display: block; margin-top: 0; padding: var(--s8) var(--s8) var(--s6); border: 0; border-radius: var(--r-xl);
+  background: radial-gradient(ellipse 60% 70% at 50% 0%, rgba(198, 244, 50, 0.16) 0%, rgba(198, 244, 50, 0) 70%), var(--bg) url("../img/grain.png") repeat; box-shadow: var(--shadow-3); color: var(--ink-2); }
+.ob-win.ob-dark::before, .ob-recap::before { content: ""; position: absolute; top: 0; left: 14%; right: 14%; height: 1.5px; background: linear-gradient(90deg, rgba(198, 244, 50, 0), #c6f432 30%, #ecffad 50%, #c6f432 70%, rgba(198, 244, 50, 0)); }
+.ob-win.ob-dark .ob-win-fig { margin-top: var(--s5); color: var(--ink-1); font-size: clamp(3rem, 6vw, 4.5rem); line-height: 1; }
+.ob-win.ob-dark .ob-win-fig small { display: block; margin: var(--s3) 0 0; color: var(--ink-3); font-size: 0.9375rem; }
+.ob-win.ob-dark p { max-width: 34rem; margin-top: var(--s5); color: var(--ink-2); }
+.ob-win.ob-dark p b { color: var(--ink-1); }
+.ob-recap-figs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s5); margin-top: var(--s6); }
+.ob-recap-figs b { display: block; color: var(--ink-1); font: 500 1.75rem/1.1 var(--font); letter-spacing: -0.035em; }
+.ob-recap-figs span { display: block; margin-top: var(--s2); color: var(--ink-3); font: var(--t-small); }
+.ob-recap-to { display: flex; align-items: center; gap: var(--s2); margin: var(--s6) 0 0; padding-top: var(--s5); border-top: 1px solid var(--line); color: var(--ink-3); font: var(--t-small); }
+.ob-recap-to b { color: var(--ink-1); font-weight: 500; }
+.ob-recap + .ob-nextup { margin-top: var(--s5); }
+.ob-later-link { margin-left: var(--s2); font: var(--t-small); font-weight: 500; }
+
+/* step 1: fixing the profile is a real control */
+.ob-pitch .ob-pitch-fix { margin-top: var(--s5); gap: var(--s2); }
+
+/* step 2: the rival's own logo, and its real figures right-aligned */
+.ob-row-av { position: relative; overflow: hidden; }
+.ob-row-av img { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0.375rem; border-radius: inherit; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); object-fit: contain; }
+.ob-row-fig { flex: none; display: grid; justify-items: end; gap: 0.125rem; margin-left: auto; padding-right: var(--s2); text-align: right; }
+.ob-row-fig b { color: var(--ink-1); font: 500 1.25rem/1 var(--font); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.ob-row-fig small { color: var(--ink-3); font: var(--t-label); white-space: nowrap; }
+.ob-row.is-off .ob-row-fig { opacity: 0.4; }
+
+/* step 4: each idea with an example Short of its format */
+.ob-angle.ob-angle--ex { display: flex; flex-direction: row; gap: var(--s4); align-items: flex-start; }
+.ob-angle-ex { position: relative; flex: none; width: 4.25rem; aspect-ratio: 9 / 16; overflow: hidden; border-radius: 0.625rem; background: #111; box-shadow: 0 0 0 1px var(--line), var(--shadow-1); }
+.ob-angle-ex img { width: 100%; height: 100%; object-fit: cover; }
+.ob-angle-ex em { position: absolute; left: 0.25rem; bottom: 0.25rem; padding: 0.0625rem 0.3125rem; border-radius: 0.3125rem; background: rgba(10, 10, 9, 0.66); color: #fff; font: 500 0.625rem/1.4 var(--font); font-style: normal; }
+.ob-angle-t { display: grid; gap: var(--s2); justify-items: start; min-width: 0; }
+
+@media (max-width: 700px) {
+  .ob-win.ob-dark, .ob-recap { padding: var(--s6) var(--s5) var(--s5); border-radius: var(--r-lg); }
+  .ob-recap-figs { grid-template-columns: minmax(0, 1fr); gap: var(--s4); }
+  .ob-row-fig b { font-size: 1.0625rem; }
+  .ob-angle-ex { width: 3.5rem; }
+}
+/* step 2's sort line shows on every screen now, not on a phone only */
+.ob-rows-cap { display: block; margin: 0 0 var(--s3); color: var(--ink-3); font: var(--t-small); }
+.ob-angle-fmt { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s2); }
+.ob-angle-fmt .ob-chip { white-space: nowrap; }
+.ob-angle-fmt small { color: var(--ink-3); font: var(--t-label); white-space: nowrap; }
