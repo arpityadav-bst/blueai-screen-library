@@ -172,3 +172,12 @@
 .ob-facts::-webkit-scrollbar { width: 6px; }
 .ob-facts::-webkit-scrollbar-thumb { border-radius: 3px; background: transparent; }
 .ob-facts:hover::-webkit-scrollbar-thumb, .ob-facts.is-scrolling::-webkit-scrollbar-thumb { background: rgba(10, 10, 9, 0.22); }
+
+/* the idea card (2026-11-18): the title uses the width the tick leaves, the format row is one line
+   (chip + a quiet rank), and the gaps follow one rhythm: label 8, title 12, format */
+.ob-stage .ob-angle.ob-angle--ex { padding-right: var(--s6); }
+.ob-stage .ob-angle--ex .ob-angle-t { gap: var(--s2); padding-right: 2.25rem; }
+.ob-stage .ob-angle--ex .ob-angle-t b { margin-bottom: 0; text-wrap: pretty; }
+.ob-angle-fmt { flex-wrap: nowrap; margin-top: var(--s1); }
+.ob-stage .ob-angle .ob-angle-fmt small { color: var(--ink-4); font: var(--t-label); font-weight: 400; white-space: nowrap; }
+.ob-angle-ex { width: 4.5rem; }

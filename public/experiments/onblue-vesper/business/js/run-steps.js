@@ -138,7 +138,7 @@
           // a real channel (report-live.js) gives its count and its subscribers; none found says so
         var sub = x.checking ? '<span class="ob-checking"></span>checking their Shorts&hellip;'
             : x.noYT ? 'no YouTube channel found'
-            : x.yt ? (x.capped ? '50+' : x.videos) + ' Shorts<span class="ob-6m"> in 6 months</span><span class="ob-6m"> &middot; ' + compact(x.yt.subs) + ' subscribers</span>'
+            : x.yt ? (x.capped ? '50+' : x.videos) + ' Shorts<span class="ob-6m"> in 6 months</span><span class="ob-6m"> &middot; ' + compact(x.yt.subs) + ' subscribers</span>' + (x.yt.likely ? ' &middot; likely <em class="ob-guess">' + e(x.yt.title) + '</em>' : '')
             : x.est ? (phone() ? '~' + x.videos + ' Shorts <em class="ob-guess">my guess</em>' : 'about ' + x.videos + ' Shorts<span class="ob-6m"> in 6 months</span>, my estimate') : x.videos + ' Shorts<span class="ob-6m"> in 6 months</span>';
           return '<div class="ob-row' + (x.on ? '' : ' is-off') + (x.checking ? ' is-checking' : '') + (x.est ? ' is-est' : '') + '" data-i="' + i + '" role="checkbox" tabindex="0" aria-checked="' + x.on + '">' +
             // the rival's own logo over its initial (the initial shows when there is none)
@@ -195,13 +195,13 @@
       say: function (r) { return ['Studying what wins in ' + r.category.toLowerCase(), 'Going through every Short your competitors posted.']; },
       work: ['Collecting their Shorts', 'Sorting them by format', window.matchMedia('(max-width: 700px)').matches ? 'Finding the ones that kept going' : 'Finding the ones that kept getting views', 'Measuring which formats get the views'],
       // the wait shows what this step works through, not a claim about results
-      asks: function (r) { syncRivals(r); return [proof((estimated(r) ? '~' : '') + r.rivalsTotal, 'Shorts from your competitors, sorted by format and ranked on views, not likes.')]; },
+      asks: function (r) { syncRivals(r); return [proof((estimated(r) ? '~' : '') + r.rivalsTotal, 'Shorts your competitors posted in the last 6 months.')]; },
       done: function (r) {
         syncRivals(r);
         // the share is said once, as the lit card's figure; the line says what it is ranked on
         var top = r.formats[0];
         var next = 'Next, the video ideas we\'d make from it.';
-        return [top.name + ' wins in ' + r.category.toLowerCase(), 'Ranked on views across ' + (estimated(r) ? 'about ' : 'all ') + r.rivalsTotal + ' Shorts your competitors posted in 6 months. ' + next, 'wins'];
+        return [top.name + ' wins in ' + r.category.toLowerCase(), 'BlueAI\'s estimate, from what it found about ' + r.category.toLowerCase() + ' on the web. ' + next, 'wins'];
       },
       result: function (r) {
         var on = rank(onRivals(r));
@@ -225,8 +225,8 @@
         // a phone binds the line's last three words, so no word sits alone under the thumb
         var def = e(DEF[top.name] || 'The format that pulled the most views for your competitors.'); if (phone()) { def = def.replace(/ (\S+) (\S+)$/, ' $1 $2'); }
         // THE ONE DARK MOMENT of the run: the winning format, in the homepage's own dark section
-        return '<div class="ob-win ob-dark"><span class="ob-chip ob-chip--volt">Winning format</span><b class="ob-win-fig">' + top.share + '%<small>of views in ' + e(r.category.toLowerCase()) + '</small></b><p><b>' + e(top.name) + '.</b> ' + def + '</p></div>' +
-          '<div class="ob-panel ob-halftone">' + (phone() ? head('Share of views by format', est + r.rivalsTotal + ' Shorts') : head('What wins in ' + r.category.toLowerCase(), 'Share of views, ' + est + r.rivalsTotal + ' Shorts')) + '<div class="ob-hbars ob-hbars--rank">' +
+        return '<div class="ob-win ob-dark"><span class="ob-chip ob-chip--volt">Winning format</span><b class="ob-win-fig">' + top.share + '%<small>estimated share of views in ' + e(r.category.toLowerCase()) + '</small></b><p><b>' + e(top.name) + '.</b> ' + def + '</p></div>' +
+          '<div class="ob-panel ob-halftone">' + (phone() ? head('Share of views by format', 'Estimated') : head('What wins in ' + r.category.toLowerCase(), 'Estimated share of views')) + '<div class="ob-hbars ob-hbars--rank">' +
           r.formats.map(function (f, i) { return hbar(f.name, f.share + '%', top.share, i ? '' : 'is-top', f.share); }).join('') + '</div></div>' +
           '<div class="ob-tiles3 ob-tiles2"><div class="ob-stat"><b>' + (est ? 'About ' : '') + r.perMonth + '</b><span>Shorts a month from your ' + on.length + ' competitor' + (on.length === 1 ? '' : 's') + '</span></div>' +
           (avg ? '<div class="ob-stat"><b>' + compact(avg) + '</b><span>Average views per Short, across your competitors</span></div></div>'

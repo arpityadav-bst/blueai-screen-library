@@ -60,9 +60,10 @@
   }
   // real channels: a found channel replaces Claude's estimate; none found says so
   function fill(x, c) {
+    if (c.error) { return; }
     if (c.found) {
       x.est = false; x.noYT = false; x.videos = c.shorts6; x.capped = c.capped; x.views = c.shorts6 * c.avgViews;
-      x.yt = { title: c.title, url: c.url, subs: c.subs, avg: c.avgViews, top: c.top || [] };
+      x.yt = { title: c.title, url: c.url, subs: c.subs, avg: c.avgViews, top: c.top || [], likely: !!c.likely };
     } else { x.est = false; x.noYT = true; x.videos = 0; x.views = 0; x.yt = null; }
   }
   function applyYouTube(r, d) {

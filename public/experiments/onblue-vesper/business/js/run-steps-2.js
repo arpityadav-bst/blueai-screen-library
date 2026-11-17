@@ -27,7 +27,7 @@
         return '<div class="ob-cards2">' + r.angles.map(function (a, i) {
           // why this format, in words: its rank among what wins (the share itself is step 3's)
           var rank = r.formats.map(function (f) { return f.name; }).indexOf(a.format) + 1;
-          var why = rank === 1 ? 'the top format in your category' : rank > 1 ? '#' + rank + ' format in your category' : '';
+          var why = rank > 0 ? '#' + rank + ' in your category' : '';
           // an example Short of the idea's format, so the format reads as a picture, not a word
           var ex = OB.film(OB.filmFor(a.format, OB.hash(a.say)));
           return '<div class="ob-angle ob-angle--ex' + (a.on ? '' : ' is-off') + '" data-i="' + i + '" role="checkbox" tabindex="0" aria-checked="' + a.on + '">' +

@@ -33,7 +33,7 @@ export async function askAshish(part: 'brand' | 'market', site: string, ip: stri
 /* ---- youtube: real channel numbers ------------------------------------------- */
 type Who = { name: string; site: string };
 type Short = { id: string; title: string; views: number; thumb: string; url: string; at: string };
-export type Channel = { found: true; title: string; url: string; subs: number; shorts6: number; capped: boolean; avgViews: number; top: Short[] } | { found: false };
+export type Channel = { found: true; likely: boolean; title: string; url: string; subs: number; shorts6: number; capped: boolean; avgViews: number; top: Short[] } | { found: false; error?: boolean };
 
 const memo = new Map<string, { at: number; data: Channel }>();
 
@@ -54,22 +54,38 @@ function looksLike(item: any, who: Who) {
   return [stem, name].some(k => k.length > 2 && (title.includes(k) || handle.includes(k) || k.includes(title) && title.length > 3));
 }
 
+// A channel with videos wins over an empty one: a brand's own handle is often an empty
+// placeholder (@dodirepacks: 0 videos) while its real channel was renamed. When no handle or name
+// matches, YouTube's own top result for the name is taken if it is a real channel (1,000+ subscribers,
+// with videos): YouTube remembers old names (DODI Repacks is now "Maro Releases"), but a name can
+// also land on a stranger, so that match is marked likely and the run says so
 async function findChannel(key: string, who: Who) {
   const part = 'snippet,statistics,contentDetails';
+  const videos = (c: any) => +(c?.statistics?.videoCount || 0);
+  let empty: any = null;
   const tries = Array.from(new Set([who.site.split('.')[0], squash(who.name)])).filter(Boolean);
   for (const h of tries) {
     const d = await yt(key, 'channels', { part, forHandle: '@' + h });
-    if (d.items?.length && looksLike(d.items[0], who)) { return d.items[0]; }
+    const c = d.items?.[0];
+    if (c && looksLike(c, who)) { if (videos(c) > 0) { return c; } empty = empty || c; }
   }
-  // no handle matched: one search by name (costs more quota, so it comes last)
+  // a search costs more quota, so it comes last
   const s = await yt(key, 'search', { part: 'snippet', type: 'channel', q: who.name, maxResults: '3' });
   for (const it of s.items || []) {
     const id = it.id?.channelId || it.snippet?.channelId;
     if (!id || !looksLike(it, who)) { continue; }
     const d = await yt(key, 'channels', { part, id });
-    if (d.items?.length) { return d.items[0]; }
+    const c = d.items?.[0];
+    if (c && videos(c) > 0) { return c; }
+    empty = empty || c;
   }
-  return null;
+  const top = s.items?.[0], tid = top?.id?.channelId || top?.snippet?.channelId;
+  if (tid) {
+    const d = await yt(key, 'channels', { part, id: tid });
+    const c = d.items?.[0];
+    if (c && videos(c) > 0 && +(c.statistics?.subscriberCount || 0) >= 1000) { c.likely = true; return c; }
+  }
+  return empty;
 }
 
 function seconds(iso: string) {
@@ -84,7 +100,7 @@ async function channelOf(key: string, who: Who): Promise<Channel> {
   let data: Channel = { found: false };
   if (ch) {
     const uploads = ch.contentDetails?.relatedPlaylists?.uploads;
-    const list = uploads ? await yt(key, 'playlistItems', { part: 'contentDetails', playlistId: uploads, maxResults: '50' }) : { items: [] };
+    const list = uploads ? await yt(key, 'playlistItems', { part: 'contentDetails', playlistId: uploads, maxResults: '50' }).catch(() => ({ items: [] })) : { items: [] };   // an empty channel has no uploads playlist (404): zero videos, not a failure
     const ids = (list.items || []).map((i: any) => i.contentDetails?.videoId).filter(Boolean);
     // the player size gives the shape: a Short is vertical AND 3 minutes or less,
     // so a 90-second landscape ad never counts as one
@@ -102,6 +118,7 @@ async function channelOf(key: string, who: Who): Promise<Channel> {
     data = {
       found: true,
       title: ch.snippet?.title || who.name,
+      likely: !!ch.likely,
       url: handle ? 'https://www.youtube.com/' + handle : 'https://www.youtube.com/channel/' + ch.id,
       subs: +(ch.statistics?.subscriberCount || 0),
       shorts6: recent.length,
@@ -122,7 +139,7 @@ export async function youtubeFor(brandIn: any, rivalsIn: any): Promise<{ off: tr
   const clean = (w: any): Who | null => { const site = hostOf(w?.site); return okSite(site) ? { name: String(w?.name || site).slice(0, 80), site } : null; };
   const brand = clean(brandIn);
   const rivals = (Array.isArray(rivalsIn) ? rivalsIn : []).slice(0, 8).map(clean).filter(Boolean) as Who[];
-  const safe = (w: Who) => channelOf(key, w).catch(() => ({ found: false }) as Channel);
+  const safe = (w: Who) => channelOf(key, w).catch(() => ({ found: false, error: true }) as Channel);   // a YouTube error is not "no channel": the run keeps the estimate
   const [own, ...them] = await Promise.all([brand ? safe(brand) : Promise.resolve({ found: false } as Channel), ...rivals.map(safe)]);
   return { own, rivals: rivals.map((w, i) => ({ site: w.site, ...them[i] })) };
 }
