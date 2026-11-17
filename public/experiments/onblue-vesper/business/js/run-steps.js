@@ -44,7 +44,8 @@
   function rank(list) { return list.slice().sort(function (a, b) { return b.videos - a.videos; }); }
   function phone() { return window.matchMedia('(max-width: 700px)').matches; }
   // 21100000 -> 21.1M, 48200 -> 48.2K: a channel's numbers at a glance
-  function compact(n) { n = +n || 0; return n >= 1e6 ? +(n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? +(n / 1e3).toFixed(1) + 'K' : String(n); }
+  // (under 1,000 it rounds too: an average once printed as 409.7674418604651)
+  function compact(n) { n = +n || 0; return n >= 1e6 ? +(n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? +(n / 1e3).toFixed(1) + 'K' : String(Math.round(n)); }
   // where the profile sits: beside the steps, or folded above them (860 and below)
   function side() { return window.matchMedia('(max-width: 860px)').matches ? 'above' : 'on the left'; }
   OB.runKit = { hbar: hbar, proof: proof, nm: nm, poss: poss, head: head, tick: tick, onRivals: onRivals, syncRivals: syncRivals, nextLabel: nextLabel, share: share, marketGuess: marketGuess };

@@ -25,13 +25,15 @@
       done: function () { return ['Video ideas we\'d make for you', 'Each pairs an audience with a format that wins. Keep the ones that fit: once you start a campaign, our team makes them into Shorts.', 'ideas']; },
       result: function (r) {
         return '<div class="ob-cards2">' + r.angles.map(function (a, i) {
-          var s = K.share(r, a.format);
+          // why this format, in words: its rank among what wins (the share itself is step 3's)
+          var rank = r.formats.map(function (f) { return f.name; }).indexOf(a.format) + 1;
+          var why = rank === 1 ? 'the top format in your category' : rank > 1 ? '#' + rank + ' format in your category' : '';
           // an example Short of the idea's format, so the format reads as a picture, not a word
           var ex = OB.film(OB.filmFor(a.format, OB.hash(a.say)));
           return '<div class="ob-angle ob-angle--ex' + (a.on ? '' : ' is-off') + '" data-i="' + i + '" role="checkbox" tabindex="0" aria-checked="' + a.on + '">' +
             (ex && ex.poster ? '<span class="ob-angle-ex" aria-hidden="true"><img src="' + e(ex.poster) + '" alt="" loading="lazy"><em>Example</em></span>' : '') +
-            '<span class="ob-angle-t"><small>' + e(a.who) + '</small><b>' + nb(a.say) +
-            '</b><span class="ob-angle-fmt"><span class="ob-chip">' + e(a.format) + '</span>' + (s ? '<small>' + s + '% of views</small>' : '') + '</span></span><em class="ob-angle-off">Off, tap to keep</em>' + K.tick() + '</div>';
+            '<span class="ob-angle-t"><small>For ' + e(a.who.charAt(0).toLowerCase() + a.who.slice(1)) + '</small><b>' + nb(a.say) +
+            '</b><span class="ob-angle-fmt"><span class="ob-chip">' + e(a.format) + '</span>' + (why ? '<small>' + why + '</small>' : '') + '</span></span><em class="ob-angle-off">Off, tap to keep</em>' + K.tick() + '</div>';
         }).join('') + '</div>';
       },
       bind: function (out, r, api) {

@@ -62,6 +62,12 @@
       facts.classList.toggle('has-above', facts.scrollTop > 4);
     }
     facts.addEventListener('scroll', cue, { passive: true });
+    // the scrollbar shows while the list moves (or the pointer is on it), then fades
+    var still;
+    facts.addEventListener('scroll', function () {
+      facts.classList.add('is-scrolling'); clearTimeout(still);
+      still = setTimeout(function () { facts.classList.remove('is-scrolling'); }, 800);
+    }, { passive: true });
     window.addEventListener('resize', cue);
 
     // run.js re-renders the profile from fresh facts (onEdit), so a fixed

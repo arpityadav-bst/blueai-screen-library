@@ -74,13 +74,18 @@
   }
   // videos still being made sit on their own slim line above the ones that need you
   // (phones, beside other rows: a poster frame in the rows' thumb column, so it reads as a video on its way)
+  // at most three lines, then one count, so a long queue never takes over Home
+  var MK_MAX = 3;
   function making(list, frame) {
     if (!list.length) { return ''; }
-    return '<div class="ob-mk-line">' + list.map(function (v) {
+    var more = list.length - MK_MAX;
+    return '<div class="ob-mk-line">' + list.slice(0, MK_MAX).map(function (v) {
       var art = frame ? OB.ui.making(0) : '<span class="ob-mk-spark" aria-hidden="true">' + OB.icon('spark', 14) + '</span>';
-      return '<div class="ob-mk-i">' + art + '<span><b>Our team is making \u201c' + nb(v.title) + '\u201d</b><small>' + (frame ? '<span class="ob-mk-dot" aria-hidden="true"></span>' : '') + e(v.format) + (phone() ? ' &middot; waits for your yes' : '. It waits here for your yes when it\'s ready.') + '</small></span>' +
+      // a remix title already carries its quotes (Nike remix: \u201c...\u201d): never a second pair
+      var t = /[\u201c"]/.test(v.title) ? nb(v.title) : '\u201c' + nb(v.title) + '\u201d';
+      return '<div class="ob-mk-i">' + art + '<span><b>Our team is making ' + t + '</b><small>' + (frame ? '<span class="ob-mk-dot" aria-hidden="true"></span>' : '') + e(v.format) + (phone() ? ' &middot; waits for your yes' : '. It waits here for your yes when it\'s ready.') + '</small></span>' +
         '<span class="ob-mk-bar"><i></i></span></div>';
-    }).join('') + '</div>';
+    }).join('') + (more > 0 ? '<a class="ob-mk-more" href="studio.html">+' + more + ' more on the way, all in Studio</a>' : '') + '</div>';
   }
   function needs(list, wait) {
     var empty = camp === 'live' ? '<b>You\'re all caught up.</b><small>Ask for a new video below. Our team makes it, and it waits here for your yes before it posts.</small>' :

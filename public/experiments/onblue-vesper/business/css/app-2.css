@@ -274,3 +274,6 @@ body.has-drawer .ob-toast.is-on { transform: translate(50%, 0); }
     background-size: 100% 100%, 0.625rem 0.625rem;
   }
 }
+/* the "being made" queue past three: one quiet count that opens Studio */
+.ob-mk-more { display: block; padding: var(--s3) var(--s4) var(--s1); color: var(--ink-3); font: var(--t-small); font-weight: 500; }
+.ob-mk-more:hover { color: var(--ink-1); }

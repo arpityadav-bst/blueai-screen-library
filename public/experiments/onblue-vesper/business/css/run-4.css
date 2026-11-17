@@ -134,9 +134,9 @@
 }
 /* step 2's sort line shows on every screen now, not on a phone only */
 .ob-rows-cap { display: block; margin: 0 0 var(--s3); color: var(--ink-3); font: var(--t-small); }
-.ob-angle-fmt { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s2); }
+.ob-angle-fmt { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s2); margin-top: var(--s1); }
 .ob-angle-fmt .ob-chip { white-space: nowrap; }
-.ob-angle-fmt small { color: var(--ink-3); font: var(--t-label); white-space: nowrap; }
+.ob-angle-fmt small { color: var(--ink-3); font: var(--t-label); }
 
 /* ---- ONE SPACING RHYTHM for the steps (Appy, 2026-11-17: the gaps between
    blocks were 12, 16, 20 or 24 by accident). Measured, then set:
@@ -165,3 +165,10 @@
 .ob-knows.is-fixing .ob-facts-wrap { box-shadow: inset 0 1px 0 #fff, 0 0 0 1px var(--accent-line), 0 0 0 5px var(--accent-wash); transition: box-shadow 0.25s var(--ease); }
 .ob-knows.is-fixing .ob-fact.is-edit .ob-fact-pen { opacity: 1; color: var(--ink-1); }
 .ob-knows.is-fixing .ob-knows-hint { color: var(--ink-1); font-weight: 500; }
+
+/* the profile's scrollbar: hidden at rest, shown while the list moves or the pointer is on it */
+.ob-facts { scrollbar-color: transparent transparent; transition: scrollbar-color 0.3s ease; }
+.ob-facts:hover, .ob-facts.is-scrolling { scrollbar-color: rgba(10, 10, 9, 0.22) transparent; }
+.ob-facts::-webkit-scrollbar { width: 6px; }
+.ob-facts::-webkit-scrollbar-thumb { border-radius: 3px; background: transparent; }
+.ob-facts:hover::-webkit-scrollbar-thumb, .ob-facts.is-scrolling::-webkit-scrollbar-thumb { background: rgba(10, 10, 9, 0.22); }
