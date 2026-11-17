@@ -56,7 +56,7 @@
           ['We make the Shorts', 'Our team makes ' + (n === 1 ? 'your video idea' : 'the ' + n + ' video ideas you kept') + ' into Shorts and reviews every one.'],
           ['Creators post them', 'Each one goes out through a creator\'s BlueAI agent. You pay only for the views they get.']
         ];
-        return '<div class="ob-card ob-nextup"><h3>What happens next</h3><ol>' + steps.map(function (s, i) {
+        return '<div class="ob-card ob-card--lit ob-nextup"><h3>What happens next</h3><ol>' + steps.map(function (s, i) {
           return '<li><i>' + (i + 1) + '</i><span><b>' + e(s[0]) + '</b>' + e(s[1]) + '</span></li>';
         }).join('') + '</ol></div>' +
           '<div class="ob-next"><button class="ob-btn ob-btn--ink" type="button" data-start>Start a draft campaign ' + OB.icon('arrow', 16) + '</button>' +

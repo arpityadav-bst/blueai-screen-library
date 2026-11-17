@@ -47,7 +47,7 @@
 .ob-cp-add { max-width: 26rem; margin-top: var(--s2); }
 
 /* one bar, always in reach: saved state, Save draft, the one primary */
-.ob-cp-bar { position: sticky; bottom: var(--s4); z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--s3); padding: var(--s3) var(--s3) var(--s3) var(--s5); border: 1px solid var(--line); border-radius: var(--p-r); background: rgba(255, 255, 255, 0.94); box-shadow: var(--shadow-2); }
+.ob-cp-bar { position: sticky; bottom: var(--s4); z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--s3); padding: var(--s3) var(--s3) var(--s3) var(--s5); border: 1px solid var(--line); border-radius: var(--p-r); background: var(--surface); box-shadow: var(--shadow-2); }
 .ob-cp-saved { margin-right: auto; color: var(--ink-4); font: var(--t-small); opacity: 0; transition: opacity 0.2s var(--ease); }
 .ob-cp-saved.is-on { opacity: 1; }
 .ob-cp-err { margin: 0; padding: var(--s3) var(--s4); border-radius: var(--r-md); background: #fdecea; color: #a1281c; font: var(--t-small); font-weight: 500; }
@@ -82,6 +82,8 @@
   .ob-cp-track ol { grid-template-columns: minmax(0, 1fr); }
   .ob-cp-sum dl > div { grid-template-columns: minmax(0, 1fr); gap: 0.125rem; }
   .ob-cp-bar { bottom: calc(var(--s3) + 4.5rem); padding: var(--s3); }
-  .ob-cp-bar .ob-btn--ink { flex: 1 1 100%; justify-content: center; }
+  /* one row on a phone: Save draft, then the primary filling the rest */
+  .ob-cp-bar { flex-wrap: nowrap; }
+  .ob-cp-bar .ob-btn--ink { flex: 1 1 auto; justify-content: center; }
   .ob-cp-saved { display: none; }
 }

@@ -107,7 +107,7 @@
       // the profile read back in two lines, so the step confirms it without a
       // second copy of the fields (those live in the profile, editable there)
       result: function (r) {
-        return '<div class="ob-card ob-pitch"><span class="ob-chip ob-chip--volt">' + e(r.brand === 'Your brand' ? 'Your brand' : r.brand) + ', in short</span>' +
+        return '<div class="ob-card ob-card--lit ob-pitch"><span class="ob-chip ob-chip--volt">' + e(r.brand === 'Your brand' ? 'Your brand' : r.brand) + ', in short</span>' +
           '<p><b>' + e(r.sell) + '.</b> For ' + e(lc(r.buyers)) + (r.where === 'Worldwide' ? ', anywhere' : ' in ' + e(r.where === 'United States' ? 'the US' : r.where === 'UK' ? 'the UK' : r.where)) + '.</p>' +
           '<p class="ob-pitch-edge">What sets it apart: ' + e(lc(r.edge)) + '.</p>' +
           '<button class="ob-link ob-pitch-fix" type="button" data-fix>Fix something in your profile</button></div>' +

@@ -188,4 +188,9 @@
 }
 
 /* a phone's tab bar keeps seven tabs; the account menu carries "Use BlueAI from your AI" (2026-11-17) */
-@media (max-width: 860px) { .ob-navi[data-nav="ai"] { display: none; } }
+@media (max-width: 860px) {
+  .ob-navi[data-nav="ai"] { display: none; }
+  /* Campaign joined the bar: seven tabs on one row, never a wrapped eighth */
+  .ob-side-nav { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+}
+@media (max-width: 420px) { .ob-navi { font-size: 0.6875rem; } }

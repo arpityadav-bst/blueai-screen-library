@@ -29,7 +29,7 @@
     main.innerHTML =
       '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">BlueAI in your AI assistant</h1><p class="ob-p-lede">Connect once. Then ask Claude, ChatGPT or Cursor for a brand report or a campaign draft, right from the chat.</p></div></header>' +
       '<div class="ob-ai">' +
-      '<section class="ob-card ob-ai-card"><div class="ob-ai-tabs" role="tablist">' + CLIENTS.map(function (x) {
+      '<section class="ob-card ob-card--lit ob-ai-card"><div class="ob-ai-tabs" role="tablist">' + CLIENTS.map(function (x) {
         return '<button type="button" role="tab" aria-selected="' + (x[0] === tab) + '" data-tab="' + x[0] + '">' + e(x[1]) + '</button>';
       }).join('') + '</div>' +
       '<ol class="ob-ai-steps">' + c[2].map(function (s) { return '<li>' + e(s) + '</li>'; }).join('') + '</ol>' +

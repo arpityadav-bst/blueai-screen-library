@@ -32,7 +32,7 @@
       '<button class="ob-btn ob-btn--sm ob-btn--ink" type="button" data-tab="approve">Review ' + (n === 1 ? 'it' : 'them') + '</button></div>' : '';
     // phones: no waiting card; the "Needs your yes" filter and the tab badge carry the count, so the grid starts higher
     var oldTabs = main.querySelector('.ob-st-tabs'), sl = oldTabs ? oldTabs.scrollLeft : 0;   // the phone's swipe strip keeps its place
-    main.innerHTML = '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Studio</h1><p class="ob-p-lede">Every video BlueAI made for ' + e(r.brand) + '.' + (ph ? '' : ' Open one to approve it or ask for a change.') + '</p></div></header>' + lead +
+    main.innerHTML = '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Studio</h1><p class="ob-p-lede">Every video we made for ' + e(r.brand) + '.' + (ph ? '' : ' Open one to approve it or ask for a change.') + '</p></div></header>' + lead +
       '<form class="ob-prompt ob-st-prompt" data-new><div class="ob-prompt-row">' + OB.agent() + '<input placeholder="' + (window.matchMedia('(max-width: 700px)').matches ? 'Ask for a new video' : 'Ask for a new video, like another ' + e(r.formats[0].name.toLowerCase())) + '" aria-label="Ask for a new video">' +
       '<button class="ob-prompt-send" type="submit" aria-label="Send">' + OB.icon('send', 18) + '</button></div></form>' +
       '<div class="ob-st-tabs" role="group" aria-label="Filter videos">' + TABS.map(function (t) {   // all five, always; an empty one is dimmed
@@ -90,7 +90,7 @@
         '<div class="ob-dr-stopbox"><button class="ob-btn ob-btn--sm" type="button" data-unpost="' + v.id + '">Stop posting</button><p class="ob-dr-help">Creators stop posting new copies and it goes back to Needs your yes. Views so far stay counted.</p></div>' : '') +
       (v.status === 'approve' ? '<form class="ob-dr-ask" data-improve="' + v.id + '"><label for="ob-dr-q">Ask for a change</label><div class="ob-add"><input class="ob-input" id="ob-dr-q" placeholder="Like a shorter hook" autocomplete="off"><button class="ob-btn" type="submit" disabled>' + OB.icon('redo', 15) + 'Remake with this</button></div>' +
         '<p class="ob-dr-help">Our team makes a new take with your note. It waits here for your yes, like this one.</p></form>' : '') +
-      (v.status === 'making' ? '<p class="ob-dr-note"><span>BlueAI is making this one. It moves to Needs your yes when it is ready.</span></p>' : '') +
+      (v.status === 'making' ? '<p class="ob-dr-note"><span>Our team is making this one. It moves to Needs your yes when it is ready.</span></p>' : '') +
       '</div></div></div>';
     drawer.classList.add('is-open'); document.body.classList.add('has-drawer');
     var vd = drawer.querySelector('.ob-dr-art video');

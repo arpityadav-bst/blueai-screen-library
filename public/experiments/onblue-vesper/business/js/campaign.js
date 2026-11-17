@@ -22,7 +22,8 @@
       (opts.hint ? '<p class="ob-cp-hint">' + e(opts.hint) + '</p>' : '') + body + '</div>';
   }
   function card(n, title, sub, body) {
-    return '<section class="ob-card ob-cp-card"><header><span class="ob-cp-n">' + n + '</span><div><h2 class="ob-pg-h3">' + e(title) + '</h2><p class="ob-pg-p">' + e(sub) + '</p></div></header>' + body + '</section>';
+    // the first card leads, lit like each page's lead card (Brand, Plan)
+    return '<section class="ob-card' + (n === 1 ? ' ob-card--lit' : '') + ' ob-cp-card"><header><span class="ob-cp-n">' + n + '</span><div><h2 class="ob-pg-h3">' + e(title) + '</h2><p class="ob-pg-p">' + e(sub) + '</p></div></header>' + body + '</section>';
   }
   function views(b) { return OB.fmt(b / OB.RATE * 1000); }
   function day(iso) { var t = new Date(iso + 'T12:00:00'); return isNaN(t) ? e(iso) : t.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
@@ -78,7 +79,7 @@
     return '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">' + e(d.name) + '</h1><p class="ob-p-lede">' +
       (d.status === 'live' ? 'Live. Your first Shorts are being made; they wait in Studio for your yes.' : 'In review. We will email ' + (mail ? e(mail) : 'you') + ' when it is approved.') + '</p></div>' +
       '<div class="ob-pg-act">' + (d.status === 'live' ? '<a class="ob-btn ob-btn--ink" href="studio.html">Open Studio' + OB.icon('arrow', 16) + '</a>' : '<button class="ob-btn" type="button" data-withdraw>Withdraw and edit</button>') + '</div></header>' +
-      '<section class="ob-card ob-cp-track"><ol>' + steps + '</ol></section>' +
+      '<section class="ob-card ob-card--lit ob-cp-track"><ol>' + steps + '</ol></section>' +
       '<section class="ob-card ob-cp-sum"><dl>' +
       '<div><dt>Type</dt><dd>' + (d.type === 'growth' ? 'Video growth' : 'Video engagement') + '</dd></div>' +
       '<div><dt>Product</dt><dd>' + e(d.product) + '</dd></div>' +
