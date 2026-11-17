@@ -1,5 +1,5 @@
 /* "Use with AI" (app/ai.html, js/ai.js): the BlueAI MCP set-up page. */
-.ob-ai { display: grid; gap: var(--s5); max-width: 47.5rem; }
+.ob-ai { display: grid; gap: var(--s4); max-width: 47.5rem; }
 .ob-ai-card { display: grid; gap: var(--s5); }
 .ob-ai-tabs { display: flex; flex-wrap: wrap; gap: var(--s2); }
 .ob-ai-tabs button { height: 2.25rem; padding: 0 var(--s4); border: 1px solid var(--line-2); border-radius: var(--r-pill); background: var(--surface); color: var(--ink-2); font: var(--t-small); font-weight: 500; cursor: pointer; transition: border-color 0.15s var(--ease), color 0.15s var(--ease); }
@@ -11,7 +11,7 @@
 .ob-ai-copy-l { grid-column: 1 / -1; color: var(--ink-3); font: var(--t-label); }
 .ob-ai-copy pre { margin: 0; overflow-x: auto; color: var(--ink-1); font: 400 0.9375rem/1.55 var(--font); white-space: pre-wrap; word-break: break-word; }
 .ob-ai-copy.is-mono pre { font: 500 0.8125rem/1.6 ui-monospace, SFMono-Regular, Consolas, monospace; white-space: pre; word-break: normal; }
-.ob-ai-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s5); }
+.ob-ai-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s4); }
 .ob-ai-list { display: grid; gap: var(--s4); margin: var(--s4) 0 0; padding: 0; list-style: none; }
 .ob-ai-list b { display: block; color: var(--ink-1); font: 500 0.9375rem/1.3 var(--font); }
 .ob-ai-list span { display: block; margin-top: 0.25rem; color: var(--ink-3); font: var(--t-small); text-wrap: pretty; }

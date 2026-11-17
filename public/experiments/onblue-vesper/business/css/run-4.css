@@ -105,7 +105,7 @@
 .ob-recap-figs span { display: block; margin-top: var(--s2); color: var(--ink-3); font: var(--t-small); }
 .ob-recap-to { display: flex; align-items: center; gap: var(--s2); margin: var(--s6) 0 0; padding-top: var(--s5); border-top: 1px solid var(--line); color: var(--ink-3); font: var(--t-small); }
 .ob-recap-to b { color: var(--ink-1); font-weight: 500; }
-.ob-recap + .ob-nextup { margin-top: var(--s5); }
+.ob-recap + .ob-nextup { margin-top: var(--s4); }
 .ob-later-link { margin-left: var(--s2); font: var(--t-small); font-weight: 500; }
 
 /* step 1: fixing the profile is a real control */
@@ -137,3 +137,27 @@
 .ob-angle-fmt { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s2); }
 .ob-angle-fmt .ob-chip { white-space: nowrap; }
 .ob-angle-fmt small { color: var(--ink-3); font: var(--t-label); white-space: nowrap; }
+
+/* ---- ONE SPACING RHYTHM for the steps (Appy, 2026-11-17: the gaps between
+   blocks were 12, 16, 20 or 24 by accident). Measured, then set:
+     32  heading to the first block, last block to the step's button
+     16  between cards, and inside card grids (the homepage bento's gap)
+     12  a caption to its own list, a list to its add field
+     24  inside every light card; 32 inside the dark ones
+     20  a card's tag to its content, its content to its foot */
+.ob-out > * + * { margin-top: var(--s4); }
+.ob-out > .ob-next { margin-top: var(--s8); }
+.ob-out > .ob-rows-cap { margin-bottom: 0; }
+.ob-out > .ob-rows-cap + .ob-rows, .ob-out > .ob-rows + .ob-add { margin-top: var(--s3); }
+.ob-out .ob-tiles3, .ob-out .ob-cards2 { gap: var(--s4); }
+.ob-out .ob-panel, .ob-out .ob-stat { padding: var(--s6); }
+.ob-stage .ob-angle { padding: var(--s6) 3.5rem var(--s6) var(--s6); }
+.ob-win.ob-dark, .ob-recap { padding: var(--s8); }
+.ob-pitch p { margin-top: var(--s5); }
+.ob-recap-figs { margin-top: var(--s5); }
+.ob-recap-to { margin-top: var(--s5); padding-top: var(--s5); }
+@media (max-width: 700px) {
+  .ob-win.ob-dark, .ob-recap { padding: var(--s6); }
+  .ob-out .ob-panel, .ob-out .ob-stat { padding: var(--s5); }
+  .ob-stage .ob-angle { padding: var(--s5) 3.25rem var(--s5) var(--s5); }
+}
