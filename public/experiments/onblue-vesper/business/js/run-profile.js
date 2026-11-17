@@ -79,6 +79,7 @@
 
     function open(li) {
       if (editing) { return; }
+      knows.classList.remove('is-fixing');
       var key = li.getAttribute('data-edit'), b = li.querySelector('b');
       editing = key;
       li.classList.add('is-editing');
@@ -124,7 +125,13 @@
         var t = knows.querySelector('[data-knows-toggle]'); if (t) { t.setAttribute('aria-expanded', 'true'); }
         knows.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-      knows.classList.remove('is-called'); void knows.offsetWidth; knows.classList.add('is-called');
+      // a pulse alone went unnoticed (Appy: "nothing happens"): the panel holds a
+      // volt ring, every fixable fact shows its pen, the hint says what to do, for
+      // a few seconds or until a fact is opened
+      knows.classList.remove('is-called'); void knows.offsetWidth; knows.classList.add('is-called', 'is-fixing');
+      if (hint) { hint.hidden = false; hint.textContent = 'Click any fact to fix it.'; }
+      window.clearTimeout(call.t);
+      call.t = window.setTimeout(function () { knows.classList.remove('is-fixing'); if (hint) { hint.textContent = 'Click anything to fix it. Every campaign starts from this.'; } }, 4000);
       var first = facts.querySelector('[data-edit]');
       if (first) { first.focus({ preventScroll: window.innerWidth <= 860 }); }
     }

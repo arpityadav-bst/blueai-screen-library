@@ -161,3 +161,7 @@
   .ob-out .ob-panel, .ob-out .ob-stat { padding: var(--s5); }
   .ob-stage .ob-angle { padding: var(--s5) 3.25rem var(--s5) var(--s5); }
 }
+/* "Fix something in your profile": unmistakable now (2026-11-17) */
+.ob-knows.is-fixing .ob-facts-wrap { box-shadow: inset 0 1px 0 #fff, 0 0 0 1px var(--accent-line), 0 0 0 5px var(--accent-wash); transition: box-shadow 0.25s var(--ease); }
+.ob-knows.is-fixing .ob-fact.is-edit .ob-fact-pen { opacity: 1; color: var(--ink-1); }
+.ob-knows.is-fixing .ob-knows-hint { color: var(--ink-1); font-weight: 500; }
