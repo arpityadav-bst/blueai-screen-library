@@ -678,3 +678,80 @@ button.cal-day:hover { border-radius: 999px; background: var(--wash); }
 .devbar button { padding: 6px 10px; border: 1px solid transparent; border-radius: 6px; color: var(--muted); font-size: 12.5px; transition: background 0.2s ease, color 0.2s ease; }
 .devbar button:hover { background: var(--wash); color: var(--ink); }
 .devbar button[aria-pressed="true"] { border-color: rgba(21, 110, 254, 0.45); background: rgba(21, 110, 254, 0.16); color: var(--ink); }
+
+/* ---- platforms --------------------------------------------------------------
+   A campaign on more than one platform: the platform list in the header line,
+   a By platform card after the chart, a row per platform under Amount spent,
+   a Platform pill on the chart, Top creators, Top posts and the posts list,
+   and the platform's mark on rows where more than one platform sits
+   together. A one-platform campaign shows none of it beyond "Platform:
+   YouTube" in the header line. */
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.pm { flex: none; display: inline-block; width: 14px; height: 14px; }
+.pm-meta { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.pm-name { display: inline-flex; align-items: center; gap: 5px; }
+.pm-name .pm { width: 15px; height: 15px; }
+
+/* the Platform pill: the filters' own pill, its value led by the mark */
+.sel[data-sel="platform"] .sel-v { display: inline-flex; align-items: center; gap: 5px; }
+.card-acts { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px 16px; }
+
+/* Subscribers and followers off: no such column, and the grids close up.
+   Below 961px the column is gone anyway. */
+html.no-fans .c-subs { display: none; }
+@media (min-width: 1081px) {
+  html.no-fans { --cols: minmax(0, 1fr) 180px 100px 72px 60px 82px 36px; --cols-r: 24px minmax(0, 1fr) 180px 100px 72px 60px 82px 36px; }
+  html.no-fans .tbl--creators { --tcols: 24px minmax(0, 1fr) 70px 100px 80px 96px; }
+}
+@media (min-width: 961px) and (max-width: 1080px) {
+  html.no-fans { --cols: minmax(0, 1fr) 150px 96px 64px 54px 74px 36px; --cols-r: 22px minmax(0, 1fr) 150px 96px 64px 54px 74px 36px; }
+  html.no-fans .tbl--creators { --tcols: 22px minmax(0, 1fr) 60px 88px 70px 86px; }
+}
+
+/* Likes and Comments leave the top cards when By platform carries them */
+.tiles--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.minis--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* By platform: a row per platform, then the total. The bar is the one place
+   a platform's colour shows, and its name always sits beside it. */
+.tbl--plat { --tcols: minmax(0, 1fr) 64px 76px 96px minmax(140px, 1.3fr) 76px 88px 92px; }
+.bp-name { display: inline-flex; align-items: center; gap: 10px; min-width: 0; font-size: 13.5px; font-weight: 500; }
+.bp-name .pm { width: 18px; height: 18px; }
+.bp-share { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.bp-bar { flex: 1; height: 6px; overflow: hidden; border-radius: 3px; background: var(--lift); }
+.bp-bar i { display: block; height: 100%; border-radius: 3px; background: var(--c); }
+.bp-pct { flex: none; width: 34px; color: var(--muted); font-size: 12.5px; text-align: right; font-variant-numeric: tabular-nums; }
+.tr-total .bp-name { padding-left: 28px; font-weight: 600; }
+.tr-total .n { font-weight: 600; }
+
+/* a platform's mark in the corner of an avatar or a thumbnail, ringed in
+   the card colour so it reads over either */
+.av { position: relative; }
+.pbadge { position: absolute; right: -4px; bottom: -4px; display: grid; place-items: center; width: 16px; height: 16px; border-radius: 5px; background: var(--card); box-shadow: 0 0 0 1.5px var(--card); }
+.pbadge .pm { width: 13px; height: 13px; }
+.thumb .pbadge { right: 3px; bottom: 3px; width: 15px; height: 15px; border-radius: 4px; }
+.thumb .pbadge .pm { width: 12px; height: 12px; }
+
+/* Accounting: each platform's views and cost under "Amount spent" */
+.acct tr.acct-plat td { padding-top: 0; border-top: 0; }
+.acct tr.acct-plat td + td { color: var(--muted); font-weight: 500; }
+.acct-pl { display: inline-flex; align-items: center; gap: 6px; padding-left: 12px; color: var(--ink-soft); }
+.acct-plat .acct-work { padding-left: 32px; }
+
+@media (max-width: 1080px) {
+  .tbl--plat { --tcols: minmax(0, 1fr) 56px 70px 88px minmax(110px, 1fr) 66px 80px 84px; }
+}
+@media (max-width: 960px) {
+  .tbl--plat { --tcols: minmax(0, 1fr) 56px 70px 88px minmax(110px, 1fr) 84px; }
+  .tbl--plat .c-likes, .tbl--plat .c-comments { display: none; }
+}
+@media (max-width: 760px) {
+  .card-head:has(> .card-acts) { flex-wrap: wrap; }
+  .tbl--plat { --tcols: minmax(0, 1fr) 72px 40px 72px; }
+  .tbl--plat .c-creators, .tbl--plat .bp-bar, .bp-more { display: none; }
+}
+
+/* Viewer data names the platforms it covers when the campaign has others */
+.aud-title { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.aud-only { display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 9px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--muted); font-size: 12px; font-weight: 500; white-space: nowrap; }
+.aud-only .pm { width: 13px; height: 13px; }

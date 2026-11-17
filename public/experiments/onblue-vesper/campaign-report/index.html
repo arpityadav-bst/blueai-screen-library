@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-look="3">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -47,13 +47,13 @@
       <div class="rep-meta" id="c-meta"></div>
     </div>
     <div class="rep-actions">
-      <button class="btn" type="button" id="btn-share" aria-haspopup="dialog" data-owner></button>
+      <button class="btn" type="button" id="btn-csv" data-owner></button>
+      <button class="btn" type="button" id="btn-pdf">Download PDF</button>
       <div class="rep-more">
         <button class="btn icon-btn" type="button" id="btn-more" aria-haspopup="menu" aria-expanded="false" aria-controls="more-menu" aria-label="More actions">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>
         </button>
         <div class="more-menu" id="more-menu" role="menu" hidden>
-          <button type="button" role="menuitem" id="btn-csv" data-owner></button>
           <button type="button" role="menuitem" id="btn-copy-id" data-copy="">Copy report ID</button>
         </div>
       </div>
@@ -101,9 +101,12 @@
             <h2 class="rep-h">Views over time</h2>
             <p class="rep-hint" id="chart-hint"></p>
           </div>
-          <div class="seg" role="group" aria-label="Chart view">
-            <button type="button" data-chart-mode="day" aria-pressed="true">Per day</button>
-            <button type="button" data-chart-mode="total" aria-pressed="false">Total</button>
+          <div class="card-acts">
+            <div id="chart-pf"></div>
+            <div class="seg" role="group" aria-label="Chart view">
+              <button type="button" data-chart-mode="total" aria-pressed="true">Total</button>
+              <button type="button" data-chart-mode="day" aria-pressed="false">Per day</button>
+            </div>
           </div>
         </div>
         <div class="chart" id="chart"></div>
@@ -115,6 +118,8 @@
         <p class="rep-foot" id="acct-foot">If the campaign closes under target, unconsumed budget is settled per the make-good policy in your agreement.</p>
       </aside>
     </div>
+    <!-- two platforms or more: one row per platform, then the total (Abhisht, 2026-11-16) -->
+    <section class="card" id="by-plat" hidden></section>
   </section>
 
   <section class="rsec" id="sec-creators" aria-label="Creators" tabindex="-1">
@@ -127,7 +132,7 @@
   <section class="card" id="posts-card">
     <div class="card-head posts-head">
       <div>
-        <h2 class="rep-h">Posts published in this period</h2>
+        <h2 class="rep-h">Posts published</h2>
         <p class="rep-hint" id="posts-hint"></p>
       </div>
       <label class="search">
@@ -198,12 +203,12 @@
 <!-- Prototype review controls, not part of the product: one look at a time on
      the real page. -->
 <div class="devdock" aria-label="Prototype controls">
-  <!-- three looks of the same report (Appy, 2026-11-16): report-looks.js -->
   <div class="devbar">
-    <b>Layout</b>
-    <button type="button" data-look="1" aria-pressed="true">1 Refined</button>
-    <button type="button" data-look="2" aria-pressed="false">2 Bento</button>
-    <button type="button" data-look="3" aria-pressed="false">3 Volt</button>
+    <b>Platforms</b>
+    <button type="button" data-plat-mode="youtube" aria-pressed="false">YouTube only</button>
+    <button type="button" data-plat-mode="instagram" aria-pressed="false">Instagram only</button>
+    <button type="button" data-plat-mode="youtube,instagram" aria-pressed="true">YouTube + Instagram</button>
+    <button type="button" data-plat-mode="youtube,instagram,tiktok" aria-pressed="false">+ TikTok (sample)</button>
   </div>
   <div class="devbar">
     <b>Top cards</b>
@@ -242,6 +247,5 @@
 <script src="report-nav.js"></script>
 <script src="report-head.js"></script>
 <script src="report-selects.js"></script>
-<script src="report-looks.js"></script>
 </body>
 </html>

@@ -61,21 +61,120 @@
     c.subs = Math.max(c.subs, r.subs || 0);
   });
 
+  /* ---- platforms -----------------------------------------------------------
+     A campaign runs on one or more platforms (details.platforms, ROB-21562),
+     and every post is on ONE of them: the platform of the account that posted
+     it (the posts API sends it as channel.platform). Everything a platform
+     names its own way lives here, so a third platform is one more entry.
+     YouTube's words are the report's approved ones, so a YouTube only
+     campaign reads exactly as before. */
+  var MARK = {
+    youtube: '<svg class="pm" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+      + '<path fill="#FF0000" d="M23.5 6.2a3 3 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3 3 0 0 0 .5 6.2C0 8.07 0 12 0 12s0 3.93.5 5.8a3 3 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51A3 3 0 0 0 23.5 17.8C24 15.93 24 12 24 12s0-3.93-.5-5.8z"/>'
+      + '<path fill="#fff" d="M9.55 15.57V8.43L15.82 12l-6.27 3.57z"/></svg>',
+    instagram: '<svg class="pm" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+      + '<rect x="1.5" y="1.5" width="21" height="21" rx="6" fill="url(#rp-ig)"/>'
+      + '<rect x="6.2" y="6.2" width="11.6" height="11.6" rx="3.6" fill="none" stroke="#fff" stroke-width="1.9"/>'
+      + '<circle cx="12" cy="12" r="2.9" fill="none" stroke="#fff" stroke-width="1.9"/><circle cx="17.2" cy="6.8" r="1.1" fill="#fff"/></svg>',
+    tiktok: '<svg class="pm" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+      + '<rect x="1.5" y="1.5" width="21" height="21" rx="6" fill="#111"/>'
+      + '<g fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+      + '<path stroke="#25F4EE" transform="translate(-0.7 -0.5)" d="M12.6 6v8.3a2.6 2.6 0 1 1-2.6-2.6M12.6 6c.3 1.9 1.6 3.1 3.6 3.3"/>'
+      + '<path stroke="#FE2C55" transform="translate(0.7 0.5)" d="M12.6 6v8.3a2.6 2.6 0 1 1-2.6-2.6M12.6 6c.3 1.9 1.6 3.1 3.6 3.3"/>'
+      + '<path stroke="#fff" d="M12.6 6v8.3a2.6 2.6 0 1 1-2.6-2.6M12.6 6c.3 1.9 1.6 3.1 3.6 3.3"/></g></svg>'
+  };
+  /* series colours (the By platform bars), validated together for colour
+     blind and normal vision, each a hue from its platform's own mark */
+  var PLAT = {
+    youtube: {
+      name: 'YouTube', color: '#e0261b', mark: MARK.youtube,
+      fans: 'Subscribers', fan: 'subscriber', acct: 'channel',
+      openAcct: 'Open channel', copyAcct: 'Copy channel link',
+      post: function (id) { return 'https://www.youtube.com/shorts/' + id; },
+      home: function (h) { return 'https://www.youtube.com/' + h; }
+    },
+    instagram: {
+      name: 'Instagram', color: '#b729a8', mark: MARK.instagram,
+      fans: 'Followers', fan: 'follower', acct: 'account',
+      openAcct: 'Open profile', copyAcct: 'Copy profile link',
+      post: function (id) { return 'https://www.instagram.com/reel/' + id + '/'; },
+      home: function (h) { return 'https://www.instagram.com/' + h.replace(/^@/, '') + '/'; }
+    },
+    /* TikTok is a review sample for now: proof that one more platform is one
+       more entry here, and nothing else on the page changes */
+    tiktok: {
+      name: 'TikTok', color: '#009e8f', mark: MARK.tiktok,
+      fans: 'Followers', fan: 'follower', acct: 'account',
+      openAcct: 'Open profile', copyAcct: 'Copy profile link',
+      post: function (id, h) { return 'https://www.tiktok.com/' + h + '/video/' + id; },
+      home: function (h) { return 'https://www.tiktok.com/' + h; }
+    }
+  };
+  var PLAT_ORDER = ['youtube', 'instagram', 'tiktok'];
+  /* WHICH PLATFORMS THIS CAMPAIGN RUNS ON (prototype): ?platforms=youtube,instagram
+     when the app passes the campaign's own list, else the review bar's pick,
+     YouTube + Instagram by default while this is reviewed. The list's order
+     is the order everywhere on the page. */
+  function platList(s) {
+    return String(s || '').toLowerCase().split(',').filter(function (k, i, a) { return PLAT[k] && a.indexOf(k) === i; });
+  }
+  var platMode = 'youtube,instagram';
+  try { platMode = window.localStorage.getItem('campaign-report:platforms') || platMode; } catch (e) {}
+  if (platMode === 'both') { platMode = 'youtube,instagram'; }
+  var qPlat = new URLSearchParams(location.search).get('platforms');
+  if (qPlat && platList(qPlat).length) { platMode = qPlat; }
+  C.platforms = platList(platMode).length ? platList(platMode) : ['youtube', 'instagram'];
+  platMode = C.platforms.join(',');
+
+  /* Sample data is YouTube's, so on a campaign with more platforms some of
+     the accounts move to each of the others (Instagram about a third, TikTok
+     about a fifth), from a seed of their own (every other number on the page
+     stays as it was). The real report reads it per post. */
+  var pseed = 20261116;
+  function PR() {
+    pseed = pseed + 0x6D2B79F5 | 0;
+    var t = Math.imul(pseed ^ pseed >>> 15, 1 | pseed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  }
+  var SAMPLE_SHARE = { instagram: 0.36, tiktok: 0.22 };
+  creators.forEach(function (c) {
+    var r = PR(), acc = 0;
+    c.platform = C.platforms[0];
+    C.platforms.slice(1).some(function (k) {
+      acc += SAMPLE_SHARE[k] || 0.2;
+      if (r < acc) { c.platform = k; return true; }
+      return false;
+    });
+    if (c.platform === 'instagram') { c.handle = '@' + c.handle.replace(/^@/, '').replace(/-/g, '.'); }
+    if (c.platform === 'tiktok') { c.handle = '@' + c.handle.replace(/^@/, '').replace(/-/g, '_'); }
+  });
+  function sampleId(k, v, i) {
+    if (k === 'youtube') { return v; }
+    if (k === 'tiktok') { return '7437' + String(100000000000000 + i * 7919337).slice(-15); }
+    return 'DQ' + v.slice(-5) + v.slice(-9, -5).toUpperCase();
+  }
+
   var posts = REAL.map(function (r, i) {
+    var c = byHandle[r.h];
     return {
       id: 'p' + (i + 1),
-      creator: byHandle[r.h],
-      asset: { id: r.v, title: r.t, thumb: r.th, emoji: EMOJI[(i * 5) % EMOJI.length], hue: (i * 47 + 200) % 360 },
+      creator: c,
+      platform: c.platform,
+      asset: { id: r.v, title: r.t, thumb: c.platform === 'youtube' ? r.th : null, emoji: EMOJI[(i * 5) % EMOJI.length], hue: (i * 47 + 200) % 360 },
       at: Date.parse(r.at),
       views: r.views || 0,
       likes: r.likes || 0,
       comments: r.comments || 0,
       d: (r.d || []).slice(),
       status: r.live ? 'live' : 'removed',
-      url: 'https://www.youtube.com/shorts/' + r.v
+      url: PLAT[c.platform].post(sampleId(c.platform, r.v, i), c.handle)
     };
   });
   C.views = posts.reduce(function (s, p) { return s + p.views; }, 0);
+  /* Every post of the campaign (the same list as `posts`); each section
+     picks its own platform from it. */
+  var ALL = posts;
 
   /* ---- views by day, per post ---------------------------------------------- */
   var DAY0 = new Date(2026, 9, 1).getTime();
@@ -170,7 +269,7 @@
   function isFull() { return period.from === 0 && period.to === LAST; }
 
   function applyPeriod() {
-    posts.forEach(function (p) {
+    ALL.forEach(function (p) {
       var v = 0;
       for (var k = period.from; k <= period.to; k++) { v += p.d[k]; }
       p.r = p.views ? v / p.views : 0;
@@ -179,6 +278,53 @@
       p.pc = Math.round(p.comments * p.r);
       p.live = p.d0 <= period.to;
     });
+  }
+
+  /* ---- platforms on the page -----------------------------------------------
+     No platform tabs over the page (Abhisht 2026-11-16). The tiles and the
+     Accounting card are always the whole campaign, the By platform card
+     splits it, and the chart, Top creators, Top posts and the posts list each
+     have a Platform pill of their own: All, then one option per platform the
+     campaign runs on. The pill is the filters' own select, so a fourth or
+     fifth platform is one more option in it, never a new layout. */
+  var pf = { chart: 'all', creators: 'all', top: 'all' };
+  function multi() { return C.platforms.length > 1; }
+  function pick(list, k) {
+    return !k || k === 'all' ? list : list.filter(function (p) { return p.platform === k; });
+  }
+  // the platforms a section shows: every one, or the one its pill picked
+  function inView(k) { return !k || k === 'all' ? C.platforms : [k]; }
+  // rows from more than one platform side by side: each carries its mark
+  function mixed(k) { return inView(k).length > 1; }
+  /* One platform: its own words (Subscribers, channels). More than one: the
+     words that fit them all. */
+  var BOTH = { fans: 'Followers', fan: 'follower', acct: 'account' };
+  function word(w, k) { var v = inView(k); return v.length === 1 ? PLAT[v[0]][w] : BOTH[w]; }
+  function names(list) {
+    var n = list.map(function (k) { return PLAT[k].name; });
+    return n.length < 3 ? n.join(' and ') : n.slice(0, -1).join(', ') + ' and ' + n[n.length - 1];
+  }
+  function viewsOn(k, list) {
+    return (list || ALL).reduce(function (s, p) { return s + (p.platform === k ? p.views : 0); }, 0);
+  }
+  /* SUBSCRIBERS AND FOLLOWERS are off for now on every campaign (Abhisht
+     2026-11-16; the Instagram accounts are brand new). Off, the column, its
+     sort, the drawer's count and the CSV column all go; true brings them all
+     back. */
+  var SHOW_FANS = false;
+  function fansWord(k) { return word('fans', k); }
+  function fansCell(c) { return num(c.subs); }
+  /* The Platform pill: the posts list's filter pill, reused by every section
+     that narrows to one platform. Only on a campaign with two platforms or
+     more. */
+  function selPlat(k) { return k === 'all' ? 'All' : PLAT[k].mark + PLAT[k].name; }
+  function platSel(id, k) {
+    if (!multi()) { return ''; }
+    return '<label class="sel' + (k !== 'all' ? ' is-set' : '') + '" data-sel="platform"><span class="sel-k">Platform</span>'
+      + '<span class="sel-v">' + selPlat(k) + '</span>'
+      + '<select data-pf="' + id + '" aria-label="Platform">' + ['all'].concat(C.platforms).map(function (q) {
+          return '<option value="' + q + '"' + (q === k ? ' selected' : '') + '>' + (q === 'all' ? 'All' : PLAT[q].name) + '</option>';
+        }).join('') + '</select></label>';
   }
 
   /* ---- formatting ---------------------------------------------------------- */
@@ -244,21 +390,30 @@
     chev: ic('<path d="m9 6 6 6-6 6"/>', 14, 2),
     info: ic('<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5h.01"/>', 14),
     yt: ic('<rect x="2.5" y="5.5" width="19" height="13" rx="3.5"/><path d="m10 9.5 4.5 2.5-4.5 2.5z"/>', 15),
+    ig: ic('<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="3.8"/><path d="M16.9 7.1h.01"/>', 15),
     ext: ic('<path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>', 12, 2)
   };
 
-  function avatar(c, size) {
-    return '<span class="av' + (size ? ' av--' + size : '') + '" style="--h:' + c.hue + '" aria-hidden="true">' + esc(initials(c.name)) + '</span>';
+  /* The platform's mark in the corner of an avatar or a thumbnail, only where
+     rows from more than one platform sit together; the name rides along for
+     screen readers. */
+  function badge(k) {
+    return '<span class="pbadge">' + PLAT[k].mark + '<span class="sr">' + PLAT[k].name + '</span></span>';
+  }
+  function avatar(c, size, mark) {
+    return '<span class="av' + (size ? ' av--' + size : '') + '" style="--h:' + c.hue + '">'
+      + '<span aria-hidden="true">' + esc(initials(c.name)) + '</span>' + (mark ? badge(c.platform) : '') + '</span>';
   }
   /* The real thumbnail when YouTube has one: the small 480x360 one in lists
      (cropped to the vertical frame), full size in the details panel. The
      coloured tile underneath shows if it fails to load or the Short is gone. */
-  function thumb(a, size, flag) {
-    return '<span class="thumb' + (size ? ' thumb--' + size : '') + '" style="--h:' + a.hue + '" aria-hidden="true">'
-      + '<span class="thumb-em">' + a.emoji + '</span>'
+  function thumb(a, size, flag, mark) {
+    return '<span class="thumb' + (size ? ' thumb--' + size : '') + '" style="--h:' + a.hue + '">'
+      + '<span class="thumb-em" aria-hidden="true">' + a.emoji + '</span>'
       + (a.thumb ? '<img src="' + (size === 'lg' ? a.thumb : 'https://i.ytimg.com/vi/' + a.id + '/hqdefault.jpg')
         + '" alt="" loading="lazy" onerror="this.remove()">' : '')
       + (flag ? '<span class="thumb-flag">Removed</span>' : '')
+      + (mark ? badge(mark) : '')
       + '</span>';
   }
   function statsInline(p) {
@@ -271,7 +426,7 @@
   }
 
   var byId = {};
-  posts.forEach(function (p) { byId[p.id] = p; });
+  ALL.forEach(function (p) { byId[p.id] = p; });
 
   function groupBy(list, key) {
     var map = {}, out = [];
@@ -336,16 +491,26 @@
        product (the name already says it) or the id (Copy report ID, in the
        menu) (Appy, 2026-11-16) */
     $('#c-status').innerHTML = '<span class="chip chip--live">Live</span>';
-    $('#c-meta').innerHTML = '<span>Ends ' + dateF(C.ends) + '</span><span>' + esc(C.country) + '</span>';
+    /* data-m names each item so the app's frame fills them by name; the
+       platforms ride at the end, marks and names (Abhisht, 2026-11-16) */
+    $('#c-meta').innerHTML = '<span data-m="ends">Ends ' + dateF(C.ends) + '</span><span data-m="geo">' + esc(C.country) + '</span>'
+      + '<span class="pm-meta" data-m="platforms">' + C.platforms.map(function (k) {
+          return '<b class="pm-name">' + PLAT[k].mark + PLAT[k].name + '</b>';
+        }).join('') + '</span>';
     $('#btn-copy-id').setAttribute('data-copy', C.ref);
     $('#c-updated').textContent = ago(updatedAt);
     $('#btn-refresh').innerHTML = IC.refresh;
     renderShareBtn();
     $('#btn-csv').textContent = 'Download CSV';
   }
+  /* The date range and Share are off the page for now: neither is in the
+     product yet (Abhisht 2026-11-16). The period stays the whole campaign,
+     and their code waits here for the buttons to come back. */
   function renderRangeBtn() {
-    $('#btn-range').innerHTML = IC.cal + '<span>' + esc(rangeLabel()) + '</span><span class="caret">' + IC.caret + '</span>';
-    $('#btn-range').classList.toggle('is-on', !isFull());
+    var b = $('#btn-range');
+    if (!b) { return; }
+    b.innerHTML = IC.cal + '<span>' + esc(rangeLabel()) + '</span><span class="caret">' + IC.caret + '</span>';
+    b.classList.toggle('is-on', !isFull());
   }
 
   /* ---- tiles ---------------------------------------------------------------
@@ -385,29 +550,34 @@
     sc.forEach(function (p) { pv += p.pv; pl += p.pl; pc += p.pc; });
     var periodSpend = billed(pv), overBy = lifeSpend - C.budget;
     var left = Math.max(0, Math.ceil((C.ends - NOW) / DAY));
-    var newPosts = posts.filter(function (p) { return p.d0 >= period.from && p.d0 <= period.to; }).length;
+    var isNew = function (p) { return p.d0 >= period.from && p.d0 <= period.to; };
+    var newPosts = posts.filter(isNew).length;
     var active = groupBy(sc.filter(function (p) { return p.pv > 0; }), creatorKey).length;
     var top = $('#tiles-top'), low = $('#tiles-posts');
+    var seenSub = names(C.platforms) + ' views on published posts';
+    var acctsSub = word('acct') + 's posting your videos';
+    /* Likes and Comments get cards of their own only on a one-platform
+       campaign; with two or more, the By platform card carries them, per
+       platform and in total (Abhisht 2026-11-16). */
+    var counts = !multi();
 
     if (tilesMode === 'current') {
       top.className = 'tiles tiles--five';
-      low.className = 'tiles tiles--four';
+      low.className = 'tiles ' + (counts ? 'tiles--four' : 'tiles--two');
       top.innerHTML =
           tile('Fill', Math.floor(C.views / C.target * 100) + '%', num(C.views) + ' of ' + num(C.target) + ' target')
-        + (full ? tile('Views', num(C.views), 'YouTube views on published posts')
-                : tile('Views', num(pv), 'gathered ' + spanText()))
-        + (full ? tile('Spend', money(lifeSpend), 'of ' + money(C.budget))
-                : tile('Spend', money(periodSpend), 'spent ' + spanText()))
+        + (full ? tile('Views', num(C.views), seenSub) : tile('Views', num(pv), 'gathered ' + spanText()))
+        + (full ? tile('Spend', money(lifeSpend), 'of ' + money(C.budget)) : tile('Spend', money(periodSpend), 'spent ' + spanText()))
         + (over ? tile('Over budget', money(overBy), 'spent past the ' + money(C.budget) + ' budget')
                 : tile('Remaining', money(C.budget - lifeSpend), 'budget left to spend'))
         + tile('Time left', left + ' days', 'ends ' + dateF(C.ends));
       low.innerHTML =
-          (full ? tile('Total posts', num(posts.length), 'live on members\u2019 own accounts')
+          (full ? tile('Total posts', num(posts.length), 'live on members’ own accounts')
                 : tile('New posts', num(newPosts), 'published ' + spanText()))
-        + (full ? tile('Creators', num(groupBy(posts, creatorKey).length), 'channels posting your videos')
+        + (full ? tile('Creators', num(groupBy(posts, creatorKey).length), acctsSub)
                 : tile('Creators', num(active), 'with views ' + spanText()))
-        + tile('Likes', num(pl), full ? 'on those posts' : 'gathered ' + spanText())
-        + tile('Comments', num(pc), full ? 'on those posts' : 'gathered ' + spanText());
+        + (counts ? tile('Likes', num(pl), full ? 'on those posts' : 'gathered ' + spanText())
+                  + tile('Comments', num(pc), full ? 'on those posts' : 'gathered ' + spanText()) : '');
     } else {
       /* ONE HERO, FOUR FACTS (blind dashboard review, Appy 2026-11-16): Views
          is the one number that says whether this is working, so it stands
@@ -422,7 +592,7 @@
       low.className = 'minis';
       top.innerHTML = (!full ? hero('Views', num(pv), 'gathered ' + spanText())
           : target ? hero('Views', num(C.views), 'of the ' + num(C.target) + ' views your budget covers', fillBar(C.views / C.target))
-          : hero('Views', num(C.views), 'YouTube views on published posts')).replace(/<\/div>$/, by + '</div>');
+          : hero('Views', num(C.views), seenSub)).replace(/<\/div>$/, by + '</div>');
       low.innerHTML =
           (full ? mini('Spend', money(lifeSpend), 'of ' + money(C.budget))
                 : mini('Spend', money(periodSpend), spanText()))
@@ -442,6 +612,13 @@
         '<tr><td>Campaign budget</td><td>' + money(C.budget) + '</td></tr>'
       + '<tr><td>Cost per 1,000 views</td><td>' + money(C.cpm) + '</td></tr>'
       + '<tr><td>Amount spent<span class="acct-work">' + num(C.views) + ' × $' + (C.cpm / 1000).toFixed(4) + '</span></td><td>' + money(lifeSpend) + '</td></tr>'
+      /* two platforms or more: each platform's views and what they cost,
+         one price per 1,000 views on every platform */
+      + (multi() ? C.platforms.map(function (k) {
+          var v = viewsOn(k);
+          return '<tr class="acct-plat"><td><span class="acct-pl">' + PLAT[k].mark + PLAT[k].name + '</span>'
+            + '<span class="acct-work">' + plural(v, 'view') + '</span></td><td>' + money(billed(v)) + '</td></tr>';
+        }).join('') : '')
       + (over
         ? '<tr class="is-total"><td>Over budget<span class="acct-work">'
           + (tilesMode === 'notarget' ? 'spent past the ' + money(C.budget) + ' budget'
@@ -466,17 +643,20 @@
     var raw = Math.max(1, max) / parts, mag = Math.pow(10, Math.floor(Math.log10(raw)));
     return [1, 2, 2.5, 5, 10].map(function (m) { return m * mag; }).filter(function (s) { return s >= raw; })[0];
   }
-  function chartPoints() {
+  /* The chart's Platform pill picks whose views it draws: every platform's
+     together (All), or one platform's. Always one line. */
+  function chartPoints(list) {
     var pts = [], k, s = 0, inc;
+    var dayViews = function (day) { return list.reduce(function (t, p) { return t + p.d[day]; }, 0); };
     if (period.from === period.to) {
       k = period.from;
-      inc = posts.reduce(function (t, p) { return t + p.d[k]; }, 0);
+      inc = dayViews(k);
       pts.push({ label: dayShort(k), tip: dateF(dayDate(k)) + ', start of day', v: 0, inc: null });
       pts.push({ label: k === LAST ? 'Now' : 'End of day', tip: dateF(dayDate(k)) + (k === LAST ? ', so far' : ', end of day'), v: inc, inc: inc });
       return pts;
     }
     for (k = period.from; k <= period.to; k++) {
-      inc = posts.reduce(function (t, p) { return t + p.d[k]; }, 0);
+      inc = dayViews(k);
       s += inc;
       pts.push({ label: dayShort(k), tip: dateF(dayDate(k)), v: s, inc: inc });
     }
@@ -486,19 +666,22 @@
   var CH = { W: 660, H: 250, L: 46, R: 16, T: 22, B: 32 };
 
   /* PER DAY OR TOTAL (CEO and PM, 2026-11-16), a switch in the card head.
-     Per day, the default: a bar per day of the views gathered that day, on the
-     same axes and date marks, the latest day drawn solid and labelled. Total:
-     the line below, unchanged. Remembered per browser. */
-  var chartMode = 'day';
-  try { if (window.localStorage.getItem('campaign-report:chart') === 'total') { chartMode = 'total'; } } catch (e) {}
-  function dayViews(k) { return posts.reduce(function (t, p) { return t + p.d[k]; }, 0); }
-  function renderBars() {
+     Total, the default since Appy 2026-11-17: the line below. Per day: a bar
+     per day of the views gathered that day, on the same axes and date marks,
+     the latest day drawn solid and labelled. Remembered per browser (a new
+     key, so the old Per day default isn't carried over). Both draw the posts
+     the chart's Platform pill picked. */
+  var chartMode = 'total';
+  try { if (window.localStorage.getItem('campaign-report:chart-view') === 'day') { chartMode = 'day'; } } catch (e) {}
+  function dayViews(k, list) { return list.reduce(function (t, p) { return t + p.d[k]; }, 0); }
+  function renderBars(list, who) {
     var pts = [], k, top = 0, sum = 0;
     for (k = period.from; k <= period.to; k++) {
-      pts.push({ label: dayShort(k), tip: dateF(dayDate(k)) + (k === LAST ? ', so far' : ''), v: dayViews(k) });
+      pts.push({ label: dayShort(k), tip: dateF(dayDate(k)) + (k === LAST ? ', so far' : ''), v: dayViews(k, list) });
     }
-    $('#chart-hint').textContent = period.from === period.to ? 'Views gathered on ' + spanText() + '.'
-      : isFull() ? 'Views gathered each day on published posts.' : 'Views gathered each day, ' + spanText() + '.';
+    var V = who ? who + 'views' : 'Views';
+    $('#chart-hint').textContent = period.from === period.to ? V + ' gathered on ' + spanText() + '.'
+      : isFull() ? V + ' gathered each day on published posts.' : V + ' gathered each day, ' + spanText() + '.';
     var n = pts.length;
     pts.forEach(function (p) { top = Math.max(top, p.v); sum += p.v; });
     var yMax = niceStep(top, 4) * 4, slot = (CH.W - CH.L - CH.R) / n;
@@ -529,7 +712,7 @@
     var near = Math.max.apply(null, pts.slice(-4).map(function (p) { return p.v; }));
     var lx = n === 1 ? cx(0) : cx(n - 1) + bw / 2;
     $('#chart').innerHTML =
-      '<svg viewBox="0 0 ' + CH.W + ' ' + CH.H + '" role="img" aria-label="Views gathered each day, ' + num(sum) + ' in total, ' + num(pts[n - 1].v) + ' on the latest day">'
+      '<svg viewBox="0 0 ' + CH.W + ' ' + CH.H + '" role="img" aria-label="' + V + ' gathered each day, ' + num(sum) + ' in total, ' + num(pts[n - 1].v) + ' on the latest day">'
       + '<g stroke="rgba(0,0,0,0.08)" stroke-width="1">' + rules + '</g>'
       + '<rect class="hov-band" visibility="hidden" y="' + CH.T + '" width="' + hw.toFixed(1) + '" height="' + (base - CH.T).toFixed(1) + '" rx="4" fill="rgba(0,0,0,0.04)"/>'
       + '<g fill="#767b85" font-size="10"' + font + '>' + labels + '</g>'
@@ -556,15 +739,17 @@
   }
 
   function renderChart() {
+    var k0 = pf.chart, who = k0 === 'all' ? '' : PLAT[k0].name + ' ';
+    $('#chart-pf').innerHTML = platSel('chart', k0);
     document.querySelectorAll('[data-chart-mode]').forEach(function (b) {
       b.setAttribute('aria-pressed', b.getAttribute('data-chart-mode') === chartMode ? 'true' : 'false');
     });
-    if (chartMode === 'day') { renderBars(); return; }
+    if (chartMode === 'day') { renderBars(pick(posts, k0), who); return; }
     $('#chart-hint').textContent = isFull()
-      ? 'Total views gathered on published posts, by day.'
-      : 'Views gathered ' + spanText() + ', by day.';
+      ? (who ? who + 'views' : 'Total views') + ' gathered on published posts, by day.'
+      : (who ? who + 'views' : 'Views') + ' gathered ' + spanText() + ', by day.';
 
-    var pts = chartPoints(), n = pts.length, k;
+    var pts = chartPoints(pick(posts, k0)), n = pts.length, k;
     var last = pts[n - 1].v;
     var yMax = niceStep(last, 4) * 4;
     var cx = function (j) { return CH.L + (CH.W - CH.L - CH.R) * (j / (n - 1)); };
@@ -592,7 +777,7 @@
     var font = ' font-family="Inter, system-ui, sans-serif"';
 
     $('#chart').innerHTML =
-      '<svg viewBox="0 0 ' + CH.W + ' ' + CH.H + '" role="img" aria-label="Views gathered by day, ' + num(last) + ' in total">'
+      '<svg viewBox="0 0 ' + CH.W + ' ' + CH.H + '" role="img" aria-label="' + (who ? who + 'views' : 'Views') + ' gathered by day, ' + num(last) + ' in total">'
       + '<g stroke="rgba(0,0,0,0.08)" stroke-width="1">' + rules + '</g>'
       + '<g fill="#767b85" font-size="10"' + font + '>' + labels + '</g>'
       + '<path d="' + area + '" fill="rgba(21,110,254,0.08)"/>'
@@ -627,19 +812,58 @@
     svg.addEventListener('pointerleave', leave);
   }
 
+  /* ---- by platform ---------------------------------------------------------
+     A campaign on two platforms or more, right after the chart: one row per
+     platform in the campaign's order, then the campaign's total. Campaign to
+     date. Spend is the platform's views at the campaign's one price, so the
+     rows add up to Amount spent. */
+  function renderByPlat() {
+    var el = $('#by-plat');
+    el.hidden = !multi();
+    if (el.hidden) { el.innerHTML = ''; return; }
+    var count = function (list) {
+      var r = { posts: list.length, creators: groupBy(list, creatorKey).length, views: 0, likes: 0, comments: 0 };
+      list.forEach(function (p) { r.views += p.views; r.likes += p.likes; r.comments += p.comments; });
+      return r;
+    };
+    var lead = function (r) {
+      return '<span class="n c-posts">' + num(r.posts) + '</span><span class="n c-creators">' + num(r.creators) + '</span>'
+        + '<span class="n is-key">' + num(r.views) + '</span>';
+    };
+    var tail = function (r) {
+      return '<span class="n c-likes">' + num(r.likes) + '</span><span class="n c-comments">' + num(r.comments) + '</span>'
+        + '<span class="n">' + money(billed(r.views)) + '</span>';
+    };
+    var all = count(ALL);
+    var rows = C.platforms.map(function (k) {
+      var r = count(pick(ALL, k)), share = all.views ? r.views / all.views : 0;
+      return '<div class="tr"><span class="bp-name">' + PLAT[k].mark + PLAT[k].name + '</span>' + lead(r)
+        + '<span class="bp-share c-share"><span class="bp-bar" aria-hidden="true"><i style="width:' + (share * 100).toFixed(1) + '%;--c:' + PLAT[k].color + '"></i></span>'
+        + '<span class="bp-pct">' + Math.round(share * 100) + '%</span></span>' + tail(r) + '</div>';
+    }).join('');
+    el.innerHTML = '<div class="card-head"><div><h2 class="rep-h">By platform</h2>'
+      + '<p class="rep-hint">One budget and one rate across all platforms.</p></div></div>'
+      + '<div class="tbl tbl--plat"><div class="tr tr-head"><span>Platform</span><span class="n c-posts">Posts</span>'
+      + '<span class="n c-creators">Creators</span><span class="n">Views</span><span class="c-share">Share<span class="bp-more"> of views</span></span>'
+      + '<span class="n c-likes">Likes</span><span class="n c-comments">Comments</span><span class="n">Spend</span></div>'
+      + rows
+      + '<div class="tr tr-total"><span class="bp-name">Total</span>' + lead(all) + '<span class="c-share"></span>' + tail(all) + '</div></div>';
+  }
+
   /* ---- top creators -------------------------------------------------------- */
   function renderTopCreators() {
-    var gs = groupBy(scope(), creatorKey).filter(function (g) { return g.views > 0; })
+    var k0 = pf.creators;
+    var gs = groupBy(pick(scope(), k0), creatorKey).filter(function (g) { return g.views > 0; })
       .sort(function (a, b) { return b.views - a.views; });
-    var head = '<div class="tr tr-head"><span>#</span><span>Creator</span><span class="n c-subs">Subscribers</span>'
+    var head = '<div class="tr tr-head"><span>#</span><span>Creator</span><span class="n c-subs">' + fansWord(k0) + '</span>'
       + '<span class="n c-posts">Posts</span><span class="n">Views</span><span class="n c-likes">Likes</span>'
       + '<span class="n c-comments">Comments</span></div>';
     var rows = gs.slice(0, 5).map(function (g, k) {
       var c = g.first.creator;
       return '<button class="tr" type="button" data-cgroup="' + g.id + '">'
         + '<span class="t-rank">' + (k + 1) + '</span>'
-        + '<span class="t-who">' + avatar(c) + '<span class="t-id"><b>' + esc(c.name) + '</b></span></span>'
-        + '<span class="n c-subs">' + num(c.subs) + '</span>'
+        + '<span class="t-who">' + avatar(c, '', mixed(k0)) + '<span class="t-id"><b>' + esc(c.name) + '</b></span></span>'
+        + '<span class="n c-subs">' + fansCell(c) + '</span>'
         + '<span class="n c-posts">' + num(g.posts.length) + '</span>'
         + '<span class="n is-key">' + num(g.views) + '</span>'
         + '<span class="n c-likes">' + num(g.likes) + '</span>'
@@ -648,22 +872,23 @@
     }).join('');
     $('#top-creators').innerHTML =
       '<div class="card-head"><div><h2 class="rep-h">Top creators</h2>'
-      + '<p class="rep-hint">' + (isFull() ? plural(groupBy(posts, creatorKey).length, 'channel') + ' posted for this campaign'
-                                          : plural(gs.length, 'channel') + ' gathered views ' + spanText()) + '. Ranked by views.</p></div>'
-      + '<button class="link-btn" type="button" data-all-creators>See all</button></div>'
-      + '<div class="tbl tbl--creators">' + head + (rows || '<div class="tbl-empty">No views in this period.</div>') + '</div>';
+      + '<p class="rep-hint">' + (isFull() ? plural(groupBy(pick(posts, k0), creatorKey).length, word('acct', k0)) + ' posted for this campaign'
+                                          : plural(gs.length, word('acct', k0)) + ' gathered views ' + spanText()) + '. Ranked by views.</p></div>'
+      + '<div class="card-acts">' + platSel('creators', k0) + '<button class="link-btn" type="button" data-all-creators>See all</button></div></div>'
+      + '<div class="tbl tbl--creators">' + head + (rows || '<div class="tbl-empty">No views yet.</div>') + '</div>';
   }
 
   /* ---- top posts ----------------------------------------------------------- */
   var topMore = false;
   function renderTopPosts() {
-    var ranked = scope().filter(function (p) { return p.pv > 0; }).sort(function (a, b) { return b.pv - a.pv || b.at - a.at; });
-    var rows = ranked.slice(0, topMore ? 10 : 5).map(function (p, k) { return postRow(p, k + 1, false); }).join('');
+    var k0 = pf.top;
+    var ranked = pick(scope(), k0).filter(function (p) { return p.pv > 0; }).sort(function (a, b) { return b.pv - a.pv || b.at - a.at; });
+    var rows = ranked.slice(0, topMore ? 10 : 5).map(function (p, k) { return postRow(p, k + 1, false, mixed(k0)); }).join('');
     $('#top-posts').innerHTML =
-      '<div class="card-head"><div><h2 class="rep-h">Top posts in this period</h2>'
+      '<div class="card-head"><div><h2 class="rep-h">Top posts</h2>'
       + '<p class="rep-hint">Ranked by views' + (isFull() ? '' : ' gathered ' + spanText()) + '.</p></div>'
-      + '<button class="link-btn" type="button" data-all-posts>See all</button></div>'
-      + '<div class="plist plist--rank">' + rowHead(true, false) + (rows || '<div class="tbl-empty">No views in this period.</div>') + '</div>'
+      + '<div class="card-acts">' + platSel('top', k0) + '<button class="link-btn" type="button" data-all-posts>See all</button></div></div>'
+      + '<div class="plist plist--rank">' + rowHead(true, false) + (rows || '<div class="tbl-empty">No views yet.</div>') + '</div>'
       + (ranked.length > 5 ? '<div class="tbl-more"><button class="link-btn" type="button" data-top-more>' + (topMore ? 'Show fewer' : 'See more') + '</button></div>' : '');
   }
 
@@ -700,6 +925,22 @@
         + '</div>';
     }).join('') + '</div>';
   }
+  /* WHICH PLATFORMS HAVE VIEWER DATA. Geography, age and gender come from
+     YouTube only for now, so on a campaign with other platforms the numbers
+     are YouTube's posts' alone, and the title says so with a "YouTube only"
+     tag (Abhisht 2026-11-16). A campaign with none of these platforms gets
+     no viewer data card at all. A platform whose audience we can read later
+     is one more name in this list. */
+  var AUD_PLATS = ['youtube'];
+  function audIn() { return C.platforms.filter(function (k) { return AUD_PLATS.indexOf(k) > -1; }); }
+  function audOn() { return audIn().length > 0; }
+  function audPosts() { return scope().filter(function (p) { return AUD_PLATS.indexOf(p.platform) > -1; }); }
+  function audTitle(title) {
+    var have = audIn(), missing = C.platforms.filter(function (k) { return have.indexOf(k) < 0; });
+    var tag = !missing.length ? '' : '<span class="aud-only" title="Viewer data isn’t available for ' + names(missing) + ' yet.">'
+      + have.map(function (k) { return PLAT[k].mark; }).join('') + names(have) + ' only</span>';
+    return '<div class="card-head"><div class="aud-title"><h2 class="rep-h">' + title + '</h2>' + tag + '</div>';
+  }
   /* one general line, once: under the three cards' row, or in the one card. No
      count of posts covered, no source named */
   function audienceNote() {
@@ -707,10 +948,10 @@
   }
   /* the three audience cards carry their title only, no hint line under it (Abhisht 2026-11-06) */
   function renderGeo() {
-    var g = geoOf(scope()), card = $('#geo-card'), has = geoMode === 'live' && g.covered;
-    card.hidden = geoMode === 'off' || audLayout === 'one';
+    var g = geoOf(audPosts()), card = $('#geo-card'), has = geoMode === 'live' && g.covered;
+    card.hidden = geoMode === 'off' || audLayout === 'one' || !audOn();
     card.innerHTML = card.hidden ? '' :
-      '<div class="card-head"><div><h2 class="rep-h">Viewer geography</h2></div>'
+      audTitle('Viewer geography')
       + (has && g.rows.length > 5 ? '<button class="link-btn" type="button" data-geo-all>' + (geoAll ? 'Show top 5' : 'Show all') + '</button>' : '')
       + '</div>'
       + (!has ? PROCESSING : AW ? '<div class="aw aw--geo">' + AW.geo(g, geoAll) + '</div>' : geoBars(g, geoAll ? 99 : 5));
@@ -742,12 +983,12 @@
     }).join('') + '</div>';
   }
   function renderDemo() {
-    var d = demoOf(scope()), has = demoMode === 'live' && d.covered;
+    var d = demoOf(audPosts()), has = demoMode === 'live' && d.covered;
     DEMO.forEach(function (m) {
       var card = $(m.card);
-      card.hidden = demoMode === 'off' || audLayout === 'one';
+      card.hidden = demoMode === 'off' || audLayout === 'one' || !audOn();
       card.innerHTML = card.hidden ? '' :
-        '<div class="card-head"><div><h2 class="rep-h">' + m.title + '</h2></div></div>'
+        audTitle(m.title) + '</div>'
         + (!has ? demoEmpty(m) : AW ? '<div class="aw aw--' + m.key + '">' + AW[m.key](m.labels, d[m.key]) + '</div>' : shareBars(m.labels, d[m.key]));
     });
     document.querySelectorAll('[data-demo-mode]').forEach(function (b) {
@@ -775,16 +1016,16 @@
     document.querySelectorAll('[data-aud-layout]').forEach(function (b) {
       b.setAttribute('aria-pressed', b.getAttribute('data-aud-layout') === audLayout ? 'true' : 'false');
     });
-    var g = geoOf(scope()), d = demoOf(scope());
+    var g = geoOf(audPosts()), d = demoOf(audPosts());
     var geoHas = geoMode === 'live' && g.covered, demoHas = demoMode === 'live' && d.covered;
     var note = $('#aud-note');
     if (note) {
-      note.hidden = audLayout !== 'three' || !(geoHas || demoHas);
+      note.hidden = audLayout !== 'three' || !audOn() || !(geoHas || demoHas);
       note.innerHTML = note.hidden ? '' : audienceNote();
     }
-    card.hidden = audLayout !== 'one' || !(showGeo || showDemo);
+    card.hidden = audLayout !== 'one' || !(showGeo || showDemo) || !audOn();
     if (card.hidden) { card.innerHTML = ''; return; }
-    var head = '<div class="card-head"><div><h2 class="rep-h">Viewer data</h2></div></div>';
+    var head = audTitle('Viewer data') + '</div>';
     if (!geoHas && !demoHas) {
       card.innerHTML = head + '<div class="geo-empty">Viewer data shows up once the videos have enough views. This usually takes a few days.</div>';
       return;
@@ -806,8 +1047,8 @@
      One list view. Sorting lives on the column headers (Published flips
      newest and oldest, the counts sort high to low), so there is no separate
      sort control. */
-  var DEFAULTS = { q: '', sort: 'newest', posted: 'any', views: 'any', status: 'all', group: 'none' };
-  var state = { q: '', sort: 'newest', posted: 'any', views: 'any', status: 'all', group: 'none', page: 1, size: 20, open: {} };
+  var DEFAULTS = { q: '', sort: 'newest', platform: 'all', posted: 'any', views: 'any', status: 'all', group: 'none' };
+  var state = { q: '', sort: 'newest', platform: 'all', posted: 'any', views: 'any', status: 'all', group: 'none', page: 1, size: 20, open: {} };
   var SORTS = {
     newest: function (a, b) { return b.at - a.at; },
     oldest: function (a, b) { return a.at - b.at; },
@@ -832,6 +1073,7 @@
         if (p.pv < r[0] || p.pv > r[1]) { return false; }
       }
       if (state.status !== 'all' && p.status !== state.status) { return false; }
+      if (state.platform !== 'all' && p.platform !== state.platform) { return false; }
       return true;
     }).sort(SORTS[state.sort]);
   }
@@ -865,7 +1107,7 @@
     return '<div class="post post-head">'
       + (rank ? '<span class="c-rank">#</span>' : '')
       + (lead || '<span class="c-content">Video</span><span class="c-creator">Creator</span>')
-      + col('newest', 'Published', 'c-pub') + col('subs', 'Subscribers', 'c-subs')
+      + col('newest', 'Published', 'c-pub') + col('subs', fansWord(), 'c-subs')
       + col('views', 'Views', 'c-views') + col('likes', 'Likes', 'c-likes') + col('comments', 'Comments', 'c-comments')
       + '<span class="c-acts"></span></div>';
   }
@@ -876,7 +1118,7 @@
      hovered, then turn blue and underlined with an external-link mark. The row
      itself opens nothing: there are no post details (campaign totals only,
      Abhisht 2026-11-06). */
-  function channelUrl(c) { return 'https://www.youtube.com/' + c.handle; }
+  function channelUrl(c) { return PLAT[c.platform].home(c.handle); }
   function xlink(href, text) {
     return '<a class="xlink" href="' + href + '" target="_blank" rel="noopener"><span class="xl-text">' + esc(text) + '</span>'
       + '<span class="xlink-ic" aria-hidden="true">' + IC.ext + '</span></a>';
@@ -885,19 +1127,19 @@
     if (!sortable) { return k === 'views' ? ' is-key' : ''; }
     return state.sort === k ? ' is-key' : '';
   }
-  function postRow(p, rank, sortable) {
+  function postRow(p, rank, sortable, mark) {
     var gone = p.status === 'removed';
     return '<div class="post' + (gone ? ' is-removed' : '') + '">'
       + (rank ? '<span class="t-rank c-rank">' + rank + '</span>' : '')
-      + '<span class="t-content c-content">' + thumb(p.asset) + '<span class="pc-text">'
+      + '<span class="t-content c-content">' + thumb(p.asset, '', false, mark ? p.platform : '') + '<span class="pc-text">'
       + '<span class="pc-title">' + xlink(p.url, p.asset.title) + '</span>'
       + '<span class="pc-by">' + esc(p.creator.name) + '</span>'
-      + (gone ? '<span class="chip chip--removed" title="This video is no longer on YouTube. Its last known views still count.">Removed</span>' : '')
+      + (gone ? '<span class="chip chip--removed" title="This video is no longer on ' + PLAT[p.platform].name + '. Its last known views still count.">Removed</span>' : '')
       + '<span class="post-mstats"><span class="stat">' + dateF(p.at) + '</span>' + statsInline(p) + '</span>'
       + '</span></span>'
       + '<span class="t-creator c-creator">' + avatar(p.creator, 'sm') + xlink(channelUrl(p.creator), p.creator.name) + '</span>'
       + '<span class="post-pub c-pub"><span>' + dateF(p.at) + '</span><span>' + timeF(p.at) + '</span></span>'
-      + '<span class="post-n c-subs' + key('subs', sortable) + '">' + num(p.creator.subs) + '</span>'
+      + '<span class="post-n c-subs' + key('subs', sortable) + '">' + fansCell(p.creator) + '</span>'
       + '<span class="post-n c-views' + key('views', sortable) + '">' + num(p.pv) + '</span>'
       + '<span class="post-n c-likes' + key('likes', sortable) + '">' + num(p.pl) + '</span>'
       + '<span class="post-n c-comments' + key('comments', sortable) + '">' + num(p.pc) + '</span>'
@@ -907,16 +1149,16 @@
   }
   function groupRow(g) {
     var open = !!state.open[g.id], c = g.first.creator;
-    var who = avatar(c) + '<span class="grp-id"><b>' + esc(c.name) + '</b><span>' + plural(g.posts.length, 'post') + '</span></span>';
+    var who = avatar(c, '', mixed(state.platform)) + '<span class="grp-id"><b>' + esc(c.name) + '</b><span>' + plural(g.posts.length, 'post') + '</span></span>';
     return '<div class="grp' + (open ? ' is-open' : '') + '">'
       + '<div class="grp-head"><button class="grp-tog" type="button" data-grp="' + g.id + '" aria-expanded="' + open + '"><span class="chev">' + IC.chev + '</span>' + who + '</button>'
       + '<span class="c-pub"></span>'
-      + '<span class="post-n c-subs">' + num(c.subs) + '</span>'
+      + '<span class="post-n c-subs">' + fansCell(c) + '</span>'
       + '<span class="post-n c-views is-key">' + num(g.views) + '</span>'
       + '<span class="post-n c-likes">' + num(g.likes) + '</span>'
       + '<span class="post-n c-comments">' + num(g.comments) + '</span>'
       + '<span class="post-acts c-acts"><button class="icon-sm" type="button" data-menu="' + g.id + '" data-menu-kind="creator" aria-label="More for ' + esc(c.name) + '" aria-haspopup="menu" aria-expanded="false">' + IC.more + '</button></span></div>'
-      + (open ? '<div class="grp-body">' + g.posts.map(function (q) { return postRow(q, 0, true); }).join('') + '</div>' : '')
+      + (open ? '<div class="grp-body">' + g.posts.map(function (q) { return postRow(q, 0, true, mixed(state.platform)); }).join('') + '</div>' : '')
       + '</div>';
   }
 
@@ -938,7 +1180,7 @@
     var from = (state.page - 1) * state.size, slice = items.slice(from, from + state.size);
     var unit = isGrouped ? 'creator' : 'post';
 
-    var active = ['q', 'posted', 'views', 'status'].some(function (k) { return state[k] !== DEFAULTS[k]; });
+    var active = ['q', 'platform', 'posted', 'views', 'status'].some(function (k) { return state[k] !== DEFAULTS[k]; });
     $('#f-clear').hidden = !active;
     $('#f-count').textContent = active
       ? num(list.length) + ' of ' + plural(all.length, 'post') + ' match'
@@ -951,7 +1193,7 @@
     if (!items.length) {
       body = '<div class="empty"><span>No posts match these filters.</span><button class="btn" type="button" data-clear>Clear filters</button></div>';
     } else {
-      body = listHead() + (isGrouped ? slice.map(groupRow) : slice.map(function (p) { return postRow(p, 0, true); })).join('');
+      body = listHead() + (isGrouped ? slice.map(groupRow) : slice.map(function (p) { return postRow(p, 0, true, mixed(state.platform)); })).join('');
     }
     $('#posts-list').innerHTML = '<div class="plist">' + body + '</div>';
 
@@ -984,12 +1226,18 @@
       pill.querySelector('.sel-v').textContent = s.options[s.selectedIndex].text;
       pill.classList.toggle('is-set', state[k] !== DEFAULTS[k]);
     });
+    var ps = document.querySelector('[data-pf="posts"]');
+    if (ps) {
+      ps.value = state.platform;
+      ps.closest('.sel').querySelector('.sel-v').innerHTML = selPlat(state.platform);
+      ps.closest('.sel').classList.toggle('is-set', state.platform !== 'all');
+    }
     if (document.activeElement !== $('#f-q')) { $('#f-q').value = state.q; }
   }
   /* A filter that leaves fewer rows used to shrink the card and drag the page up
      under the reader. While any filter is on, the card keeps the tallest height
      it has had; clearing the filters lets it go. */
-  var FILTER_KEYS = ['q', 'posted', 'views', 'status', 'group'];
+  var FILTER_KEYS = ['q', 'platform', 'posted', 'views', 'status', 'group'];
   function setState(patch) {
     var card = $('#posts-card'), before = card.offsetHeight;
     var filtering = Object.keys(patch).some(function (k) { return FILTER_KEYS.indexOf(k) > -1; });
@@ -997,7 +1245,7 @@
     if (!('page' in patch)) { state.page = 1; }
     syncSelects();
     renderPosts();
-    var active = ['q', 'posted', 'views', 'status'].some(function (k) { return state[k] !== DEFAULTS[k]; });
+    var active = ['q', 'platform', 'posted', 'views', 'status'].some(function (k) { return state[k] !== DEFAULTS[k]; });
     if (!active) { card.style.minHeight = ''; }
     else if (filtering) { card.style.minHeight = Math.max(before, parseFloat(card.style.minHeight) || 0) + 'px'; }
   }
@@ -1005,9 +1253,13 @@
   /* ---- everything that follows the period ---------------------------------- */
   function renderAll() {
     applyPeriod();
+    // no Subscribers column while SHOW_FANS is off, and no sort left on it
+    document.documentElement.classList.toggle('no-fans', !SHOW_FANS);
+    if (!SHOW_FANS && state.sort === 'subs') { state.sort = 'newest'; }
     renderRangeBtn();
     renderTiles();
     renderChart();
+    renderByPlat();
     renderTopCreators();
     renderTopPosts();
     renderGeo();
@@ -1114,7 +1366,7 @@
   function closeRange() {
     rpop.hidden = true;
     cal = null;
-    $('#btn-range').setAttribute('aria-expanded', 'false');
+    if ($('#btn-range')) { $('#btn-range').setAttribute('aria-expanded', 'false'); }
   }
   function setPeriod(key, from, to) {
     period = { key: key, from: from, to: to };
@@ -1161,9 +1413,10 @@
       + (stack.length > 1 ? '<button class="dr-back" type="button" data-dr-back>&lsaquo; Back</button>' : '<span class="dr-kicker">Creator</span>')
       + '<button class="icon-sm" type="button" data-dr-close aria-label="Close">' + IC.close + '</button></div>';
 
-    var g = view.group;
-    var head = '<div class="dr-who" style="margin-top:0">' + avatar(g.first.creator, 'lg') + '<div><h3 style="font-size:16px">' + esc(g.first.creator.name) + '</h3>'
-        + '<span>' + plural(g.posts.length, 'post') + ' · ' + subs(g.first.creator.subs) + '</span></div></div>';
+    var g = view.group, c = g.first.creator, P = PLAT[c.platform];
+    /* on a multi-platform campaign the details name the platform too */
+    var head = '<div class="dr-who" style="margin-top:0">' + avatar(c, 'lg', multi()) + '<div><h3 style="font-size:16px">' + esc(c.name) + '</h3>'
+        + '<span>' + (multi() ? P.name + ' · ' : '') + plural(g.posts.length, 'post') + (SHOW_FANS ? ' · ' + plural(c.subs, P.fan) : '') + '</span></div></div>';
     var list = g.posts.slice().sort(SORTS.views);
     html = top + head
       + periodNote()
@@ -1190,10 +1443,14 @@
     var item = function (act, icon, label) {
       return '<button type="button" role="menuitem" data-act="' + act + '" data-id="' + id + '">' + icon + label + '</button>';
     };
-    /* a creator row (grouped by creator) keeps Details; a post row has no details, only its links */
-    menu.innerHTML = btn.getAttribute('data-menu-kind') === 'creator'
-      ? item('cdetails', IC.info, 'Details') + item('channel', IC.yt, 'Open channel') + item('ccopy', IC.link, 'Copy channel link')
-      : item('yt', IC.yt, 'Open on YouTube') + item('copy', IC.link, 'Copy link');
+    /* a creator row (grouped by creator) keeps Details; a post row has no
+       details, only its links, in its own platform's words */
+    var isCreator = btn.getAttribute('data-menu-kind') === 'creator';
+    var pk = isCreator ? lastGroups[id].first.creator.platform : byId[id].platform, P = PLAT[pk];
+    var pic = { youtube: IC.yt, instagram: IC.ig }[pk] || IC.ext;
+    menu.innerHTML = isCreator
+      ? item('cdetails', IC.info, 'Details') + item('channel', pic, P.openAcct) + item('ccopy', IC.link, P.copyAcct)
+      : item('yt', pic, 'Open on ' + P.name) + item('copy', IC.link, 'Copy link');
     menu.hidden = false;
     var r = btn.getBoundingClientRect(), mw = menu.offsetWidth, mh = menu.offsetHeight;
     var left = Math.min(window.innerWidth - mw - 12, r.right - mw);
@@ -1223,6 +1480,7 @@
      the icon carries the state: a lock while private, a globe once shared. */
   function renderShareBtn() {
     var b = $('#btn-share');
+    if (!b) { return; }
     b.innerHTML = (shared ? IC.globe16 : IC.lock) + 'Share';
     b.classList.toggle('is-shared', shared);
     b.title = shared ? 'Shared: anyone with the link can view' : 'Private: only you can see this report';
@@ -1247,7 +1505,11 @@
     var sw = pop.querySelector('[data-share-toggle]');
     if (sw && byKeyboard) { sw.focus(); }
   }
-  function closeShare() { pop.hidden = true; $('#btn-share').classList.remove('is-on'); $('#btn-share').setAttribute('aria-expanded', 'false'); }
+  function closeShare() {
+    pop.hidden = true;
+    var b = $('#btn-share');
+    if (b) { b.classList.remove('is-on'); b.setAttribute('aria-expanded', 'false'); }
+  }
   function toggleShare() {
     if (!pop.hidden) { closeShare(); return; }
     paintShare();
@@ -1319,22 +1581,27 @@
   }
   function downloadCsv() {
     /* no per-post audience columns: campaign totals only (Abhisht 2026-11-06) */
+    /* the posts the list shows, its Platform pill included. A YouTube only
+       campaign's file is as it was (less Subscribers while SHOW_FANS is off);
+       any other gets a Platform column, and the account column in words that
+       fit what is in it */
     var list = filtered(), span = isFull() ? 'Campaign to date' : spanText();
-    var rows = [['Period', 'Posted at', 'Channel', 'Subscribers', 'Video title', 'Post URL', 'Status', 'Views', 'Likes', 'Comments']];
+    var yt = C.platforms.length === 1 && C.platforms[0] === 'youtube', k0 = state.platform;
+    var acct = word('acct', k0);
+    var acctCol = yt ? 'Channel' : mixed(k0) ? 'Channel or account' : acct.charAt(0).toUpperCase() + acct.slice(1);
+    var fansCol = yt ? 'Subscribers' : mixed(k0) ? 'Subscribers or followers' : fansWord(k0);
+    var rows = [['Period'].concat(yt ? [] : ['Platform'], ['Posted at', acctCol], SHOW_FANS ? [fansCol] : [],
+      ['Video title', 'Post URL', 'Status', 'Views', 'Likes', 'Comments'])];
     list.forEach(function (p) {
-      rows.push([
-        span, new Date(p.at).toISOString(), p.creator.name, p.creator.subs, p.asset.title, p.url,
-        p.status === 'removed' ? 'Removed' : 'Live', p.pv, p.pl, p.pc
-      ]);
+      rows.push([span].concat(yt ? [] : [PLAT[p.platform].name], [new Date(p.at).toISOString(), p.creator.name],
+        SHOW_FANS ? [p.creator.subs] : [],
+        [p.asset.title, p.url, p.status === 'removed' ? 'Removed' : 'Live', p.pv, p.pl, p.pc]));
     });
-    var blob = new Blob([rows.map(function (r) { return r.map(csvCell).join(','); }).join('\n')], { type: 'text/csv' });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = C.name + '_posts' + (isFull() ? '' : '_' + isoDay(period.from) + '_' + isoDay(period.to)) + '.csv';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
-    toast('CSV with ' + plural(list.length, 'post'));
+    /* THE PROTOTYPE SAYS IT, IT DOESN'T DO IT (Appy, 2026-11-17): a real file
+       download from inside the app's frame blanked the page, so the button
+       answers with a toast. The rows above are the file's spec for the build. */
+    void rows;
+    toast('Downloading CSV, ' + plural(list.length, 'post'));
   }
 
   /* ---- events -------------------------------------------------------------- */
@@ -1359,6 +1626,15 @@
       if (a === 'cdetails') { openDrawer({ kind: 'creator', group: g }); }
       if (a === 'channel') { window.open(channelUrl(g.first.creator), '_blank', 'noopener'); }
       if (a === 'ccopy') { copy(channelUrl(g.first.creator)); }
+      return;
+    }
+    if ((a = t.getAttribute('data-plat-mode'))) {
+      /* the sample's accounts are dealt out at load, so a new pick reloads;
+         a ?platforms= in the address would win over it, so it goes */
+      try { window.localStorage.setItem('campaign-report:platforms', a); } catch (e) {}
+      var u = new URL(location.href);
+      u.searchParams.delete('platforms');
+      location.replace(u.href);
       return;
     }
     if ((a = t.getAttribute('data-range'))) {
@@ -1403,7 +1679,7 @@
       clearTimeout(searchT);
       searching(false);
       $('#f-q').value = '';
-      setState({ q: '', posted: 'any', views: 'any', status: 'all' });
+      setState({ q: '', platform: 'all', posted: 'any', views: 'any', status: 'all' });
       return;
     }
     if (t.hasAttribute('data-geo-all')) { geoAll = !geoAll; renderGeo(); return; }
@@ -1414,8 +1690,8 @@
       return;
     }
     if ((a = t.getAttribute('data-chart-mode'))) {
-      chartMode = a === 'total' ? 'total' : 'day';
-      try { window.localStorage.setItem('campaign-report:chart', chartMode); } catch (e) {}
+      chartMode = a === 'day' ? 'day' : 'total';
+      try { window.localStorage.setItem('campaign-report:chart-view', chartMode); } catch (e) {}
       renderChart();
       return;
     }
@@ -1440,12 +1716,12 @@
     }
     if (t.hasAttribute('data-top-more')) { topMore = !topMore; renderTopPosts(); return; }
     if (t.hasAttribute('data-all-creators')) {
-      setState({ group: 'creator', sort: 'views', open: {} });
+      setState({ group: 'creator', sort: 'views', open: {}, platform: pf.creators });
       $('#posts-card').scrollIntoView({ block: 'start', behavior: 'smooth' });
       return;
     }
     if (t.hasAttribute('data-all-posts')) {
-      setState({ group: 'none', sort: 'views' });
+      setState({ group: 'none', sort: 'views', platform: pf.top });
       $('#posts-card').scrollIntoView({ block: 'start', behavior: 'smooth' });
       return;
     }
@@ -1454,6 +1730,7 @@
     if (t.id === 'btn-range') { if (rpop.hidden) { openRange(); } else { closeRange(); } return; }
     if (t.id === 'btn-share') { toggleShare(); return; }
     if (t.id === 'btn-csv') { downloadCsv(); return; }
+    if (t.id === 'btn-pdf') { toast('Downloading PDF'); return; }
     if (t.id === 'btn-refresh') {
       t.classList.add('is-spinning');
       setTimeout(function () {
@@ -1470,6 +1747,17 @@
 
   document.addEventListener('change', function (ev) {
     var s = ev.target;
+    /* a Platform pill: the posts list's goes through its filters; the
+       chart's and the top tables' redraw just their own card */
+    var pid = s.getAttribute && s.getAttribute('data-pf');
+    if (pid) {
+      if (pid === 'posts') { setState({ platform: s.value }); return; }
+      pf[pid] = s.value;
+      if (pid === 'chart') { renderChart(); } else if (pid === 'creators') { renderTopCreators(); } else { renderTopPosts(); }
+      var again = document.querySelector('[data-pf="' + pid + '"]');
+      if (again) { again.focus({ preventScroll: true }); }
+      return;
+    }
     if (s.id === 'f-size') { setState({ size: +s.value }); return; }
     Object.keys(SEL).forEach(function (k) {
       if ('#' + s.id === SEL[k]) {
@@ -1507,6 +1795,17 @@
   setInterval(function () { $('#c-updated').textContent = ago(updatedAt); }, 30000);
 
   /* ---- go ------------------------------------------------------------------ */
+  // Instagram's gradient, defined once for every mark on the page
+  document.body.insertAdjacentHTML('afterbegin', '<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>'
+    + '<linearGradient id="rp-ig" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse">'
+    + '<stop offset="0" stop-color="#FEC053"/><stop offset=".35" stop-color="#F2203E"/><stop offset=".7" stop-color="#B729A8"/><stop offset="1" stop-color="#5342D6"/>'
+    + '</linearGradient></defs></svg>');
+  document.querySelectorAll('[data-plat-mode]').forEach(function (b) {
+    b.setAttribute('aria-pressed', b.getAttribute('data-plat-mode') === platMode ? 'true' : 'false');
+  });
+  // the posts list's Platform pill leads its filters
+  $('.filters').insertAdjacentHTML('afterbegin', platSel('posts', 'all'));
+  $('#f-q').placeholder = 'Search titles or ' + word('acct') + 's';
   $('.search-ic').innerHTML = IC.search;
   applyViewAs();
   renderHead();

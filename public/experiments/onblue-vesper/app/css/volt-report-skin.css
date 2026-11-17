@@ -114,7 +114,7 @@ body { font-family: var(--v-font); letter-spacing: var(--v-tr-mid); }
   .secnav-a[aria-current] { border-color: transparent; background: var(--v-ink-btn); color: #fff; }
 }
 
-/* ---- colour and hierarchy moved to the three looks (report-looks*.css,
+/* ---- colour and hierarchy moved to the report look (report-looks*.css,
    Appy 2026-11-16): the pastel tint per widget is gone from the base */
 /* Accounting's budget meter: volt as the fill, the error tone once over */
 .acct-meter { border-top-color: var(--v-line); }
@@ -252,3 +252,11 @@ html { scrollbar-width: thin; scrollbar-color: rgba(10, 10, 9, 0.18) transparent
 @media (prefers-reduced-motion: reduce) {
   .btn, .btn:hover, .btn:active { transition: none; transform: none; }
 }
+
+/* ---- platforms (marks, Platform pills, By platform) ---------------------- */
+.pbadge { background: var(--v-surface); box-shadow: 0 0 0 1.5px var(--v-surface); }
+.pm-name { font-weight: 500; }
+.bp-bar { background: rgba(10, 10, 9, 0.07); }
+.bp-pct { color: var(--v-ink-3); }
+.bp-name, .tr-total .n { color: var(--v-ink-1); }
+.aud-only { border-color: var(--v-line-2); background: var(--v-surface); color: var(--v-ink-2); }

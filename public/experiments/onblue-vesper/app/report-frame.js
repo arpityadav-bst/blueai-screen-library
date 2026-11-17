@@ -184,11 +184,11 @@
     if (route.page !== 'report' || !c) { return; }
     var name = doc.getElementById('c-name'), meta = doc.querySelectorAll('#c-meta > span');
     if (name && name.textContent !== c.title) { name.textContent = c.title; }
-    // his head line is two spans now (ends, country) and the id rides on Copy report ID (2026-11-16)
-    if (meta.length < 2) { return; }
-    var set = function (el, html) { if (el.innerHTML !== html) { el.innerHTML = html; } };
-    if (c.ends) { set(meta[0], 'Ends ' + A.esc(c.ends)); }
-    set(meta[1], A.esc(country(c.geo)));
+    // his head line names its items (data-m): ends, geo, platforms; the id rides on Copy report ID
+    var set = function (el, html) { if (el && el.innerHTML !== html) { el.innerHTML = html; } };
+    var m = function (k) { return doc.querySelector('#c-meta > [data-m="' + k + '"]'); };
+    if (c.ends) { set(m('ends'), 'Ends ' + A.esc(c.ends)); }
+    set(m('geo'), A.esc(country(c.geo)));
     var copyId = doc.getElementById('btn-copy-id');
     if (copyId && copyId.getAttribute('data-copy') !== c.id) { copyId.setAttribute('data-copy', c.id); }
   }

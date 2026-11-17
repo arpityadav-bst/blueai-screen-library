@@ -1,6 +1,7 @@
-/* The head's "More actions" menu (Appy, 2026-11-16): Download CSV and Copy
-   report ID, out of the button row. Its items keep report.js's own handlers
-   (#btn-csv, data-copy); this only opens and closes it. */
+/* The head's "More actions" menu (Appy, 2026-11-16): Copy report ID, out of
+   the button row, where Download CSV and Download PDF sit since 2026-11-17.
+   Its item keeps report.js's own handler (data-copy); this only opens and
+   closes it. */
 (function () {
   'use strict';
 

@@ -74,7 +74,7 @@
 .rsec .tiles { margin-top: 0; }
 .rsec .tiles, .rsec .minis { gap: var(--rgap); }
 .rsec #tiles-posts { margin-top: var(--rgap); }
-.rsec > .card + .card { margin-top: var(--rgap); }
+.rsec > .card + .card, .rsec > .rep-grid + .card { margin-top: var(--rgap); }
 .rsec .rep-grid { margin-top: 0; gap: var(--rgap); align-items: stretch; }
 
 /* ---- audience: three widgets in a row, stacking when narrow ---------------- */

@@ -1,7 +1,8 @@
-/* THE REPORT'S THREE LOOKS (Appy, 2026-11-16). report-frame.js links this
-   after volt-report-skin.css; campaign-report/report-looks.js sets
-   html[data-look] = 1 (Refined), 2 (Bento) or 3 (Volt). This file holds what
-   all three share, the per-look files hold the rest.
+/* THE REPORT'S LOOK (Appy, 2026-11-16). report-frame.js links this after
+   volt-report-skin.css. Three looks were reviewed side by side; Volt (3) was
+   chosen on 2026-11-17 and Refined and Bento were removed. The report page
+   carries html[data-look="3"] in its markup, and report-look-3.css holds
+   Volt's own rules; this file holds the type scale and the parts under it.
 
    SHARED: ONE TYPE SCALE AND TWO TEXT INKS (blind dashboard review: the page
    had 15 sizes, 3 weights and a text grey that failed AA).
@@ -11,10 +12,8 @@
      13  body, rows, values in lists
      12  labels, meta, axis notes
    Weights 400 and 600. Ink-1 for numbers and names, ink-3 for labels and
-   meta, nothing lighter. Colour is for data and status only; each look
+   meta, nothing lighter. Colour is for data and status only; the look
    decides which colours. */
-@import url("report-look-1.css");
-@import url("report-look-2.css");
 @import url("report-look-3.css");
 
 :root {
@@ -156,3 +155,16 @@
   .refresh-btn, .rep-head .icon-btn { width: 2.75rem; height: 2.75rem; }
   .more-menu button { height: 2.75rem; }
 }
+
+/* ---- platforms (Abhisht's work, merged 2026-11-17) on the looks' type scale:
+   the header's platform names read as the rest of the grey line, and the By
+   platform card, Accounting's platform rows and the "YouTube only" tag use
+   the shared sizes, weights 400 and 600, inks 1 and 3 */
+.rep-meta .pm-meta { gap: 0 0.75rem; }
+.rep-meta .pm-name { color: inherit; font-weight: 400; }
+.bp-name { font: var(--rt-body); font-weight: 600; color: var(--v-ink-1); }
+.bp-pct { font: var(--rt-label); color: var(--v-ink-3); }
+.acct tr.acct-plat td { font: var(--rt-label); }
+.acct tr.acct-plat td + td { color: var(--v-ink-3); font-weight: 400; }
+.acct-pl { color: var(--v-ink-3); }
+.aud-only { font: var(--rt-label); color: var(--v-ink-3); }
