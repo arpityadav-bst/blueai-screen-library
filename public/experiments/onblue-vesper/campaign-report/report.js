@@ -935,16 +935,17 @@
   function audIn() { return C.platforms.filter(function (k) { return AUD_PLATS.indexOf(k) > -1; }); }
   function audOn() { return audIn().length > 0; }
   function audPosts() { return scope().filter(function (p) { return AUD_PLATS.indexOf(p.platform) > -1; }); }
+  /* "YouTube only" moved off each card's title into the one note line under
+     them (Abhisht and Appy, 2026-11-17: the tag on all three crowded them) */
   function audTitle(title) {
-    var have = audIn(), missing = C.platforms.filter(function (k) { return have.indexOf(k) < 0; });
-    var tag = !missing.length ? '' : '<span class="aud-only" title="Viewer data isn’t available for ' + names(missing) + ' yet.">'
-      + have.map(function (k) { return PLAT[k].mark; }).join('') + names(have) + ' only</span>';
-    return '<div class="card-head"><div class="aud-title"><h2 class="rep-h">' + title + '</h2>' + tag + '</div>';
+    return '<div class="card-head"><div class="aud-title"><h2 class="rep-h">' + title + '</h2></div>';
   }
   /* one general line, once: under the three cards' row, or in the one card. No
      count of posts covered, no source named */
   function audienceNote() {
-    return '<p class="geo-note">' + IC.info + '<span>Based on videos with enough views to report audience data.</span></p>';
+    var have = audIn(), only = C.platforms.some(function (k) { return have.indexOf(k) < 0; });
+    return '<p class="geo-note">' + IC.info + '<span>' + (only ? 'Viewer data comes from ' + names(have) + ' only, on videos with enough views to report it.'
+      : 'Based on videos with enough views to report audience data.') + '</span></p>';
   }
   /* the three audience cards carry their title only, no hint line under it (Abhisht 2026-11-06) */
   function renderGeo() {
