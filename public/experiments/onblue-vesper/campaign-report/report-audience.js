@@ -75,9 +75,10 @@
     var bar = '<div class="aw-split" role="img" aria-label="'
       + esc(labels.map(function (l, k) { return l + ' ' + pct(shares[k]); }).join(', ')) + '">'
       + labels.map(function (l, k) {
-        return '<i class="aw-g' + k + '" style="width:' + (shares[k] * 100).toFixed(2) + '%"></i>';
+        // a share that rounds to 0.0% is left out, bar and line alike
+        return shares[k] >= 0.0005 ? '<i class="aw-g' + k + '" style="width:' + (shares[k] * 100).toFixed(2) + '%"></i>' : '';
       }).join('') + '</div>';
-    var more = labels.slice(2).map(function (l, k) { return esc(l) + ' ' + pct(shares[k + 2]); }).join(' · ');
+    var more = labels.slice(2).map(function (l, k) { return shares[k + 2] >= 0.0005 ? esc(l) + ' ' + pct(shares[k + 2]) : ''; }).filter(Boolean).join(' · ');
     return nums + '<div class="aw-viz">' + bar + (more ? '<p class="aw-more">' + more + '</p>' : '') + '</div>';
   }
 

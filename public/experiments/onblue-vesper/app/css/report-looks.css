@@ -188,3 +188,48 @@
 .acct tr.acct-plat td + td { color: var(--v-ink-3); font-weight: 400; }
 .acct-pl { color: var(--v-ink-3); }
 .aud-only { font: var(--rt-label); color: var(--v-ink-3); }
+
+/* ---- PHONE PASS (Appy, 2026-11-17: "a few things break on my phone") -------- */
+@media (max-width: 700px) {
+  /* the platforms take their own line, so no separator dot is left alone at a line's start */
+  .rep-meta { row-gap: 0.25rem; }
+  .rep-meta .pm-meta { flex-basis: 100%; }
+  .rep-meta .pm-meta::before { display: none; }
+  /* the sticky bar is the sections' first: the range is its calendar icon only
+     (the period still shows in the open picker and the chart's hint), so the
+     section tabs get the width and never show a clipped neighbour */
+  #btn-range > span { display: none; }
+  #btn-range { width: 2.75rem; padding: 0; justify-content: center; }
+  .secnav-tools { gap: 0.25rem; }
+  /* the chart's corner: the y axis "0" collided with the first date */
+  .chart svg g[fill] > text:first-child { display: none; }
+  /* pages: the arrows stay on the numbers' row; per page drops under them */
+  .pager-r { flex-wrap: wrap; row-gap: 0.75rem; }
+  .pg { flex-wrap: nowrap; }
+}
+/* the strips' segments are percentages beside 2px gaps: they give a little
+   so the last one ("Other") is never cut off */
+.aw-strip i, .aw-split i { flex: 0 1 auto; }
+/* the Sort pill is the phone's sort control (report-mobile.js); a desktop sorts by the column headers */
+.sel--sort { display: none; }
+@media (max-width: 700px) {
+  .filters .sel--sort { display: inline-flex; }
+  /* the menus open from the left edge of their button, inside the screen */
+  .rep-more .more-menu { left: 0; right: auto; }
+  /* the tools now sit in the header row (report-mobile.js) */
+  .rep-actions .secnav-tools { margin-left: auto; }
+  /* 44px to touch: tabs, pills, pages, row menus, menu items, links, date presets */
+  .secnav-a { min-height: 2.75rem; }
+  .sel { min-height: 2.75rem; }
+  .pg button { min-width: 2.75rem; height: 2.75rem; }
+  .icon-sm { width: 2.75rem; height: 2.75rem; }
+  .menu button, .menu a, .more-menu button, #range-pop button { min-height: 2.75rem; }
+  .link-btn { min-height: 2.75rem; min-width: 2.75rem; justify-content: center; }
+  .back { display: inline-flex; align-items: center; min-height: 2.75rem; margin-bottom: 0; }
+  /* the filters: one row that scrolls sideways, not three rows of pills */
+  .filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 0.125rem; }
+  .filters::-webkit-scrollbar { display: none; }
+  .filters .sel { flex: none; }
+  /* the top post's title gets two lines instead of one cut word */
+  .mini--post .mini-link { display: -webkit-box; white-space: normal; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+}
