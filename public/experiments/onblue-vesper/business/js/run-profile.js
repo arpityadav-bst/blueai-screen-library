@@ -19,7 +19,7 @@
   OB.runProfile = function (knows, r, onEdit) {
     var facts = knows.querySelector('[data-facts]'), count = knows.querySelector('[data-facts-count]');
     var hint = knows.querySelector('[data-knows-hint]');
-    var seen = {}, editing = null, pending = null, last = [];
+    var seen = {}, editing = null, pending = null, last = [], nextKey = null;
 
     function row(f, isNew) {
       var fl = f[2] || '', key = f[3];
@@ -78,6 +78,10 @@
       editing = null; pending = null;
       if (changed) { r[key] = value; if (key === 'where') { r.whereSet = true; } }
       onEdit(key, changed);
+      if (nextKey) {
+        var k = nextKey; nextKey = null;
+        window.setTimeout(function () { var row = facts.querySelector('[data-edit="' + k + '"]'); if (row && !editing) { open(row); } }, 0);
+      }
       var again = facts.querySelector('[data-edit="' + key + '"]');
       if (!again) { return; }
       if (byKey) { again.focus({ preventScroll: true }); }
@@ -99,7 +103,7 @@
         var picks = li.querySelector('.ob-fact-picks');
         picks.addEventListener('click', function (ev) { var p = ev.target.closest('.ob-pick'); if (p) { ev.stopPropagation(); close(li, true, p.textContent); } });
         picks.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') { ev.preventDefault(); close(li, false, '', true); } });
-        picks.querySelector('[aria-pressed="true"], .ob-pick').focus();
+        (picks.querySelector('[aria-pressed="true"]') || picks.querySelector('.ob-pick')).focus({ preventScroll: true });   // the chosen market, not the first
         return;
       }
       b.outerHTML = '<textarea class="ob-fact-input" rows="1" aria-label="' + e(li.querySelector('span').textContent) + '">' + e(r[key]) + '</textarea>';
@@ -119,8 +123,13 @@
     // one edit at a time, and clicking another fact moves to it: a text edit has already
     // saved on blur (the list re-rendered under the click), the market pick closes here;
     // the row is looked up again by key because the clicked one may have been replaced
+    facts.addEventListener('mousedown', function (ev) {
+      var li = ev.target.closest('[data-edit]');
+      nextKey = editing && li && !li.classList.contains('is-editing') ? li.getAttribute('data-edit') : null;
+    });
     facts.addEventListener('click', function (ev) {
       var li = ev.target.closest('[data-edit]');
+      nextKey = null;
       if (!li || li.classList.contains('is-editing')) { return; }
       var key = li.getAttribute('data-edit');
       if (editing) { close(facts.querySelector('.is-editing'), false); }
