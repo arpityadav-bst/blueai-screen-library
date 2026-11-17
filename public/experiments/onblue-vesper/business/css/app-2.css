@@ -138,7 +138,7 @@ body.has-drawer .ob-toast.is-on { transform: translate(50%, 0); }
 
 /* Home: your yes leads, the prompt follows as a slimmer bar */
 .ob-sect.ob-sect--first { margin-top: 0; }
-.ob-prompt--home { margin-top: var(--s12); padding: var(--s3); }   /* a section of its own (48), padded like Studio's prompt (12), 2026-11-17 */
+.ob-prompt--home { margin-top: var(--s4); padding: var(--s3); }   /* "or your own" right under the formats' Make one (16), padded like Studio's prompt (12), 2026-11-17 */
 .ob-prompt--home .ob-prompt-row input { height: 2.75rem; font-size: 1.0625rem; }
 .ob-head h1 .ob-tone { white-space: nowrap; }
 
@@ -261,3 +261,16 @@ body.has-drawer .ob-toast.is-on { transform: translate(50%, 0); }
 .ob-pl-where { flex: none; display: grid; place-items: center; width: 1.375rem; height: 1.375rem; color: var(--ink-3); }
 .ob-tip-n:empty { display: none; }
 .ob-tip-dots { margin-right: auto; }
+
+/* ---- VIDEO ROWS ON THE HOMEPAGE'S DOT FIELD (2026-11-17): the bento tiles'
+   own treatment from css/bento.css (the firmer 0.12 edge, the dots fading up
+   from white), so a row of Shorts reads as one tile, as on the homepage.
+   Desktop only: a phone's rows swipe edge to edge and keep the plain page. */
+@media (min-width: 701px) {
+  .ob-sect > .ob-home-row, .ob-pg .ob-st-grid {
+    padding: var(--s6) var(--s5) var(--s5); border: 1px solid rgba(10, 10, 9, 0.12); border-radius: var(--r-lg); box-shadow: 0 1px 2px rgba(10, 10, 9, 0.04);
+    background-color: var(--surface-2);
+    background-image: linear-gradient(180deg, var(--surface) 0%, rgba(255, 255, 255, 0) 5rem), radial-gradient(rgba(10, 10, 9, 0.12) 1.1px, rgba(10, 10, 9, 0) 1.4px);
+    background-size: 100% 100%, 0.625rem 0.625rem;
+  }
+}

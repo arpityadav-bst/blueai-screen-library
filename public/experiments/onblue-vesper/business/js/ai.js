@@ -29,7 +29,7 @@
   function render() {
     var c = CLIENTS.filter(function (x) { return x[0] === tab; })[0];
     main.innerHTML =
-      '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Use BlueAI with your AI</h1><p class="ob-p-lede">Connect once. Then ask Claude, ChatGPT or Cursor for a brand report or a campaign draft, right from the chat.</p></div></header>' +
+      '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Use BlueAI with <span class="ob-tone">your AI</span></h1><p class="ob-p-lede">Connect once. Then ask Claude, ChatGPT or Cursor for a brand report or a campaign draft, right from the chat.</p></div></header>' +
       '<div class="ob-ai">' +
       '<section class="ob-card ob-card--lit ob-ai-card"><div class="ob-ai-tabs" role="tablist">' + CLIENTS.map(function (x) {
         return '<button type="button" role="tab" aria-selected="' + (x[0] === tab) + '" data-tab="' + x[0] + '">' + e(x[1]) + '</button>';

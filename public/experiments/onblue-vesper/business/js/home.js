@@ -13,10 +13,10 @@
   var draft = OB.store('onblue-draft'), camp = A.stage === 'running' ? 'live' : draft && draft.site === (r.site || '') ? draft.status : '';
   var used;
 
-  function hello() { var h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; }
+  // tone: the greeting is the page title, its time of day the key word; in the line under a count it stays plain
+  function hello(tone) { var h = new Date().getHours(), w = h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening'; return 'Good ' + (tone ? '<span class="ob-tone">' + w + '</span>' : w); }
   function low(s) { return s ? s.charAt(0).toLowerCase() + s.slice(1) : ''; }
   function same(a, b) { return String(a).toLowerCase() === String(b).toLowerCase(); }
-  function angles() { return r.angles.filter(function (a) { return a.on !== false; }); }
   function rivals() { return P.has(2) ? r.rivals.filter(function (x) { return x.on && !x.checking; }).slice(0, 5) : []; }
   function meta(v) { return e(v.format) + (v.angle ? ' &middot; for ' + e(low(v.angle)) : ''); }
   var nb = OB.ui.nb;
@@ -26,7 +26,7 @@
   // the count is the page's one toned word, kept on one line with its noun
   function head(n) {
     var hi = hello() + (r.name ? ', ' + e(r.name) : '');
-    var h1 = n ? '<span class="ob-tone">' + (n === 1 ? 'One&nbsp;video' : n + '&nbsp;videos') + '</span> ' + '<span class="ob-nw">' + (n === 1 ? 'is' : 'are') + ' waiting</span> <span class="ob-nw">for your yes</span>' : hi;   // phones: breaks as "waiting / for your yes"
+    var h1 = n ? '<span class="ob-tone">' + (n === 1 ? 'One&nbsp;video' : n + '&nbsp;videos') + '</span> ' + '<span class="ob-nw">' + (n === 1 ? 'is' : 'are') + ' waiting</span> <span class="ob-nw">for your yes</span>' : hello(true) + (r.name ? ', ' + e(r.name) : '');   // phones: breaks as "waiting / for your yes"
     var sub = n ? hi + '. Our team is making videos for ' + e(r.brand) + '.' :
       !P.finished ? 'Your free report for ' + e(r.brand) + ' is saved, ' + P.done + ' of ' + P.total + ' steps done.' :
       camp === 'live' ? 'Our team is making videos for ' + e(r.brand) + '. Nothing needs you right now.' :
@@ -53,21 +53,14 @@
       '<a class="ob-btn ob-btn--ink" href="../run.html?resume=1">Continue my report' + OB.icon('arrow', 16) + '</a></section>';
   }
 
-  function chips() {
-    var vs = A.st.videos, out = [];
-    var has = function (f) { return vs.some(function (v) { return v.status !== 'making' && same(v.format, f); }); };
-    if (P.has(4)) { angles().slice(0, 3).forEach(function (a) { out.push((has(a.format) ? 'Another ' + low(a.format) : a.format) + ' for ' + low(a.who)); }); }
-    else if (P.has(3)) { r.formats.slice(0, 3).forEach(function (f) { out.push(f.name + ' for ' + r.brand); }); }
-    var rv = rivals()[0]; if (rv) { out.push('Remix ' + rv.name + '\'s top Short'); }
-    return out;
-  }
   function prompt() {
+    // ONE WAY TO START (Appy, 2026-11-17): "Make one" on the formats is the primary;
+    // the prompt is the secondary "or your own", without its suggestion chips
     return '<form class="ob-prompt ob-prompt--home" data-prompt data-tour="prompt"><div class="ob-prompt-row">' + OB.agent() +
       // phones get a field that grows to three lines, so a filled chip reads in full
-      (phone() ? '<textarea rows="1" placeholder="Ask BlueAI for a video" aria-label="Ask BlueAI"></textarea>' :
-        '<input placeholder="' + (window.innerWidth < 640 ? 'Ask for a video' : 'What video should we make for ' + e(r.brand) + '?') + '" aria-label="Ask BlueAI">') +
-      '<button class="ob-prompt-send" type="submit" aria-label="Send">' + OB.icon('send', 18) + '</button></div>' +
-      '<div class="ob-prompt-chips">' + chips().map(function (c) { return '<button type="button" data-chip>' + e(c) + '</button>'; }).join('') + '</div></form>';
+      (phone() ? '<textarea rows="1" placeholder="Or describe your own video" aria-label="Describe a video"></textarea>' :
+        '<input placeholder="' + (window.innerWidth < 640 ? 'Or describe your own video' : 'Or describe a video of your own for ' + e(r.brand)) + '" aria-label="Describe a video">') +
+      '<button class="ob-prompt-send" type="submit" aria-label="Send">' + OB.icon('send', 18) + '</button></div></form>';
   }
 
   // one card per video: a real 9:16 poster to watch from, Approve as the one filled button
@@ -117,7 +110,8 @@
         return '<div class="ob-fmt' + (i ? '' : ' is-top') + '"><span class="ob-fmt-rank">' + (i + 1) + '</span><b>' + e(f.name) + '</b>' +
           '<span class="ob-fmt-share"><strong>' + f.share + '%</strong> of views</span><span class="ob-fmt-bar"><i style="width:' + f.share + '%"></i></span>' +
           '<small class="ob-fmt-tag' + (mine.length ? ' is-used' : '') + '">' + tag + '</small>' +
-          '<button class="ob-btn ob-btn--sm" type="button" data-format="' + i + '" aria-label="' + (mine.length ? 'Make another ' : 'Make one: ') + e(f.name) + '">' + OB.icon('plus', 15) + (mine.length ? 'Make another' : 'Make one') + '</button></div>';
+          // the top format's button is the page's one primary
+          '<button class="ob-btn ob-btn--sm' + (i ? '' : ' ob-btn--ink') + '" type="button" data-format="' + i + '" aria-label="' + (mine.length ? 'Make another ' : 'Make one: ') + e(f.name) + '">' + OB.icon('plus', 15) + (mine.length ? 'Make another' : 'Make one') + '</button></div>';
       }).join('') + '</div></section>';
   }
 
@@ -160,7 +154,7 @@
     var rank = function (v) { return v.status === 'posting' ? 1e9 : A.views(v); };
     var rest = vs.filter(function (v) { return v.status === 'posting' || v.status === 'live'; }).sort(function (a, b) { return rank(b) - rank(a); }).slice(0, 5);
     used = {}; list.concat(rest).forEach(function (v) { if (v.status !== 'making') { used[v.film] = true; } });
-    main.innerHTML = head(wait.length) + resume() + campaign() + needs(list, wait.length) + prompt() + recent(rest) + formats() + remixes();
+    main.innerHTML = head(wait.length) + resume() + campaign() + needs(list, wait.length) + formats() + prompt() + recent(rest) + remixes();
     OB.ui.films(main); rowDots();
   }
 
@@ -172,9 +166,7 @@
     if (!v) { inp.focus(); return; }
     made(A.make(v.charAt(0).toUpperCase() + v.slice(1)));
   });
-  // the suggestion already in the field is marked, so phones can hide it (app-phone-2.css)
-  function picked(f, v) { f.querySelectorAll('[data-chip]').forEach(function (c) { c.classList.toggle('is-picked', c.textContent === v); }); }
-  main.addEventListener('input', function (ev) { var f = ev.target.closest('[data-prompt]'); if (f) { f.classList.toggle('has-text', !!ev.target.value.trim()); fit(ev.target); picked(f, ev.target.value.trim()); } });
+  main.addEventListener('input', function (ev) { var f = ev.target.closest('[data-prompt]'); if (f) { f.classList.toggle('has-text', !!ev.target.value.trim()); fit(ev.target); } });
   // the phone's field is a textarea: Enter still sends, Shift+Enter is a new line
   main.addEventListener('keydown', function (ev) {
     if (ev.key !== 'Enter' || ev.shiftKey || ev.isComposing || ev.target.tagName !== 'TEXTAREA') { return; }
@@ -183,8 +175,6 @@
   });
   main.addEventListener('click', function (ev) {
     var t = ev.target;
-    var chip = t.closest('[data-chip]');
-    if (chip) { var inp = main.querySelector('[data-prompt] input, [data-prompt] textarea'); inp.value = chip.textContent; inp.closest('form').classList.add('has-text'); fit(inp); picked(inp.closest('form'), inp.value); inp.focus(); return; }
     var w = t.closest('[data-watch]'); if (w) { A.watched(w.getAttribute('data-watch')); return; }
     var ap = t.closest('[data-approve]');
     if (ap) { A.approve(ap.getAttribute('data-approve')); OB.toast(A.st.paused ? OB.ui.ph('Approved. It goes out when you resume posting.', 'Approved. Posts when you resume.') : OB.ui.ph('Approved. Creators start posting it today.', 'Approved. Creators post it today.')); render(); OB.ui.side(); return; }

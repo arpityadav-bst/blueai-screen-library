@@ -22,14 +22,14 @@
     // the campaign stands and leads to it, never "Posting" with a Pause button
     var d = OB.store('onblue-draft'), camp = A.stage === 'running' ? 'live' : d && d.site === (r.site || '') ? d.status : '';
     if (camp !== 'live') {
-      return '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Plan</h1><p class="ob-p-lede">What we will run for ' + e(r.brand) + ' once your campaign is live, and what it costs.</p></div><div class="ob-pg-act">' +
+      return '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title"><span class="ob-tone">Plan</span></h1><p class="ob-p-lede">What we will run for ' + e(r.brand) + ' once your campaign is live, and what it costs.</p></div><div class="ob-pg-act">' +
         '<span class="ob-ap-tag ob-ap-tag--off">' + (camp === 'review' ? 'In review' : camp === 'draft' ? 'Draft' : 'No campaign yet') + '</span>' +
         '<a class="ob-btn" href="campaign.html">' + (camp === 'review' ? 'See your campaign' : camp === 'draft' ? 'Finish your draft' : 'Draft a campaign') + '</a></div></header>';
     }
     var act = (st.paused ? (phone() ? '<span class="ob-ap-tag ob-ap-tag--off">Paused</span>' : '') : '<span class="ob-ap-tag">Posting</span>') +
       '<button class="ob-btn' + (st.paused ? ' ob-btn--ink' : '') + '" type="button" data-pause>' + (st.paused ? 'Resume posting' : phone() ? 'Pause' : 'Pause posting') + '</button>';
     // paused swaps the lede line rather than adding one, so nothing on the page moves
-    return '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Plan</h1><p class="ob-p-lede">' + (st.paused ? PAUSED : 'What BlueAI is running for ' + e(r.brand) + ', and what it costs.') + '</p></div><div class="ob-pg-act">' + act + '</div></header>';
+    return '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title"><span class="ob-tone">Plan</span></h1><p class="ob-p-lede">' + (st.paused ? PAUSED : 'What BlueAI is running for ' + e(r.brand) + ', and what it costs.') + '</p></div><div class="ob-pg-act">' + act + '</div></header>';
   }
   function sect(t, note) { return '<div class="ob-p-sect"><h2 class="ob-p-h2">' + t + '</h2>' + (note ? '<span class="ob-p-note">' + note + '</span>' : '') + '</div>'; }
 

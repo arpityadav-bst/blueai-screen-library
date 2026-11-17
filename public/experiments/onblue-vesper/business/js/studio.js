@@ -32,7 +32,7 @@
       '<button class="ob-btn ob-btn--sm ob-btn--ink" type="button" data-tab="approve">Review ' + (n === 1 ? 'it' : 'them') + '</button></div>' : '';
     // phones: no waiting card; the "Needs your yes" filter and the tab badge carry the count, so the grid starts higher
     var oldTabs = main.querySelector('.ob-st-tabs'), sl = oldTabs ? oldTabs.scrollLeft : 0;   // the phone's swipe strip keeps its place
-    main.innerHTML = '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Studio</h1><p class="ob-p-lede">Every video we made for ' + e(r.brand) + '.' + (ph ? '' : ' Open one to approve it or ask for a change.') + '</p></div></header>' + lead +
+    main.innerHTML = '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title"><span class="ob-tone">Studio</span></h1><p class="ob-p-lede">Every video we made for ' + e(r.brand) + '.' + (ph ? '' : ' Open one to approve it or ask for a change.') + '</p></div></header>' + lead +
       '<form class="ob-prompt ob-st-prompt" data-new><div class="ob-prompt-row">' + OB.agent() + '<input placeholder="' + (window.matchMedia('(max-width: 700px)').matches ? 'Ask for a new video' : 'Ask for a new video, like another ' + e(r.formats[0].name.toLowerCase())) + '" aria-label="Ask for a new video">' +
       '<button class="ob-prompt-send" type="submit" aria-label="Send">' + OB.icon('send', 18) + '</button></div></form>' +
       '<div class="ob-st-tabs" role="group" aria-label="Filter videos">' + TABS.map(function (t) {   // all five, always; an empty one is dimmed

@@ -32,7 +32,7 @@
       '</svg><div class="ob-chart-x">' + labels + '</div><div class="ob-chart-tip" data-tip hidden></div></div>';
   }
   function head() {
-    return '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Analytics</h1><p class="ob-p-lede">Verified views by day, and what they cost. You pay $8 per 1,000 verified views.</p></div></header>';
+    return '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title"><span class="ob-tone">Analytics</span></h1><p class="ob-p-lede">Verified views by day, and what they cost. You pay $8 per 1,000 verified views.</p></div></header>';
   }
 
   function render() {

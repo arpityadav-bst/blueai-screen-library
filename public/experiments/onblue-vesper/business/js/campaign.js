@@ -36,7 +36,7 @@
     }).join('');
     var refs = d.refs.map(function (s) { return '<span class="ob-chip ob-cp-ref">' + e(s) + '<button type="button" aria-label="Remove ' + e(s) + '" data-unref="' + e(s) + '">' + OB.icon('close', 12) + '</button></span>'; }).join('');
     var custom = D.BUDGETS.indexOf(d.budget) < 0;
-    return '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Your first campaign</h1><p class="ob-p-lede">' + (d.fromAI ? 'Drafted by your AI assistant with the BlueAI MCP. Check it, change anything, then send it to us for review.' : 'Started from your brand profile and report. Change anything, then send it to us for review.') + '</p></div></header>' +
+    return '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Your first <span class="ob-tone">campaign</span></h1><p class="ob-p-lede">' + (d.fromAI ? 'Drafted by your AI assistant with the BlueAI MCP. Check it, change anything, then send it to us for review.' : 'Started from your brand profile and report. Change anything, then send it to us for review.') + '</p></div></header>' +
       '<form class="ob-cp" data-form novalidate>' +
       card(1, 'About you', 'So we know who we are working with.',
         field('Your name', '<input class="ob-input" id="cp-name" data-k="you.name" value="' + e(d.you.name) + '" placeholder="Your first name" autocomplete="given-name">', { id: 'cp-name' }) +

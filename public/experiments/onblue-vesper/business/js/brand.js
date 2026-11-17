@@ -59,7 +59,7 @@
 
   function render(scrollFiles) {
     var f = [['sell', 'What you sell'], ['buyers', 'Who buys'], ['edge', 'Your edge'], ['voice', 'How you sound']];
-    main.innerHTML = '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Brand</h1><p class="ob-p-lede">Your brand profile for ' + e(r.brand) + ', from your report. Change it once and every video uses it.</p></div></header>' +
+    main.innerHTML = '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title"><span class="ob-tone">Brand</span></h1><p class="ob-p-lede">Your brand profile for ' + e(r.brand) + ', from your report. Change it once and every video uses it.</p></div></header>' +
       header() + '<div class="ob-br-facts">' + f.map(function (x) { return edit(x); }).join('') + '</div>' +
       '<section><div class="ob-p-sect"><h2 class="ob-p-h2">Rules for every video</h2></div><div class="ob-pg-grid2">' +
       rules('always', 'Always') + rules('never', 'Never') + '</div></section>' +

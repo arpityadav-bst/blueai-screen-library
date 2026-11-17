@@ -16,7 +16,7 @@
   var at = 0, done = {}, man;
 
   function head(sub, act) {
-    rh.innerHTML = '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Radar</h1><p class="ob-p-lede">' + e(sub) + '</p></div>' + (act ? '<div class="ob-pg-act">' + act + '</div>' : '') + '</header>';
+    rh.innerHTML = '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title"><span class="ob-tone">Radar</span></h1><p class="ob-p-lede">' + e(sub) + '</p></div>' + (act ? '<div class="ob-pg-act">' + act + '</div>' : '') + '</header>';
     exp(); return '';
   }
   // the head's Manage says whether the manager is open (phones hide it then: the panel's Done is the one close)
