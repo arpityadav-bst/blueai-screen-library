@@ -501,7 +501,7 @@
     $('#c-updated').textContent = ago(updatedAt);
     $('#btn-refresh').innerHTML = IC.refresh;
     renderShareBtn();
-    $('#btn-csv').textContent = 'Download CSV';
+    $('#btn-csv').textContent = 'Posts list (CSV)';
   }
   /* The date range and Share are off the page for now: neither is in the
      product yet (Abhisht 2026-11-16). The period stays the whole campaign,

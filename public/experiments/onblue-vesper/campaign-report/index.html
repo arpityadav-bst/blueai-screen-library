@@ -47,8 +47,17 @@
       <div class="rep-meta" id="c-meta"></div>
     </div>
     <div class="rep-actions">
-      <button class="btn" type="button" id="btn-csv" data-owner></button>
-      <button class="btn" type="button" id="btn-pdf">Download PDF</button>
+      <!-- one Download button, its formats in a menu (Appy, 2026-11-17) -->
+      <div class="rep-more">
+        <button class="btn dl-btn" type="button" id="btn-dl" aria-haspopup="menu" aria-expanded="false" aria-controls="dl-menu">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>
+          <span>Download</span>
+        </button>
+        <div class="more-menu" id="dl-menu" role="menu" hidden>
+          <button type="button" role="menuitem" id="btn-csv" data-owner></button>
+          <button type="button" role="menuitem" id="btn-pdf">Full report (PDF)</button>
+        </div>
+      </div>
       <div class="rep-more">
         <button class="btn icon-btn" type="button" id="btn-more" aria-haspopup="menu" aria-expanded="false" aria-controls="more-menu" aria-label="More actions">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>

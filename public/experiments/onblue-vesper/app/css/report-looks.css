@@ -39,6 +39,26 @@
 .rep-head .btn, .secnav-tools .btn { height: 2.25rem; padding: 0 0.875rem; font: 600 0.8125rem/1 var(--v-font); }
 .rep-head .icon-btn { width: 2.25rem; padding: 0; color: var(--v-ink-3); }
 .rep-head .icon-btn:hover, .rep-head .icon-btn.is-on { color: var(--v-ink-1); }
+/* ONE SIDE COLUMN FOR TWO ROWS (Appy, 2026-11-17, a trial): Viewer gender and
+   Accounting share the same narrower column, so the gap between Viewer age and
+   Viewer gender sits right over the gap between the chart and Accounting, and
+   geography and age get the room their crowded headers need. Only with all
+   three viewer cards showing; otherwise the row keeps its flexible layout. */
+:root { --side: 19rem; }
+@media (min-width: 961px) {
+  .rsec .rep-grid { grid-template-columns: minmax(0, 1fr) var(--side); }
+  .aud-row:has(> #aud-card[hidden]):not(:has(> #geo-card[hidden], > #age-card[hidden], > #gender-card[hidden])) {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) var(--side);
+  }
+}
+/* The chart card is as tall as Accounting beside it: the head stays at the
+   top, the chart sits on the card's bottom edge (like Accounting's foot), and
+   the spare height falls between them (Appy, 2026-11-17) */
+.rep-grid > .chart-card { display: flex; flex-direction: column; }
+.rep-grid > .chart-card > .chart { margin-top: auto; }
+.rep-head .dl-btn { display: inline-flex; align-items: center; gap: 0.375rem; }
+.rep-head .dl-btn svg { flex: none; }
+.rep-head .dl-btn.is-on { background: var(--v-surface-2); }
 .rep-more { position: relative; }
 .more-menu { position: absolute; z-index: 40; top: calc(100% + 0.375rem); right: 0; display: grid; min-width: 12rem; padding: 0.375rem; border: 1px solid var(--v-line); border-radius: 0.875rem; background: #fff; box-shadow: var(--v-lift); }
 .more-menu[hidden] { display: none; }
