@@ -55,6 +55,9 @@ html[data-look="3"] .mini:nth-child(odd) { border-right: 1px solid rgba(255, 255
 html[data-look="3"] .mini:nth-child(-n+2) { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
 html[data-look="3"] .mini::before { content: ""; width: 0.4375rem; height: 0.4375rem; margin-bottom: 0.25rem; border-radius: 50%; background: rgba(255, 255, 255, 0.24); }
 html[data-look="3"] .mini:first-child::before { background: var(--v-accent); }
+/* Top post: the title reads first (lighter), the creator under it stays grey */
+html[data-look="3"] .mini-link { color: #e8e8e2; }
+html[data-look="3"] .mini-link:hover, html[data-look="3"] .mini-link:focus-visible { color: #fff; text-decoration-color: var(--v-accent); }
 
 @media (max-width: 900px) {
   html[data-look="3"] #sec-overview:has(.tiles--hero) { grid-template-columns: minmax(0, 1fr); }

@@ -533,8 +533,8 @@
     return '<div class="tile tile--hero"><span class="tile-l">' + label + '</span><span class="tile-v">' + value + '</span>'
       + (extra || '') + '<span class="tile-s">' + sub + '</span></div>';
   }
-  function mini(label, value, sub) {
-    return '<div class="mini"><span class="mini-l">' + label + '</span>'
+  function mini(label, value, sub, cls) {
+    return '<div class="mini' + (cls ? ' ' + cls : '') + '"><span class="mini-l">' + label + '</span>'
       + '<span class="mini-v">' + value + (sub ? '<small>' + sub + '</small>' : '') + '</span></div>';
   }
   function fillBar(share) {
@@ -579,26 +579,27 @@
         + (counts ? tile('Likes', num(pl), full ? 'on those posts' : 'gathered ' + spanText())
                   + tile('Comments', num(pc), full ? 'on those posts' : 'gathered ' + spanText()) : '');
     } else {
-      /* ONE HERO, FOUR FACTS (blind dashboard review, Appy 2026-11-16): Views
-         is the one number that says whether this is working, so it stands
-         alone with its fill; Posts and Creators are its context and ride in
-         its foot. Likes and Comments become a rate, and the price the brand
-         pays per 1,000 views gets a place of its own */
+      /* ONE HERO, FOUR FACTS (Abhisht, 2026-11-17): Views stands alone with
+         its fill; the four small cards are Posts, Creators, Time left and Top
+         post. Spend, Cost per 1,000 views and Engagement are gone: not what a
+         brand checks, and the Accounting card carries the money. */
       var target = tilesMode === 'compact';
       var nPosts = full ? posts.length : newPosts, nCreators = full ? groupBy(posts, creatorKey).length : active;
-      var by = '<span class="tile-by">From <b>' + plural(nPosts, full ? 'post' : 'new post') + '</b> by <b>' + plural(nCreators, 'creator') + '</b></span>';
-      var views = full ? C.views : pv, rate = views ? (pl + pc) / views : 0;
+      var best = sc.filter(function (p) { return p.pv > 0; }).sort(function (a, b) { return b.pv - a.pv || b.at - a.at; })[0];
       top.className = 'tiles tiles--hero';
       low.className = 'minis';
-      top.innerHTML = (!full ? hero('Views', num(pv), 'gathered ' + spanText())
+      top.innerHTML = !full ? hero('Views', num(pv), 'gathered ' + spanText())
           : target ? hero('Views', num(C.views), 'of the ' + num(C.target) + ' views your budget covers', fillBar(C.views / C.target))
-          : hero('Views', num(C.views), seenSub)).replace(/<\/div>$/, by + '</div>');
+          : hero('Views', num(C.views), seenSub);
       low.innerHTML =
-          (full ? mini('Spend', money(lifeSpend), 'of ' + money(C.budget))
-                : mini('Spend', money(periodSpend), spanText()))
-        + mini('Cost per 1,000 views', money(C.cpm), 'fixed for this campaign')
-        + mini('Engagement', pct(rate, 1), num(pl) + ' likes \u00b7 ' + num(pc) + ' comments')
-        + mini('Time left', left + ' days', 'ends ' + dayShort(Math.round((C.ends - DAY0) / DAY)));
+          mini('Posts', num(nPosts), full ? 'published for this campaign' : 'published ' + spanText())
+        + mini('Creators', num(nCreators), full ? acctsSub : 'with views ' + spanText())
+        + mini('Time left', left + ' days', 'ends ' + dayShort(Math.round((C.ends - DAY0) / DAY)))
+        /* the top post's views, its title (to the post) and who posted it */
+        + mini('Top post', best ? num(best.pv) : '0', best
+            ? '<a class="mini-link" href="' + esc(best.url) + '" target="_blank" rel="noopener">' + esc(best.asset.title) + '</a>'
+              + '<span class="mini-by">' + esc(best.creator.name) + '</span>'
+            : 'No views yet', 'mini--post');
     }
 
     $('#acct-foot').textContent = tilesMode === 'notarget'
@@ -1190,13 +1191,17 @@
       ? posts.length + ' posts driving engagement for this campaign.'
       : plural(all.length, 'post') + ' published ' + spanText() + '. Views, likes and comments are the ones gathered in that period.';
 
+    /* the PDF numbers every post, 1 to N in the list's order, newest first
+       (Abhisht, 2026-11-17): 135 rows over many pages need a way to point at one */
+    var numbered = !isGrouped && document.documentElement.classList.contains('is-pdf');
     var body;
     if (!items.length) {
       body = '<div class="empty"><span>No posts match these filters.</span><button class="btn" type="button" data-clear>Clear filters</button></div>';
     } else {
-      body = listHead() + (isGrouped ? slice.map(groupRow) : slice.map(function (p) { return postRow(p, 0, true, mixed(state.platform)); })).join('');
+      body = (numbered ? rowHead(true, true) : listHead())
+        + (isGrouped ? slice.map(groupRow) : slice.map(function (p, i) { return postRow(p, numbered ? from + i + 1 : 0, true, mixed(state.platform)); })).join('');
     }
-    $('#posts-list').innerHTML = '<div class="plist">' + body + '</div>';
+    $('#posts-list').innerHTML = '<div class="plist' + (numbered ? ' plist--rank' : '') + '">' + body + '</div>';
 
     var pg = pageList(state.page, pages).map(function (k) {
       return k === '…' ? '<span class="gap">…</span>'
@@ -1576,33 +1581,126 @@
       navigator.clipboard.writeText(text).then(done, done);
     } catch (e) { done(); }
   }
+  /* ---- downloads (Abhisht, 2026-11-17) -------------------------------------
+     FILE NAMES: "<Campaign> - onBlue report - YYYY-MM-DD.pdf" and
+     "<Campaign> - onBlue posts - YYYY-MM-DD.csv". The campaign name as the
+     brand typed it, less the characters Windows or Mac can't have in a file
+     name, double spaces collapsed, at most 60 characters; the date is the
+     download day in the viewer's own time zone, no time (a second download
+     the same day gets the browser's "(1)"). Nothing left of the name: the
+     campaign ID. The name and ID are read from the page, so the app's frame
+     (which writes its own campaign into the head) names the file too. */
+  function fileBase() {
+    var name = ($('#c-name').textContent || '').replace(/[\\/:*?"<>|\u0000-\u001f]/g, ' ').replace(/\s+/g, ' ').trim();
+    name = name.slice(0, 60).replace(/[\s.]+$/, '');
+    return name || 'Campaign ' + ($('#btn-copy-id').getAttribute('data-copy') || C.ref);
+  }
+  function today() {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function csvName() { return fileBase() + ' - onBlue posts - ' + today() + '.csv'; }
+  function pdfName() { return fileBase() + ' - onBlue report - ' + today(); }   // the browser adds ".pdf"
+
+  /* A file from text. The link is never added to the page: the app frame's
+     link guard (app/frame-escape.js) watches clicks on the document and
+     opened the file AS the page, which is what blanked the screen before. */
+  function saveFile(text, type, name) {
+    var url = URL.createObjectURL(new Blob([text], { type: type }));
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+  /* CSV: every post of the campaign, removed ones too, newest first,
+     whatever the posts list is filtered to. One Total row right under the
+     headings; it equals the big Views number because the rows add up to it.
+     Platform is on every file, so files from different campaigns line up.
+     No subscribers, no per-post audience (campaign totals only), no
+     per-post spend. A number a platform hasn't sent yet (Instagram) is an
+     empty cell, never 0. UTF-8 with a BOM and CRLF, so Excel shows emoji
+     and non-English titles right. */
   function csvCell(v) {
+    if (v === null || v === undefined) { return ''; }
+    if (typeof v === 'number') { return String(v); }
     var s = String(v);
-    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    // a title starting with = + - @ would run as a formula in Excel or Sheets
+    if (/^[=+\-@\t\r]/.test(s)) { s = "'" + s; }
+    return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }
+  function utcStamp(t) { return new Date(t).toISOString().slice(0, 16).replace('T', ' '); }
+  function csvText() {
+    var list = ALL.slice().sort(function (a, b) { return b.at - a.at; });
+    var sum = function (k) { return list.reduce(function (s, p) { return s + (p[k] || 0); }, 0); };
+    var rows = [
+      ['Published (UTC)', 'Platform', 'Creator', 'Video title', 'Post link', 'Status', 'Views', 'Likes', 'Comments'],
+      ['Total (' + plural(list.length, 'post') + ')', '', '', '', '', '', sum('views'), sum('likes'), sum('comments')]
+    ];
+    list.forEach(function (p) {
+      rows.push([utcStamp(p.at), PLAT[p.platform].name, p.creator.name, p.asset.title, p.url,
+        p.status === 'removed' ? 'Removed' : 'Live', p.views, p.likes, p.comments]);
+    });
+    return '﻿' + rows.map(function (r) { return r.map(csvCell).join(','); }).join('\r\n') + '\r\n';
   }
   function downloadCsv() {
-    /* no per-post audience columns: campaign totals only (Abhisht 2026-11-06) */
-    /* the posts the list shows, its Platform pill included. A YouTube only
-       campaign's file is as it was (less Subscribers while SHOW_FANS is off);
-       any other gets a Platform column, and the account column in words that
-       fit what is in it */
-    var list = filtered(), span = isFull() ? 'Campaign to date' : spanText();
-    var yt = C.platforms.length === 1 && C.platforms[0] === 'youtube', k0 = state.platform;
-    var acct = word('acct', k0);
-    var acctCol = yt ? 'Channel' : mixed(k0) ? 'Channel or account' : acct.charAt(0).toUpperCase() + acct.slice(1);
-    var fansCol = yt ? 'Subscribers' : mixed(k0) ? 'Subscribers or followers' : fansWord(k0);
-    var rows = [['Period'].concat(yt ? [] : ['Platform'], ['Posted at', acctCol], SHOW_FANS ? [fansCol] : [],
-      ['Video title', 'Post URL', 'Status', 'Views', 'Likes', 'Comments'])];
-    list.forEach(function (p) {
-      rows.push([span].concat(yt ? [] : [PLAT[p.platform].name], [new Date(p.at).toISOString(), p.creator.name],
-        SHOW_FANS ? [p.creator.subs] : [],
-        [p.asset.title, p.url, p.status === 'removed' ? 'Removed' : 'Live', p.pv, p.pl, p.pc]));
-    });
-    /* THE PROTOTYPE SAYS IT, IT DOESN'T DO IT (Appy, 2026-11-17): a real file
-       download from inside the app's frame blanked the page, so the button
-       answers with a toast. The rows above are the file's spec for the build. */
-    void rows;
-    toast('Downloading CSV, ' + plural(list.length, 'post'));
+    saveFile(csvText(), 'text/csv;charset=utf-8', csvName());
+    toast('CSV downloaded, ' + plural(ALL.length, 'post'));
+  }
+
+  /* PDF: a snapshot of the whole report as it is now, built from the page
+     itself (the browser's print to PDF), so every link in it stays a link.
+     For the snapshot the page shows every section whatever was on screen,
+     the whole campaign on every platform, Top posts at five and ALL posts in
+     one compact list (no thumbnails, no pages), and an "As of" line with the
+     report ID under the title; the buttons, filters and menus go
+     (report-pdf.css). The file name rides on the page title, which the
+     browser offers as the PDF's name. Afterwards the page is put back as it
+     was. In the product the server renders this same page to a PDF, so the
+     brand gets the file at once instead of a print dialog. */
+  var pdfSaved = null;
+  function enterPdf() {
+    if (pdfSaved) { return; }
+    pdfSaved = { state: Object.assign({}, state), pf: Object.assign({}, pf), topMore: topMore };
+    closeMenu(); closeShare(); closeRange();
+    if (drawer.classList.contains('is-open')) { closeDrawer(); }
+    Object.assign(state, { q: '', platform: 'all', posted: 'any', views: 'any', status: 'all', group: 'none', sort: 'newest', size: 1e6 });
+    pf.chart = pf.creators = pf.top = 'all';
+    topMore = false;
+    var asOf = new Date(updatedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
+    $('#pdf-stamp').textContent = 'As of ' + asOf + ' · Report ID ' + ($('#btn-copy-id').getAttribute('data-copy') || C.ref);
+    document.documentElement.classList.add('is-pdf');
+    syncSelects();
+    renderAll();
+  }
+  function leavePdf() {
+    if (!pdfSaved) { return; }
+    Object.assign(state, pdfSaved.state);
+    Object.assign(pf, pdfSaved.pf);
+    topMore = pdfSaved.topMore;
+    pdfSaved = null;
+    document.documentElement.classList.remove('is-pdf');
+    syncSelects();
+    var page = state.page;
+    renderAll();
+    if (page > 1) { state.page = page; renderPosts(); }
+  }
+  function downloadPdf() {
+    var titles = [[document, document.title]];
+    try { if (window.parent !== window && window.parent.document) { titles.push([window.parent.document, window.parent.document.title]); } } catch (e) {}
+    enterPdf();
+    titles.forEach(function (t) { t[0].title = pdfName(); });
+    var done = false;
+    var after = function () {
+      if (done) { return; }
+      done = true;
+      titles.forEach(function (t) { t[0].title = t[1]; });
+      leavePdf();
+    };
+    window.addEventListener('afterprint', after, { once: true });
+    // a beat for the snapshot to lay out before the print dialog freezes the page
+    setTimeout(function () { window.print(); }, 60);
   }
 
   /* ---- events -------------------------------------------------------------- */
@@ -1731,7 +1829,7 @@
     if (t.id === 'btn-range') { if (rpop.hidden) { openRange(); } else { closeRange(); } return; }
     if (t.id === 'btn-share') { toggleShare(); return; }
     if (t.id === 'btn-csv') { downloadCsv(); return; }
-    if (t.id === 'btn-pdf') { toast('Downloading PDF'); return; }
+    if (t.id === 'btn-pdf') { downloadPdf(); return; }
     if (t.id === 'btn-refresh') {
       t.classList.add('is-spinning');
       setTimeout(function () {
@@ -1812,4 +1910,23 @@
   renderHead();
   syncSelects();
   renderAll();
+
+  /* REVIEW HOOK, prototype only: ?pdf=1 opens the report already in its PDF
+     snapshot, so the PDF's layout can be looked at on screen or printed
+     headless. Opened on its own (outside the app's frame) it links the
+     app's Volt sheets itself, the way the frame does, so it looks the same. */
+  if (new URLSearchParams(location.search).get('pdf') === '1') {
+    if (window.parent === window) {
+      document.documentElement.classList.add('is-bare');
+      tilesMode = 'compact';   // the app's starting pick (app/report-frame.js)
+      ['../app/css/volt-report-skin.css', '../app/css/report-looks.css'].forEach(function (h) {
+        var l = document.createElement('link');
+        l.rel = 'stylesheet';
+        l.href = h;
+        document.head.appendChild(l);
+      });
+    }
+    enterPdf();
+    document.title = pdfName();
+  }
 })();

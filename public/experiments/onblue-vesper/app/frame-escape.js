@@ -28,6 +28,8 @@
       if (e.defaultPrevented || e.button > 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) { return; }
       var a = e.target.closest && e.target.closest('a[href]');
       if (!a || (a.target && a.target !== '_self')) { return; }
+      // a file download (the report's CSV) is not a way out of the screen
+      if (a.hasAttribute('download') || /^(blob|data):/i.test(a.getAttribute('href'))) { return; }
       var url;
       try { url = new URL(a.getAttribute('href'), doc.baseURI); } catch (err) { return; }
       if (url.origin !== location.origin || url.pathname === win.location.pathname) { return; }

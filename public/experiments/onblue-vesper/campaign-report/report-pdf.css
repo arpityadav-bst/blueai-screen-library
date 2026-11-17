@@ -1,0 +1,118 @@
+/* THE PDF SNAPSHOT (Abhisht, 2026-11-17): Download > Full report (PDF).
+   report.js puts the page in its snapshot (html.is-pdf: every section, the
+   whole campaign, every post) and opens the browser's print to PDF; these
+   rules turn the screen into the document. Links stay links, so titles and
+   creators are underlined here (there is no hover on paper). Rules start
+   with "html.is-pdf body" so they outrank the app's look sheets, which the
+   frame links in after this one.
+   Landscape Letter: at 10.2 in of width the report keeps its desktop
+   layout (portrait would fall to the phone layout). */
+
+.pdf-stamp { display: none; }
+
+@page { size: letter landscape; margin: 0.4in; }
+
+html.is-pdf body .pdf-stamp {
+  display: block;
+  margin: 0.5rem 0 0;
+  color: var(--v-ink-3, #6b6b66);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+/* everything that is for using the page, not reading it */
+html.is-pdf body header.top,
+html.is-pdf body .back,
+html.is-pdf body .rep-actions,
+html.is-pdf body .secnav,
+html.is-pdf body .card-acts,
+html.is-pdf body .tbl-more,
+html.is-pdf body .posts-head .search,
+html.is-pdf body .filters,
+html.is-pdf body .pager,
+html.is-pdf body .c-acts,
+html.is-pdf body .post-acts,
+html.is-pdf body .devdock,
+html.is-pdf body .toast,
+html.is-pdf body .menu,
+html.is-pdf body .pop,
+html.is-pdf body .scrim,
+html.is-pdf body .drawer,
+html.is-pdf body .link-off,
+html.is-pdf body [data-geo-all],
+html.is-pdf body .xlink-ic,
+html.is-pdf body .post .thumb { display: none !important; }
+
+/* links read as links */
+html.is-pdf body .xlink,
+html.is-pdf body .mini-link { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+html.is-pdf body .xlink { text-decoration-color: rgba(10, 10, 9, 0.3); }
+html.is-pdf body .mini-link { text-decoration-color: rgba(255, 255, 255, 0.4); }
+html.is-pdf body .post.is-removed .xlink { color: inherit; }
+
+/* the posts list: one compact table, no thumbnails */
+html.is-pdf body .post { min-height: 0; padding-top: 0.5rem; padding-bottom: 0.5rem; }
+html.is-pdf body .post .c-content { gap: 0; }
+
+/* the snapshot on screen (?pdf=1, opened on its own): the page at the
+   PDF's width, on white */
+html.is-bare header.top { display: none !important; }
+html.is-bare.is-pdf body { background: #fff; }
+html.is-bare.is-pdf body .page { max-width: 1000px; padding-top: 24px; }
+
+@media print {
+  html, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html.is-pdf body { background: #fff !important; }
+  html.is-pdf body .page { max-width: none; margin: 0; padding: 0; }
+  /* a card or tile never splits across pages; the posts list does, row by row */
+  html.is-pdf body .rep-head,
+  html.is-pdf body #sec-overview,
+  html.is-pdf body .aud-row > .card,
+  html.is-pdf body .chart-card,
+  html.is-pdf body .acct-card,
+  html.is-pdf body #by-plat,
+  html.is-pdf body #top-creators,
+  html.is-pdf body #top-posts { break-inside: avoid; }
+  html.is-pdf body .post, html.is-pdf body .post-head { break-inside: avoid; }
+  html.is-pdf body #posts-card { break-before: page; }
+
+  /* ALWAYS THE DESKTOP LAYOUT. When printing, the browser checks the
+     screen-size rules against a portrait page (about 740px) even though the
+     page is landscape (about 980px), so the report fell to its phone layout:
+     no Creator, Likes or Comments columns, one card per row. Here the desktop
+     values come back, at the 961-1080px sizes the page really has. */
+  html.is-pdf, html.is-pdf.no-fans {
+    --rgap: 16px;
+    --cols: minmax(0, 1fr) 150px 96px 64px 54px 74px 36px;
+    /* the rank column fits three digits: the posts list is numbered to 135 and on */
+    --cols-r: 30px minmax(0, 1fr) 150px 96px 64px 54px 74px 36px;
+  }
+  html.is-pdf body .card { padding: 20px 22px; }
+  html.is-pdf body .title { font-size: 2rem; }
+  /* the overview band: Views on the left, the four cards on the right */
+  html[data-look="3"].is-pdf body #sec-overview:has(.tiles--hero) { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+  html[data-look="3"].is-pdf body .minis { border-top: 0; border-left: 1px solid rgba(255, 255, 255, 0.1); }
+  /* viewer cards three across; chart and Accounting side by side */
+  html.is-pdf body .aud-row > .card:not(#aud-card) { flex-basis: 17rem; }
+  html.is-pdf body .rsec .rep-grid { grid-template-columns: minmax(0, 1fr) var(--side, 19rem); }
+  html.is-pdf body .chart svg text { font-size: 10px; }
+  html.is-pdf body .chart svg text[font-weight="600"] { font-size: 11.5px; }
+  /* By platform and Top creators: every column */
+  html.is-pdf body .tbl--plat { --tcols: minmax(0, 1fr) 56px 70px 88px minmax(110px, 1fr) 66px 80px 84px; }
+  html.is-pdf body .tbl--plat .c-likes, html.is-pdf body .tbl--plat .c-comments,
+  html.is-pdf body .tbl--plat .c-creators, html.is-pdf body .tbl .c-posts { display: block; }
+  html.is-pdf body .tbl--plat .bp-bar { display: block; }
+  html.is-pdf body .bp-more { display: inline; }
+  html.is-pdf.no-fans body .tbl--creators { --tcols: 22px minmax(0, 1fr) 60px 88px 70px 86px; }
+  html.is-pdf body .tbl--creators .c-likes, html.is-pdf body .tbl--creators .c-comments { display: block; }
+  html.is-pdf body .tr { gap: 16px; padding: 10px 8px; }
+  /* the post tables: Video, Creator, Published, Views, Likes, Comments */
+  html.is-pdf body .post-head { display: grid; }
+  html.is-pdf body .post { gap: 14px; padding: 8px; }
+  html.is-pdf body .plist .c-creator, html.is-pdf body .plist .c-pub,
+  html.is-pdf body .plist .c-views, html.is-pdf body .plist .c-likes, html.is-pdf body .plist .c-comments { display: block; }
+  html.is-pdf body .plist .t-creator { display: flex; }
+  html.is-pdf body .plist .post-pub { display: grid; }
+  html.is-pdf.no-fans body .plist .c-subs,
+  html.is-pdf body .post-mstats, html.is-pdf body .pc-by { display: none; }
+}
