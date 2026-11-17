@@ -17,7 +17,9 @@
     ['vscode', 'VS Code', ['Open the Command Palette and run MCP: Add Server', 'Pick HTTP, paste the address below', 'Name it blueai and choose where to save it']]
   ];
   var tab = 'claude';
-  var PROMPT = 'Use BlueAI to build the brand report for ' + site + '. Then draft a first campaign from it with a $2,000 budget, keeping the video ideas you think fit best, and give me the link to review it.';
+  // the budget the brand's own draft carries, so the prompt never disagrees with it
+  var draft = OB.store('onblue-draft'), budget = draft && draft.site === (r.site || '') && draft.budget ? draft.budget : 2000;
+  var PROMPT = 'Use BlueAI to build the brand report for ' + site + '. Then draft a first campaign from it with a $' + OB.fmt(budget) + ' budget, keeping the video ideas you think fit best, and give me the link to review it.';
 
   function copyBox(label, value, mono) {
     return '<div class="ob-ai-copy' + (mono ? ' is-mono' : '') + '"><span class="ob-ai-copy-l">' + e(label) + '</span><pre>' + e(value) + '</pre>' +
@@ -27,7 +29,7 @@
   function render() {
     var c = CLIENTS.filter(function (x) { return x[0] === tab; })[0];
     main.innerHTML =
-      '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">BlueAI in your AI assistant</h1><p class="ob-p-lede">Connect once. Then ask Claude, ChatGPT or Cursor for a brand report or a campaign draft, right from the chat.</p></div></header>' +
+      '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Use BlueAI with your AI</h1><p class="ob-p-lede">Connect once. Then ask Claude, ChatGPT or Cursor for a brand report or a campaign draft, right from the chat.</p></div></header>' +
       '<div class="ob-ai">' +
       '<section class="ob-card ob-card--lit ob-ai-card"><div class="ob-ai-tabs" role="tablist">' + CLIENTS.map(function (x) {
         return '<button type="button" role="tab" aria-selected="' + (x[0] === tab) + '" data-tab="' + x[0] + '">' + e(x[1]) + '</button>';

@@ -34,7 +34,12 @@
       '<b>$' + OB.fmt(some ? k.left : A.st.budget) + (some ? '<small>left</small>' : '') + '</b>' +
       '<div class="ob-meter"><span style="width:' + used + '%"></span></div>' +
       '<small>' + spentLine + '</small></a>' :
-      '<a class="ob-side-budget" href="campaign.html"><span class="ob-side-budget-top"><span>Budget</span></span><b>Not set yet</b><small>You set it in your campaign</small></a>';
+      // a draft's budget shows as the draft's, so the card never says "not set" beside a $3,000 Submit
+      (function () {
+        var d = OB.store('onblue-draft'), mine = d && d.site === (r.site || '') && d.budget;
+        return '<a class="ob-side-budget" href="campaign.html"><span class="ob-side-budget-top"><span>Budget</span></span>' +
+          (mine ? '<b>$' + OB.fmt(d.budget) + '</b><small>In your draft, not submitted yet</small>' : '<b>Not set yet</b><small>You set it in your campaign</small>') + '</a>';
+      })();
     return '<a class="ob-logo" href="home.html">' + OB.logoMark + '<span><span class="ob-logo-on">on</span>Blue</span></a>' +
       '<div class="ob-side-nav">' + nav + '</div>' +
       '<div class="ob-side-gap"></div>' + budget +

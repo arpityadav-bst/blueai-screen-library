@@ -138,8 +138,8 @@ body.has-drawer .ob-toast.is-on { transform: translate(50%, 0); }
 
 /* Home: your yes leads, the prompt follows as a slimmer bar */
 .ob-sect.ob-sect--first { margin-top: 0; }
-.ob-prompt--home { margin-top: var(--s10); padding: var(--s2) var(--s3) var(--s3); }
-.ob-prompt--home .ob-prompt-row input { height: 2.5rem; font-size: 1.0625rem; }
+.ob-prompt--home { margin-top: var(--s12); padding: var(--s3); }   /* a section of its own (48), padded like Studio's prompt (12), 2026-11-17 */
+.ob-prompt--home .ob-prompt-row input { height: 2.75rem; font-size: 1.0625rem; }
 .ob-head h1 .ob-tone { white-space: nowrap; }
 
 /* a report left unfinished at sign-up: how far it got, and the way back in */

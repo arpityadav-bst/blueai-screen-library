@@ -32,7 +32,7 @@
       '</svg><div class="ob-chart-x">' + labels + '</div><div class="ob-chart-tip" data-tip hidden></div></div>';
   }
   function head() {
-    return '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Analytics</h1><p class="ob-p-lede">verified views by day, and what they cost. You pay $8 per 1,000 verified views.</p></div></header>';
+    return '<header class="ob-p-head ob-pg-head"><div><h1 class="ob-p-title">Analytics</h1><p class="ob-p-lede">Verified views by day, and what they cost. You pay $8 per 1,000 verified views.</p></div></header>';
   }
 
   function render() {
@@ -52,7 +52,7 @@
     }
     // what only this page knows: how long the budget lasts at the pace so far (an estimate, and it says so)
     var weekly = k.spent / Math.max(1, k.days) * 7, weeks = weekly ? Math.round(k.left / weekly) : 0;
-    var kp = [['verified views', OB.fmt(k.views)], ['Spent', '$' + OB.fmt(k.spent)], ['Budget lasts', '~' + weeks + '<small>weeks</small>'], ['Videos live', k.live], ['Creators who posted', k.creators]];
+    var kp = [['Verified views', OB.fmt(k.views)], ['Spent', '$' + OB.fmt(k.spent)], ['Budget lasts', '~' + weeks + '<small>weeks</small>'], ['Videos live', k.live], ['Creators who posted', k.creators]];
     var top = A.views(live[0]) || 1;
     // row costs add up to the Spent figure exactly by largest remainder: round
     // down, then hand the missing dollars to the rows with the biggest
@@ -67,7 +67,7 @@
     main.innerHTML = head() + '<div class="ob-card ob-an-strip">' + kp.map(function (x) { return '<div><small>' + x[0] + '</small><span class="ob-p-figure">' + x[1] + '</span></div>'; }).join('') + '</div>' +
       '<section class="ob-card ob-card--lit ob-an-panel"><div class="ob-an-head"><div><h2 class="ob-p-h2">Daily views</h2><span class="ob-p-note">Last ' + days.length + ' days, today so far</span></div>' +
       '<div class="ob-legend"><span><i style="background:var(--an-new)"></i>New, posted in the last 3 days</span><span><i style="background:var(--an-old)"></i>Older videos</span></div></div>' + chart(days) + '</section>' +
-      '<section><div class="ob-p-sect"><h2 class="ob-p-h2">Every video</h2><span class="ob-p-note">' + live.length + ' live, most viewed first</span></div><div class="ob-table-wrap ob-an-table"><table class="ob-table"><thead><tr><th>Video</th><th>Posted</th><th>verified views</th><th>Cost</th></tr></thead><tbody>' +
+      '<section><div class="ob-p-sect"><h2 class="ob-p-h2">Every video</h2><span class="ob-p-note">' + live.length + ' live, most viewed first</span></div><div class="ob-table-wrap ob-an-table"><table class="ob-table"><thead><tr><th>Video</th><th>Posted</th><th>Verified views</th><th>Cost</th></tr></thead><tbody>' +
       live.map(function (v, i) {
         var vw = A.views(v);
         return '<tr><td><a href="studio.html#' + v.id + '"><span class="ob-table-th"><img alt="" src="' + OB.film(v.film).poster + '"></span>' + e(v.title) + '</a></td><td>' + (v.ago === 0 ? 'Today' : v.ago === 1 ? 'Yesterday' : v.ago + ' days ago') +

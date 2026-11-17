@@ -115,7 +115,7 @@
 
   main.addEventListener('input', function (ev) {
     var k = ev.target.getAttribute('data-k'); if (!k) { return; }
-    set(k, ev.target.value); save(true);
+    set(k, ev.target.value); save(true); if (k === 'budget') { OB.ui.side(); }
     if (k === 'budget') { var s = main.querySelector('[data-say] b'); if (s) { s.textContent = views(d.budget); } main.querySelector('[type="submit"]').firstChild.textContent = 'Submit for review, $' + OB.fmt(d.budget); }
   });
   main.addEventListener('click', function (ev) {
@@ -124,7 +124,7 @@
       var key = p.parentNode.getAttribute('data-pick'), v = p.getAttribute('data-v');
       if (key === 'budget') { d.budget = v === 'Other' ? (D.BUDGETS.indexOf(d.budget) < 0 ? d.budget : 1000) : +v; }
       else { set(key, v); }
-      save(); render(); return;
+      save(); render(); if (key === 'budget') { OB.ui.side(); } return;
     }
     var idea = t.closest('[data-idea]');
     if (idea) {

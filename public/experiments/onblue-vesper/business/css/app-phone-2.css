@@ -194,3 +194,11 @@
   .ob-side-nav { grid-template-columns: repeat(7, minmax(0, 1fr)); }
 }
 @media (max-width: 420px) { .ob-navi { font-size: 0.6875rem; } }
+
+/* touch: every pick, select, tab and remove control at least 44px (2026-11-17) */
+@media (max-width: 700px) {
+  .ob-main .ob-pick { min-height: 2.75rem; }
+  .ob-br-sel { min-height: 2.75rem; }
+  .ob-ai-tabs button { min-height: 2.75rem; }
+  .ob-cp-ref button { width: 2.75rem; height: 2.75rem; }
+}
