@@ -11,14 +11,14 @@
 .ob-knows-hint[hidden] { display: none; }
 
 /* a group's name, sitting on the list like a section rule */
-.ob-fgroup { padding: var(--s4) var(--s4) var(--s1); border-top: 1px solid var(--line); color: var(--ink-3); font: 600 0.6875rem/1.3 var(--font); letter-spacing: 0.06em; text-transform: uppercase; }
+.ob-fgroup { padding: var(--s4) var(--s4) var(--s1); border-top: 1px solid var(--line); color: var(--ink-3); font: 500 0.75rem/1.3 var(--font); }   /* sentence case: no small uppercase kickers in Volt */
 .ob-fgroup:first-child { border-top: 0; }
 .ob-fgroup + .ob-fact { border-top: 0; padding-top: var(--s1); }
 
 /* a fact you can fix: the whole row is the control, the pen says so on hover */
 .ob-fact.is-edit { padding-right: 2.75rem; cursor: pointer; transition: background-color 0.15s var(--ease); }
 .ob-fact.is-edit:hover, .ob-fact.is-edit:focus-visible { background: var(--surface-2); }
-.ob-fact.is-edit:focus-visible { outline: 2px solid var(--ink-1); outline-offset: -2px; }
+.ob-fact.is-edit:focus-visible { outline: 0; box-shadow: inset 0 0 0 2px #9ccf12; }
 .ob-fact-pen { position: absolute; top: var(--s3); right: var(--s3); display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: var(--r-sm); color: var(--ink-4); opacity: 0; transition: opacity 0.15s var(--ease); }
 .ob-fact.is-edit:hover .ob-fact-pen, .ob-fact.is-edit:focus-visible .ob-fact-pen { opacity: 1; color: var(--ink-1); }
 .ob-fact.is-editing { padding-right: var(--s4); background: var(--surface-2); cursor: default; }

@@ -72,14 +72,15 @@
 
     // run.js re-renders the profile from fresh facts (onEdit), so a fixed
     // value shows at once; the row it came from keeps the focus
-    function close(li, save, value) {
+    // focus goes back to the row only when the keyboard closed it (Enter, Escape); a click elsewhere keeps its own target
+    function close(li, save, value, byKey) {
       var key = editing, changed = !!(save && value && value !== String(r[key]));
       editing = null; pending = null;
       if (changed) { r[key] = value; if (key === 'where') { r.whereSet = true; } }
       onEdit(key, changed);
       var again = facts.querySelector('[data-edit="' + key + '"]');
       if (!again) { return; }
-      again.focus({ preventScroll: true });
+      if (byKey) { again.focus({ preventScroll: true }); }
       if (changed) { again.classList.add('is-saved'); window.setTimeout(function () { again.classList.remove('is-saved'); }, 1600); }
     }
 
@@ -97,27 +98,34 @@
         }).join('') + '</span>';
         var picks = li.querySelector('.ob-fact-picks');
         picks.addEventListener('click', function (ev) { var p = ev.target.closest('.ob-pick'); if (p) { ev.stopPropagation(); close(li, true, p.textContent); } });
-        picks.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') { ev.preventDefault(); close(li, false); } });
+        picks.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') { ev.preventDefault(); close(li, false, '', true); } });
         picks.querySelector('[aria-pressed="true"], .ob-pick').focus();
         return;
       }
       b.outerHTML = '<textarea class="ob-fact-input" rows="1" aria-label="' + e(li.querySelector('span').textContent) + '">' + e(r[key]) + '</textarea>';
       var t = li.querySelector('textarea'), done = false;
       var grow = function () { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; };
-      var finish = function (save) { if (done) { return; } done = true; close(li, save, t.value.replace(/\s+/g, ' ').trim()); };
+      var finish = function (save, byKey) { if (done) { return; } done = true; close(li, save, t.value.replace(/\s+/g, ' ').trim(), byKey); };
       grow();
       t.addEventListener('input', grow);
       t.addEventListener('keydown', function (ev) {
-        if (ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); finish(true); }
-        if (ev.key === 'Escape') { ev.preventDefault(); finish(false); }
+        if (ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); finish(true, true); }
+        if (ev.key === 'Escape') { ev.preventDefault(); finish(false, true); }
       });
       t.addEventListener('blur', function () { finish(true); });
       t.focus(); t.setSelectionRange(t.value.length, t.value.length);
     }
 
+    // one edit at a time, and clicking another fact moves to it: a text edit has already
+    // saved on blur (the list re-rendered under the click), the market pick closes here;
+    // the row is looked up again by key because the clicked one may have been replaced
     facts.addEventListener('click', function (ev) {
       var li = ev.target.closest('[data-edit]');
-      if (li && !li.classList.contains('is-editing')) { open(li); }
+      if (!li || li.classList.contains('is-editing')) { return; }
+      var key = li.getAttribute('data-edit');
+      if (editing) { close(facts.querySelector('.is-editing'), false); }
+      var row = facts.querySelector('[data-edit="' + key + '"]');
+      if (row) { open(row); }
     });
     facts.addEventListener('keydown', function (ev) {
       var li = ev.target.closest('[data-edit]');
