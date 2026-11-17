@@ -73,7 +73,7 @@
       ['Learns your brand from ', 'one link', '.', 'BlueAI reads ' + host + ': what you sell and who buys it.'],
       ['Finds your ', 'competitors', ' and what they post.', 'It finds ' + r.rivals.length + ' rivals in ' + r.category.toLowerCase() + ' and the ' + r.rivalsTotal + ' Shorts they posted in the last six months.'],
       ['Finds the formats that ', 'win', ' in your category.', 'It sorts every rival Short by format and keeps the ones that win. Right now, ' + top.toLowerCase() + ' leads.'],
-      ['Makes your videos on ', 'winning formats', '.', 'BlueAI makes your Shorts on the formats that win in your category.'],
+      ['Makes your videos on ', 'winning formats', '.', 'We make your Shorts on the formats that win in your category.'],
       ['Creators post them ', 'everywhere at once', '.', 'A community of thousands of creators posts them on their own channels. Days, not months.'],
       ['Reads the results and ', 'doubles down', '.', 'It tracks the views every day, old videos included, and makes more of what works. You pay $8 per 1,000 verified views.']
     ];

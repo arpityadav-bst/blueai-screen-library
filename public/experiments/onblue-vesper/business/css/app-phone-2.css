@@ -186,3 +186,6 @@
 @media (max-width: 700px) and (prefers-reduced-motion: reduce) {
   .ob-row-dots i { transition: none; }
 }
+
+/* a phone's tab bar keeps seven tabs; the account menu carries "Use BlueAI from your AI" (2026-11-17) */
+@media (max-width: 860px) { .ob-navi[data-nav="ai"] { display: none; } }

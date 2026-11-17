@@ -36,7 +36,7 @@
 .ob-stepper li.is-done i { border-color: transparent; background: var(--ink-1); color: #fff; }
 
 /* ---- the left column: what BlueAI knows ----------------------------------- */
-.ob-run-body { display: grid; grid-template-columns: 18.75rem minmax(0, 1fr); min-height: 0; background: linear-gradient(var(--line), var(--line)) 18.75rem 0 / 1px 100% no-repeat; }
+.ob-run-body { display: grid; grid-template-columns: 24rem minmax(0, 1fr); min-height: 0; background: linear-gradient(var(--line), var(--line)) 24rem 0 / 1px 100% no-repeat; }
 .ob-knows, .ob-stage { min-width: 0; }
 .ob-knows { position: sticky; top: 4rem; align-self: start; display: flex; flex-direction: column; height: calc(100vh - 4rem); overflow: hidden; padding: var(--s8) var(--s6); }
 .ob-knows-head { flex: none; display: flex; align-items: center; gap: var(--s3); }

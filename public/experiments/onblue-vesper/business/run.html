@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="css/run-2.css">
 <link rel="stylesheet" href="css/product.css">
 <link rel="stylesheet" href="css/run-3.css">
+<link rel="stylesheet" href="css/run-4.css">
 </head>
 <body class="ob-page">
 <div class="ob-run">
@@ -23,9 +24,10 @@
     <div class="ob-runbar-end"><button class="ob-btn ob-btn--sm" type="button" data-save>Save my report</button><a class="ob-link ob-runbar-exit" href="index.html">Back to site</a></div>
   </header>
   <div class="ob-run-body">
-    <aside class="ob-knows" aria-label="What BlueAI knows">
+    <aside class="ob-knows" aria-label="Your brand profile">
       <div class="ob-knows-head" data-knows-head></div>
-      <button class="ob-knows-label" type="button" data-knows-toggle aria-expanded="false"><span><span class="ob-knows-what">What </span>BlueAI knows</span> <span class="ob-count" data-facts-count>0</span></button>
+      <button class="ob-knows-label" type="button" data-knows-toggle aria-expanded="false"><span><span class="ob-knows-what">Your brand profile</span><span class="ob-knows-short">Brand profile</span></span> <span class="ob-count" data-facts-count>0</span></button>
+      <p class="ob-knows-hint" data-knows-hint hidden>Click anything to fix it. Every campaign starts from this.</p>
       <div class="ob-facts-wrap"><ul class="ob-facts" data-facts></ul></div>
     </aside>
     <main class="ob-stage" data-stage aria-live="polite"></main>
@@ -47,6 +49,7 @@
 
 <script src="js/ob.js"></script>
 <script src="js/report.js"></script>
+<script src="js/report-live.js"></script>
 <script src="js/run-steps.js"></script>
 <script src="js/run-steps-2.js"></script>
 <script>
@@ -54,6 +57,7 @@
   document.querySelectorAll('[data-agent]').forEach(function (n) { n.outerHTML = OB.agent(); });
 </script>
 <script src="js/google.js"></script>
+<script src="js/run-profile.js"></script>
 <script src="js/run.js"></script>
 <script src="js/run-exit.js"></script>
 </body>

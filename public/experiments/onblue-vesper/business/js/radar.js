@@ -71,7 +71,7 @@
       '<span class="ob-rd-views"><strong>' + OB.short(top.s.views) + '</strong>&nbsp;views</span>' +
       // what makes it work, as BlueAI reads it: fills the card with the reason to remix, not air
       '<div class="ob-rd-why"><small>Why it works, as BlueAI reads it</small><ul>' + ['A hook in the first second', 'One character, one small problem', 'Short enough to watch twice'].map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div>' +
-      '<p class="ob-rd-say">' + OB.agent() + '<span>BlueAI keeps the format and the hook, and makes it about ' + e(r.brand) + '.</span></p>' +
+      '<p class="ob-rd-say">' + OB.agent() + '<span>We keep the format and the hook, and make it about ' + e(r.brand) + '.</span></p>' +
       '<span data-hero>' + remixBtn(top.x, 'hero', true) + '</span></div></div>' +
 
       '<div class="ob-card ob-rd-week"><h3 class="ob-pg-h3">Formats winning across ' + e(r.category.toLowerCase()) + '</h3><p class="ob-pg-p">Share of views, all brands in the category, estimated</p><div class="ob-rd-bars">' +

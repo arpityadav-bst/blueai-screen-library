@@ -1,8 +1,11 @@
-/* The six steps of the agent run, as data: what BlueAI says, what it ticks
-   off while it works, what it asks or shows in the wait, the result, and the
-   facts it adds to the left column. run.js plays them. Steps 1 to 3 live here,
-   4 to 6 in run-steps-2.js. Exposes OB.STEPS and the shared kit OB.runKit.
-   done() returns [heading, line, word]: the word gets the homepage halftone. */
+/* The five steps of the agent run, as data: what BlueAI says, what it ticks
+   off while it works, the proof card it shows in the wait, the result, and the
+   facts it adds to the brand profile on the left. run.js plays them. Steps 1
+   to 3 live here, 4 and 5 in run-steps-2.js. Exposes OB.STEPS and OB.runKit.
+   done() returns [heading, line, word]: the word gets the homepage halftone.
+   THE RUN ASKS NOTHING (Ashish, 2026-11-17): one focus per step. The "about
+   you" questions (name, goal, your Shorts today) moved to the draft campaign,
+   and the profile itself is edited in the left column, not in the steps. */
 (function () {
   'use strict';
   var OB = window.OB, e = OB.esc;
@@ -46,9 +49,12 @@
   function marketGuess(r) { return !!r.site && !r.whereSet; }
   function rank(list) { return list.slice().sort(function (a, b) { return b.videos - a.videos; }); }
   function phone() { return window.matchMedia('(max-width: 700px)').matches; }
+  // 21100000 -> 21.1M, 48200 -> 48.2K: a channel's numbers at a glance
+  function compact(n) { n = +n || 0; return n >= 1e6 ? +(n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? +(n / 1e3).toFixed(1) + 'K' : String(n); }
+  // where the profile sits: beside the steps, or folded above them (860 and below)
+  function side() { return window.matchMedia('(max-width: 860px)').matches ? 'above' : 'on the left'; }
   OB.runKit = { hbar: hbar, proof: proof, nm: nm, poss: poss, head: head, tick: tick, onRivals: onRivals, syncRivals: syncRivals, nextLabel: nextLabel, share: share, marketGuess: marketGuess };
 
-  var GOALS = ['More views', 'More sales', 'Launching something', 'Growing a channel'];
   var WHERE = ['United States', 'UK', 'Canada', 'Worldwide'];
   // what a winning format is, in a line, so the result says what to make
   var DEF = {
@@ -58,42 +64,30 @@
     'Photoreal story': 'A short, real-looking scene where your product saves the moment.',
     'Animated story': 'A small animated story with your product at the turn.'
   };
-  function grow(t) { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }
-  function answers(r) {
-    var f = [];
-    if (r.name) { f.push(['Your name', r.name]); }
-    if (r.goal) { f.push(['Goal', r.goal]); }
-    return f;
+  // the profile's rows: [label, value, flags, the report key an edit writes]
+  function brandFacts(r) {
+    var g = r.site ? '' : 'guess';
+    return { sell: ['What you sell', r.sell, '', 'sell'], buyers: ['Who buys', r.buyers, '', 'buyers'], market: ['Market', r.where, marketGuess(r) ? 'guess' : '', 'where'],
+      voice: ['How you sound', r.voice, g, 'voice'], edge: ['Your edge', r.edge, g, 'edge'], cat: ['Category', r.category] };
   }
-  // one set of labels for the cards and the column; on the step's own result
-  // the column dims the four rows the cards already show (cur)
-  function brandFacts(r, cur) {
-    var d = cur ? 'dim' : '', g = r.site ? '' : 'guess';
-    return { sell: ['What you sell', r.sell, d], buyers: ['Who buys', r.buyers, d], market: ['Market', r.where, marketGuess(r) ? 'guess' : ''],
-      voice: ['How you sound', r.voice, d + ' ' + g], edge: ['Your edge', r.edge, d + ' ' + g], cat: ['Category', r.category] };
-  }
-  function marketLine(r) {
-    // the place, the tag and Change wrap as one group on a phone (run-2.css)
-    return (phone() ? 'Buyers in' : 'Selling to buyers in') + ' <span class="ob-market-v"><b>' + e(r.where) + '</b>' + (marketGuess(r) ? ' <em class="ob-guess">my guess</em>' : '') + '<button class="ob-link" type="button" data-market>Change</button></span>';
-  }
+  // a fact read back in a sentence: first letter lower case, unless it opens an acronym
+  function lc(t) { t = String(t || ''); return /^[A-Z][A-Z]/.test(t) ? t : t.charAt(0).toLowerCase() + t.slice(1); }
+  OB.runKit.WHERE = WHERE;
 
   OB.STEPS = [
     {
       key: 'brand', label: 'Your brand', next: 'Looks right',
-      say: function (r) { return r.site ? ['Reading ' + r.site, 'This takes about a minute. A couple of quick questions while I work.'] : ['Getting to know ' + nm(r), 'A couple of quick questions while I work.']; },
+      say: function (r) { var w = 'Watch your brand profile fill in ' + side() + '.'; return r.site ? ['Reading ' + r.site, 'This takes about a minute. ' + w] : ['Getting to know ' + nm(r), w]; },
       // no website: BlueAI works from the answers you gave, so it says so
       work: function (r) {
         return r.site ? ['Opening your homepage', 'Finding what you sell', 'Working out who buys', 'Reading how you sound', 'Writing your brand profile']
           : ['Reading what you told me', 'Placing you in a category', 'Sharpening who buys', 'Choosing how you should sound', 'Writing your brand profile'];
       },
-      asks: function (r) {
-        var first = r.site ? { kind: 'text', key: 'name', q: 'What should I call you?', ph: 'Your first name' }
-          : { kind: 'text', key: 'brand', q: 'What\'s your brand called?', ph: 'Your brand name' };
-        var thanks = r.name ? 'Thanks, ' + r.name + '. ' : r.brand !== 'Your brand' && !r.site ? 'Thanks. ' : '';
-        return [first, { kind: 'pick', key: 'goal', q: thanks + 'What matters most right now?', picks: GOALS }];
-      },
-      // what the column learns as each checklist line ticks (n lines done)
+      asks: [],
+      // what the profile learns as each checklist line ticks (n lines done)
       live: function (r, n) {
+        // the real profile is on its way (report-live.js): no sample facts meanwhile
+        if (OB.live && OB.live.pending('brand')) { return []; }
         var f = [], b = brandFacts(r);
         if (r.site) {
           if (n >= 2) { f.push(b.cat, b.sell); }
@@ -104,50 +98,27 @@
           if (n >= 2) { f.push(b.cat); }
           if (n >= 4) { f.push(b.voice); }
         }
-        return f.concat(answers(r));
+        return f;
       },
       done: function (r) {
-        var sub = 'Fix anything that\'s off' + (r.name ? ', ' + r.name : '') + '. Every video I make will use this' + (r.goal ? ' and aim at ' + r.goal.toLowerCase() : '') + '.';
         var word = r.brand === 'Your brand' ? 'gaps filled in' : r.brand;
-        return [r.site ? 'Here\'s ' + nm(r) + ', as I read it' : 'Here\'s ' + nm(r) + ', with the gaps filled in', sub, word];
+        return [r.site ? 'Here\'s ' + nm(r) + ', as I read it' : 'Here\'s ' + nm(r) + ', with the gaps filled in', 'Anything off? Fix it in your brand profile ' + side() + '. Every campaign we draft for you starts from it.', word];
       },
+      // the profile read back in two lines, so the step confirms it without a
+      // second copy of the fields (those live in the profile, editable there)
       result: function (r) {
-        var b = brandFacts(r);
-        return '<div class="ob-cards2">' + ['sell', 'buyers', 'edge', 'voice'].map(function (k) {
-          var x = b[k], guess = / guess/.test(x[2]);
-          return '<div class="ob-edit"><label for="ob-e-' + k + '">' + x[0] + (guess ? ' <em class="ob-guess">my guess</em>' : '') + '</label><textarea id="ob-e-' + k + '" rows="1" data-k="' + k + '">' + e(r[k]) + '</textarea></div>';
-        }).join('') + '</div><p class="ob-market" data-market-row>' + marketLine(r) + '</p>' +
+        return '<div class="ob-card ob-pitch"><span class="ob-chip ob-chip--volt">' + e(r.brand === 'Your brand' ? 'Your brand' : r.brand) + ', in short</span>' +
+          '<p><b>' + e(r.sell) + '.</b> For ' + e(lc(r.buyers)) + (r.where === 'Worldwide' ? ', anywhere' : ' in ' + e(r.where === 'United States' ? 'the US' : r.where === 'UK' ? 'the UK' : r.where)) + '.</p>' +
+          '<p class="ob-pitch-edge">What sets it apart: ' + e(lc(r.edge)) + '.</p>' +
+          '<button class="ob-link ob-pitch-fix" type="button" data-fix>Fix something in your profile</button></div>' +
           '<p class="ob-upnext">Still to come: ' + OB.STEPS.slice(1).map(function (s) { return '<b>' + e(s.label) + '</b>'; }).join(', ') + '</p>';
       },
       bind: function (out, r, api) {
-        // the market is the likeliest wrong fact, so it can be fixed right here
-        var mrow = out.querySelector('[data-market-row]');
-        mrow.addEventListener('click', function (ev) {
-          if (ev.target.closest('[data-market]')) {
-            mrow.innerHTML = 'Where are your buyers? <span class="ob-picks">' + WHERE.map(function (w) { return '<button class="ob-pick" type="button" aria-pressed="' + (w === r.where) + '">' + e(w) + '</button>'; }).join('') + '</span>';
-            return;
-          }
-          var p = ev.target.closest('.ob-pick'); if (!p) { return; }
-          r.where = p.textContent; r.whereSet = true; api.save(); api.facts(); mrow.innerHTML = marketLine(r);
-        });
-        out.querySelectorAll('textarea').forEach(function (t) {
-          var card = t.closest('.ob-edit'), timer;
-          grow(t);
-          t.addEventListener('input', function () { grow(t); r[t.getAttribute('data-k')] = t.value; api.save(); api.facts(); });
-          t.addEventListener('change', function () {
-            t.value = t.value.replace(/\s+/g, ' ').trim(); r[t.getAttribute('data-k')] = t.value; api.save(); api.facts();
-            card.classList.add('is-saved'); window.clearTimeout(timer); timer = window.setTimeout(function () { card.classList.remove('is-saved'); }, 1800);
-          });
-          // the label or the card's padding opens the text with the caret at the end
-          card.addEventListener('mousedown', function (ev) {
-            if (ev.target === t) { return; }
-            ev.preventDefault(); t.focus(); t.setSelectionRange(t.value.length, t.value.length);
-          });
-        });
+        out.querySelector('[data-fix]').addEventListener('click', function () { api.editProfile(); });
       },
-      facts: function (r, cur) {
-        var b = brandFacts(r, cur);
-        return [b.cat, b.sell, b.buyers, b.market, b.voice, b.edge].concat(answers(r));
+      facts: function (r) {
+        var b = brandFacts(r);
+        return [b.cat, b.sell, b.buyers, b.market, b.voice, b.edge];
       }
     },
     {
@@ -161,10 +132,8 @@
       work: ['Searching your category', 'Matching who they sell to', 'Checking their YouTube Shorts', 'Ranking them by how much they post'],
       asks: function (r) {
         var n = r.rivals.filter(function (x) { return !x.added; }).length;
-        return [{ kind: 'pick', key: 'today', q: 'Do you make short videos today?', picks: ['Not yet', 'Sometimes', 'Every week'] },
-          proof(String(n), 'brands found so far that sell to the same buyers as ' + nm(r))];
+        return [proof(String(n), 'brands found so far that sell to the same buyers as ' + nm(r))];
       },
-      live: function (r) { return r.today ? [['Your Shorts today', r.today]] : []; },
       done: function () { return ['Are these your competitors?', 'Drop any that don\'t fit. Add any I missed.', 'competitors']; },
       result: function (r) {
         // ranked by how much they post, the way the checklist said; one you added
@@ -172,7 +141,10 @@
         r.rivals.sort(function (a, b) { return (a.checking ? 1 : 0) - (b.checking ? 1 : 0) || b.videos - a.videos; });
         // a phone says "in 6 months" once, above the list, not in every row
         return '<p class="ob-rows-cap">Shorts posted in the last 6 months</p><div class="ob-rows" data-rows>' + r.rivals.map(function (x, i) {
-          var sub = x.checking ? '<span class="ob-checking"></span>checking their Shorts&hellip;'
+          // a real channel (report-live.js) gives its count and its subscribers; none found says so
+        var sub = x.checking ? '<span class="ob-checking"></span>checking their Shorts&hellip;'
+            : x.noYT ? 'no YouTube channel found'
+            : x.yt ? (x.capped ? '50+' : x.videos) + ' Shorts<span class="ob-6m"> in 6 months</span><span class="ob-6m"> &middot; ' + compact(x.yt.subs) + ' subscribers</span>'
             : x.est ? (phone() ? '~' + x.videos + ' Shorts <em class="ob-guess">my guess</em>' : 'about ' + x.videos + ' Shorts<span class="ob-6m"> in 6 months</span>, my estimate') : x.videos + ' Shorts<span class="ob-6m"> in 6 months</span>';
           return '<div class="ob-row' + (x.on ? '' : ' is-off') + (x.checking ? ' is-checking' : '') + (x.est ? ' is-est' : '') + '" data-i="' + i + '" role="checkbox" tabindex="0" aria-checked="' + x.on + '">' +
             '<span class="ob-row-av" style="--h:' + (OB.hash(x.name) % 360) + '" aria-hidden="true">' + e(x.name.charAt(0).toUpperCase()) + '</span>' +
@@ -201,25 +173,27 @@
           if (!v) { return; }
           var b = OB.report.brand(v), site = b.host || v;
           if (r.rivals.some(function (x) { return x.site === site; })) { api.toast(site + ' is already on the list'); return; }
-          // a site you add has no count yet: BlueAI checks it, then gives an estimate;
-          // the button and the column wait for it, so nothing counts it half-way
+          // a site you add has no count yet: BlueAI looks up its real channel
+          // (report-live.js), or gives an estimate when it can't; the button and
+          // the column wait for it, so nothing counts it half-way
           var x = { name: b.name, site: site, videos: 0, views: 0, on: true, added: true, checking: true };
           r.rivals.push(x); api.save(); api.redo();
-          window.setTimeout(function () {
-            var n = 12 + (OB.hash(v) % 25);
-            x.checking = false; x.est = true; x.videos = n; x.views = n * 30000;
+          var live = OB.live && OB.live.check ? OB.live.check(r, x) : Promise.resolve(false);
+          Promise.all([live, new Promise(function (res) { window.setTimeout(res, 1200); })]).then(function (got) {
+            if (!got[0]) { var n = 12 + (OB.hash(v) % 25); x.est = true; x.videos = n; x.views = n * 30000; }
+            x.checking = false;
             syncRivals(r); api.save();
             if (api.is('rivals')) { api.redo(); }
             api.facts();
-          }, 1400);
+          });
         });
       },
       facts: function (r) {
-        return (r.today ? [['Your Shorts today', r.today]] : []).concat([['Competitors', rank(onRivals(r)).map(function (x) { return x.name; }).join(', ') || 'None yet']]);
+        return [['Competitors', rank(onRivals(r)).map(function (x) { return x.name; }).join(', ') || 'None yet']];
       }
     },
     {
-      key: 'wins', label: 'What wins', next: 'Show my video ideas',
+      key: 'wins', label: 'What wins', next: 'See what we\'d make',
       say: function (r) { return ['Studying what wins in ' + r.category.toLowerCase(), 'Going through every Short your competitors posted.']; },
       work: ['Collecting their Shorts', 'Sorting them by format', window.matchMedia('(max-width: 700px)').matches ? 'Finding the ones that kept going' : 'Finding the ones that kept getting views', 'Measuring which formats get the views'],
       // the wait shows what this step works through, not a claim about results
@@ -228,31 +202,38 @@
         syncRivals(r);
         // the share is said once, as the lit card's figure; the line says what it is ranked on
         var top = r.formats[0];
-        var next = r.today === 'Not yet' ? 'You haven\'t started yet, so this is where to start.' : 'Next, I\'ll turn it into video ideas for you.';
+        var next = 'Next, the video ideas we\'d make from it.';
         return [top.name + ' wins in ' + r.category.toLowerCase(), 'Ranked on views across ' + (estimated(r) ? 'about ' : 'all ') + r.rivalsTotal + ' Shorts your competitors posted in 6 months. ' + next, 'wins'];
       },
       result: function (r) {
         var on = rank(onRivals(r));
         var max = Math.max.apply(null, on.map(function (x) { return x.videos; }).concat([1]));
         var top = r.formats[0], fi = filmOf(top.name);
-        // what you said about your own Shorts: a weekly habit over 6 months is about 26
-        var you = r.brand === 'Your brand' ? 'You' : r.brand + ' (you)';
-        var mine = r.today === 'Every week' ? hbar(you, '~26', Math.max(max, 26), 'is-you', 26) : r.today === 'Sometimes' ? hbar(you, 'a few', max, 'is-you', Math.min(6, max))
-          : r.today === 'Not yet' ? hbar(you, '0', max, 'is-you', 0) : '';
-        // a phone labels your own row "You", so it never wraps (run-2.css)
-        mine = mine.replace('<span>' + e(you) + '</span>', '<span><span class="ob-you-l">' + e(you) + '</span><span class="ob-you-s">You</span></span>');
         var est = estimated(r) ? 'about ' : '';
+        // your own channel, when BlueAI found it, on the same scale as theirs
+        var you = r.brand === 'Your brand' ? 'You' : r.brand + ' (you)', mine = '';
+        if (r.own) {
+          max = Math.max(max, r.own.shorts6);
+          mine = hbar(you, String(r.own.shorts6), max, 'is-you', r.own.shorts6).replace('<span>' + e(you) + '</span>', '<span><span class="ob-you-l">' + e(you) + '</span><span class="ob-you-s">You</span></span>');
+        }
+        // their real best Shorts (report-live.js): the proof a brand can click
+        var best = r.topShorts && r.topShorts.length ? '<div class="ob-panel">' + head('Their best Shorts', 'Most viewed, last 6 months') + '<div class="ob-yts">' + r.topShorts.map(function (t) {
+          return '<a class="ob-yt" href="' + e(t.url) + '" target="_blank" rel="noopener"><span class="ob-yt-thumb"><img src="' + e(t.thumb) + '" alt="" loading="lazy"><span class="ob-yt-play">' + OB.icon('play', 12) + '</span></span>' +
+            '<span class="ob-yt-txt"><b>' + e(t.title) + '</b><small>' + e(t.rival) + ' &middot; ' + compact(t.views) + ' views</small></span></a>';
+        }).join('') + '</div></div>' : '';
+        var lead = r.topShorts && r.topShorts[0];
         // a phone binds the line's last three words, so no word sits alone under the thumb
         var def = e(DEF[top.name] || 'The format that pulled the most views for your competitors.'); if (phone()) { def = def.replace(/ (\S+) (\S+)$/, '\u00a0$1\u00a0$2'); }
         return '<div class="ob-card ob-card--lit ob-win">' + (fi >= 0 ? '<span class="ob-win-media">' + OB.videoTag(OB.film(fi)) + '</span>' : '') +
           '<div><span class="ob-chip ob-chip--volt">Winning format</span><b class="ob-win-fig">' + top.share + '%<small>of views</small></b><p><b>' + e(top.name) + '.</b> ' +
-          def + '</p></div></div>' +
+          def + '</p></div></div>' + best +
           '<div class="ob-panel">' + (phone() ? head('Share of views by format', est + r.rivalsTotal + ' Shorts') : head('What wins in ' + r.category.toLowerCase(), 'Share of views, ' + est + r.rivalsTotal + ' Shorts')) + '<div class="ob-hbars ob-hbars--rank">' +
           r.formats.map(function (f, i) { return hbar(f.name, f.share + '%', top.share, i ? '' : 'is-top', f.share); }).join('') + '</div></div>' +
           '<div class="ob-tiles3 ob-tiles2"><div class="ob-stat"><b>' + (est ? 'About ' : '') + r.perMonth + '</b><span>Shorts a month from your ' + on.length + ' competitor' + (on.length === 1 ? '' : 's') + '</span></div>' +
-          '<div class="ob-stat"><b>' + r.longest.days + ' days</b><span>How long ' + e(r.longest.rival) + '\'s best ' + e(top.name) + ' Short kept pulling new views</span></div></div>' +
+          (lead ? '<div class="ob-stat"><b>' + compact(lead.views) + ' views</b><span>On ' + e(lead.rival) + '\'s most watched Short in the last 6 months</span></div></div>'
+            : '<div class="ob-stat"><b>' + r.longest.days + ' days</b><span>How long ' + e(r.longest.rival) + '\'s best ' + e(top.name) + ' Short kept pulling new views</span></div></div>') +
           '<div class="ob-panel">' + head('Shorts posted', 'Last 6 months' + (est ? ', ~ is my estimate' : '')) + '<div class="ob-hbars ob-hbars--posted">' +
-          on.map(function (x) { return hbar(x.name, (x.est ? '~' : '') + x.videos, max, x.est ? 'is-est' : '', x.videos); }).join('') + mine + '</div></div>';
+          on.map(function (x) { return hbar(x.name, (x.est ? '~' : '') + (x.capped ? '50+' : x.videos), max, x.est ? 'is-est' : '', x.videos); }).join('') + mine + '</div></div>';
       },
       bind: function (out) { OB.watchFilms(out); },
       facts: function (r) { return [['Top format', r.formats[0].name], ['Runner-up', r.formats[1].name]]; }

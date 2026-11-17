@@ -1,0 +1,83 @@
+/* The agent run, part 4 (run.html, linked last): Ashish's round, 2026-11-17.
+   THE BRAND PROFILE: the left column was "What BlueAI knows", 300px of quiet
+   grey that people missed. It is now named, wider, grouped, counted against
+   the whole profile, and the one place a fact is fixed (run-profile.js).
+   Plus the two new cards: step 1's read-back and the last step's next steps. */
+
+/* ---- the profile column ---------------------------------------------------- */
+.ob-knows-label { margin-top: var(--s8); font: 600 1.0625rem/1.3 var(--font); letter-spacing: var(--tr-mid); }
+.ob-knows-label .ob-count { display: inline-flex; align-items: center; height: 1.5rem; padding: 0 var(--s2); border-radius: var(--r-pill); background: var(--accent-wash); box-shadow: inset 0 0 0 1px var(--accent-line); color: var(--ink-1); font: 600 0.75rem/1 var(--font); letter-spacing: 0; }
+.ob-knows-hint { flex: none; margin: calc(var(--s3) * -1 + 0.125rem) 0 var(--s3); color: var(--ink-3); font: var(--t-small); text-wrap: pretty; }
+.ob-knows-hint[hidden] { display: none; }
+
+/* a group's name, sitting on the list like a section rule */
+.ob-fgroup { padding: var(--s4) var(--s4) var(--s1); border-top: 1px solid var(--line); color: var(--ink-3); font: 600 0.6875rem/1.3 var(--font); letter-spacing: 0.06em; text-transform: uppercase; }
+.ob-fgroup:first-child { border-top: 0; }
+.ob-fgroup + .ob-fact { border-top: 0; padding-top: var(--s1); }
+
+/* a fact you can fix: the whole row is the control, the pen says so on hover */
+.ob-fact.is-edit { padding-right: 2.75rem; cursor: pointer; transition: background-color 0.15s var(--ease); }
+.ob-fact.is-edit:hover, .ob-fact.is-edit:focus-visible { background: var(--surface-2); }
+.ob-fact.is-edit:focus-visible { outline: 2px solid var(--ink-1); outline-offset: -2px; }
+.ob-fact-pen { position: absolute; top: var(--s3); right: var(--s3); display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: var(--r-sm); color: var(--ink-4); opacity: 0; transition: opacity 0.15s var(--ease); }
+.ob-fact.is-edit:hover .ob-fact-pen, .ob-fact.is-edit:focus-visible .ob-fact-pen { opacity: 1; color: var(--ink-1); }
+.ob-fact.is-editing { padding-right: var(--s4); background: var(--surface-2); cursor: default; }
+.ob-fact.is-editing .ob-fact-pen { display: none; }
+.ob-fact-input { display: block; width: 100%; margin-top: var(--s1); padding: var(--s2) var(--s3); overflow: hidden; resize: none; border: 1px solid var(--line-2); border-radius: var(--r-sm); background: var(--surface); box-shadow: 0 0 0 3px var(--accent-wash); color: var(--ink-1); font: 500 0.875rem/1.4 var(--font); }
+.ob-fact-input:focus { outline: none; border-color: var(--ink-1); }
+.ob-fact-picks { margin-top: var(--s2); }
+.ob-fact-picks .ob-pick { height: 2rem; padding: 0 var(--s3); }
+/* fixed: a short volt mark on the row, the way a new fact arrives */
+.ob-fact.is-saved::before { content: ""; position: absolute; left: 0; top: var(--s3); bottom: var(--s3); width: 0.1875rem; border-radius: 0 0.1875rem 0.1875rem 0; background: var(--accent); animation: ob-run-fade 1.6s var(--ease) forwards; }
+
+/* "Fix something in your profile" points at the column: one soft volt pulse */
+.ob-knows.is-called .ob-facts-wrap { animation: ob-profile-call 1.4s var(--ease); }
+@keyframes ob-profile-call { 0%, 100% { box-shadow: inset 0 1px 0 #fff, var(--shadow-1); } 30% { box-shadow: inset 0 1px 0 #fff, 0 0 0 4px var(--accent-wash), 0 0 0 1px var(--accent-line); } }
+
+/* ---- step 1: the profile read back ------------------------------------------ */
+.ob-pitch { padding: var(--s6); }
+.ob-pitch p { margin: var(--s4) 0 0; color: var(--ink-1); font: 400 1.25rem/1.45 var(--font); letter-spacing: var(--tr-mid); text-wrap: pretty; }
+.ob-pitch p b { font-weight: 500; }
+.ob-pitch .ob-pitch-edge { margin-top: var(--s2); color: var(--ink-3); font: var(--t-body); }
+.ob-pitch-fix { display: inline-flex; margin-top: var(--s5); font: var(--t-small); font-weight: 500; }
+
+/* ---- the last step: what happens next ----------------------------------------- */
+.ob-nextup { padding: var(--s6); }
+.ob-nextup h3 { margin: 0; color: var(--ink-1); font: var(--t-h3); letter-spacing: var(--tr-mid); }
+.ob-nextup ol { display: grid; gap: var(--s4); margin: var(--s5) 0 0; padding: 0; list-style: none; }
+.ob-nextup li { display: flex; gap: var(--s3); align-items: flex-start; }
+.ob-nextup li i { flex: none; display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: 50%; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink-1); font: 600 0.8125rem/1 var(--font); font-style: normal; }
+.ob-nextup li:first-child i { background: var(--accent); box-shadow: none; }
+.ob-nextup li span { color: var(--ink-3); font: var(--t-body); }
+.ob-nextup li b { display: block; color: var(--ink-1); font-weight: 500; }
+
+/* a phone's compact row says "Brand profile" (run-2.css hides the long name at 700) */
+.ob-knows-short { display: none; }
+@media (max-width: 700px) { .ob-knows-short { display: inline; } }
+
+@media (max-width: 860px) {
+  /* "Fix something" scrolls the profile in clear of the sticky bar */
+  .ob-knows { scroll-margin-top: 6rem; }
+  .ob-knows-hint { flex-basis: 100%; margin: 0 0 var(--s2); }
+  .ob-knows:not(.is-open) .ob-knows-hint { display: none; }
+  .ob-knows-label { margin: 0; font-size: 0.875rem; }
+  .ob-pitch, .ob-nextup { padding: var(--s5); }
+  .ob-pitch p { font-size: 1.0625rem; }
+  /* a phone has no hover: the pen always shows on a row you can fix */
+  .ob-fact-pen { opacity: 1; }
+}
+
+/* ---- step 3: their best Shorts, real (report-live.js) ------------------------- */
+.ob-yts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s3); margin-top: var(--s4); }
+.ob-yt { display: flex; flex-direction: column; gap: var(--s2); min-width: 0; color: inherit; text-decoration: none; }
+.ob-yt-thumb { position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--r-md); background: var(--surface-2); box-shadow: 0 0 0 1px var(--line); }
+.ob-yt-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s var(--ease); }
+.ob-yt:hover .ob-yt-thumb img { transform: scale(1.03); }
+.ob-yt-play { position: absolute; left: var(--s2); bottom: var(--s2); display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: rgba(10, 10, 9, 0.72); color: #fff; }
+.ob-yt-txt b { display: -webkit-box; overflow: hidden; color: var(--ink-1); font: 500 0.8125rem/1.35 var(--font); -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.ob-yt-txt small { display: block; margin-top: 0.125rem; color: var(--ink-3); font: var(--t-label); }
+@media (max-width: 700px) {
+  .ob-yts { grid-template-columns: minmax(0, 1fr); }
+  .ob-yt { flex-direction: row; align-items: center; gap: var(--s3); }
+  .ob-yt-thumb { flex: none; width: 7.5rem; }
+}

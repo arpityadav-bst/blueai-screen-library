@@ -1,0 +1,87 @@
+/* The Campaign page (app/campaign.html, js/campaign.js): the draft campaign as
+   four numbered cards and one sticky action bar, then the review tracker.
+   Built from the dashboard's own parts (ob-card, ob-input, ob-pick, ob-chip). */
+
+.ob-cp { display: grid; gap: var(--s5); max-width: 47.5rem; padding-bottom: 6rem; }
+.ob-cp-card { display: grid; gap: var(--s6); }
+.ob-cp-card > header { display: flex; gap: var(--s4); align-items: flex-start; }
+.ob-cp-n { flex: none; display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink-1); font: 600 0.875rem/1 var(--font); }
+.ob-cp-card:first-child .ob-cp-n { background: var(--accent); box-shadow: none; }
+
+.ob-cp-f { display: grid; gap: var(--s2); min-width: 0; }
+.ob-cp-l { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); }
+.ob-cp-l label { color: var(--ink-1); font: 500 0.9375rem/1.3 var(--font); letter-spacing: -0.01em; }
+/* "From your report": the answer came from the run, not from you */
+.ob-cp-from { display: inline-flex; align-items: center; gap: 0.25rem; height: 1.375rem; padding: 0 0.5rem; border-radius: var(--r-pill); background: var(--accent-wash); box-shadow: inset 0 0 0 1px var(--accent-line); color: var(--ink-2); font: 500 0.6875rem/1 var(--font); }
+.ob-cp-opt { color: var(--ink-4); font: var(--t-label); }
+.ob-cp-hint { margin: 0; color: var(--ink-3); font: var(--t-small); text-wrap: pretty; }
+.ob-cp .ob-pick small { margin-left: 0.25rem; color: inherit; opacity: 0.7; font: inherit; font-size: 0.6875rem; }
+.ob-cp-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s4); }
+.ob-cp-note { height: auto; min-height: 5.5rem; padding-block: var(--s3); resize: vertical; font: var(--t-body); line-height: 1.5; }
+.ob-cp-amt { max-width: 12rem; margin-top: var(--s2); }
+.ob-cp-say { margin: var(--s2) 0 0; color: var(--ink-3); font: var(--t-small); }
+.ob-cp-say b { color: var(--ink-1); font-weight: 600; }
+.ob-cp .ob-plats { margin-top: 0; }
+
+/* the two campaign types: the picked one inks, like a pick */
+.ob-cp-types { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s3); }
+.ob-cp-type { display: grid; gap: 0.25rem; padding: var(--s4); border: 1px solid var(--line-2); border-radius: var(--r-md); background: var(--surface); text-align: left; cursor: pointer; transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease); }
+.ob-cp-type b { color: var(--ink-1); font: 500 0.9375rem/1.3 var(--font); }
+.ob-cp-type span { color: var(--ink-3); font: var(--t-small); }
+.ob-cp-type:hover { border-color: var(--ink-4); }
+.ob-cp-type[aria-pressed="true"] { border-color: var(--ink-1); box-shadow: 0 0 0 1px var(--ink-1), 0 0 0 5px var(--accent-wash); }
+
+/* video ideas: a check card each, the report's own */
+.ob-cp-ideas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s3); }
+.ob-cp-idea { position: relative; display: grid; gap: 0.375rem; justify-items: start; padding: var(--s4); padding-right: 2.75rem; border: 1px solid var(--line-2); border-radius: var(--r-md); background: var(--surface); text-align: left; cursor: pointer; transition: opacity 0.15s var(--ease), border-color 0.15s var(--ease); }
+.ob-cp-idea small { color: var(--ink-3); font: var(--t-label); }
+.ob-cp-idea b { color: var(--ink-1); font: 500 0.9375rem/1.35 var(--font); }
+.ob-cp-idea i { position: absolute; top: var(--s4); right: var(--s4); display: grid; place-items: center; width: 1.375rem; height: 1.375rem; border-radius: 50%; border: 1.5px solid var(--line-2); color: transparent; }
+.ob-cp-idea[aria-checked="true"] { border-color: var(--ink-1); }
+.ob-cp-idea[aria-checked="true"] i { border-color: transparent; background: var(--ink-1); color: #fff; }
+.ob-cp-idea[aria-checked="false"] { opacity: 0.6; }
+.ob-cp-refs { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.ob-cp-ref { padding-right: 0.25rem; }
+.ob-cp-ref button { display: grid; place-items: center; width: 1.375rem; height: 1.375rem; margin-left: 0.125rem; border: 0; border-radius: 50%; background: none; color: var(--ink-3); cursor: pointer; }
+.ob-cp-ref button:hover { background: var(--surface-2); color: var(--ink-1); }
+.ob-cp-add { max-width: 26rem; margin-top: var(--s2); }
+
+/* one bar, always in reach: saved state, Save draft, the one primary */
+.ob-cp-bar { position: sticky; bottom: var(--s4); z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--s3); padding: var(--s3) var(--s3) var(--s3) var(--s5); border: 1px solid var(--line); border-radius: var(--p-r); background: rgba(255, 255, 255, 0.94); box-shadow: var(--shadow-2); }
+.ob-cp-saved { margin-right: auto; color: var(--ink-4); font: var(--t-small); opacity: 0; transition: opacity 0.2s var(--ease); }
+.ob-cp-saved.is-on { opacity: 1; }
+.ob-cp-err { margin: 0; padding: var(--s3) var(--s4); border-radius: var(--r-md); background: #fdecea; color: #a1281c; font: var(--t-small); font-weight: 500; }
+.ob-cp-err[hidden] { display: none; }
+
+/* after submitting: the product's tracker, then what was sent */
+.ob-cp-track ol { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s4); margin: 0; padding: 0; list-style: none; }
+.ob-cp-track li { display: grid; gap: var(--s3); align-content: start; }
+.ob-cp-track li i { display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: 50%; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink-3); font: 600 0.8125rem/1 var(--font); font-style: normal; }
+.ob-cp-track li.is-done i { background: var(--ink-1); box-shadow: none; color: #fff; }
+.ob-cp-track li.is-now i { background: var(--accent); box-shadow: none; color: var(--ink-1); }
+.ob-cp-track b { display: block; color: var(--ink-1); font: 500 0.9375rem/1.3 var(--font); }
+.ob-cp-track b small { margin-left: 0.25rem; color: var(--ink-4); font: var(--t-label); }
+.ob-cp-track span { display: block; margin-top: 0.25rem; color: var(--ink-3); font: var(--t-small); text-wrap: pretty; }
+.ob-cp-track li:not(.is-done):not(.is-now) b { color: var(--ink-3); }
+.ob-cp-sum { margin-top: var(--s5); }
+.ob-cp-sum dl { display: grid; gap: 0; margin: 0; }
+.ob-cp-sum dl > div { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: var(--s4); padding: var(--s3) 0; border-top: 1px solid var(--line); }
+.ob-cp-sum dl > div:first-child { border-top: 0; padding-top: 0; }
+.ob-cp-sum dt { color: var(--ink-3); font: var(--t-small); }
+.ob-cp-sum dd { margin: 0; color: var(--ink-1); font: 500 0.875rem/1.45 var(--font); }
+.ob-cp-demo { margin: var(--s5) 0 0; color: var(--ink-4); font: var(--t-small); }
+.ob-cp-track, .ob-cp-sum, .ob-cp-ai { max-width: 47.5rem; }
+.ob-cp-ai { display: flex; align-items: center; gap: var(--s4); margin-top: var(--s5); padding: var(--s4) var(--s5); }
+.ob-cp-ai > div { flex: 1; min-width: 0; }
+.ob-cp-ai b { display: block; color: var(--ink-1); font: 500 0.9375rem/1.3 var(--font); }
+.ob-cp-ai span:not(.ob-cp-ai-mark) { display: block; margin-top: 0.125rem; color: var(--ink-3); font: var(--t-small); }
+.ob-cp-ai-mark { flex: none; display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: var(--r-md); background: var(--accent); color: var(--ink-1); }
+
+@media (max-width: 700px) {
+  .ob-cp-types, .ob-cp-ideas, .ob-cp-two { grid-template-columns: minmax(0, 1fr); }
+  .ob-cp-track ol { grid-template-columns: minmax(0, 1fr); }
+  .ob-cp-sum dl > div { grid-template-columns: minmax(0, 1fr); gap: 0.125rem; }
+  .ob-cp-bar { bottom: calc(var(--s3) + 4.5rem); padding: var(--s3); }
+  .ob-cp-bar .ob-btn--ink { flex: 1 1 100%; justify-content: center; }
+  .ob-cp-saved { display: none; }
+}

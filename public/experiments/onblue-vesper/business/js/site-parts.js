@@ -57,7 +57,7 @@
     ['Do you guarantee views?', 'No, and nobody honest can. You pay only for the verified views your videos actually get. If a video doesn\'t land, it costs you nothing. Each success is yours, our failures are ours.'],
     ['Who posts the videos?', 'Creators from the onBlue community post them on their own channels. BlueAI matches each video to creators whose audience fits your buyers.'],
     ['Which platforms?', 'YouTube Shorts today. TikTok and Instagram are coming.'],
-    ['What is in the free report?', 'Your brand as BlueAI reads it, your competitors, what wins in your category, video ideas worth making, your first three videos and a plan. It takes about two minutes.'],
+    ['What is in the free report?', 'Your brand as BlueAI reads it, your competitors and their best Shorts, what wins in your category, and video ideas worth making. It takes about a minute, and we email it to you.'],
     ['I don\'t have a website. Can I still start?', 'Yes. Answer three quick questions instead and BlueAI starts the same way.']
   ];
   var faq = document.querySelector('[data-faq]');

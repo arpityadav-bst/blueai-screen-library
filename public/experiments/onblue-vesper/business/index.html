@@ -5,7 +5,7 @@
 <script>/* the host turns /business/ into /business, which breaks every relative path: land on index.html instead */ if (!/\/$|\.html$/.test(location.pathname)) { location.replace(location.pathname + '/index.html' + location.search + location.hash); }</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
 <title>onBlue for business: short videos that win</title>
-<meta name="description" content="Type your website. BlueAI learns your brand, finds what wins in your category, makes the videos, and creators post them. $8 per 1,000 verified views.">
+<meta name="description" content="Type your website. BlueAI learns your brand, finds what wins in your category; we make the videos, and creators post them. $8 per 1,000 verified views.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&display=swap">
@@ -25,6 +25,7 @@
 <link rel="stylesheet" href="css/compare.css">
 <link rel="stylesheet" href="css/pricing.css">
 <link rel="stylesheet" href="css/dark.css">
+<link rel="stylesheet" href="css/site-mcp.css">
 </head>
 <body class="ob-page">
 
@@ -48,7 +49,7 @@
   <section class="ob-hero" id="top">
     <div class="ob-wrap">
       <h1>Your <span class="ob-next" data-next>next</span> winning Short,<br><span class="ob-tone">everywhere</span> at once</h1>
-      <p class="ob-hero-sub"><span>BlueAI makes it.</span> <span>Thousands of creators post it.</span></p>
+      <p class="ob-hero-sub"><span>We make it.</span> <span>Thousands of creators post it.</span></p>
       <form class="ob-field" data-site-form autocomplete="off">
         <span class="ob-field-ico" data-fav></span>
         <input type="text" name="site" inputmode="url" placeholder="yourwebsite.com" aria-label="Your website" data-site-input>
@@ -66,7 +67,7 @@
         <!-- stand-in avatars (real photos from randomuser.me) until there are real creator photos -->
         <div class="ob-crowd"><span class="ob-crowd-faces" aria-hidden="true"><img src="img/avatars/creator-1.jpg" alt="" loading="lazy"><img src="img/avatars/creator-2.jpg" alt="" loading="lazy"><img src="img/avatars/creator-3.jpg" alt="" loading="lazy"><img src="img/avatars/creator-4.jpg" alt="" loading="lazy"><img src="img/avatars/creator-5.jpg" alt="" loading="lazy"></span><span>Thousands of creators with warmed-up accounts, ready to post</span></div>
       </div>
-      <p class="ob-cred"><span class="ob-cred-l">BlueAI makes the videos.</span><br><span class="ob-cred-l">Thousands of creators post them.</span><br><span class="ob-cred-l">You pay only for <span class="ob-tone">verified views</span>.</span></p>
+      <p class="ob-cred"><span class="ob-cred-l">We make the videos.</span><br><span class="ob-cred-l">Thousands of creators post them.</span><br><span class="ob-cred-l">You pay only for <span class="ob-tone">verified views</span>.</span></p>
       <div class="ob-cred-cta"><button class="ob-btn ob-btn--ink" type="button" data-to-field>Get my free report <span data-ico="arrow"></span></button></div>
     </div>
   </section>
@@ -84,7 +85,7 @@
   <section class="ob-sec ob-center ob-screen">
     <div class="ob-wrap">
       <h2 class="ob-h2">Endless videos, built on formats that <span class="ob-tone">already win</span></h2>
-      <p class="ob-lede">Stories, dramas, 3D, reveals, memes. BlueAI picks the format your category rewards, then makes it in your voice.</p>
+      <p class="ob-lede">Stories, dramas, 3D, reveals, memes. BlueAI picks the format your category rewards. We make it in your voice.</p>
     </div>
     <div class="ob-wall" data-wall></div>
   </section>
@@ -94,7 +95,7 @@
       <div class="ob-result">
         <div class="ob-result-copy">
           <h2 class="ob-result-h">A small brand hit <span class="ob-tone">80K views</span> in 5 days</h2>
-          <p class="ob-result-say">Five Shorts, made by BlueAI and posted by creators on YouTube. Its first five days on onBlue.</p>
+          <p class="ob-result-say">Five Shorts, made by our team and posted by creators on YouTube. Its first five days on onBlue.</p>
           <button class="ob-btn ob-btn--ink ob-result-cta" type="button" data-to-field>Get my free report <span data-ico="arrow"></span></button>
           <p class="ob-result-who">Results vary. You pay for the views that happen, nothing more.</p>
         </div>
@@ -139,7 +140,7 @@
           </div>
         </article>
         <article class="bt-tile bt-remix">
-          <div class="bt-txt"><h3>Remix a rival's Short</h3><p>Pick one from Radar and BlueAI makes your version of it.</p></div>
+          <div class="bt-txt"><h3>Remix a rival's Short</h3><p>Pick one from Radar and we make your version of it.</p></div>
           <div class="bt-viz"><div class="bt-pair"><span class="bt-was"><img src="films/pm-price-counter.jpg" alt=""><em>Competitor</em></span><i class="bt-arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i><span class="bt-now"><img src="films/pm-deal-reveal.jpg" alt=""><em>Remixed for you</em></span></div></div>
         </article>
         <!-- the three small tiles: a swipe row on the phone (css/bento.css); display: contents above 700, so the grid is as it was -->
@@ -147,7 +148,7 @@
         <article class="bt-tile bt-studio">
           <div class="bt-txt"><h3>Studio</h3><p>Ask for a change in plain words: a new hook, a shorter cut, another format.</p></div>
           <div class="bt-viz">
-            <div class="bt-chat"><div class="bt-msg bt-me">Make the hook shorter</div><div class="bt-msg bt-ai"><span class="bt-dot"></span>New take ready</div></div>
+            <div class="bt-chat"><div class="bt-msg bt-me">Make the hook shorter</div><div class="bt-msg bt-ai"><span class="bt-dot"></span>New take on the way</div></div>
             <div class="bt-swap"><img src="films/pm-ai-drama-cat.jpg" alt=""><img src="films/pm-ai-drama-fruit.jpg" alt=""></div>
           </div>
         </article>
@@ -161,9 +162,28 @@
         </article>
         </div><div class="bt-dots" data-bt-dots></div></div>
         <article class="bt-tile bt-report">
-          <div class="bt-txt"><h3>A free report to start</h3><p>Two minutes, no sign-up.</p></div>
-          <div class="bt-viz"><div class="bt-field"><span class="bt-typed">northlinecoffee.com<i></i></span></div><ul class="bt-lines"><li><b>5 rivals</b> found</li><li><b>Food reveal</b> wins</li><li><b>3 videos</b> made</li></ul><button class="ob-link bt-go" type="button" data-to-field>Get my free report <span data-ico="arrow"></span></button></div>
+          <div class="bt-txt"><h3>A free report to start</h3><p>Ready in about a minute, then sent to your inbox.</p></div>
+          <div class="bt-viz"><div class="bt-field"><span class="bt-typed">northlinecoffee.com<i></i></span></div><ul class="bt-lines"><li><b>5 rivals</b> found</li><li><b>Food reveal</b> wins</li><li><b>Their best Shorts</b> found</li></ul><button class="ob-link bt-go" type="button" data-to-field>Get my free report <span data-ico="arrow"></span></button></div>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE BlueAI MCP (Appy + Ashish, 2026-11-17): BlueAI from the AI a brand
+       already uses. A real server (src/app/api/mcp); set up on app/ai.html -->
+  <section class="ob-sec ob-mcp-sec" id="mcp">
+    <div class="ob-wrap ob-mcp">
+      <div class="ob-mcp-t">
+        <span class="ob-chip">BlueAI MCP</span>
+        <h2 class="ob-h2">Or just ask <span class="ob-tone">your AI</span></h2>
+        <p class="ob-lede">Connect BlueAI to Claude, ChatGPT or Cursor once. Then ask for a brand report or a campaign draft right from the chat. Your AI drafts; you submit.</p>
+        <p class="ob-mcp-apps"><span>Claude</span><span>Claude Code</span><span>ChatGPT</span><span>Cursor</span><span>VS Code</span></p>
+        <a class="ob-btn ob-btn--ink" href="app/ai.html">Set up the BlueAI MCP</a>
+      </div>
+      <div class="ob-card ob-mcp-chat" aria-hidden="true">
+        <div class="ob-mcp-msg ob-mcp-me">Build the BlueAI report for gymshark.com, then draft a $2,000 campaign from it.</div>
+        <div class="ob-mcp-tool"><i></i>BlueAI &middot; brand_report</div>
+        <div class="ob-mcp-msg ob-mcp-ai">5 competitors found. Lululemon's most watched Short has <b>15.8M views</b>; talking product wins in fitness apparel. Your draft is ready to review:<span class="ob-mcp-link">onBlue &middot; Gymshark Shorts, November</span></div>
       </div>
     </div>
   </section>
@@ -217,10 +237,10 @@
     <div class="ob-close-films" data-close-films aria-hidden="true"></div>
     <div class="ob-wrap">
       <span class="ob-close-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><defs><radialGradient id="ob-close-glint" gradientUnits="userSpaceOnUse" cx="-15.6" cy="12" r="15" gradientTransform="scale(1.6 1)"><stop offset="0" stop-color="#c6f432"/><stop offset="0.5" stop-color="#c6f432"/><stop offset="1" stop-color="#f2f2ec"/><animate attributeName="cx" values="-15.6;-15.6;30.6;30.6" keyTimes="0;0.52;0.82;1" calcMode="spline" keySplines="0 0 1 1;0.45 0 0.25 1;0 0 1 1" dur="7s" begin="3.5s" repeatCount="indefinite"/></radialGradient></defs><path fill="url(#ob-close-glint)" d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg></span>
-      <h2 class="ob-close-title">Your first three videos are <span class="ob-tone">one website away</span>.</h2>
-      <p class="ob-close-sub">BlueAI reads your site and comes back in about two minutes with a free report:</p>
+      <h2 class="ob-close-title">Your free report is <span class="ob-tone">one website away</span>.</h2>
+      <p class="ob-close-sub">BlueAI reads your site and builds your free report, then emails it to you:</p>
       <ul class="ob-close-gets">
-        <li>Your brand, as BlueAI reads it</li><li>Your competitors</li><li>What wins in your category</li><li>Video ideas worth making</li><li>Your first three videos</li><li>A plan</li>
+        <li>Your brand, as BlueAI reads it</li><li>Your competitors</li><li>Their best Shorts</li><li>What wins in your category</li><li>Video ideas worth making</li>
       </ul>
       <form class="ob-field" data-site-form autocomplete="off">
         <span class="ob-field-ico" data-fav></span>
@@ -247,7 +267,7 @@
     <span class="ob-foot-sun"><svg viewBox="0 0 24 24"><defs><radialGradient id="ob-foot-glint" gradientUnits="userSpaceOnUse" cx="-15.6" cy="12" r="15" gradientTransform="scale(1.6 1)"><stop offset="0" stop-color="#c6f432"/><stop offset="0.5" stop-color="#c6f432"/><stop offset="1" stop-color="#ecece6"/><animate attributeName="cx" values="-15.6;-15.6;30.6;30.6" keyTimes="0;0.52;0.82;1" calcMode="spline" keySplines="0 0 1 1;0.45 0 0.25 1;0 0 1 1" dur="7s" begin="1.5s" repeatCount="indefinite"/></radialGradient><linearGradient id="ob-foot-fadeg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="24"><stop offset="0.26" stop-color="#fff"/><stop offset="0.58" stop-color="#fff" stop-opacity="0.3"/><stop offset="0.86" stop-color="#fff" stop-opacity="0"/></linearGradient><mask id="ob-foot-fade" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="url(#ob-foot-fadeg)"/></mask></defs><path mask="url(#ob-foot-fade)" fill="url(#ob-foot-glint)" d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z"/></svg></span>
     <span class="ob-foot-crop"><span class="ob-foot-word ob-tone">onBlue</span></span>
   </div>
-  <div class="ob-foot-tail"><div class="ob-wrap ob-foot-base"><span class="ob-foot-legal"><span>&copy; 2026 onBlue</span><a href="#top">Terms</a></span><span>BlueAI makes it. Thousands of creators post it.</span></div></div>
+  <div class="ob-foot-tail"><div class="ob-wrap ob-foot-base"><span class="ob-foot-legal"><span>&copy; 2026 onBlue</span><a href="#top">Terms</a></span><span>We make it. Thousands of creators post it.</span></div></div>
 </footer>
 
 <div class="ob-modal" data-modal role="dialog" aria-modal="true" aria-labelledby="ob-ns-t">

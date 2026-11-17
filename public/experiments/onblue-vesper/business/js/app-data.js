@@ -10,13 +10,16 @@
    Exposes OB.app. */
 (function () {
   'use strict';
-  var OB = window.OB, DAYS = 14, V = 4, STEPS = 6;
+  // STEPS: the run's five (Ashish, 2026-11-17: no instant Shorts, no plan step)
+  var OB = window.OB, DAYS = 14, V = 5, STEPS = 5;
 
   var r = OB.report.get() || OB.report.make({ site: 'northline-coffee.com' });
   var stage = OB.store('onblue-app-stage') || 'new';
   var KEY = 'onblue-app-' + stage;
   var done = stage === 'running' || typeof r.done !== 'number' ? STEPS : Math.max(0, Math.min(STEPS, r.done));
-  // has(2): competitors found, has(3): formats, has(4): angles, has(5): first videos, has(6): plan
+  // has(2): competitors found, has(3): formats, has(4): angles, has(5): the report sent
+  // the first videos come with a live campaign (app/campaign.html), not with the report
+  var draft = OB.store('onblue-draft'), camp = draft && draft.site === (r.site || '') ? draft.status : '';
   var progress = { done: done, total: STEPS, finished: done >= STEPS, has: function (n) { return done >= n; } };
 
   // what each clip shows, so a title never fights its picture (two takes each)
@@ -104,13 +107,13 @@
   }
   function init() {
     var vs = [];
-    if (stage === 'running') { vs = running(); } else if (progress.has(5)) {
+    if (stage === 'running') { vs = running(); } else if (camp === 'live') {
       vs = r.videos.map(function (v, i) { return vid('v' + i, v.title, v.format, v.film, v.who || '', 'approve', 0); });
     }
-    return { v: V, done: done, videos: vs, budget: r.budget || 500, budgetSet: progress.finished, paused: false, perWeek: r.perWeek || 5, seq: 0 };
+    return { v: V, done: done, camp: camp, videos: vs, budget: draft && camp ? draft.budget : r.budget || 500, budgetSet: stage === 'running' || camp === 'review' || camp === 'live', paused: false, perWeek: r.perWeek || 5, seq: 0 };
   }
   var st = OB.store(KEY);
-  if (!st || st.v !== V || st.done !== done) { st = init(); }
+  if (!st || st.v !== V || st.done !== done || (stage !== 'running' && st.camp !== camp)) { st = init(); }
   function save() { OB.store(KEY, st); }
   save();
 

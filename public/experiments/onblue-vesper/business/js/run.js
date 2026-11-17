@@ -1,7 +1,8 @@
 /* The agent run: plays OB.STEPS one at a time. Each step ticks through its
-   checklist while BlueAI asks a quick question or shows a proof card, then
-   shows its result and adds what it learned to the left column. Sign-up comes
-   last, only when you want to keep the report (Appy: sign up afterwards). */
+   checklist while BlueAI shows a proof card, then shows its result and adds
+   what it learned to the brand profile on the left (run-profile.js). Sign-in
+   comes first (PM, 2026-11-05); the run asks nothing (Ashish, 2026-11-17) and
+   ends with the report on its way and a draft campaign as the one next step. */
 (function () {
   'use strict';
   var OB = window.OB, e = OB.esc, STEPS = OB.STEPS;
@@ -20,7 +21,6 @@
 
   var stage = document.querySelector('[data-stage]'), facts = document.querySelector('[data-facts]');
   var stepper = document.querySelector('[data-stepper]'), stepnow = document.querySelector('[data-stepnow]');
-  var count = document.querySelector('[data-facts-count]');
   var knows = document.querySelector('.ob-knows'), saveBtn = document.querySelector('[data-save]');
   var bar = document.querySelector('.ob-runbar');
   // ticked: checklist lines done in the step at work; saved: signed up mid-run
@@ -33,7 +33,13 @@
     redo: function () { show(at, true); },
     next: function () { go(at + 1); },
     is: function (k) { return STEPS[at].key === k; },
-    toast: toast
+    toast: toast,
+    editProfile: function () { profile.call(); },
+    // the run's one next step: the app, where the draft campaign starts
+    start: function () {
+      r.started = 1; api.save(); OB.store('onblue-tour-done', null); OB.store('onblue-app-stage', 'new'); OB.store('onblue-app-new', null); OB.store('onblue-app-running', null);
+      window.location.href = 'app/campaign.html';
+    }
   };
 
   // the toast sits at the foot of the main column (run.css); when that would
@@ -78,39 +84,25 @@
   var fold = document.querySelector('[data-knows-toggle]');
   if (fold) { fold.addEventListener('click', function () { var o = knows.classList.toggle('is-open'); fold.setAttribute('aria-expanded', String(o)); }); }
 
-  // facts keep the order they first arrived in; only ones not shown before rise in
-  // (the budget slider re-renders often). Only the list scrolls, so the brand,
-  // the heading and the count stay put; f[2] flags a row 'guess' and/or 'dim'
+  // the brand profile: run-profile.js renders and edits it; an edit saves the
+  // report and, on step 1's own result, refreshes its read-back
+  var profile = OB.runProfile(knows, r, function (key, changed) {
+    if (changed) { api.save(); }
+    renderFacts();
+    // step 1's read-back follows the fix in place, without rising in again
+    if (changed && STEPS[at].key === 'brand' && done > at) {
+      show(at, true);
+      var o = stage.querySelector('.ob-out'); if (o) { o.style.animation = 'none'; }
+    }
+  });
   function renderFacts() {
     var list = [];
     for (var i = 0; i < done; i++) { list = list.concat(STEPS[i].facts(r, i === at)); }
     if (at >= done && STEPS[at].live) { list = list.concat(STEPS[at].live(r, ticked)); }
-    list.forEach(function (f) { if (order.indexOf(f[0]) < 0) { order.push(f[0]); } });
-    list.sort(function (a, b) { return order.indexOf(a[0]) - order.indexOf(b[0]); });
-    var fresh = 0;
-    facts.innerHTML = list.length ? list.map(function (f) {
-      var isNew = !shownSet[f[0]]; if (isNew) { fresh++; }
-      var fl = f[2] || '';
-      return '<li class="ob-fact' + (isNew ? ' is-new' : '') + (/dim/.test(fl) ? ' is-dim' : '') + '"><span>' + e(f[0]) + (/guess/.test(fl) ? ' <em class="ob-guess">my guess</em>' : '') + '</span><b>' + e(f[1]) + '</b></li>';
-    }).join('') : '<li class="ob-knows-empty">Everything BlueAI learns shows up here as it works.</li>';
-    shownSet = {}; list.forEach(function (f) { shownSet[f[0]] = true; });
-    if (count) { count.textContent = list.length; count.hidden = !list.length; }
+    profile.render(list);
     var cat = list.some(function (f) { return f[0] === 'Category'; });
     if (cat !== catKnown) { catKnown = cat; renderHead(); }
-    var first = facts.querySelector('.is-new');
-    if (fresh && first && window.innerWidth > 860 && facts.scrollHeight > facts.clientHeight) {
-      var want = Math.min(first.offsetTop, facts.scrollHeight - facts.clientHeight);
-      if (want > facts.scrollTop) { facts.scrollTo({ top: want, behavior: 'smooth' }); }
-    }
-    moreCue();
   }
-  // soft fades inside the card while rows sit above or below its edges
-  function moreCue() {
-    facts.classList.toggle('has-more', facts.scrollTop + facts.clientHeight < facts.scrollHeight - 8);
-    facts.classList.toggle('has-above', facts.scrollTop > 4);
-  }
-  facts.addEventListener('scroll', moreCue, { passive: true });
-  window.addEventListener('resize', moreCue);
 
   function renderStepper() {
     stepper.innerHTML = STEPS.map(function (s, i) {
@@ -128,41 +120,11 @@
     saveBtn.innerHTML = saved ? OB.icon('check', 14) + 'Saved' : '<span>Save <span class="ob-save-my">my </span>report</span>';   // 380 and below drops "my" (run-3.css)
   }
 
-  function aside(a, step) {
-    if (!a) { return ''; }
-    if (a.kind === 'proof') { return '<div class="ob-aside ob-card ob-card--float ob-proofcard">' + (a.big ? '<b>' + e(a.big) + '</b>' : '') + '<span>' + e(a.say) + '</span></div>'; }
-    var body = a.kind === 'text'
-      ? '<form class="ob-aside-row" data-ask><input class="ob-input" placeholder="' + e(a.ph) + '" aria-label="' + e(a.q) + '"><button class="ob-btn ob-btn--ink" type="submit">Next</button></form>'
-      : '<div class="ob-picks" data-ask>' + a.picks.map(function (p) { return '<button class="ob-pick" type="button" aria-pressed="false">' + e(p) + '</button>'; }).join('') + '</div>';
-    return '<div class="ob-aside ob-card ob-card--float" data-aside="' + step + '"><h3>' + e(a.q) + '</h3>' + body +
-      '<button class="ob-link ob-aside-skip" type="button" data-skip>Skip for now</button></div>';
-  }
-
-  // the quick questions, one after another, answered or skipped
-  function ask(step, n) {
-    var list = typeof step.asks === 'function' ? step.asks(r) : step.asks;
-    var box = stage.querySelector('[data-asks]'), a = list[n];
-    // a proof card only fills the wait: once the result is up, it has nothing to fill
-    box.innerHTML = a && a.kind === 'proof' && done > at ? '' : aside(a, n);
-    if (!a || a.kind === 'proof') { return; }
-    var answer = function (v) {
-      if (v) {
-        r[a.key] = v;
-        if (a.key === 'brand') { r.brand = v; r.initial = v.charAt(0).toUpperCase(); renderHead(); }
-        api.save(); renderFacts();
-        // answered after the result showed: the heading picks it up
-        var sy = done > at && stage.querySelector('.ob-say'); if (sy) { sy.outerHTML = say(STEPS[at].done(r)); }
-      }
-      ask(step, n + 1);
-    };
-    var el = box.querySelector('[data-ask]');
-    if (a.kind === 'text') {
-      if (window.innerWidth > 860) { el.querySelector('input').focus({ preventScroll: true }); }   // a phone rests until tapped (no keyboard over the checklist)
-      el.addEventListener('submit', function (ev) { ev.preventDefault(); answer(el.querySelector('input').value.trim()); });
-    } else {
-      el.addEventListener('click', function (ev) { var p = ev.target.closest('.ob-pick'); if (p) { p.setAttribute('aria-pressed', 'true'); window.setTimeout(function () { answer(p.textContent); }, 220); } });
-    }
-    box.querySelector('[data-skip]').addEventListener('click', function () { answer(''); });
+  // the wait shows a proof card; once the result is up, it has nothing to fill
+  function ask(step) {
+    var list = typeof step.asks === 'function' ? step.asks(r) : step.asks, a = list[0];
+    stage.querySelector('[data-asks]').innerHTML = a && a.kind === 'proof' && done <= at
+      ? '<div class="ob-aside ob-card ob-card--float ob-proofcard">' + (a.big ? '<b>' + e(a.big) + '</b>' : '') + '<span>' + e(a.say) + '</span></div>' : '';
   }
 
   // lines[2], when given, is the one word of the heading in the homepage halftone
@@ -179,7 +141,7 @@
     timers.forEach(window.clearTimeout); timers = []; ticked = 0;
     stage.innerHTML = say(s.say(r)) + '<div class="ob-workbox" data-work><div class="ob-workbar"><span data-bar></span></div><ul class="ob-work">' +
       (typeof s.work === 'function' ? s.work(r) : s.work).map(function (w) { return '<li><i></i><span>' + e(w) + '</span></li>'; }).join('') + '</ul></div><div data-asks></div><div data-out></div>';
-    ask(s, 0);
+    ask(s);
     var items = stage.querySelectorAll('[data-work] li'), wbar = stage.querySelector('[data-bar]'), t = 0;
     items.forEach(function (li, k) {
       timers.push(window.setTimeout(function () {
@@ -190,17 +152,24 @@
       }, t));
       t += 700 + (OB.hash(r.brand + i + k) % 500);
     });
+    // the real report (report-live.js) may still be on its way: the last line keeps
+    // working until this step's part is in, or its time limit runs out
+    var token = ++runs;
     timers.push(window.setTimeout(function () {
+      (OB.live ? OB.live.ready(s.key) : Promise.resolve()).then(function () { if (token === runs && at === i) { finish(); } });
+    }, t));
+    function finish() {
       var w = stage.querySelector('[data-work]'); if (w) { w.remove(); }
-      // a proof card only fills the wait; an unanswered question stays
-      var ab = stage.querySelector('[data-asks]'); if (ab && ab.querySelector('.ob-proofcard')) { ab.innerHTML = ''; }
+      // a proof card only fills the wait
+      var ab = stage.querySelector('[data-asks]'); if (ab) { ab.innerHTML = ''; }
       stage.querySelector('.ob-say').outerHTML = say(s.done(r));
       // progress for the app: how far the report got, saved with it
       if (done < i + 1) { done = i + 1; }
       r.done = Math.max(r.done | 0, done); api.save();
       renderStepper(); renderFacts(); result(s);
-    }, t));
+    }
   }
+  var runs = 0;
 
   function result(s) {
     // a fresh node each time, so a re-render never stacks a second set of listeners
@@ -247,8 +216,8 @@
   function err(msg) { suErr.textContent = msg; suErr.hidden = !msg; suIn.classList.toggle('is-bad', !!msg); }
   function openSignup(mode, viaGoogle) {
     suMode = mode || '';
-    suT.textContent = viaGoogle ? 'Continue with Google' : mode === 'first' ? 'Sign in to get your free report' : mode === 'start' ? 'Save your report and start' : 'Save your report';
-    suSub.textContent = viaGoogle ? 'Which Google account should onBlue use?' : mode === 'first' ? 'Free, no card. BlueAI builds it in your account, so it is saved as it goes.' : mode === 'start' ? 'Free to save. Your budget is set to $' + OB.fmt(r.budget) + ', and you only ever pay $8 per 1,000 verified views that happen.' : 'Free, and it picks up right where BlueAI left off.';
+    suT.textContent = viaGoogle ? 'Continue with Google' : mode === 'first' ? 'Sign in to get your free report' : 'Save your report';
+    suSub.textContent = viaGoogle ? 'Which Google account should onBlue use?' : mode === 'first' ? 'Free, no card. BlueAI builds it in your account and sends it to your inbox.' : 'Free, and it picks up right where BlueAI left off.';
     google.hidden = !!viaGoogle; orLine.hidden = !!viaGoogle;
     suLabel.textContent = viaGoogle ? 'Google account email' : 'Email';
     suGo.textContent = viaGoogle ? 'Continue' : 'Continue with email';
@@ -270,15 +239,9 @@
     OB.sess('onblue:agency', r.brand); OB.sess('onblue:agency-status', 'approved');
     // sign in first (PM, 2026-11-05): the account opens now and the run starts after it
     if (suMode === 'first') { saved = true; OB.store('onblue-tour-done', null); OB.store('onblue-app-stage', 'new'); OB.store('onblue-app-new', null); OB.store('onblue-app-running', null); closeSignup(); renderStepper(); begin(); return; }
-    if (suMode !== 'start' && done < STEPS.length) {
-      saved = true; closeSignup(); renderStepper();
-      toast('Saved to ' + email);
-      return;
-    }
-    r.started = 1; api.save(); OB.store('onblue-tour-done', null); OB.store('onblue-app-stage', 'new'); OB.store('onblue-app-new', null); OB.store('onblue-app-running', null);
-    window.location.href = 'app/home.html?welcome=1';
+    saved = true; closeSignup(); renderStepper();
+    toast('Saved to ' + email);
   }
-  api.signup = function (mode) { if (saved && mode === 'start') { suMode = 'start'; finish(r.email); } else { openSignup(mode); } };
   // Google's own chooser in a popup (js/google.js); the in-page form only if the popup is blocked
   google.addEventListener('click', function () {
     OB.google(r.email || r.mailed || '', function (email) { if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { finish(email); } }, function () { openSignup(suMode, true); });

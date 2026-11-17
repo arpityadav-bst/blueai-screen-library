@@ -8,7 +8,9 @@
   'use strict';
   var OB = window.OB, A = OB.app, r = A.r, e = OB.esc, P = A.progress;
   var main = document.querySelector('[data-main]');
-  var LEFT = ['your brand', 'competitors', 'what wins', 'video ideas', 'first videos', 'your plan'];
+  var LEFT = ['your brand', 'competitors', 'what wins', 'video ideas', 'your report'];
+  // the first campaign (app/campaign.html): '' none yet, draft, review, live
+  var draft = OB.store('onblue-draft'), camp = A.stage === 'running' ? 'live' : draft && draft.site === (r.site || '') ? draft.status : '';
   var used;
 
   function hello() { var h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; }
@@ -25,16 +27,28 @@
   function head(n) {
     var hi = hello() + (r.name ? ', ' + e(r.name) : '');
     var h1 = n ? '<span class="ob-tone">' + (n === 1 ? 'One&nbsp;video' : n + '&nbsp;videos') + '</span> ' + '<span class="ob-nw">' + (n === 1 ? 'is' : 'are') + ' waiting</span> <span class="ob-nw">for your yes</span>' : hi;   // phones: breaks as "waiting / for your yes"
-    var sub = n ? hi + '. BlueAI is making videos for ' + e(r.brand) + '.' :
-      P.finished ? 'BlueAI is making videos for ' + e(r.brand) + '. Nothing needs you right now.' : 'Your free report for ' + e(r.brand) + ' is saved, ' + P.done + ' of ' + P.total + ' steps done.';
+    var sub = n ? hi + '. Our team is making videos for ' + e(r.brand) + '.' :
+      !P.finished ? 'Your free report for ' + e(r.brand) + ' is saved, ' + P.done + ' of ' + P.total + ' steps done.' :
+      camp === 'live' ? 'Our team is making videos for ' + e(r.brand) + '. Nothing needs you right now.' :
+      camp === 'review' ? 'Your campaign for ' + e(r.brand) + ' is in review.' : 'Your report for ' + e(r.brand) + ' is in your inbox. Next, your first campaign.';
     return '<div class="ob-head"><div><h1>' + h1 + '</h1><p>' + sub + '</p></div></div>';
+  }
+
+  // the report is done and no campaign is live yet: the one next step
+  function campaign() {
+    if (!P.finished || camp === 'live') { return ''; }
+    var inReview = camp === 'review';
+    return '<section class="ob-resume ob-resume--camp"><div class="ob-resume-t"><b>' + (inReview ? 'Your campaign is in review' : camp === 'draft' ? 'Finish your campaign draft' : 'Draft your first campaign') + '</b><p>' +
+      (inReview ? 'We check every campaign, usually within a working day, and email you when it is approved. Then our team makes your Shorts.'
+        : 'It starts from your brand profile and report, so you only add the budget and dates. Our team makes the Shorts once it is approved.') + '</p></div>' +
+      '<a class="ob-btn' + (inReview ? '' : ' ob-btn--ink') + '" href="campaign.html">' + (inReview ? 'See where it stands' : camp === 'draft' ? 'Continue my draft' : 'Start a draft campaign') + OB.icon('arrow', 16) + '</a></section>';
   }
 
   // signed up before the report was done: where it stopped, and the way back in
   function resume() {
     if (P.finished) { return ''; }
     var rest = LEFT.slice(P.done), bar = LEFT.map(function (_, i) { return '<i' + (i < P.done ? ' class="is-done"' : '') + '></i>'; }).join('');
-    return '<section class="ob-resume"><div class="ob-resume-t"><b>Finish your report</b><p>Still to go: ' + e(rest.join(', ')) + '. BlueAI makes your first videos once your video ideas are set.</p>' +
+    return '<section class="ob-resume"><div class="ob-resume-t"><b>Finish your report</b><p>Still to go: ' + e(rest.join(', ')) + '. Then you draft your first campaign from it.</p>' +
       '<span class="ob-resume-bar" aria-label="' + P.done + ' of ' + P.total + ' steps done">' + bar + '</span></div>' +
       '<a class="ob-btn ob-btn--ink" href="../run.html?resume=1">Continue my report' + OB.icon('arrow', 16) + '</a></section>';
   }
@@ -51,7 +65,7 @@
     return '<form class="ob-prompt ob-prompt--home" data-prompt data-tour="prompt"><div class="ob-prompt-row">' + OB.agent() +
       // phones get a field that grows to three lines, so a filled chip reads in full
       (phone() ? '<textarea rows="1" placeholder="Ask BlueAI for a video" aria-label="Ask BlueAI"></textarea>' :
-        '<input placeholder="' + (window.innerWidth < 640 ? 'Ask BlueAI for a video' : 'What should BlueAI make for ' + e(r.brand) + '?') + '" aria-label="Ask BlueAI">') +
+        '<input placeholder="' + (window.innerWidth < 640 ? 'Ask for a video' : 'What video should we make for ' + e(r.brand) + '?') + '" aria-label="Ask BlueAI">') +
       '<button class="ob-prompt-send" type="submit" aria-label="Send">' + OB.icon('send', 18) + '</button></div>' +
       '<div class="ob-prompt-chips">' + chips().map(function (c) { return '<button type="button" data-chip>' + e(c) + '</button>'; }).join('') + '</div></form>';
   }
@@ -71,13 +85,13 @@
     if (!list.length) { return ''; }
     return '<div class="ob-mk-line">' + list.map(function (v) {
       var art = frame ? OB.ui.making(0) : '<span class="ob-mk-spark" aria-hidden="true">' + OB.icon('spark', 14) + '</span>';
-      return '<div class="ob-mk-i">' + art + '<span><b>Making \u201c' + nb(v.title) + '\u201d</b><small>' + (frame ? '<span class="ob-mk-dot" aria-hidden="true"></span>' : '') + e(v.format) + (phone() ? ' &middot; waits for your yes' : '. It waits here for your yes when it\'s ready.') + '</small></span>' +
+      return '<div class="ob-mk-i">' + art + '<span><b>Our team is making \u201c' + nb(v.title) + '\u201d</b><small>' + (frame ? '<span class="ob-mk-dot" aria-hidden="true"></span>' : '') + e(v.format) + (phone() ? ' &middot; waits for your yes' : '. It waits here for your yes when it\'s ready.') + '</small></span>' +
         '<span class="ob-mk-bar"><i></i></span></div>';
     }).join('') + '</div>';
   }
   function needs(list, wait) {
-    var empty = P.has(5) ? '<b>You\'re all caught up.</b><small>Ask BlueAI for a new video below. It waits here for you before it posts.</small>' :
-      '<b>Your first videos come next.</b><small>Finish your report and BlueAI makes three. They wait here for your yes before anything posts.</small>';
+    var empty = camp === 'live' ? '<b>You\'re all caught up.</b><small>Ask for a new video below. Our team makes it, and it waits here for your yes before it posts.</small>' :
+      '<b>Your first videos come with your campaign.</b><small>Once it is approved, our team makes your video ideas into Shorts. Each waits here for your yes before it posts.</small>';
     var mk = list.filter(function (v) { return v.status === 'making'; }), ready = list.filter(function (v) { return v.status !== 'making'; });
     var body = ready.length ? '<div class="ob-needs">' + making(mk, phone()) + ready.map(need).join('') + '</div>' :
       '<div class="ob-needs ob-needs--empty' + (mk.length ? ' has-making' : '') + '">' + making(mk) + '<span class="ob-yes">' + OB.icon('check') + '</span><div>' + empty + '</div></div>';
@@ -146,7 +160,7 @@
     var rank = function (v) { return v.status === 'posting' ? 1e9 : A.views(v); };
     var rest = vs.filter(function (v) { return v.status === 'posting' || v.status === 'live'; }).sort(function (a, b) { return rank(b) - rank(a); }).slice(0, 5);
     used = {}; list.concat(rest).forEach(function (v) { if (v.status !== 'making') { used[v.film] = true; } });
-    main.innerHTML = head(wait.length) + resume() + needs(list, wait.length) + prompt() + recent(rest) + formats() + remixes();
+    main.innerHTML = head(wait.length) + resume() + campaign() + needs(list, wait.length) + prompt() + recent(rest) + formats() + remixes();
     OB.ui.films(main); rowDots();
   }
 

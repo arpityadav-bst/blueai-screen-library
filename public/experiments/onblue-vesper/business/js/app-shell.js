@@ -8,7 +8,8 @@
   var OB = window.OB, A = OB.app, r = A.r, e = OB.esc;
   var page = document.body.getAttribute('data-page');
 
-  var NAV = [['home', 'Home', 'home'], ['plan', 'Plan', 'plan'], ['studio', 'Studio', 'studio'], ['brand', 'Brand', 'brand'], ['radar', 'Radar', 'radar'], ['analytics', 'Analytics', 'chart']];
+  // Campaign (Ashish, 2026-11-17): the draft, then its review, sits right after Home
+  var NAV = [['home', 'Home', 'home'], ['campaign', 'Campaign', 'send'], ['plan', 'Plan', 'plan'], ['studio', 'Studio', 'studio'], ['brand', 'Brand', 'brand'], ['radar', 'Radar', 'radar'], ['analytics', 'Analytics', 'chart'], ['ai', 'Use with AI', 'spark']];
   var who = r.name || OB.sess('onblue:agency') || r.brand;
   var email = OB.sess('onblue:email') || r.email || ('you@' + (r.site || 'yourbrand.com'));
 
@@ -24,7 +25,7 @@
       return '<a class="ob-navi' + (on ? ' is-on' : '') + '" href="' + n[0] + '.html" data-nav="' + n[0] + '"' + (on ? ' aria-current="page"' : '') + '>' + OB.icon(n[2]) + '<span>' + n[1] + '</span>' + extra + '</a>';
     }).join('');
     // the bar fills with what is spent: empty on day one, never a full bar that reads as used up
-    var set = A.st.budgetSet || P.finished;
+    var set = A.st.budgetSet;   // set in the campaign, not by the report (2026-11-17)
     var used = A.st.budget ? Math.max(0, Math.min(100, Math.round(k.spent / A.st.budget * 100))) : 0;
     // the same exact figure Analytics shows, so the two never disagree; nothing spent says it once
     var some = k.spent >= 1, spentLine = some ? '$' + OB.fmt(k.spent) + ' spent, ' + OB.fmt(k.views) + ' verified views' : 'Nothing spent yet';
@@ -33,13 +34,14 @@
       '<b>$' + OB.fmt(some ? k.left : A.st.budget) + (some ? '<small>left</small>' : '') + '</b>' +
       '<div class="ob-meter"><span style="width:' + used + '%"></span></div>' +
       '<small>' + spentLine + '</small></a>' :
-      '<a class="ob-side-budget" href="plan.html"><span class="ob-side-budget-top"><span>Budget</span></span><b>Not set yet</b><small>You pick it in the last step of your report</small></a>';
+      '<a class="ob-side-budget" href="campaign.html"><span class="ob-side-budget-top"><span>Budget</span></span><b>Not set yet</b><small>You set it in your campaign</small></a>';
     return '<a class="ob-logo" href="home.html">' + OB.logoMark + '<span><span class="ob-logo-on">on</span>Blue</span></a>' +
       '<div class="ob-side-nav">' + nav + '</div>' +
       '<div class="ob-side-gap"></div>' + budget +
       '<button class="ob-me" type="button" aria-haspopup="menu" aria-expanded="false" data-me><span class="ob-me-av">' + e(who.charAt(0).toUpperCase()) + '</span>' +
       '<span class="ob-me-t"><b>' + e(who) + '</b><small>' + e(email) + '</small></span><span class="ob-me-dots" aria-hidden="true"><i></i><i></i><i></i></span></button>' +
       '<div class="ob-menu" role="menu" data-menu><div class="ob-menu-who"><b>' + e(r.brand) + '</b><small>Workspace</small></div>' +
+      '<a href="ai.html" role="menuitem">' + OB.icon('spark', 16) + 'Use BlueAI from your AI</a>' +
       '<button type="button" role="menuitem" data-tour-replay>' + OB.icon('redo', 16) + 'Replay the tour</button>' +
       '<a href="../index.html" role="menuitem">' + OB.icon('globe', 16) + 'onBlue website<span class="ob-menu-ext" aria-hidden="true">' + OB.icon('arrow', 14) + '</span></a><hr>' +
       '<div class="ob-menu-demo" role="group" aria-label="Prototype demo"><small>Prototype demo</small><div>' +

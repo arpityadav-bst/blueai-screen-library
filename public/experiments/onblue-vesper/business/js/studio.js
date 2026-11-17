@@ -89,7 +89,7 @@
         (nx ? '<button class="ob-btn ob-btn--ink ob-dr-approve" type="button" data-open="' + nx.id + '">Next waiting (' + waiting + ')' + OB.icon('arrow', 16) + '</button>' : '') +
         '<div class="ob-dr-stopbox"><button class="ob-btn ob-btn--sm" type="button" data-unpost="' + v.id + '">Stop posting</button><p class="ob-dr-help">Creators stop posting new copies and it goes back to Needs your yes. Views so far stay counted.</p></div>' : '') +
       (v.status === 'approve' ? '<form class="ob-dr-ask" data-improve="' + v.id + '"><label for="ob-dr-q">Ask for a change</label><div class="ob-add"><input class="ob-input" id="ob-dr-q" placeholder="Like a shorter hook" autocomplete="off"><button class="ob-btn" type="submit" disabled>' + OB.icon('redo', 15) + 'Remake with this</button></div>' +
-        '<p class="ob-dr-help">BlueAI makes a new take with your note. It waits here for your yes, like this one.</p></form>' : '') +
+        '<p class="ob-dr-help">Our team makes a new take with your note. It waits here for your yes, like this one.</p></form>' : '') +
       (v.status === 'making' ? '<p class="ob-dr-note"><span>BlueAI is making this one. It moves to Needs your yes when it is ready.</span></p>' : '') +
       '</div></div></div>';
     drawer.classList.add('is-open'); document.body.classList.add('has-drawer');
