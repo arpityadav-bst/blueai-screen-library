@@ -225,9 +225,16 @@
         // a phone binds the line's last three words, so no word sits alone under the thumb
         var def = e(DEF[top.name] || 'The format that pulled the most views for your competitors.'); if (phone()) { def = def.replace(/ (\S+) (\S+)$/, ' $1 $2'); }
         // THE ONE DARK MOMENT of the run: the winning format, in the homepage's own dark section
-        return '<div class="ob-win ob-dark"><span class="ob-chip ob-chip--volt">Winning format</span><b class="ob-win-fig">' + top.share + '%<small>estimated share of views in ' + e(r.category.toLowerCase()) + '</small></b><p><b>' + e(top.name) + '.</b> ' + def + '</p></div>' +
+        // examples (Abhisht, 2026-11-18): the winner's sample plays in its card, every format has one to watch
+        var ex = function (name) { return OB.filmFor(name, OB.hash(name)); };
+        var winEx = '<button class="ob-win-ex" type="button" data-film="' + ex(top.name) + '" data-film-title="' + e(top.name) + '" aria-label="Watch an example of ' + e(top.name) + '">' + OB.videoTag(OB.film(ex(top.name))) + '<span class="ob-win-ex-l">' + OB.icon('play', 10) + 'Example</span></button>';
+        var looks = '<div class="ob-panel ob-halftone">' + head('What each format looks like', 'Examples by our team') + '<div class="ob-fx">' + r.formats.map(function (f) {
+          var i = ex(f.name), fl = OB.film(i);
+          return '<button class="ob-fx-i" type="button" data-film="' + i + '" data-film-title="' + e(f.name) + '"><span class="ob-fx-thumb"><img src="' + e(fl.poster) + '" alt="" loading="lazy"><span class="ob-fx-play">' + OB.icon('play', 12) + '</span></span><b>' + e(f.name) + '</b><small>' + f.share + '%</small></button>';
+        }).join('') + '</div></div>';
+        return '<div class="ob-win ob-dark">' + winEx + '<span class="ob-chip ob-chip--volt">Winning format</span><b class="ob-win-fig">' + top.share + '%<small>estimated share of views in ' + e(r.category.toLowerCase()) + '</small></b><p><b>' + e(top.name) + '.</b> ' + def + '</p></div>' +
           '<div class="ob-panel ob-halftone">' + (phone() ? head('Share of views by format', 'Estimated') : head('What wins in ' + r.category.toLowerCase(), 'Estimated share of views')) + '<div class="ob-hbars ob-hbars--rank">' +
-          r.formats.map(function (f, i) { return hbar(f.name, f.share + '%', top.share, i ? '' : 'is-top', f.share); }).join('') + '</div></div>' +
+          r.formats.map(function (f, i) { return hbar(f.name, f.share + '%', top.share, i ? '' : 'is-top', f.share); }).join('') + '</div></div>' + looks +
           '<div class="ob-tiles3 ob-tiles2"><div class="ob-stat"><b>' + (est ? 'About ' : '') + r.perMonth + '</b><span>Shorts a month from your ' + on.length + ' competitor' + (on.length === 1 ? '' : 's') + '</span></div>' +
           (avg ? '<div class="ob-stat"><b>' + compact(avg) + '</b><span>Average views per Short, across your competitors</span></div></div>'
             : '<div class="ob-stat"><b>About ' + r.longest.days + ' days</b><span>How long ' + e(r.longest.rival) + '\'s best ' + e(top.name) + ' Short kept pulling new views, my estimate</span></div></div>') +

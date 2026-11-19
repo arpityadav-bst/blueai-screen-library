@@ -31,7 +31,7 @@
           // an example Short of the idea's format, so the format reads as a picture, not a word
           var ex = OB.film(OB.filmFor(a.format, OB.hash(a.say)));
           return '<div class="ob-angle ob-angle--ex' + (a.on ? '' : ' is-off') + '" data-i="' + i + '" role="checkbox" tabindex="0" aria-checked="' + a.on + '">' +
-            (ex && ex.poster ? '<span class="ob-angle-ex" aria-hidden="true"><img src="' + e(ex.poster) + '" alt="" loading="lazy"><em>Example</em></span>' : '') +
+            (ex && ex.poster ? '<button class="ob-angle-ex" type="button" data-film="' + OB.filmFor(a.format, OB.hash(a.say)) + '" data-film-title="' + e(a.format) + '" aria-label="Watch an example of ' + e(a.format) + '"><img src="' + e(ex.poster) + '" alt="" loading="lazy"><span class="ob-angle-play">' + OB.icon('play', 12) + '</span><em>Example</em></button>' : '') +
             '<span class="ob-angle-t"><small>For ' + e(a.who.charAt(0).toLowerCase() + a.who.slice(1)) + '</small><b>' + nb(a.say) +
             '</b><span class="ob-angle-fmt"><span class="ob-chip">' + e(a.format) + '</span>' + (why ? '<small>' + why + '</small>' : '') + '</span></span><em class="ob-angle-off">Off, tap to keep</em>' + K.tick() + '</div>';
         }).join('') + '</div>';
@@ -44,7 +44,7 @@
         };
         label();
         out.addEventListener('click', function (ev) { var c = ev.target.closest('.ob-angle'); if (c) { flip(c); } });
-        out.addEventListener('keydown', function (ev) { var c = ev.target.closest('.ob-angle'); if (c && (ev.key === ' ' || ev.key === 'Enter')) { ev.preventDefault(); flip(c); } });
+        out.addEventListener('keydown', function (ev) { if (ev.target.closest('[data-film]')) { return; } var c = ev.target.closest('.ob-angle'); if (c && (ev.key === ' ' || ev.key === 'Enter')) { ev.preventDefault(); flip(c); } });
       },
       facts: function (r) { return [['Video ideas', onAngles(r).map(function (a) { return a.who; }).join(', ') || 'None picked']]; }
     },
